@@ -24,6 +24,8 @@ teardown() {
 		kill -- "-$(cat "$out.smi.pid")" 2>/dev/null
 		rm -f "$out.smi.pid"
 	fi
+	# A profiler wrapper writes its report when the server exits: stop it with SIGTERM first.
+	[ -n "${DMK_SERVER_WRAP:-}" ] && docker stop -t "${DMK_STOP_TIMEOUT:-600}" dmx-server >/dev/null 2>&1
 	docker logs dmx-server >"$out.server.log" 2>&1
 	docker rm -f dmx-server dmx-bench >/dev/null 2>&1
 	cat /proc/loadavg >"$out.load1"

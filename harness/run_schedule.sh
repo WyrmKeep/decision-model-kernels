@@ -6,6 +6,9 @@
 #                  tool   <run-name> <arm> <llama command> [args]
 #                  tool@<w> ...   the same as tool, under the wrapper $DMK_WRAP_<w>
 #                  # comment
+# A line may start with KEY=VALUE overrides of DMK_* settings for that line only,
+# e.g.  DMK_MODEL=other.gguf bench r1 stock. A value with spaces goes in double
+# quotes and must not contain quotes: DMK_SERVER_WRAP="/tools/x/nsys profile -o /runs/r1"
 # DMK_EXTRA_DIR (optional, local) is copied to the host and mounted at /extra for clients.
 # The env file sets DMK_HOST (ssh destination), DMK_BENCH_DIR (local benchmark dir),
 # and the DMK_* variables that the remote scripts need (see harness.env.example).
@@ -29,9 +32,18 @@ fi
 grep -v -E '^(export )?DMK_(HOST|BENCH_DIR|EXTRA_DIR)=' "$DMK_ENV" | ssh "$DMK_HOST" "cat > $DMK_REMOTE_DIR/harness/run.env"
 
 fail=0
-while read -r kind name rest; do
-	[[ -z ${kind:-} || $kind == \#* ]] && continue
-	echo "== $(date -u +%T) $kind $name $rest"
+while read -r line; do
+	[[ -z ${line// /} || $line == \#* ]] && continue
+	envs=
+	while [[ $line =~ ^(DMK_[A-Z0-9_]+)=(\"([^\"\']*)\"|[^[:space:]\"\']+)[[:space:]]+(.*)$ ]]; do
+		key=${BASH_REMATCH[1]}
+		val=${BASH_REMATCH[2]}
+		[[ $val == \"*\" ]] && val=${BASH_REMATCH[3]}
+		envs+="$key='$val' "
+		line=${BASH_REMATCH[4]}
+	done
+	read -r kind name rest <<<"$line"
+	echo "== $(date -u +%T) $envs$kind $name $rest"
 	pre=
 	case $kind in
 	bench) script=run_bench.sh ;;
@@ -45,7 +57,7 @@ while read -r kind name rest; do
 		;;
 	*) echo "bad line: $kind" >&2; exit 2 ;;
 	esac
-	if ! ssh -n "$DMK_HOST" "set -a; . $DMK_REMOTE_DIR/harness/run.env; set +a; $pre bash $DMK_REMOTE_DIR/harness/$script $name $rest"; then
+	if ! ssh -n "$DMK_HOST" "set -a; . $DMK_REMOTE_DIR/harness/run.env; set +a; $envs$pre bash $DMK_REMOTE_DIR/harness/$script $name $rest"; then
 		echo "!! $name failed"
 		fail=$((fail + 1))
 	fi
