@@ -1,0 +1,43 @@
+# Window 1 (2026-10-30): phase 1 equivalence, phase 2 harness, public benchmark reference and baseline
+# make_schedule.py --prefix p1-bench --blocks 6 --seed 20261030 --arm S=stock --arm D=build:b12004-sm86 --kind bench
+bench p1-bench-b1-D build:b12004-sm86 --write-reference p1-bench-b1-D
+bench p1-bench-b1-S stock --write-reference p1-bench-b1-S
+bench p1-bench-b2-S stock --write-reference p1-bench-b2-S
+bench p1-bench-b2-D build:b12004-sm86 --write-reference p1-bench-b2-D
+bench p1-bench-b3-S stock --write-reference p1-bench-b3-S
+bench p1-bench-b3-D build:b12004-sm86 --write-reference p1-bench-b3-D
+bench p1-bench-b4-D build:b12004-sm86 --write-reference p1-bench-b4-D
+bench p1-bench-b4-S stock --write-reference p1-bench-b4-S
+bench p1-bench-b5-S stock --write-reference p1-bench-b5-S
+bench p1-bench-b5-D build:b12004-sm86 --write-reference p1-bench-b5-D
+bench p1-bench-b6-S stock --write-reference p1-bench-b6-S
+bench p1-bench-b6-D build:b12004-sm86 --write-reference p1-bench-b6-D
+# make_schedule.py --prefix p1-llb --blocks 4 --seed 20261031 --arm S=stock --arm D=build:b12004-sm86 --kind tool
+tool p1-llb-b1-S stock bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-llb-b1-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-llb-b2-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-llb-b2-S stock bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-llb-b3-S stock bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-llb-b3-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-llb-b4-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-llb-b4-S stock bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool p1-kld-wiki-S-base stock perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -f /work/wiki.test.raw -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-S.kld
+tool p1-kld-wiki-S-self stock perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-S.kld --kl-divergence
+tool p1-kld-wiki-D-vsS build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-S.kld --kl-divergence
+tool p2-kld-wiki-Q8-base build:b12004-sm86 perplexity -m /refmodels/h2o-lightning-4b-Q8_0.gguf -f /work/wiki.test.raw -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-Q8.kld
+tool p2-kld-wiki-D-vsQ8 build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-Q8.kld --kl-divergence
+tool p1-kld-domain-S-base stock perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -f /work/domain-medium-long.txt -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-S.kld
+tool p1-kld-domain-S-self stock perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-S.kld --kl-divergence
+tool p1-kld-domain-D-vsS build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-S.kld --kl-divergence
+tool p2-kld-domain-Q8-base build:b12004-sm86 perplexity -m /refmodels/h2o-lightning-4b-Q8_0.gguf -f /work/domain-medium-long.txt -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-Q8.kld
+tool p2-kld-domain-D-vsQ8 build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-Q8.kld --kl-divergence
+client p2-dectest-S stock /extra/dectest/run_dectest.py --url http://127.0.0.1:18080 --cases /extra/dectest/cases.json --out /runs/{name}.answers.json
+client p2-dectest-D build:b12004-sm86 /extra/dectest/run_dectest.py --url http://127.0.0.1:18080 --cases /extra/dectest/cases.json --out /runs/{name}.answers.json
+DMK_MODELS=/path/to/q8-models DMK_MODEL=h2o-lightning-4b-Q8_0.gguf client p2-pub-ref-q8 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --baseline /extra/pubbench/baseline.json --out /runs/{name}.json --passes 1 --write-reference {name}
+client p2-pub-base-1 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --baseline /extra/pubbench/baseline.json --out /runs/{name}.json --write-reference {name}
+client p2-pub-base-2 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --baseline /extra/pubbench/baseline.json --out /runs/{name}.json --write-reference {name}
+client p2-pub-base-3 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --baseline /extra/pubbench/baseline.json --out /runs/{name}.json --write-reference {name}
+tool@memcheck p2-san-memcheck-D build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 256 -ub 256 -c 256 --chunks 1 -f /work/domain-medium-long.txt
+tool@initcheck p2-san-initcheck-D build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 256 -ub 256 -c 256 --chunks 1 -f /work/domain-medium-long.txt
+tool@synccheck p2-san-synccheck-D build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 256 -ub 256 -c 256 --chunks 1 -f /work/domain-medium-long.txt
+tool@racecheck p2-san-racecheck-D build:b12004-sm86 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 256 -ub 256 -c 256 --chunks 1 -f /work/domain-medium-long.txt

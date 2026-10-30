@@ -2,7 +2,7 @@
 
 This folder holds the raw files and the derived tables of each measurement. A data set is the data of one test.
 
-At this time, the folder has no data set. It has this README only.
+At this time, the folder has two data sets.
 
 The [harness](../harness/README.md) makes the raw files. The [method](../docs/method.md) gives the tests that compare builds.
 
@@ -10,7 +10,8 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 
 | Data set | Date | Contents |
 |---|---|---|
-| | | This table has no row at this time. |
+| [`2026-10-30-window1`](2026-10-30-window1/README.md) | 2026-10-30 | The first measurement window: build `D` against the stock image, the KL divergence, the 52-decision set, `compute-sanitizer`, and the first runs of the public benchmark |
+| [`2026-10-30-test-backend-ops`](2026-10-30-test-backend-ops/README.md) | 2026-10-30 | The logs of `test-backend-ops` for the 187 operations of the graph of mix8 and for five built-in tests, on build `D` |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 
