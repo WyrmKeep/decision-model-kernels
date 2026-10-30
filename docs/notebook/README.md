@@ -24,12 +24,15 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | Date | Entry | Type | Condition |
 |---|---|---|---|
 | 2026-10-30 | [Inspection of the upstream code](2026-10-30-phase0-upstream-survey.md) | Inspection | Complete |
-| 2026-10-30 | [Test of the build from source](2026-10-30-phase1-equivalence-plan.md) | Prediction | Written before the first measurement. At this time, this folder has no results entry for it. |
+| 2026-10-30 | [Test of the build from source](2026-10-30-phase1-equivalence-plan.md) | Prediction | Written before the first measurement. The [result entry](2026-10-30-phase1-equivalence-result.md) gives the result. |
+| 2026-10-30 | [Result of the test of the build from source](2026-10-30-phase1-equivalence-result.md) | Results | Complete. Build D is in all limits of the prediction entry. |
+| 2026-10-30 | [Correctness baseline of the model mix8 on build D](2026-10-30-phase2-correctness-baseline.md) | Results | Complete. It has no prediction entry. The numbers are the baseline for the next entries. |
 
 Source: the files in this folder.
 
 ## Related documents
 
 - [Method](../method.md): the benchmark, how we compare builds, and the tests of the answers.
+- [Data sets](../../data/README.md): the raw files and the tables that the entries use.
 - [Change documents](../changes/README.md): one document for each change.
 - [Glossary](../glossary.md): the terms of the project.
