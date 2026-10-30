@@ -1,7 +1,8 @@
 import unittest
 
 import support
-from ste_rules import Settings, british_spelling
+from ste_glossary import parse_glossary
+from ste_rules import Checker, Settings, british_spelling
 
 
 def findings(text, glossary_file=False, settings=None):
@@ -42,6 +43,12 @@ class VocabularyTests(unittest.TestCase):
     def test_glossary_words_and_forms_pass(self):
         self.assertEqual(codes("The cat frobnicated the widgets with the widget stand."), [])
         self.assertEqual(codes("Zork is in the box."), [])
+
+    def test_glossary_phrase_with_a_camel_case_word_passes(self):
+        text = support.GLOSSARY_TEXT + "| Blue DeltaBox | technical name | A small box. |\n"
+        checker = Checker(support.dictionary(), parse_glossary(text), support.SETTINGS)
+        self.assertEqual([f.rule for f in checker.check("The cat sees a Blue DeltaBox.", "t.md")], [])
+        self.assertEqual([f.rule for f in checker.check("The cat sees a Blue.", "t.md")], ["1.1"])
 
     def test_technical_name_in_dictionary_alternative_points_to_glossary(self):
         (found,) = findings("The graph is red.")

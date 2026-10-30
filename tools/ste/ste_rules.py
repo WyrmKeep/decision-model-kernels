@@ -108,6 +108,11 @@ _BRITISH_WORDS = {
 }
 
 
+def _phrase_part(token: Token) -> bool:
+    """A word, or a name with letters and digits only (for example DeltaNet), can be part of a phrase."""
+    return token.kind == WORD or (token.kind == ATOM_KIND and token.text.isalnum())
+
+
 def british_spelling(word: str) -> str | None:
     """Return the American spelling when ``word`` looks British, else None."""
     if word in _BRITISH_WORDS:
@@ -331,7 +336,7 @@ class Checker:
                 continue
             for length in (4, 3, 2):
                 seq = sentence[index : index + length]
-                if len(seq) < length or any(t.kind != WORD for t in seq):
+                if len(seq) < length or not all(_phrase_part(t) for t in seq):
                     continue
                 phrase = " ".join(t.lower for t in seq)
                 if phrase in self.glossary.surface or phrase in self.dictionary.approved_phrases:
