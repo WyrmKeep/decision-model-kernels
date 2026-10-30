@@ -1,0 +1,1174 @@
+[
+ {
+  "id": "triage00",
+  "task": "triage",
+  "size": "short",
+  "state": "Unraid status report: array started, 0 disks with read errors, disk1 76% used, no parity configured.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage01",
+  "task": "triage",
+  "size": "short",
+  "state": "SMART warning on disk2 (WDC WD180EDGZ): attribute 5 Reallocated_Sector_Ct increased from 0 to 8.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "storage",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage02",
+  "task": "triage",
+  "size": "short",
+  "state": "Backrest: plan main-gdrive failed at 07:31. rclone: googleapi: Error 401: Invalid Credentials, authError.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "backup",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage03",
+  "task": "triage",
+  "size": "short",
+  "state": "Docker update available: lscr.io/linuxserver/sonarr:latest has a newer image.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage04",
+  "task": "triage",
+  "size": "short",
+  "state": "Uptime Kuma: [Plex] is DOWN. connect ECONNREFUSED 203.0.113.20:32400 (3 retries).",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "availability",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage05",
+  "task": "triage",
+  "size": "short",
+  "state": "sshd[2211]: Failed password for invalid user admin from 192.0.2.117 port 51122 ssh2 (repeated 412 times in 10 minutes).",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "security",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage06",
+  "task": "triage",
+  "size": "short",
+  "state": "Uptime Kuma: [Plex] is UP (200 - OK) after 2 minutes of downtime.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "availability",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage07",
+  "task": "triage",
+  "size": "short",
+  "state": "Beszel: CPU above 90% for 10 minutes on homelab while the scheduled Tdarr transcode queue runs.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage08",
+  "task": "triage",
+  "size": "short",
+  "state": "Mover finished: moved 412 GB from cache to array in 3h12m.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage09",
+  "task": "triage",
+  "size": "short",
+  "state": "kernel: NVRM: Xid (PCI:0000:01:00): 79, GPU has fallen off the bus.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "hardware",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage10",
+  "task": "triage",
+  "size": "short",
+  "state": "Certificate for www.homelab.example.net expires in 5 days; automatic renewal failed: DNS challenge timed out.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "availability",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage11",
+  "task": "triage",
+  "size": "short",
+  "state": "Backrest: plan main-local finished OK in 6m41s, 1.2 GiB added, snapshot 8f2c1a.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "noul",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "backup",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "check00",
+  "task": "check",
+  "size": "short",
+  "state": "Task: restart Sonarr and confirm it responds.\nReport: Restarted the sonarr container. `curl -s localhost:8989/ping` returned {\"status\":\"OK\"}.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "check01",
+  "task": "check",
+  "size": "short",
+  "state": "Task: restart Sonarr and confirm it responds.\nReport: Restarted the sonarr container; it should be fine now.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check02",
+  "task": "check",
+  "size": "short",
+  "state": "Task: move all 6 ended shows from disk1 to disk2 and confirm disk1's new usage.\nReport: Moved 4 of the 6 shows; the other two were in use and will be retried later. disk1 is now at 79%.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check03",
+  "task": "check",
+  "size": "short",
+  "state": "Task: back up /etc/rc.local before editing it.\nReport: Copied it to /srv/backups/manual/rc.local.bak-20261030-142723 (cmp: identical), then added the three lines.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "check04",
+  "task": "check",
+  "size": "short",
+  "state": "Task: update the notes log, commit and push.\nReport: Wrote log/2026-10-30.md and committed it as 68791fe. `git status -sb` shows `## main...origin/main [ahead 1]`.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check05",
+  "task": "check",
+  "size": "short",
+  "state": "Task: run a 10-minute GPU burn-in and report errors.\nReport: gpu-burn ran for 600 s: `GPU 0: OK (0 errors)`, max 75 C, no Xid lines in dmesg.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "check06",
+  "task": "check",
+  "size": "short",
+  "state": "Task: make sure the Uptime Kuma monitor for Gitea is green.\nReport: Created the HTTP monitor for Gitea in Uptime Kuma.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check07",
+  "task": "check",
+  "size": "short",
+  "state": "Task: delete the quarantine folder once nothing references it.\nReport: grep over all container configs found no references; deleted sonarr-rename-20260915/quarantine; `du` confirms 400 MB freed.",
+  "questions": {
+   "done": {
+    "type": "noul",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "style00",
+  "task": "style",
+  "size": "short",
+  "state": "Reboot scheduled for tomorrow night, after the array check finishes.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": true,
+   "secret": false
+  }
+ },
+ {
+  "id": "style01",
+  "task": "style",
+  "size": "short",
+  "state": "Reboot planned for Sat 31 Oct 2026 at 22:00, after the array check finishes.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "style02",
+  "task": "style",
+  "size": "short",
+  "state": "Set the runner registration token to 7f3a9cb2e41d08aa5c3e9f1b6d2a0c47 in /etc/act_runner/config.yaml.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": true
+  }
+ },
+ {
+  "id": "style03",
+  "task": "style",
+  "size": "short",
+  "state": "The runner registration token is in Bitwarden, item 'Gitea runner (build-host)'.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "style04",
+  "task": "style",
+  "size": "short",
+  "state": "Ran the burn-in earlier today; no errors.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": true,
+   "secret": false
+  }
+ },
+ {
+  "id": "style05",
+  "task": "style",
+  "size": "short",
+  "state": "Updated 2026-10-30 15:10. Burn-in on 2026-10-30: no errors.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "style06",
+  "task": "style",
+  "size": "short",
+  "state": "Backrest's Google Drive remote uses client secret GOCSPX-4hT2kq9Lw0ZrXc1vBn7mPq3s.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": true
+  }
+ },
+ {
+  "id": "style07",
+  "task": "style",
+  "size": "short",
+  "state": "SMB password changed on 2026-10-22; the new one is in Bitwarden.",
+  "questions": {
+   "relative_date": {
+    "type": "noul",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "noul",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "commit00",
+  "task": "commit",
+  "size": "short",
+  "state": "Commit message: GPU docs: correct the work window to 14:20-15:10\nDiff:\n-## RTX 3060 Ti driver, tests and use cases (14:20-15:30)\n+## RTX 3060 Ti driver, tests and use cases (14:20-15:10)",
+  "questions": {
+   "matches": {
+    "type": "noul",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": true
+  }
+ },
+ {
+  "id": "commit01",
+  "task": "commit",
+  "size": "short",
+  "state": "Commit message: Fix typo in README\nDiff:\n+def rotate_logs(path, keep=7):\n+    for f in sorted(glob(path))[:-keep]:\n+        os.remove(f)",
+  "questions": {
+   "matches": {
+    "type": "noul",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": false
+  }
+ },
+ {
+  "id": "commit02",
+  "task": "commit",
+  "size": "short",
+  "state": "Commit message: Bump Sonarr to 4.0.10\nDiff:\n-    image: lscr.io/linuxserver/sonarr:4.0.9\n+    image: lscr.io/linuxserver/sonarr:4.0.10",
+  "questions": {
+   "matches": {
+    "type": "noul",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": true
+  }
+ },
+ {
+  "id": "commit03",
+  "task": "commit",
+  "size": "short",
+  "state": "Commit message: Remove unused volume mappings\nDiff:\n     volumes:\n       - /srv/docker/appdata/sonarr:/config\n+      - /srv/docker/media/tv:/tv",
+  "questions": {
+   "matches": {
+    "type": "noul",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": false
+  }
+ },
+ {
+  "id": "medium00-storage",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:13 Homelab ntpd[15401]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:30:22 Homelab ntpd[22873]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:30:51 Homelab kernel: mdcmd (68): spindown 5\nOct 30 14:31:10 Homelab tailscaled[42588]: magicsock: derp-4 connected; connGen=1\nOct 30 14:31:24 Homelab kernel: docker0: port 22(veth9d44520) entered forwarding state\nOct 30 14:31:46 Homelab tailscaled[10254]: wgengine: Reconfig: configuring router\nOct 30 14:32:12 Homelab webGUI: Successful login user root from 203.0.113.237\nOct 30 14:32:39 Homelab nginx: 2026/10/30 14:34:26 [info] 22237#6984: *7202 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:32:45 Homelab backrest[23106]: task completed: snapshot main-local, 221 files changed, 794 MiB added\nOct 30 14:33:02 Homelab backrest[13080]: task completed: snapshot main-local, 334 files changed, 247 MiB added\nOct 30 14:33:26 Homelab tailscaled[45928]: wgengine: Reconfig: configuring router\nOct 30 14:33:42 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:34:09 Homelab kernel: br-50e258f6423f: port 4(veth2fcf147) entered blocking state\nOct 30 14:34:29 Homelab kernel: ata5.00: exception Emask 0x0 SAct 0xe4a01c SErr 0x0 action 0x0\nOct 30 14:34:53 Homelab kernel: ata5.00: failed command: READ FPDMA QUEUED\nOct 30 14:35:18 Homelab kernel: I/O error, dev sdc, sector 896294211 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 0\nOct 30 14:35:25 Homelab kernel: md: disk2 read error, sector=312949392\nOct 30 14:35:49 Homelab emhttpd: spinning down /dev/sdb\nOct 30 14:36:11 Homelab kernel: mdcmd (785): spindown 3\nOct 30 14:36:27 Homelab emhttpd: spinning down /dev/sdg\nOct 30 14:36:55 Homelab kernel: docker0: port 14(vethd87a388) entered forwarding state\nOct 30 14:37:09 Homelab kernel: veth8618b42: entered promiscuous mode\nOct 30 14:37:29 Homelab emhttpd: read SMART /dev/sdg\nOct 30 14:37:48 Homelab webGUI: Successful login user root from 203.0.113.122",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": true,
+   "oom_kill": false,
+   "worst": "storage"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "medium01-memory",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:10 Homelab kernel: docker0: port 12(veth7a1a94e) entered forwarding state\nOct 30 14:30:21 Homelab kernel: br-a48521c11b97: port 2(veth7432354) entered blocking state\nOct 30 14:30:45 Homelab backrest[36901]: task completed: snapshot main-local, 133 files changed, 867 MiB added\nOct 30 14:31:09 Homelab rc.docker: immich: started succesfully!\nOct 30 14:31:29 Homelab tailscaled[58977]: wgengine: Reconfig: configuring router\nOct 30 14:31:53 Homelab dockerd[41324]: time=\"2026-10-30T14:36:37.226794Z\" level=info msg=\"ignoring event\" container=810157422897971feebb75da5dfb0240618101928cb149bff5cf939373615901 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:32:03 Homelab kernel: ffmpeg invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0\nOct 30 14:32:23 Homelab kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=docker-4b45ab73a6b13c97c0e4b5da2c9e0f1b843697ed8f034215fc6845f023f49ea5.scope,mems_allowed=0\nOct 30 14:32:45 Homelab kernel: Memory cgroup out of memory: Killed process 11222 (python3) total-vm:7090921kB, anon-rss:2416255kB, file-rss:0kB\nOct 30 14:33:08 Homelab nginx: 2026/10/30 14:44:33 [info] 11445#37220: *58834 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:33:24 Homelab kernel: mdcmd (742): spindown 4\nOct 30 14:33:59 Homelab webGUI: Successful login user root from 203.0.113.207\nOct 30 14:34:11 Homelab emhttpd: spinning down /dev/sdb\nOct 30 14:34:28 Homelab ntpd[28456]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:34:57 Homelab sshd-session[11532]: Accepted publickey for root from 198.51.100.132 port 57776 ssh2: ED25519 SHA256:010d3e39c60776b9647fe1aefc25775c25ab09ae69e\nOct 30 14:35:01 Homelab crond[47935]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:35:37 Homelab kernel: docker0: port 27(veth17e5462) entered forwarding state\nOct 30 14:35:52 Homelab kernel: docker0: port 17(vetha4fa0f1) entered forwarding state\nOct 30 14:36:14 Homelab smbd[14682]: [2026/10/30 14:33:09.025142,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:36:32 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:36:53 Homelab emhttpd: spinning down /dev/sdd\nOct 30 14:37:16 Homelab kernel: eth0: renamed from vethc551f12\nOct 30 14:37:30 Homelab kernel: vetha26d384: entered promiscuous mode",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": true,
+   "worst": "memory"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "medium02-network",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:18 Homelab webGUI: Successful login user root from 203.0.113.12\nOct 30 14:30:23 Homelab kernel: veth590859f: entered promiscuous mode\nOct 30 14:30:41 Homelab sshd-session[55453]: Accepted publickey for root from 198.51.100.87 port 39390 ssh2: ED25519 SHA256:2808b236dc5464d113037dda758745d97333c4bf25d\nOct 30 14:31:18 Homelab kernel: veth78db060: entered promiscuous mode\nOct 30 14:31:39 Homelab kernel: igb 0000:06:00.0 eth1: igb: eth1 NIC Link is Down\nOct 30 14:31:57 Homelab kernel: bond0: (slave eth0): link status definitely down, disabling slave\nOct 30 14:32:02 Homelab tailscaled[50178]: control: dial: dial tcp: lookup controlplane.tailscale.com: network is unreachable\nOct 30 14:32:22 Homelab kernel: bond0: now running without any active interface!\nOct 30 14:32:44 Homelab nginx: 2026/10/30 14:55:58 [info] 47919#36748: *47440 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:33:00 Homelab ntpd[5967]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:33:25 Homelab ntpd[38827]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:33:41 Homelab webGUI: Successful login user root from 203.0.113.71\nOct 30 14:34:06 Homelab dockerd[33086]: time=\"2026-10-30T14:02:42.830487Z\" level=info msg=\"ignoring event\" container=ff3856b74fc365b704dbc674817062cd0cb7ca6c6fb9c58b0f541cbcc8dae4d5 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:34:24 Homelab emhttpd: read SMART /dev/sdd\nOct 30 14:34:44 Homelab tailscaled[51618]: magicsock: derp-1 connected; connGen=1\nOct 30 14:35:11 Homelab tailscaled[11255]: wgengine: Reconfig: configuring router\nOct 30 14:35:28 Homelab ntpd[30896]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:35:40 Homelab sshd-session[17005]: Accepted publickey for root from 203.0.113.197 port 59399 ssh2: ED25519 SHA256:0c5b3a4e4d4cdf275b386458885e182b2bfe85058e3\nOct 30 14:36:04 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:36:23 Homelab kernel: eth0: renamed from vethd9697db\nOct 30 14:36:56 Homelab kernel: vethe8675e7: entered promiscuous mode\nOct 30 14:37:05 Homelab sshd-session[54259]: Accepted publickey for root from 198.51.100.158 port 30152 ssh2: ED25519 SHA256:c577cc87eaa30a2715a216e45bb685433f79365539f\nOct 30 14:37:37 Homelab kernel: mdcmd (898): spindown 3\nOct 30 14:37:57 Homelab smbd[31515]: [2026/10/30 14:02:57.856469,  0] ../../source3/smbd/server.c:1746(main)",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "network"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "medium03-none",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:14 Homelab smbd[53466]: [2026/10/30 14:17:06.193501,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:30:35 Homelab nginx: 2026/10/30 14:26:41 [info] 10288#47765: *47728 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:30:57 Homelab smbd[58415]: [2026/10/30 14:04:47.595456,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:31:17 Homelab webGUI: Successful login user root from 203.0.113.17\nOct 30 14:31:27 Homelab nginx: 2026/10/30 14:16:56 [info] 59841#21673: *75917 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:31:52 Homelab dockerd[21661]: time=\"2026-10-30T14:21:08.735857Z\" level=info msg=\"ignoring event\" container=1a2d4e35a4fd2e6742cbed07aecbfd926ea338da113580f06f919f8109f6db0d module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:32:15 Homelab sshd-session[14799]: Accepted publickey for root from 198.51.100.223 port 54368 ssh2: ED25519 SHA256:a209e0c76765b25f35f8e3190ec7b9495d162cff337\nOct 30 14:32:32 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:32:42 Homelab sshd-session[53770]: Accepted publickey for root from 2001:db8:7dc:66::acd port 59237 ssh2: ED25519 SHA256:64e24e23b779847a44dccb2de0e35aea29862324eb0\nOct 30 14:33:11 Homelab smbd[52099]: [2026/10/30 14:14:39.436577,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:33:39 Homelab kernel: eth0: renamed from veth98466dd\nOct 30 14:33:53 Homelab kernel: mdcmd (352): spindown 3\nOct 30 14:34:04 Homelab tailscaled[10805]: wgengine: Reconfig: configuring router\nOct 30 14:34:32 Homelab kernel: docker0: port 35(veth9e31d45) entered forwarding state\nOct 30 14:34:41 Homelab smbd[37086]: [2026/10/30 14:46:28.661620,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:35:11 Homelab sshd-session[55339]: Accepted publickey for root from 203.0.113.178 port 56138 ssh2: ED25519 SHA256:243494e26cfa1736480237f77a15972f37d7d1c0629\nOct 30 14:35:39 Homelab webGUI: Successful login user root from 203.0.113.112\nOct 30 14:35:41 Homelab kernel: mdcmd (337): spindown 5\nOct 30 14:36:08 Homelab tailscaled[57707]: wgengine: Reconfig: configuring router\nOct 30 14:36:23 Homelab kernel: docker0: port 23(veth913ccb7) entered forwarding state",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "none"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "medium04-storage",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:16 Homelab kernel: eth0: renamed from veth77642aa\nOct 30 14:30:35 Homelab kernel: veth7d9dca2: entered promiscuous mode\nOct 30 14:30:42 Homelab kernel: eth0: renamed from vethd85a22c\nOct 30 14:31:16 Homelab nginx: 2026/10/30 14:33:49 [info] 6133#13488: *90978 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:31:37 Homelab kernel: docker0: port 14(veth73f3a28) entered forwarding state\nOct 30 14:31:56 Homelab kernel: ata5.00: exception Emask 0x0 SAct 0xba1e92 SErr 0x0 action 0x0\nOct 30 14:32:16 Homelab kernel: ata5.00: failed command: READ FPDMA QUEUED\nOct 30 14:32:24 Homelab kernel: I/O error, dev sdc, sector 558699819 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 0\nOct 30 14:32:46 Homelab kernel: md: disk2 read error, sector=501892625\nOct 30 14:33:18 Homelab kernel: docker0: port 33(veth99114c3) entered forwarding state\nOct 30 14:33:27 Homelab kernel: docker0: port 28(veth2b958ab) entered forwarding state\nOct 30 14:33:55 Homelab kernel: vetha035908: entered promiscuous mode\nOct 30 14:34:05 Homelab kernel: vethbb72784: entered promiscuous mode\nOct 30 14:34:20 Homelab kernel: br-b5ae21507018: port 1(vethfbb9c69) entered blocking state\nOct 30 14:34:54 Homelab smbd[20770]: [2026/10/30 14:50:25.344046,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:35:13 Homelab dockerd[47526]: time=\"2026-10-30T14:22:37.867587Z\" level=info msg=\"ignoring event\" container=61c134d17ce9613f298255fd799465803762388ef494a48b42fedc388aabe0e5 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:35:23 Homelab backrest[15981]: task completed: snapshot main-local, 114 files changed, 100 MiB added\nOct 30 14:35:55 Homelab nginx: 2026/10/30 14:26:38 [info] 17232#11121: *93390 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:36:06 Homelab webGUI: Successful login user root from 203.0.113.52\nOct 30 14:36:32 Homelab smbd[39418]: [2026/10/30 14:49:33.674731,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:36:57 Homelab smbd[42194]: [2026/10/30 14:41:26.067544,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:37:09 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:37:30 Homelab rc.docker: radarr: started succesfully!\nOct 30 14:37:48 Homelab kernel: veth92e7168: entered promiscuous mode",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": true,
+   "oom_kill": false,
+   "worst": "storage"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "medium05-memory",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:07 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:30:39 Homelab backrest[42813]: task completed: snapshot main-local, 250 files changed, 118 MiB added\nOct 30 14:30:53 Homelab tailscaled[49887]: magicsock: derp-1 connected; connGen=1\nOct 30 14:31:12 Homelab webGUI: Successful login user root from 203.0.113.205\nOct 30 14:31:26 Homelab kernel: br-052a42dbeaae: port 5(veth409980a) entered blocking state\nOct 30 14:31:52 Homelab kernel: br-2bf072986575: port 7(veth2269ccc) entered blocking state\nOct 30 14:32:05 Homelab tailscaled[16884]: wgengine: Reconfig: configuring router\nOct 30 14:32:23 Homelab webGUI: Successful login user root from 203.0.113.38\nOct 30 14:32:58 Homelab webGUI: Successful login user root from 203.0.113.38\nOct 30 14:33:10 Homelab tailscaled[20086]: magicsock: derp-10 connected; connGen=1\nOct 30 14:33:20 Homelab kernel: node invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0\nOct 30 14:33:40 Homelab kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=docker-323426328edf1203f5a34deb7447ff425b24a6493dbe3bd7a93598d7babf202a.scope,mems_allowed=0\nOct 30 14:34:19 Homelab kernel: Memory cgroup out of memory: Killed process 57377 (python3) total-vm:6847990kB, anon-rss:3736706kB, file-rss:0kB\nOct 30 14:34:39 Homelab kernel: eth0: renamed from veth041b554\nOct 30 14:34:47 Homelab sshd-session[22452]: Accepted publickey for root from 198.51.100.2 port 54934 ssh2: ED25519 SHA256:a8c4995e7eea514965157872c07c7797e74ed1b4755\nOct 30 14:35:12 Homelab kernel: eth0: renamed from veth228de2d\nOct 30 14:35:37 Homelab webGUI: Successful login user root from 203.0.113.63\nOct 30 14:35:46 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:36:17 Homelab backrest[12148]: task completed: snapshot main-local, 170 files changed, 106 MiB added\nOct 30 14:36:20 Homelab dockerd[52956]: time=\"2026-10-30T14:21:53.635813Z\" level=info msg=\"ignoring event\" container=3c8aa1fc436e3afd0b87dc134cdd16a2e1429134b891636103e479e3c02fb18c module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:36:53 Homelab nginx: 2026/10/30 14:52:45 [info] 32708#1611: *93706 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:37:06 Homelab rc.docker: gitea: started succesfully!\nOct 30 14:37:26 Homelab webGUI: Successful login user root from 203.0.113.39",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": true,
+   "worst": "memory"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "medium06-network",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:04 Homelab ntpd[49316]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:30:33 Homelab backrest[44690]: task completed: snapshot main-local, 213 files changed, 340 MiB added\nOct 30 14:30:43 Homelab webGUI: Successful login user root from 203.0.113.38\nOct 30 14:31:16 Homelab crond[56422]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:31:37 Homelab kernel: igb 0000:06:00.0 eth1: igb: eth1 NIC Link is Down\nOct 30 14:31:59 Homelab kernel: bond0: (slave eth0): link status definitely down, disabling slave\nOct 30 14:32:12 Homelab tailscaled[36194]: control: dial: dial tcp: lookup controlplane.tailscale.com: network is unreachable\nOct 30 14:32:25 Homelab kernel: bond0: now running without any active interface!\nOct 30 14:32:41 Homelab kernel: mdcmd (489): spindown 3\nOct 30 14:33:03 Homelab nginx: 2026/10/30 14:29:30 [info] 10758#25640: *86215 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:33:26 Homelab webGUI: Successful login user root from 203.0.113.202\nOct 30 14:33:54 Homelab kernel: mdcmd (514): spindown 4\nOct 30 14:34:15 Homelab nginx: 2026/10/30 14:00:25 [info] 24006#48281: *87403 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:34:34 Homelab kernel: docker0: port 10(veth0a5ccd1) entered forwarding state\nOct 30 14:34:50 Homelab nginx: 2026/10/30 14:33:59 [info] 2052#42488: *23915 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:35:15 Homelab backrest[42504]: task completed: snapshot main-local, 332 files changed, 293 MiB added\nOct 30 14:35:29 Homelab kernel: docker0: port 28(veth14c609a) entered forwarding state\nOct 30 14:35:42 Homelab kernel: veth94cab74: entered promiscuous mode\nOct 30 14:36:14 Homelab nginx: 2026/10/30 14:49:52 [info] 23582#31712: *47339 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:36:32 Homelab rc.docker: gitea: started succesfully!\nOct 30 14:36:49 Homelab ntpd[54141]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:37:09 Homelab kernel: br-0b5e9e698d28: port 6(vethd126ade) entered blocking state\nOct 30 14:37:29 Homelab tailscaled[49458]: magicsock: derp-4 connected; connGen=1\nOct 30 14:37:55 Homelab kernel: eth0: renamed from veth6a1b961",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "network"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "medium07-none",
+  "task": "syslog-medium",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:12 Homelab kernel: mdcmd (198): spindown 1\nOct 30 14:30:21 Homelab smbd[27435]: [2026/10/30 14:02:53.614290,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:30:41 Homelab smbd[44382]: [2026/10/30 14:28:05.845076,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:31:15 Homelab rc.docker: gitea: started succesfully!\nOct 30 14:31:25 Homelab dockerd[21257]: time=\"2026-10-30T14:10:33.204110Z\" level=info msg=\"ignoring event\" container=0cedf36766eac0beb7bb4de48b7a8b90f0144135fb810453eb4ad9e88b56d850 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:31:43 Homelab smbd[53638]: [2026/10/30 14:03:20.579759,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:32:13 Homelab tailscaled[57052]: magicsock: derp-2 connected; connGen=1\nOct 30 14:32:24 Homelab kernel: veth26ca6e5: entered promiscuous mode\nOct 30 14:32:56 Homelab nginx: 2026/10/30 14:57:37 [info] 6830#31075: *26039 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:33:19 Homelab crond[7190]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:33:25 Homelab kernel: docker0: port 12(veth799f5bb) entered forwarding state\nOct 30 14:33:53 Homelab sshd-session[7742]: Accepted publickey for root from 198.51.100.135 port 48277 ssh2: ED25519 SHA256:cb5f0292e60e2c694ff051d094b3002725e8345a6ef\nOct 30 14:34:13 Homelab ntpd[37109]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:34:22 Homelab smbd[23575]: [2026/10/30 14:38:51.825359,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:34:42 Homelab kernel: br-4deefd8bddd0: port 3(veth53b2a16) entered blocking state\nOct 30 14:35:02 Homelab backrest[35920]: task completed: snapshot main-local, 130 files changed, 806 MiB added\nOct 30 14:35:30 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:35:48 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:36:01 Homelab kernel: br-ef13c8c822de: port 3(vethee9b391) entered blocking state\nOct 30 14:36:32 Homelab smbd[44739]: [2026/10/30 14:23:29.045614,  0] ../../source3/smbd/server.c:1746(main)",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "none"
+  },
+  "size": "medium"
+ },
+ {
+  "id": "long00-storage",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:11 Homelab kernel: docker0: port 24(veth9cb62a6) entered forwarding state\nOct 30 14:30:31 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:30:43 Homelab rc.docker: immich: started succesfully!\nOct 30 14:31:08 Homelab rc.docker: immich: started succesfully!\nOct 30 14:31:25 Homelab emhttpd: spinning down /dev/sdb\nOct 30 14:31:51 Homelab kernel: mdcmd (501): spindown 4\nOct 30 14:32:10 Homelab tailscaled[7727]: magicsock: derp-2 connected; connGen=1\nOct 30 14:32:30 Homelab kernel: eth0: renamed from veth5acb538\nOct 30 14:32:52 Homelab tailscaled[3250]: wgengine: Reconfig: configuring router\nOct 30 14:33:16 Homelab sshd-session[48618]: Accepted publickey for root from 198.51.100.95 port 55417 ssh2: ED25519 SHA256:cb1597661a37ff6e71f123afba1e639530b36ed9d83\nOct 30 14:33:36 Homelab kernel: ata5.00: exception Emask 0x0 SAct 0xec33fd SErr 0x0 action 0x0\nOct 30 14:33:59 Homelab kernel: ata5.00: failed command: READ FPDMA QUEUED\nOct 30 14:34:12 Homelab kernel: I/O error, dev sdc, sector 379925747 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 0\nOct 30 14:34:30 Homelab kernel: md: disk2 read error, sector=716269929\nOct 30 14:34:44 Homelab emhttpd: spinning down /dev/sdd\nOct 30 14:35:11 Homelab nginx: 2026/10/30 14:07:47 [info] 23176#4846: *18163 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:35:34 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:35:50 Homelab backrest[48651]: task completed: snapshot main-local, 304 files changed, 118 MiB added\nOct 30 14:36:09 Homelab kernel: veth6447071: entered promiscuous mode\nOct 30 14:36:35 Homelab dockerd[40937]: time=\"2026-10-30T14:24:24.049494Z\" level=info msg=\"ignoring event\" container=2ded37f057a9095dc5373f7e456f21a3b5701944a74f4c1012abd062eced8549 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:36:52 Homelab ntpd[22196]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:37:14 Homelab emhttpd: spinning down /dev/sdb\nOct 30 14:37:38 Homelab crond[11298]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:37:49 Homelab nginx: 2026/10/30 14:48:26 [info] 5871#9361: *24233 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:38:11 Homelab webGUI: Successful login user root from 203.0.113.89\nOct 30 14:38:38 Homelab kernel: docker0: port 15(vethe68860f) entered forwarding state\nOct 30 14:38:54 Homelab crond[36620]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:39:07 Homelab kernel: vethc1ba39a: entered promiscuous mode\nOct 30 14:39:21 Homelab sshd-session[17869]: Accepted publickey for root from 2001:db8:fadf:e5::8b0 port 52281 ssh2: ED25519 SHA256:72b64e7d0295297dda1bc06dafe7d0bc372fe2e7822\nOct 30 14:39:48 Homelab webGUI: Successful login user root from 203.0.113.60\nOct 30 14:40:15 Homelab smbd[48260]: [2026/10/30 14:01:49.003708,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:40:34 Homelab kernel: mdcmd (435): spindown 3\nOct 30 14:40:49 Homelab nginx: 2026/10/30 14:13:47 [info] 14660#49931: *85732 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:41:01 Homelab kernel: mdcmd (126): spindown 5\nOct 30 14:41:30 Homelab kernel: mdcmd (454): spindown 2\nOct 30 14:41:58 Homelab nginx: 2026/10/30 14:02:53 [info] 38433#12666: *67487 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:42:13 Homelab nginx: 2026/10/30 14:47:39 [info] 40121#35840: *62507 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:42:33 Homelab rc.docker: tdarr: started succesfully!\nOct 30 14:42:49 Homelab nginx: 2026/10/30 14:32:26 [info] 17065#46839: *80051 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:43:04 Homelab ntpd[44179]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:43:25 Homelab kernel: docker0: port 6(vethc787e89) entered forwarding state\nOct 30 14:43:40 Homelab kernel: vethb7b062e: entered promiscuous mode\nOct 30 14:44:09 Homelab kernel: eth0: renamed from vethf09ae27\nOct 30 14:44:27 Homelab smbd[38934]: [2026/10/30 14:25:33.053503,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:44:53 Homelab tailscaled[2902]: magicsock: derp-2 connected; connGen=1\nOct 30 14:45:08 Homelab tailscaled[58108]: magicsock: derp-10 connected; connGen=1\nOct 30 14:45:31 Homelab kernel: vethdbd06cb: entered promiscuous mode\nOct 30 14:45:46 Homelab kernel: eth0: renamed from veth54a0c62\nOct 30 14:46:01 Homelab dockerd[50645]: time=\"2026-10-30T14:15:09.557354Z\" level=info msg=\"ignoring event\" container=51a3c5f1d067bacabb7b3e90dbec024edd0abb04e79216a5e8d4514fcc39e91b module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:46:25 Homelab emhttpd: read SMART /dev/sdd\nOct 30 14:46:53 Homelab kernel: docker0: port 2(veth60cf3e2) entered forwarding state\nOct 30 14:47:19 Homelab nginx: 2026/10/30 14:58:19 [info] 35629#15276: *50735 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:47:30 Homelab webGUI: Successful login user root from 203.0.113.143\nOct 30 14:47:48 Homelab backrest[4251]: task completed: snapshot main-local, 330 files changed, 656 MiB added\nOct 30 14:48:18 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:48:31 Homelab tailscaled[43720]: wgengine: Reconfig: configuring router\nOct 30 14:48:49 Homelab emhttpd: read SMART /dev/sdd\nOct 30 14:49:16 Homelab tailscaled[2726]: magicsock: derp-1 connected; connGen=1\nOct 30 14:49:39 Homelab tailscaled[20442]: magicsock: derp-1 connected; connGen=1\nOct 30 14:49:42 Homelab dockerd[49907]: time=\"2026-10-30T14:12:42.338346Z\" level=info msg=\"ignoring event\" container=7acf3a22ac19155a42ac33f17b89ed5b084acbbc20aacecbbffee9bc3963bfd3 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:50:18 Homelab crond[17656]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:50:20 Homelab kernel: mdcmd (693): spindown 2",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": true,
+   "oom_kill": false,
+   "worst": "storage"
+  },
+  "size": "long"
+ },
+ {
+  "id": "long01-memory",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:03 Homelab kernel: br-26fd1b7d6f4c: port 3(veth5a1d44c) entered blocking state\nOct 30 14:30:32 Homelab kernel: br-e3e1a15e7cd1: port 5(vethfb3e02e) entered blocking state\nOct 30 14:30:50 Homelab kernel: veth6c881f5: entered promiscuous mode\nOct 30 14:31:11 Homelab kernel: veth18c8c89: entered promiscuous mode\nOct 30 14:31:34 Homelab kernel: br-9267a7e08cf4: port 5(veth797f95e) entered blocking state\nOct 30 14:31:43 Homelab ntpd[52455]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:32:09 Homelab emhttpd: read SMART /dev/sdd\nOct 30 14:32:28 Homelab ntpd[48993]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:32:50 Homelab nginx: 2026/10/30 14:18:56 [info] 7415#50228: *68212 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:33:08 Homelab kernel: eth0: renamed from veth8107b55\nOct 30 14:33:33 Homelab crond[9939]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:33:56 Homelab kernel: mdcmd (67): spindown 1\nOct 30 14:34:00 Homelab ntpd[19138]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:34:30 Homelab kernel: br-d0d492ad463b: port 5(vetha9e87d4) entered blocking state\nOct 30 14:34:51 Homelab kernel: eth0: renamed from veth5a8e385\nOct 30 14:35:02 Homelab kernel: br-55e6bfec7baf: port 7(veth70577cc) entered blocking state\nOct 30 14:35:36 Homelab crond[8961]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:35:42 Homelab smbd[15477]: [2026/10/30 14:57:46.611613,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:36:18 Homelab nginx: 2026/10/30 14:34:39 [info] 24416#25456: *79168 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:36:39 Homelab smbd[55144]: [2026/10/30 14:20:30.262338,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:36:49 Homelab crond[56828]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:37:13 Homelab kernel: docker0: port 27(veth1fc1b9c) entered forwarding state\nOct 30 14:37:24 Homelab smbd[1995]: [2026/10/30 14:18:05.314686,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:37:43 Homelab webGUI: Successful login user root from 203.0.113.172\nOct 30 14:38:15 Homelab crond[36270]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:38:25 Homelab backrest[44097]: task completed: snapshot main-local, 299 files changed, 383 MiB added\nOct 30 14:38:45 Homelab smbd[59709]: [2026/10/30 14:48:09.790304,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:39:17 Homelab tailscaled[8413]: magicsock: derp-2 connected; connGen=1\nOct 30 14:39:29 Homelab kernel: veth9a7e38a: entered promiscuous mode\nOct 30 14:39:58 Homelab kernel: java invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0\nOct 30 14:40:15 Homelab kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=docker-4496f14cba95d308bc8f92756e166730d4d2fd6d5f7e035a0f0ffd931216ebed.scope,mems_allowed=0\nOct 30 14:40:22 Homelab kernel: Memory cgroup out of memory: Killed process 23791 (python3) total-vm:1839685kB, anon-rss:1877151kB, file-rss:0kB\nOct 30 14:40:40 Homelab tailscaled[2111]: magicsock: derp-1 connected; connGen=1\nOct 30 14:41:03 Homelab webGUI: Successful login user root from 203.0.113.12\nOct 30 14:41:27 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:41:44 Homelab kernel: mdcmd (546): spindown 3\nOct 30 14:42:09 Homelab tailscaled[8027]: wgengine: Reconfig: configuring router\nOct 30 14:42:29 Homelab sshd-session[40296]: Accepted publickey for root from 198.51.100.128 port 60295 ssh2: ED25519 SHA256:ce6d1ba039dd0f007038a203d1d73363202d99bc4df\nOct 30 14:42:52 Homelab rc.docker: plex: started succesfully!\nOct 30 14:43:11 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:43:36 Homelab tailscaled[32520]: wgengine: Reconfig: configuring router\nOct 30 14:43:50 Homelab kernel: docker0: port 26(vethb5d6ea0) entered forwarding state\nOct 30 14:44:04 Homelab kernel: br-0dffc3e6ba9c: port 6(veth2411ab3) entered blocking state\nOct 30 14:44:20 Homelab ntpd[27911]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:44:51 Homelab dockerd[33367]: time=\"2026-10-30T14:42:37.462694Z\" level=info msg=\"ignoring event\" container=d4d0eae29088752b2933a80a146e55648ab27fe82b61ff20d0293870e71d1a76 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:45:03 Homelab kernel: eth0: renamed from veth6e5e32f\nOct 30 14:45:25 Homelab smbd[22409]: [2026/10/30 14:07:42.530344,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:45:45 Homelab nginx: 2026/10/30 14:38:57 [info] 29062#39949: *68462 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:46:11 Homelab dockerd[29567]: time=\"2026-10-30T14:46:26.830322Z\" level=info msg=\"ignoring event\" container=b92dd8d60f8b1263625969cbf311c3862b3c4eb90e26ba6a3de0647a0e50dcf0 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:46:21 Homelab ntpd[11655]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:46:45 Homelab dockerd[53143]: time=\"2026-10-30T14:19:10.499439Z\" level=info msg=\"ignoring event\" container=b6539338d2c1340a87aabcb2437878b17d382287db64fa3c26a40dd71d4591b8 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:47:15 Homelab sshd-session[4946]: Accepted publickey for root from 203.0.113.13 port 36100 ssh2: ED25519 SHA256:1aacb9fb0f3a78fdee19d005681ffa6fce74ad08b7d\nOct 30 14:47:29 Homelab kernel: mdcmd (88): spindown 3\nOct 30 14:47:52 Homelab emhttpd: read SMART /dev/sdg\nOct 30 14:48:09 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:48:38 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:48:55 Homelab nginx: 2026/10/30 14:35:18 [info] 24371#3499: *5050 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:49:03 Homelab tailscaled[30838]: magicsock: derp-4 connected; connGen=1\nOct 30 14:49:28 Homelab dockerd[17913]: time=\"2026-10-30T14:47:07.303929Z\" level=info msg=\"ignoring event\" container=e6dd059de83be2a052d1849eca38eef6218df0107c5fe5a189480140489b09fd module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:49:53 Homelab tailscaled[23619]: magicsock: derp-10 connected; connGen=1\nOct 30 14:50:17 Homelab kernel: eth0: renamed from veth932cd5e",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": true,
+   "worst": "memory"
+  },
+  "size": "long"
+ },
+ {
+  "id": "long02-network",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:15 Homelab kernel: docker0: port 29(vethc42b175) entered forwarding state\nOct 30 14:30:35 Homelab kernel: br-74fc45559635: port 4(veth10c142f) entered blocking state\nOct 30 14:30:44 Homelab kernel: docker0: port 16(vethb5021f7) entered forwarding state\nOct 30 14:31:02 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:31:31 Homelab rc.docker: plex: started succesfully!\nOct 30 14:31:43 Homelab kernel: br-6e097a28ecfb: port 1(vethac7707b) entered blocking state\nOct 30 14:32:15 Homelab emhttpd: spinning down /dev/sdd\nOct 30 14:32:31 Homelab sshd-session[43178]: Accepted publickey for root from 203.0.113.133 port 30686 ssh2: ED25519 SHA256:decba714ea694b5789cf57973409c092f50753d4347\nOct 30 14:32:47 Homelab kernel: mdcmd (532): spindown 3\nOct 30 14:33:03 Homelab nginx: 2026/10/30 14:18:35 [info] 11880#14401: *68830 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:33:23 Homelab dockerd[49950]: time=\"2026-10-30T14:29:40.597474Z\" level=info msg=\"ignoring event\" container=925c5ab859498d3d0ac7885168ede762763a6277a02badf2c9667bc6b1ae131b module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:33:45 Homelab emhttpd: spinning down /dev/sdg\nOct 30 14:34:17 Homelab sshd-session[25256]: Accepted publickey for root from 2001:db8:2ada:af::3dd port 39788 ssh2: ED25519 SHA256:a1c50d461ae3bcd59a5e479e91b75b91aed268a7644\nOct 30 14:34:22 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:34:44 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:35:19 Homelab ntpd[47707]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:35:29 Homelab backrest[8908]: task completed: snapshot main-local, 196 files changed, 568 MiB added\nOct 30 14:35:51 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:36:03 Homelab webGUI: Successful login user root from 203.0.113.67\nOct 30 14:36:37 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:36:54 Homelab emhttpd: spinning down /dev/sdf\nOct 30 14:37:06 Homelab ntpd[48683]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:37:24 Homelab crond[15514]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:37:43 Homelab ntpd[51010]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:38:13 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:38:23 Homelab kernel: docker0: port 30(vethcdafb0c) entered forwarding state\nOct 30 14:38:49 Homelab kernel: eth0: renamed from veth1f7153d\nOct 30 14:39:04 Homelab kernel: mdcmd (683): spindown 4\nOct 30 14:39:20 Homelab smbd[51526]: [2026/10/30 14:28:51.269409,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:39:59 Homelab sshd-session[35934]: Accepted publickey for root from 203.0.113.224 port 58552 ssh2: ED25519 SHA256:2d45f53f8bdd7da1c19dcacde50f5d0f45479823a98\nOct 30 14:40:10 Homelab sshd-session[24937]: Accepted publickey for root from 203.0.113.111 port 59269 ssh2: ED25519 SHA256:8bf4790c934ff50a8a647dc53bb76afaf9d97184a37\nOct 30 14:40:35 Homelab emhttpd: spinning down /dev/sdg\nOct 30 14:40:56 Homelab webGUI: Successful login user root from 203.0.113.11\nOct 30 14:41:17 Homelab webGUI: Successful login user root from 203.0.113.168\nOct 30 14:41:29 Homelab webGUI: Successful login user root from 203.0.113.215\nOct 30 14:41:52 Homelab sshd-session[41814]: Accepted publickey for root from 2001:db8:d47e:ea::aba port 54141 ssh2: ED25519 SHA256:f5197e72072f3bc3b23ea550e519139d0d4babd58a6\nOct 30 14:42:18 Homelab rc.docker: immich: started succesfully!\nOct 30 14:42:39 Homelab ntpd[12423]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:42:45 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:43:15 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:43:34 Homelab ntpd[53837]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:43:47 Homelab sshd-session[24981]: Accepted publickey for root from 203.0.113.152 port 53453 ssh2: ED25519 SHA256:d81bab9c2f8aef37f2e16c36a47640071c13a82f519\nOct 30 14:44:01 Homelab smbd[44326]: [2026/10/30 14:42:39.877576,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:44:34 Homelab webGUI: Successful login user root from 203.0.113.236\nOct 30 14:44:42 Homelab smbd[24769]: [2026/10/30 14:30:48.943459,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:45:14 Homelab tailscaled[21022]: wgengine: Reconfig: configuring router\nOct 30 14:45:34 Homelab kernel: docker0: port 35(veth37d3d93) entered forwarding state\nOct 30 14:45:55 Homelab crond[21608]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:46:12 Homelab nginx: 2026/10/30 14:51:00 [info] 2881#35764: *79687 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:46:21 Homelab kernel: br-2f2b43df7feb: port 2(veth97c7f2f) entered blocking state\nOct 30 14:46:44 Homelab backrest[23903]: task completed: snapshot main-local, 393 files changed, 569 MiB added\nOct 30 14:47:07 Homelab kernel: veth4e5c0be: entered promiscuous mode\nOct 30 14:47:35 Homelab dockerd[46231]: time=\"2026-10-30T14:45:47.811494Z\" level=info msg=\"ignoring event\" container=e22d2a4da34e40f05104e58988373faad479b343606f6938d9d0f9604784befb module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:47:44 Homelab kernel: igb 0000:06:00.0 eth1: igb: eth1 NIC Link is Down\nOct 30 14:48:15 Homelab kernel: bond0: (slave eth0): link status definitely down, disabling slave\nOct 30 14:48:37 Homelab tailscaled[59516]: control: dial: dial tcp: lookup controlplane.tailscale.com: network is unreachable\nOct 30 14:48:57 Homelab kernel: bond0: now running without any active interface!\nOct 30 14:49:11 Homelab backrest[36879]: task completed: snapshot main-local, 217 files changed, 778 MiB added\nOct 30 14:49:33 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:49:44 Homelab smbd[26979]: [2026/10/30 14:20:45.007861,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:50:05 Homelab kernel: mdcmd (277): spindown 5\nOct 30 14:50:21 Homelab tailscaled[48810]: magicsock: derp-1 connected; connGen=1",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "network"
+  },
+  "size": "long"
+ },
+ {
+  "id": "long03-none",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:08 Homelab crond[26087]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:30:33 Homelab smbd[36122]: [2026/10/30 14:19:48.923189,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:30:50 Homelab nginx: 2026/10/30 14:41:17 [info] 45083#58109: *96175 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:31:10 Homelab kernel: veth24291fd: entered promiscuous mode\nOct 30 14:31:25 Homelab kernel: eth0: renamed from veth80ed5d6\nOct 30 14:31:52 Homelab kernel: vethc9b0c49: entered promiscuous mode\nOct 30 14:32:04 Homelab sshd-session[14823]: Accepted publickey for root from 198.51.100.45 port 39863 ssh2: ED25519 SHA256:1a1ddb8e7c088facade3ffd0cdd911ee632c99cd1c5\nOct 30 14:32:22 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:32:54 Homelab kernel: br-3128d889fb09: port 8(vethb729e51) entered blocking state\nOct 30 14:33:04 Homelab crond[49188]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:33:27 Homelab backrest[38136]: task completed: snapshot main-local, 127 files changed, 842 MiB added\nOct 30 14:33:42 Homelab kernel: mdcmd (137): spindown 5\nOct 30 14:34:12 Homelab emhttpd: read SMART /dev/sdd\nOct 30 14:34:20 Homelab ntpd[9409]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:34:46 Homelab kernel: br-3c20d62c6abb: port 1(vethf2325ff) entered blocking state\nOct 30 14:35:17 Homelab sshd-session[6154]: Accepted publickey for root from 2001:db8:d9ee:d2::ee6 port 56418 ssh2: ED25519 SHA256:77712949a93c2a4f3ebe59139cfd9205a7226fd9141\nOct 30 14:35:26 Homelab tailscaled[36624]: magicsock: derp-1 connected; connGen=1\nOct 30 14:35:48 Homelab dockerd[12668]: time=\"2026-10-30T14:07:40.372888Z\" level=info msg=\"ignoring event\" container=6dba9e2da889439156d5c5c0bca162a651271ac54354781af8552fc809736825 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:36:03 Homelab crond[15604]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:36:21 Homelab crond[32851]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:36:59 Homelab tailscaled[10207]: magicsock: derp-10 connected; connGen=1\nOct 30 14:37:12 Homelab ntpd[7855]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:37:31 Homelab ntpd[54543]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:37:54 Homelab sshd-session[47800]: Accepted publickey for root from 203.0.113.131 port 56777 ssh2: ED25519 SHA256:579a909ad7c30d9b1371c2696f9f346e9479c56aa9f\nOct 30 14:38:02 Homelab tailscaled[22912]: magicsock: derp-10 connected; connGen=1\nOct 30 14:38:21 Homelab kernel: veth1eb1c7a: entered promiscuous mode\nOct 30 14:38:44 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:39:09 Homelab sshd-session[2066]: Accepted publickey for root from 203.0.113.159 port 45624 ssh2: ED25519 SHA256:9eb6ce038bd584fd5e3aa70373659a24e14197882b1\nOct 30 14:39:25 Homelab rc.docker: immich: started succesfully!\nOct 30 14:39:51 Homelab tailscaled[31647]: magicsock: derp-4 connected; connGen=1\nOct 30 14:40:00 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:40:22 Homelab kernel: br-4bd6b60c8761: port 1(veth9c8ec45) entered blocking state\nOct 30 14:40:42 Homelab ntpd[55990]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:41:18 Homelab kernel: br-12943cdb7d7e: port 8(veth01d3d58) entered blocking state\nOct 30 14:41:30 Homelab backrest[15459]: task completed: snapshot main-local, 312 files changed, 710 MiB added\nOct 30 14:41:48 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:42:16 Homelab crond[54822]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:42:24 Homelab backrest[48552]: task completed: snapshot main-local, 320 files changed, 327 MiB added\nOct 30 14:42:54 Homelab rc.docker: sonarr: started succesfully!\nOct 30 14:43:17 Homelab tailscaled[17314]: wgengine: Reconfig: configuring router\nOct 30 14:43:31 Homelab dockerd[40245]: time=\"2026-10-30T14:52:45.850190Z\" level=info msg=\"ignoring event\" container=4e1680e447463fd9abc0f2f9a6ff5653aada294ec2535ee79561b4dcf9ec3e0e module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:43:47 Homelab kernel: mdcmd (139): spindown 5\nOct 30 14:44:03 Homelab sshd-session[25175]: Accepted publickey for root from 198.51.100.16 port 42581 ssh2: ED25519 SHA256:d7554ba3bedbfc2d934be158fc6515b5372a79c5e05\nOct 30 14:44:28 Homelab kernel: br-c13172e6fe24: port 1(veth3089c54) entered blocking state\nOct 30 14:44:57 Homelab kernel: mdcmd (751): spindown 3\nOct 30 14:45:18 Homelab emhttpd: spinning down /dev/sdf\nOct 30 14:45:31 Homelab kernel: mdcmd (862): spindown 4\nOct 30 14:45:54 Homelab tailscaled[27974]: wgengine: Reconfig: configuring router\nOct 30 14:46:19 Homelab kernel: docker0: port 20(vethc57d8b0) entered forwarding state\nOct 30 14:46:25 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:46:58 Homelab dockerd[1598]: time=\"2026-10-30T14:22:33.416726Z\" level=info msg=\"ignoring event\" container=052553dd246ca74a5595a9a1e630989f872507b3deeacd4cc05bc7021fe2effb module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:47:02 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:47:32 Homelab tailscaled[8010]: wgengine: Reconfig: configuring router\nOct 30 14:47:48 Homelab kernel: vethce52bfa: entered promiscuous mode\nOct 30 14:48:01 Homelab emhttpd: spinning down /dev/sde\nOct 30 14:48:39 Homelab webGUI: Successful login user root from 203.0.113.62\nOct 30 14:48:43 Homelab kernel: eth0: renamed from veth98b2d13\nOct 30 14:49:11 Homelab kernel: docker0: port 9(vethb90e15a) entered forwarding state",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "none"
+  },
+  "size": "long"
+ },
+ {
+  "id": "long04-storage",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:12 Homelab sshd-session[16690]: Accepted publickey for root from 198.51.100.191 port 48183 ssh2: ED25519 SHA256:14c66e2b80612c8f3de4643b8817eae32ef49155bf7\nOct 30 14:30:39 Homelab kernel: mdcmd (247): spindown 3\nOct 30 14:30:57 Homelab backrest[9293]: task completed: snapshot main-local, 302 files changed, 681 MiB added\nOct 30 14:31:06 Homelab tailscaled[42642]: wgengine: Reconfig: configuring router\nOct 30 14:31:35 Homelab ntpd[46921]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:31:55 Homelab tailscaled[55285]: wgengine: Reconfig: configuring router\nOct 30 14:32:00 Homelab kernel: eth0: renamed from veth7dd0102\nOct 30 14:32:30 Homelab kernel: vethd0194e1: entered promiscuous mode\nOct 30 14:32:53 Homelab crond[40325]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:33:05 Homelab kernel: docker0: port 10(veth82b5be2) entered forwarding state\nOct 30 14:33:29 Homelab kernel: br-71e0042887e6: port 3(veth89002b7) entered blocking state\nOct 30 14:33:47 Homelab kernel: eth0: renamed from vethe880bdd\nOct 30 14:34:09 Homelab webGUI: Successful login user root from 203.0.113.64\nOct 30 14:34:28 Homelab webGUI: Successful login user root from 203.0.113.166\nOct 30 14:34:53 Homelab tailscaled[32387]: wgengine: Reconfig: configuring router\nOct 30 14:35:16 Homelab webGUI: Successful login user root from 203.0.113.116\nOct 30 14:35:30 Homelab backrest[44571]: task completed: snapshot main-local, 147 files changed, 313 MiB added\nOct 30 14:35:46 Homelab smbd[19631]: [2026/10/30 14:34:30.841101,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:36:05 Homelab kernel: br-ce3d1a6e4efc: port 2(veth029e584) entered blocking state\nOct 30 14:36:27 Homelab webGUI: Successful login user root from 203.0.113.151\nOct 30 14:36:52 Homelab dockerd[28563]: time=\"2026-10-30T14:21:38.004989Z\" level=info msg=\"ignoring event\" container=e673f0ffeeea6c5f2f78269e722f73b7ba4240f693354ee56fe4235452ab6d65 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:37:05 Homelab tailscaled[32960]: wgengine: Reconfig: configuring router\nOct 30 14:37:36 Homelab emhttpd: read SMART /dev/sdg\nOct 30 14:37:50 Homelab rc.docker: gitea: started succesfully!\nOct 30 14:38:01 Homelab kernel: veth15f50e7: entered promiscuous mode\nOct 30 14:38:28 Homelab emhttpd: read SMART /dev/sdg\nOct 30 14:38:51 Homelab dockerd[8735]: time=\"2026-10-30T14:29:57.610708Z\" level=info msg=\"ignoring event\" container=2ce0d7c0a0b0bd9a755df90dc9d0c0dab4fe3cc9fc6307a6422e357e0679ed3b module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:39:05 Homelab emhttpd: read SMART /dev/sdg\nOct 30 14:39:27 Homelab ntpd[46417]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:39:53 Homelab tailscaled[23378]: magicsock: derp-10 connected; connGen=1\nOct 30 14:40:15 Homelab kernel: docker0: port 13(vethf1690d6) entered forwarding state\nOct 30 14:40:38 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:40:44 Homelab kernel: ata5.00: exception Emask 0x0 SAct 0x4698ef SErr 0x0 action 0x0\nOct 30 14:41:01 Homelab kernel: ata5.00: failed command: READ FPDMA QUEUED\nOct 30 14:41:38 Homelab kernel: I/O error, dev sdc, sector 414884491 op 0x0:(READ) flags 0x80700 phys_seg 1 prio class 0\nOct 30 14:41:47 Homelab kernel: md: disk2 read error, sector=19793296\nOct 30 14:42:10 Homelab kernel: br-2230b0ea8d9a: port 7(veth831d2d8) entered blocking state\nOct 30 14:42:24 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:42:50 Homelab webGUI: Successful login user root from 203.0.113.218\nOct 30 14:43:01 Homelab nginx: 2026/10/30 14:47:24 [info] 38796#42786: *71134 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:43:37 Homelab tailscaled[5290]: wgengine: Reconfig: configuring router\nOct 30 14:43:59 Homelab kernel: docker0: port 9(veth87d3846) entered forwarding state\nOct 30 14:44:00 Homelab sshd-session[11805]: Accepted publickey for root from 203.0.113.83 port 49197 ssh2: ED25519 SHA256:3642a2561a9246f76a24a743e2a30f5ca6be936b05d\nOct 30 14:44:36 Homelab kernel: br-e856892b93bd: port 8(veth9d378d9) entered blocking state\nOct 30 14:44:49 Homelab nginx: 2026/10/30 14:15:01 [info] 42139#56798: *63106 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:45:18 Homelab crond[43070]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:45:25 Homelab tailscaled[46257]: wgengine: Reconfig: configuring router\nOct 30 14:45:59 Homelab backrest[28969]: task completed: snapshot main-local, 335 files changed, 732 MiB added\nOct 30 14:46:10 Homelab kernel: mdcmd (47): spindown 2\nOct 30 14:46:28 Homelab tailscaled[44827]: wgengine: Reconfig: configuring router\nOct 30 14:46:44 Homelab kernel: docker0: port 37(vethe458ade) entered forwarding state\nOct 30 14:47:14 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:47:21 Homelab ntpd[18206]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:47:55 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:48:10 Homelab kernel: docker0: port 36(vetha253023) entered forwarding state\nOct 30 14:48:27 Homelab kernel: mdcmd (778): spindown 2\nOct 30 14:48:43 Homelab tailscaled[58160]: magicsock: derp-1 connected; connGen=1\nOct 30 14:49:04 Homelab kernel: br-a5bbc6e92354: port 2(veth507ffff) entered blocking state\nOct 30 14:49:38 Homelab dockerd[23505]: time=\"2026-10-30T14:07:12.286385Z\" level=info msg=\"ignoring event\" container=50797786d6b6a6be6f585345e730bae1424da88d0e1a12d6c7e85a9e494bd7d3 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:49:43 Homelab kernel: mdcmd (345): spindown 1\nOct 30 14:50:03 Homelab kernel: vethe627bfb: entered promiscuous mode\nOct 30 14:50:37 Homelab kernel: docker0: port 38(vethe2abeec) entered forwarding state",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": true,
+   "oom_kill": false,
+   "worst": "storage"
+  },
+  "size": "long"
+ },
+ {
+  "id": "long05-memory",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:15 Homelab crond[56492]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:30:25 Homelab rc.docker: sonarr: started succesfully!\nOct 30 14:30:53 Homelab kernel: eth0: renamed from veth803d21f\nOct 30 14:31:17 Homelab tailscaled[17381]: magicsock: derp-4 connected; connGen=1\nOct 30 14:31:37 Homelab kernel: mdcmd (805): spindown 1\nOct 30 14:31:57 Homelab dockerd[56215]: time=\"2026-10-30T14:29:44.603381Z\" level=info msg=\"ignoring event\" container=e3eef5fcfaff9f1ff117a608c862ed2297b8255018d26916dfde1d63d656db6a module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:32:15 Homelab kernel: eth0: renamed from vethf79b72c\nOct 30 14:32:27 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:32:41 Homelab dockerd[35511]: time=\"2026-10-30T14:38:52.674043Z\" level=info msg=\"ignoring event\" container=9cf1438297d1350e575c69a57d0454285ace4ca49d90e8a34bef0b62e692548a module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:33:16 Homelab backrest[10832]: task completed: snapshot main-local, 151 files changed, 489 MiB added\nOct 30 14:33:29 Homelab kernel: ffmpeg invoked oom-killer: gfp_mask=0xcc0(GFP_KERNEL), order=0, oom_score_adj=0\nOct 30 14:33:45 Homelab kernel: oom-kill:constraint=CONSTRAINT_MEMCG,nodemask=(null),cpuset=docker-fe7e132f872ea91de020ab264c11d0f94f05b436164cc94dc06428a80b78ffae.scope,mems_allowed=0\nOct 30 14:34:07 Homelab kernel: Memory cgroup out of memory: Killed process 29032 (python3) total-vm:5886028kB, anon-rss:1067829kB, file-rss:0kB\nOct 30 14:34:20 Homelab backrest[39800]: task completed: snapshot main-local, 255 files changed, 506 MiB added\nOct 30 14:34:53 Homelab sshd-session[40866]: Accepted publickey for root from 203.0.113.53 port 56849 ssh2: ED25519 SHA256:87d05dd8d4e6dceda5b5077d019dc2431b321f59705\nOct 30 14:35:18 Homelab rc.docker: immich: started succesfully!\nOct 30 14:35:25 Homelab kernel: mdcmd (806): spindown 5\nOct 30 14:35:57 Homelab webGUI: Successful login user root from 203.0.113.17\nOct 30 14:36:02 Homelab backrest[47253]: task completed: snapshot main-local, 157 files changed, 655 MiB added\nOct 30 14:36:23 Homelab kernel: docker0: port 4(vethadd2f53) entered forwarding state\nOct 30 14:36:53 Homelab nginx: 2026/10/30 14:24:02 [info] 32721#44886: *90344 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:37:19 Homelab ntpd[15295]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:37:32 Homelab tailscaled[42010]: wgengine: Reconfig: configuring router\nOct 30 14:37:49 Homelab rc.docker: immich: started succesfully!\nOct 30 14:38:04 Homelab smbd[4936]: [2026/10/30 14:30:19.575670,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:38:30 Homelab kernel: mdcmd (715): spindown 3\nOct 30 14:38:51 Homelab smbd[2073]: [2026/10/30 14:48:07.384628,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:39:15 Homelab nginx: 2026/10/30 14:28:20 [info] 26530#38143: *47887 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:39:28 Homelab crond[59620]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:39:50 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:40:13 Homelab kernel: docker0: port 3(veth699103e) entered forwarding state\nOct 30 14:40:34 Homelab sshd-session[23144]: Accepted publickey for root from 198.51.100.137 port 37275 ssh2: ED25519 SHA256:228a40cb5aa45c6d72f4bdd3f05db3564639ba2e7a9\nOct 30 14:40:46 Homelab kernel: veth94bf131: entered promiscuous mode\nOct 30 14:41:01 Homelab smbd[13041]: [2026/10/30 14:06:37.335273,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:41:34 Homelab ntpd[30054]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:41:52 Homelab kernel: docker0: port 18(veth4b8326c) entered forwarding state\nOct 30 14:42:06 Homelab rc.docker: immich: started succesfully!\nOct 30 14:42:34 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:42:41 Homelab rc.docker: gitea: started succesfully!\nOct 30 14:43:14 Homelab sshd-session[26690]: Accepted publickey for root from 198.51.100.229 port 48168 ssh2: ED25519 SHA256:b254cdbe4c237f1c7175966a6e2298c69a747e35a91\nOct 30 14:43:26 Homelab kernel: eth0: renamed from veth0062ba1\nOct 30 14:43:42 Homelab crond[38063]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:44:16 Homelab crond[11900]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:44:39 Homelab smbd[38008]: [2026/10/30 14:06:28.606020,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:44:55 Homelab rc.docker: sonarr: started succesfully!\nOct 30 14:45:19 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:45:24 Homelab sshd-session[12013]: Accepted publickey for root from 198.51.100.41 port 42152 ssh2: ED25519 SHA256:4bfc57d5e234b29ed1bf91b7534d51e82c3915e8f6f\nOct 30 14:45:59 Homelab backrest[16846]: task completed: snapshot main-local, 285 files changed, 1 MiB added\nOct 30 14:46:01 Homelab webGUI: Successful login user root from 203.0.113.133\nOct 30 14:46:34 Homelab smbd[44933]: [2026/10/30 14:18:57.253598,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:46:42 Homelab smbd[3966]: [2026/10/30 14:24:44.025869,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:47:14 Homelab tailscaled[45378]: wgengine: Reconfig: configuring router\nOct 30 14:47:33 Homelab kernel: vethe0e13e5: entered promiscuous mode\nOct 30 14:47:43 Homelab smbd[7268]: [2026/10/30 14:53:39.696508,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:48:00 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:48:31 Homelab webGUI: Successful login user root from 203.0.113.243\nOct 30 14:48:51 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:49:19 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:49:29 Homelab crond[37787]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:49:51 Homelab kernel: mdcmd (247): spindown 3\nOct 30 14:50:08 Homelab kernel: br-c11b019ff228: port 6(veth06cadb6) entered blocking state",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": true,
+   "worst": "memory"
+  },
+  "size": "long"
+ },
+ {
+  "id": "long06-network",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:07 Homelab sshd-session[45552]: Accepted publickey for root from 198.51.100.229 port 43106 ssh2: ED25519 SHA256:a073f0f42996dd18d48708ec03fcec38fe65b0854e9\nOct 30 14:30:36 Homelab kernel: eth0: renamed from vethf6df387\nOct 30 14:30:40 Homelab sshd-session[59983]: Accepted publickey for root from 198.51.100.86 port 30920 ssh2: ED25519 SHA256:d96d9f73af076845b3d61ed9500319fe91e7b21b785\nOct 30 14:31:08 Homelab kernel: eth0: renamed from veth954fa10\nOct 30 14:31:21 Homelab rc.docker: radarr: started succesfully!\nOct 30 14:31:48 Homelab nginx: 2026/10/30 14:10:01 [info] 19268#57709: *16731 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:32:18 Homelab kernel: igb 0000:06:00.0 eth1: igb: eth1 NIC Link is Down\nOct 30 14:32:34 Homelab kernel: bond0: (slave eth0): link status definitely down, disabling slave\nOct 30 14:32:56 Homelab tailscaled[13397]: control: dial: dial tcp: lookup controlplane.tailscale.com: network is unreachable\nOct 30 14:33:07 Homelab kernel: bond0: now running without any active interface!\nOct 30 14:33:22 Homelab smbd[6765]: [2026/10/30 14:14:49.449842,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:33:45 Homelab webGUI: Successful login user root from 203.0.113.28\nOct 30 14:34:17 Homelab nginx: 2026/10/30 14:57:19 [info] 41956#35380: *33728 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:34:39 Homelab sshd-session[55748]: Accepted publickey for root from 198.51.100.126 port 63347 ssh2: ED25519 SHA256:3186fb61eb1b1c6077c338e7a7810f098a574f44fc9\nOct 30 14:34:50 Homelab ntpd[25099]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:35:03 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:35:29 Homelab kernel: mdcmd (744): spindown 4\nOct 30 14:35:50 Homelab kernel: vethd1fd5b8: entered promiscuous mode\nOct 30 14:36:06 Homelab crond[41112]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:36:35 Homelab crond[47521]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:36:59 Homelab tailscaled[50722]: wgengine: Reconfig: configuring router\nOct 30 14:37:13 Homelab rc.docker: immich: started succesfully!\nOct 30 14:37:21 Homelab backrest[56477]: task completed: snapshot main-local, 116 files changed, 104 MiB added\nOct 30 14:37:43 Homelab sshd-session[42290]: Accepted publickey for root from 198.51.100.82 port 49740 ssh2: ED25519 SHA256:fc2e46704ffe42a35d882d9d0c2e8e4a85bad6a4d50\nOct 30 14:38:01 Homelab webGUI: Successful login user root from 203.0.113.207\nOct 30 14:38:26 Homelab emhttpd: read SMART /dev/sdd\nOct 30 14:38:57 Homelab backrest[24664]: task completed: snapshot main-local, 197 files changed, 710 MiB added\nOct 30 14:39:19 Homelab tailscaled[23544]: wgengine: Reconfig: configuring router\nOct 30 14:39:21 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:39:40 Homelab kernel: mdcmd (138): spindown 4\nOct 30 14:40:13 Homelab kernel: eth0: renamed from vethe1a7b51\nOct 30 14:40:39 Homelab rc.docker: radarr: started succesfully!\nOct 30 14:40:40 Homelab sshd-session[35830]: Accepted publickey for root from 198.51.100.184 port 55904 ssh2: ED25519 SHA256:55c32d17032827c1a2768f1be8858537c1787e142f0\nOct 30 14:41:19 Homelab emhttpd: spinning down /dev/sdd\nOct 30 14:41:30 Homelab kernel: eth0: renamed from veth9a3f2f9\nOct 30 14:41:48 Homelab dockerd[54292]: time=\"2026-10-30T14:02:52.812463Z\" level=info msg=\"ignoring event\" container=0b8486e8a29110db5b7d5f247fd55d8f3ee3efae7dc99dd1be100be11b47f9ce module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:42:10 Homelab smbd[1227]: [2026/10/30 14:50:01.185258,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:42:27 Homelab tailscaled[29796]: wgengine: Reconfig: configuring router\nOct 30 14:42:49 Homelab kernel: mdcmd (865): spindown 5\nOct 30 14:43:09 Homelab kernel: br-65d026a25cec: port 1(veth2e7297b) entered blocking state\nOct 30 14:43:21 Homelab sshd-session[58655]: Accepted publickey for root from 203.0.113.135 port 44373 ssh2: ED25519 SHA256:5c6b0a38c0fee92ebd208ef8c8ce50396e9db696baf\nOct 30 14:43:41 Homelab sshd-session[32116]: Accepted publickey for root from 203.0.113.241 port 53081 ssh2: ED25519 SHA256:be935c81c63ee525c24a002a1b459b2e5155be169b3\nOct 30 14:44:08 Homelab rc.docker: backrest: started succesfully!\nOct 30 14:44:20 Homelab crond[50136]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:44:54 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:45:16 Homelab tailscaled[45351]: magicsock: derp-10 connected; connGen=1\nOct 30 14:45:36 Homelab crond[4031]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:45:54 Homelab kernel: mdcmd (194): spindown 5\nOct 30 14:46:02 Homelab crond[35744]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:46:28 Homelab sshd-session[59227]: Accepted publickey for root from 198.51.100.1 port 51440 ssh2: ED25519 SHA256:fb8e77a447fa1271daabbb647ff8568c539fa4fd802\nOct 30 14:46:53 Homelab rc.docker: immich: started succesfully!\nOct 30 14:47:11 Homelab sshd-session[34113]: Accepted publickey for root from 203.0.113.215 port 61375 ssh2: ED25519 SHA256:84486da326a013b8d8af063ae6a7d254a4e09fae7be\nOct 30 14:47:23 Homelab kernel: vetha828ba8: entered promiscuous mode\nOct 30 14:47:57 Homelab emhttpd: read SMART /dev/sdb\nOct 30 14:48:03 Homelab dockerd[12806]: time=\"2026-10-30T14:37:33.974171Z\" level=info msg=\"ignoring event\" container=6b47a150a85445d49abb4f91744c2ff4ca5b17c1ade27d62e3efb64e6ffec0c9 module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:48:26 Homelab kernel: br-d24e03773f77: port 4(vethb419151) entered blocking state\nOct 30 14:48:43 Homelab tailscaled[34261]: wgengine: Reconfig: configuring router\nOct 30 14:49:17 Homelab smbd[17719]: [2026/10/30 14:12:17.654140,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:49:27 Homelab sshd-session[44049]: Accepted publickey for root from 198.51.100.57 port 44745 ssh2: ED25519 SHA256:d50d153b6ac9d42569bb8aa41e3c9b1b542571b920f\nOct 30 14:49:56 Homelab crond[22097]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:50:02 Homelab smbd[51080]: [2026/10/30 14:09:44.522073,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:50:22 Homelab kernel: eth0: renamed from veth2260097",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "network"
+  },
+  "size": "long"
+ },
+ {
+  "id": "long07-none",
+  "task": "syslog-long",
+  "state": "Excerpt of the Unraid syslog on Homelab:\nOct 30 14:30:01 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:30:33 Homelab smbd[26674]: [2026/10/30 14:47:15.644427,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:30:40 Homelab rc.docker: plex: started succesfully!\nOct 30 14:31:04 Homelab dockerd[42177]: time=\"2026-10-30T14:26:58.826624Z\" level=info msg=\"ignoring event\" container=b377ab5458c760d4ad82c6bc3c4a1d7d6ef3ba4e73975c5b2de2072720d10efa module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:31:35 Homelab kernel: vethabf4e13: entered promiscuous mode\nOct 30 14:31:48 Homelab tailscaled[44820]: wgengine: Reconfig: configuring router\nOct 30 14:32:01 Homelab emhttpd: read SMART /dev/sde\nOct 30 14:32:26 Homelab kernel: vethe27aff6: entered promiscuous mode\nOct 30 14:32:52 Homelab kernel: eth0: renamed from veth229af33\nOct 30 14:33:14 Homelab tailscaled[58106]: magicsock: derp-2 connected; connGen=1\nOct 30 14:33:37 Homelab emhttpd: spinning down /dev/sdd\nOct 30 14:33:41 Homelab kernel: mdcmd (414): spindown 5\nOct 30 14:34:01 Homelab emhttpd: read SMART /dev/sdf\nOct 30 14:34:35 Homelab backrest[1280]: task completed: snapshot main-local, 130 files changed, 193 MiB added\nOct 30 14:34:58 Homelab kernel: docker0: port 29(vethf64291d) entered forwarding state\nOct 30 14:35:11 Homelab tailscaled[44359]: wgengine: Reconfig: configuring router\nOct 30 14:35:34 Homelab tailscaled[6471]: magicsock: derp-1 connected; connGen=1\nOct 30 14:35:50 Homelab crond[18292]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:36:16 Homelab rc.docker: gitea: started succesfully!\nOct 30 14:36:32 Homelab kernel: veth0e175a1: entered promiscuous mode\nOct 30 14:36:44 Homelab kernel: br-457f00802f56: port 4(veth6cc68dc) entered blocking state\nOct 30 14:37:02 Homelab emhttpd: spinning down /dev/sdf\nOct 30 14:37:37 Homelab emhttpd: spinning down /dev/sdd\nOct 30 14:37:50 Homelab dockerd[3157]: time=\"2026-10-30T14:14:32.492676Z\" level=info msg=\"ignoring event\" container=0af52966f6d8f6a66962b657958a1e72fd18a6142fa5827a78e605564301648d module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:38:19 Homelab kernel: mdcmd (687): spindown 1\nOct 30 14:38:37 Homelab webGUI: Successful login user root from 203.0.113.216\nOct 30 14:38:56 Homelab webGUI: Successful login user root from 203.0.113.37\nOct 30 14:39:17 Homelab ntpd[4330]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:39:23 Homelab sshd-session[6848]: Accepted publickey for root from 2001:db8:b6ff:dd::ab0 port 44074 ssh2: ED25519 SHA256:b07bb5eaa43e2c1c466c470c8ab7e8aa2a439ef7dbe\nOct 30 14:39:46 Homelab tailscaled[21657]: wgengine: Reconfig: configuring router\nOct 30 14:40:17 Homelab sshd-session[37543]: Accepted publickey for root from 198.51.100.109 port 49037 ssh2: ED25519 SHA256:6d852398a0c6a6db1b9b365c35dfb678d552788a273\nOct 30 14:40:29 Homelab crond[26224]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:40:52 Homelab crond[1432]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)\nOct 30 14:41:09 Homelab kernel: br-ea75183b06d4: port 2(veth610d5f9) entered blocking state\nOct 30 14:41:21 Homelab webGUI: Successful login user root from 203.0.113.141\nOct 30 14:41:47 Homelab backrest[22787]: task completed: snapshot main-local, 166 files changed, 704 MiB added\nOct 30 14:42:00 Homelab webGUI: Successful login user root from 203.0.113.67\nOct 30 14:42:30 Homelab emhttpd: spinning down /dev/sdb\nOct 30 14:42:56 Homelab tailscaled[29317]: wgengine: Reconfig: configuring router\nOct 30 14:43:19 Homelab sshd-session[45329]: Accepted publickey for root from 2001:db8:d47e:ea::aba port 58934 ssh2: ED25519 SHA256:5fde79dbd3336ba6dad6c12232821e8b0c817cccd29\nOct 30 14:43:33 Homelab ntpd[2294]: kernel reports TIME_ERROR: 0x41: Clock Unsynchronized\nOct 30 14:43:41 Homelab webGUI: Successful login user root from 203.0.113.230\nOct 30 14:44:09 Homelab kernel: mdcmd (258): spindown 2\nOct 30 14:44:26 Homelab rc.docker: sonarr: started succesfully!\nOct 30 14:44:58 Homelab nginx: 2026/10/30 14:55:36 [info] 47871#11459: *61468 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:45:17 Homelab dockerd[59503]: time=\"2026-10-30T14:48:49.417571Z\" level=info msg=\"ignoring event\" container=6140959c1800c33102fa1448c38b41c7fa7edcb6235225b6683974b83da013ed module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:45:22 Homelab kernel: mdcmd (283): spindown 4\nOct 30 14:45:56 Homelab emhttpd: read SMART /dev/sdc\nOct 30 14:46:13 Homelab smbd[46596]: [2026/10/30 14:08:16.695155,  0] ../../source3/smbd/server.c:1746(main)\nOct 30 14:46:33 Homelab kernel: veth7292f95: entered promiscuous mode\nOct 30 14:46:50 Homelab dockerd[26889]: time=\"2026-10-30T14:24:51.493613Z\" level=info msg=\"ignoring event\" container=03262f24f9e3fddf71021b915719d3a2940cc599c469270e638d5903f86b409b module=libcontainerd namespace=moby topic=/tasks/delete type=\"*events.TaskDelete\"\nOct 30 14:47:10 Homelab kernel: eth0: renamed from veth8a84ff0\nOct 30 14:47:20 Homelab nginx: 2026/10/30 14:50:49 [info] 48217#23936: *8612 client closed connection while waiting for request, client: 127.0.0.1, server: 127.0.0.1:80\nOct 30 14:47:56 Homelab rc.docker: sonarr: started succesfully!\nOct 30 14:48:10 Homelab kernel: docker0: port 7(veth8bdd0e5) entered forwarding state\nOct 30 14:48:35 Homelab kernel: docker0: port 37(veth22d014b) entered forwarding state\nOct 30 14:48:44 Homelab rc.docker: plex: started succesfully!\nOct 30 14:49:19 Homelab crond[11711]: (root) CMD (/usr/local/emhttp/plugins/dynamix/scripts/monitor &> /dev/null)",
+  "questions": {
+   "disk_error": {
+    "type": "noul",
+    "instructions": "Does this log show a disk, filesystem or I/O error?"
+   },
+   "oom_kill": {
+    "type": "noul",
+    "instructions": "Did the kernel kill a process because the system or a container ran out of memory?"
+   },
+   "worst": {
+    "type": "choice",
+    "instructions": "Which kind of problem is the most serious one in this log?",
+    "criteria": {
+     "storage": "Disk, filesystem or I/O errors",
+     "memory": "Out-of-memory conditions or killed processes",
+     "network": "Network links or connectivity going down",
+     "none": "No problem; only routine activity"
+    }
+   }
+  },
+  "expect": {
+   "disk_error": false,
+   "oom_kill": false,
+   "worst": "none"
+  },
+  "size": "long"
+ }
+]

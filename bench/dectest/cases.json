@@ -1,0 +1,646 @@
+[
+ {
+  "id": "triage00",
+  "task": "triage",
+  "state": "Unraid status report: array started, 0 disks with read errors, disk1 76% used, no parity configured.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage01",
+  "task": "triage",
+  "state": "SMART warning on disk2 (WDC WD180EDGZ): attribute 5 Reallocated_Sector_Ct increased from 0 to 8.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "storage",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage02",
+  "task": "triage",
+  "state": "Backrest: plan main-gdrive failed at 07:31. rclone: googleapi: Error 401: Invalid Credentials, authError.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "backup",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage03",
+  "task": "triage",
+  "state": "Docker update available: lscr.io/linuxserver/sonarr:latest has a newer image.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage04",
+  "task": "triage",
+  "state": "Uptime Kuma: [Plex] is DOWN. connect ECONNREFUSED 203.0.113.20:32400 (3 retries).",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "availability",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage05",
+  "task": "triage",
+  "state": "sshd[2211]: Failed password for invalid user admin from 192.0.2.117 port 51122 ssh2 (repeated 412 times in 10 minutes).",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "security",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage06",
+  "task": "triage",
+  "state": "Uptime Kuma: [Plex] is UP (200 - OK) after 2 minutes of downtime.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "availability",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage07",
+  "task": "triage",
+  "state": "Beszel: CPU above 90% for 10 minutes on homelab while the scheduled Tdarr transcode queue runs.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage08",
+  "task": "triage",
+  "state": "Mover finished: moved 412 GB from cache to array in 3h12m.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "routine",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "triage09",
+  "task": "triage",
+  "state": "kernel: NVRM: Xid (PCI:0000:01:00): 79, GPU has fallen off the bus.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "hardware",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage10",
+  "task": "triage",
+  "state": "Certificate for www.homelab.example.net expires in 5 days; automatic renewal failed: DNS challenge timed out.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "availability",
+   "needs_action": true
+  }
+ },
+ {
+  "id": "triage11",
+  "task": "triage",
+  "state": "Backrest: plan main-local finished OK in 6m41s, 1.2 GiB added, snapshot 8f2c1a.",
+  "questions": {
+   "category": {
+    "type": "choice",
+    "instructions": "Which category does this homelab server notification belong to?",
+    "criteria": {
+     "storage": "Disk health, SMART attributes, array, filesystem or free space",
+     "backup": "Backup or sync jobs and their results",
+     "availability": "A service, website or certificate being down, failing or recovering",
+     "security": "Login attempts, intrusions, exposed services or suspicious access",
+     "hardware": "CPU, GPU, memory, PCIe or other hardware faults",
+     "routine": "Scheduled maintenance, updates available, informational status or expected load"
+    }
+   },
+   "needs_action": {
+    "type": "bool",
+    "instructions": "Does a person need to act on this notification soon (it is not informational, already resolved or expected)?"
+   }
+  },
+  "expect": {
+   "category": "backup",
+   "needs_action": false
+  }
+ },
+ {
+  "id": "check00",
+  "task": "check",
+  "state": "Task: restart Sonarr and confirm it responds.\nReport: Restarted the sonarr container. `curl -s localhost:8989/ping` returned {\"status\":\"OK\"}.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "check01",
+  "task": "check",
+  "state": "Task: restart Sonarr and confirm it responds.\nReport: Restarted the sonarr container; it should be fine now.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check02",
+  "task": "check",
+  "state": "Task: move all 6 ended shows from disk1 to disk2 and confirm disk1's new usage.\nReport: Moved 4 of the 6 shows; the other two were in use and will be retried later. disk1 is now at 79%.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check03",
+  "task": "check",
+  "state": "Task: back up /etc/rc.local before editing it.\nReport: Copied it to /srv/backups/manual/rc.local.bak-20261030-142723 (cmp: identical), then added the three lines.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "check04",
+  "task": "check",
+  "state": "Task: update the notes log, commit and push.\nReport: Wrote log/2026-10-30.md and committed it as 68791fe. `git status -sb` shows `## main...origin/main [ahead 1]`.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check05",
+  "task": "check",
+  "state": "Task: run a 10-minute GPU burn-in and report errors.\nReport: gpu-burn ran for 600 s: `GPU 0: OK (0 errors)`, max 75 C, no Xid lines in dmesg.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "check06",
+  "task": "check",
+  "state": "Task: make sure the Uptime Kuma monitor for Gitea is green.\nReport: Created the HTTP monitor for Gitea in Uptime Kuma.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": false
+  }
+ },
+ {
+  "id": "check07",
+  "task": "check",
+  "state": "Task: delete the quarantine folder once nothing references it.\nReport: grep over all container configs found no references; deleted sonarr-rename-20260915/quarantine; `du` confirms 400 MB freed.",
+  "questions": {
+   "done": {
+    "type": "bool",
+    "instructions": "Does the report show that the task was fully completed AND that the result was checked (not just assumed)?"
+   }
+  },
+  "expect": {
+   "done": true
+  }
+ },
+ {
+  "id": "style00",
+  "task": "style",
+  "state": "Reboot scheduled for tomorrow night, after the array check finishes.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": true,
+   "secret": false
+  }
+ },
+ {
+  "id": "style01",
+  "task": "style",
+  "state": "Reboot planned for Sat 31 Oct 2026 at 22:00, after the array check finishes.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "style02",
+  "task": "style",
+  "state": "Set the runner registration token to 7f3a9cb2e41d08aa5c3e9f1b6d2a0c47 in /etc/act_runner/config.yaml.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": true
+  }
+ },
+ {
+  "id": "style03",
+  "task": "style",
+  "state": "The runner registration token is in Bitwarden, item 'Gitea runner (build-host)'.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "style04",
+  "task": "style",
+  "state": "Ran the burn-in earlier today; no errors.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": true,
+   "secret": false
+  }
+ },
+ {
+  "id": "style05",
+  "task": "style",
+  "state": "Updated 2026-10-30 15:10. Burn-in on 2026-10-30: no errors.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "style06",
+  "task": "style",
+  "state": "Backrest's Google Drive remote uses client secret GOCSPX-4hT2kq9Lw0ZrXc1vBn7mPq3s.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": true
+  }
+ },
+ {
+  "id": "style07",
+  "task": "style",
+  "state": "SMB password changed on 2026-10-22; the new one is in Bitwarden.",
+  "questions": {
+   "relative_date": {
+    "type": "bool",
+    "instructions": "Does the text rely on a relative time reference (like 'today', 'tomorrow', 'yesterday', 'next week', 'tonight', 'recently') instead of an absolute date?"
+   },
+   "secret": {
+    "type": "bool",
+    "instructions": "Does the text contain an actual secret value (a password, API key or token itself), rather than only saying where one is stored?"
+   }
+  },
+  "expect": {
+   "relative_date": false,
+   "secret": false
+  }
+ },
+ {
+  "id": "commit00",
+  "task": "commit",
+  "state": "Commit message: GPU docs: correct the work window to 14:20-15:10\nDiff:\n-## RTX 3060 Ti driver, tests and use cases (14:20-15:30)\n+## RTX 3060 Ti driver, tests and use cases (14:20-15:10)",
+  "questions": {
+   "matches": {
+    "type": "bool",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": true
+  }
+ },
+ {
+  "id": "commit01",
+  "task": "commit",
+  "state": "Commit message: Fix typo in README\nDiff:\n+def rotate_logs(path, keep=7):\n+    for f in sorted(glob(path))[:-keep]:\n+        os.remove(f)",
+  "questions": {
+   "matches": {
+    "type": "bool",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": false
+  }
+ },
+ {
+  "id": "commit02",
+  "task": "commit",
+  "state": "Commit message: Bump Sonarr to 4.0.10\nDiff:\n-    image: lscr.io/linuxserver/sonarr:4.0.9\n+    image: lscr.io/linuxserver/sonarr:4.0.10",
+  "questions": {
+   "matches": {
+    "type": "bool",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": true
+  }
+ },
+ {
+  "id": "commit03",
+  "task": "commit",
+  "state": "Commit message: Remove unused volume mappings\nDiff:\n     volumes:\n       - /srv/docker/appdata/sonarr:/config\n+      - /srv/docker/media/tv:/tv",
+  "questions": {
+   "matches": {
+    "type": "bool",
+    "instructions": "Does the commit message accurately describe what the diff changes?"
+   }
+  },
+  "expect": {
+   "matches": false
+  }
+ }
+]
