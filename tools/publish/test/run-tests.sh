@@ -138,6 +138,14 @@ commit edge.md "Near misses: $(ip4 100 63 0 1) $(ip4 100 128 0 1) $(ip4 172 15 0
 expect_allowed "addresses just outside the private ranges pass"
 
 fresh
+commit run.log "$(ip4 10 34 039 564) I perplexity: 606.47 seconds per pass"
+expect_allowed "a log time stamp with a leading zero (minutes.seconds.milliseconds.microseconds) is not an address"
+
+fresh
+commit edge2.md "Numbers above 255 are no address: $(ip4 10 12 300 001) $(ip4 10 0 0 256) $(ip4 172 16 0 300)"
+expect_allowed "numbers above 255 or with leading zeros are not an address"
+
+fresh
 commit README.md "Source: https://github.com/WyrmKeep/decision-model-kernels"
 expect_allowed "the allowed GitHub owner URL passes"
 
@@ -150,7 +158,7 @@ Permission is hereby granted."
 expect_allowed "the allowed license line passes"
 
 section "hook: private addresses, names and paths block"
-for spec in "10 1 2 3" "172 16 0 9" "172 31 255 1" "192 168 1 5" "100 64 0 1" "100 127 255 254"; do
+for spec in "10 0 0 1" "10 1 2 3" "10 255 255 255" "172 16 0 1" "172 16 0 9" "172 31 255 1" "192 168 1 5" "192 168 1 20" "100 64 0 1" "100 127 255 254"; do
   # shellcheck disable=SC2086
   set -- $spec
   fresh
@@ -459,6 +467,83 @@ chmod +x "$W/.git/hooks/pre-push"
 fresh
 git -C "$W" config core.hooksPath /nonexistent
 "$P/install-hooks.sh" "$W" >/dev/null 2>&1 && bad "install refuses when core.hooksPath is set" || ok "install refuses when core.hooksPath is set"
+
+section "hook: the installed ignore file"
+# A copy of the gate folder with its own ignore file, so these tests do not depend on the real one.
+G=$T/gate-copy
+mkdir -p "$G"
+cp "$P/pre-push" "$P/install-hooks.sh" "$P/lib.sh" "$P/gitleaks.toml" "$P/allow-files.txt" "$G/"
+fresh_gate() { # a fresh clone with the hook installed from the copy $G
+  fresh
+  "$G/install-hooks.sh" "$W" >"$D/install-gate.log" 2>&1
+  ignore_installed=$W/.git/hooks/dmk-publish/gitleaks.ignore
+}
+ignored_line() { printf 'a.md:dmk-private-ipv4:1\n'; }
+
+{ printf '# test ignore file\n'; ignored_line; } >"$G/gitleaks.ignore"
+fresh_gate
+[ -f "$ignore_installed" ] && cmp -s "$G/gitleaks.ignore" "$ignore_installed" && ok "install copies gitleaks.ignore to the hook folder" || bad "install copies gitleaks.ignore to the hook folder"
+ignore_sum=$(sha256sum "$G/gitleaks.ignore" | cut -d' ' -f1)
+if grep -q "^$ignore_sum  dmk-publish/gitleaks.ignore\$" "$W/.git/hooks/dmk-publish/SHA256SUMS"; then ok "install records the sha256 of the ignore file"; else bad "install records the sha256 of the ignore file"; fi
+commit a.md "server $(ip4 10 4 4 4)"
+expect_allowed "the hook uses the installed ignore file by default"
+
+commit b.md "server $(ip4 10 5 5 5)"
+expect_refused "the installed ignore file hides only the listed finding" 'b.md:1 dmk-private-ipv4'
+
+# An explicit DMK_IGNORE_FILE wins over the installed copy.
+fresh_gate
+commit a.md "server $(ip4 10 4 4 4)"
+printf 'b.md:dmk-private-ipv4:1\n' >"$T/other.ignore"
+PENV=(DMK_IGNORE_FILE="$T/other.ignore")
+expect_refused "an explicit DMK_IGNORE_FILE replaces the installed ignore file" 'a.md:1 dmk-private-ipv4'
+PENV=()
+expect_allowed "the same push passes with the installed ignore file"
+
+# A .gitleaksignore file in the work tree stays without effect, with an installed ignore file in place.
+fresh_gate
+commit c.md "server $(ip4 10 6 6 6)"
+printf '%s\n' "$(git -C "$W" rev-parse HEAD):c.md:dmk-private-ipv4:1" "c.md:dmk-private-ipv4:1" >"$W/.gitleaksignore"
+expect_refused "a .gitleaksignore file in the repository stays ignored when an ignore file is installed" 'c.md:1 dmk-private-ipv4'
+
+# Trust model: a change takes effect only after install-hooks.sh runs again.
+fresh_gate
+commit a.md "server $(ip4 10 4 4 4)"
+printf 'a.md:dmk-private-ipv4:1\n' >>"$ignore_installed"
+expect_refused "the hook refuses to run when the installed ignore file was edited" 'differ from their recorded checksums'
+"$G/install-hooks.sh" --verify "$W" >/dev/null 2>&1 && bad "install-hooks --verify rejects an edited ignore file" || ok "install-hooks --verify rejects an edited ignore file"
+"$G/install-hooks.sh" "$W" >/dev/null 2>&1
+expect_allowed "a reinstall restores the installed ignore file"
+
+fresh_gate
+commit d.md "server $(ip4 10 7 7 7)"
+printf 'd.md:dmk-private-ipv4:1\n' >>"$G/gitleaks.ignore"
+expect_refused "a change in the repository ignore file has no effect before a reinstall" 'd.md:1 dmk-private-ipv4'
+"$G/install-hooks.sh" "$W" >/dev/null 2>&1
+expect_allowed "the change takes effect after install-hooks.sh runs again"
+
+fresh_gate
+commit a.md "server $(ip4 10 4 4 4)"
+rm -f "$W/.git/hooks/dmk-publish/gitleaks.ignore"
+expect_refused "the hook refuses to run when the installed ignore file is missing" 'differ from their recorded checksums'
+
+# Without an ignore file in the gate folder, nothing is installed and a stray copy is not trusted.
+rm -f "$G/gitleaks.ignore"
+fresh_gate
+[ ! -e "$W/.git/hooks/dmk-publish/gitleaks.ignore" ] && ok "install copies no ignore file when the folder has none" || bad "install copies no ignore file when the folder has none"
+if grep -q 'gitleaks.ignore' "$W/.git/hooks/dmk-publish/SHA256SUMS"; then bad "install records no checksum for a missing ignore file"; else ok "install records no checksum for a missing ignore file"; fi
+commit a.md "server $(ip4 10 4 4 4)"
+ignored_line >"$W/.git/hooks/dmk-publish/gitleaks.ignore"
+expect_refused "an ignore file without a recorded checksum is refused" 'has no recorded checksum'
+
+# A reinstall from a folder without an ignore file removes the old copy.
+{ printf '# test ignore file\n'; ignored_line; } >"$G/gitleaks.ignore"
+fresh_gate
+commit a.md "server $(ip4 10 4 4 4)"
+rm -f "$G/gitleaks.ignore"
+"$G/install-hooks.sh" "$W" >/dev/null 2>&1
+[ ! -e "$ignore_installed" ] && ok "a reinstall removes an ignore file that the folder no longer has" || bad "a reinstall removes an ignore file that the folder no longer has"
+expect_refused "the finding blocks again after the ignore file is gone" 'a.md:1 dmk-private-ipv4'
 
 section "hook: other ways to run git"
 fresh

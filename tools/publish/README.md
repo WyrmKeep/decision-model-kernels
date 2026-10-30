@@ -33,6 +33,8 @@ A CI scan runs after the git push. At that time the data is on the server. The p
 
 The file check makes the last two checks. gitleaks makes the other checks.
 
+The rule for IP addresses accepts only the numbers 0 to 255. It does not accept a number of more than one character that starts with a zero. A log can write a time as four numbers with periods, for example `10.34.039.564`. The rule does not find that text.
+
 The publication gate lets the three example networks of RFC 5737 through. The networks have the ranges 192.0.2.0/24, 198.51.100.0/24 and 203.0.113.0/24.
 
 The publication gate lets the name of the owner account through in two shapes. One shape is a `github.com/WyrmKeep/` URL. The other shape is a line with only this text:
@@ -81,9 +83,11 @@ Do these steps one time in each clone.
 4. Add the upstream base to the llama.cpp fork with `tools/publish/install-hooks.sh --upstream-base "<revisions>" <clone>`.
 5. Run `tools/publish/install-hooks.sh --verify <clone>`.
 
-The script copies the hook to `.git/hooks/pre-push`. It copies the files `lib.sh`, `gitleaks.toml` and `allow-files.txt` to `.git/hooks/dmk-publish/`. It records the SHA-256 checksum of each file in `dmk-publish/SHA256SUMS`. At each git push, the hook compares the files with the checksums.
+The script copies the hook to `.git/hooks/pre-push`. It copies the files `lib.sh`, `gitleaks.toml`, `allow-files.txt` and `gitleaks.ignore` to `.git/hooks/dmk-publish/`. If this folder has no `gitleaks.ignore`, the script does not install that file. It records the SHA-256 checksum of each file in `dmk-publish/SHA256SUMS`. At each git push, the hook compares the files with the checksums.
 
-Run `install-hooks.sh` again after each change to `lib.sh`, `gitleaks.toml` or `allow-files.txt`. The script does not replace a hook that is not the hook of the publication gate. Use `--force` to move that hook to a different name. The script does not install if `core.hooksPath` is set. The flag `--verify` does not do this test.
+Run `install-hooks.sh` again after each change to `lib.sh`, `gitleaks.toml`, `allow-files.txt` or `gitleaks.ignore`. A change has no effect in a clone before you do this. If a person changes a file that the script installed, the checksum is not the same. Then the hook stops the git push.
+
+The script does not replace a hook that is not the hook of the publication gate. Use `--force` to move that hook to a different name. The script does not install if `core.hooksPath` is set. The flag `--verify` does not do this test.
 
 ## The upstream base
 
@@ -130,7 +134,7 @@ A gitleaks rule that finds usual words causes noise. For a short name, write the
 | `DMK_UPSTREAM_BASE` | Revisions of upstream history that no scan reads | The value `dmk.upstreamBase` of the clone, or none if it is not set |
 | `DMK_MAX_FILE_BYTES` | The largest file that the file check lets through, in bytes | 5242880 |
 | `DMK_ALLOWLIST` | Path of the allow-list | Hook: the copy that `install-hooks.sh` installs with the hook. `publish.sh`: the file `allow-files.txt` in the folder of the script. `scan-dir.sh` does not use an allow-list. |
-| `DMK_IGNORE_FILE` | Path of a file with gitleaks fingerprints to ignore | `publish.sh`: the file `gitleaks.ignore` in the folder of the script, if the folder has that file. Hook and `scan-dir.sh`: none. |
+| `DMK_IGNORE_FILE` | Path of a file with gitleaks fingerprints to ignore. A value that you set replaces the default. | Hook: the copy of `gitleaks.ignore` that `install-hooks.sh` installs with the hook, if it installs one. `publish.sh`: the file `gitleaks.ignore` in the folder of the script, if the folder has that file. `scan-dir.sh`: none. |
 | `DMK_GITLEAKS` | Path of the gitleaks program | `gitleaks` from `PATH` |
 | `DMK_REPO` | Clone that `publish.sh` publishes | The clone that holds the script |
 | `DMK_REPORT` | Path of the report file of `publish.sh` | `<git dir>/dmk-publish-report.txt` |
@@ -213,9 +217,12 @@ If the item is a secret, examine the other areas where the secret is. If other p
 
 1. Change the text if you can.
 2. Let a file through: add its path to `allow-files.txt` and write the cause.
-3. Ignore one item: put its fingerprint in a file and set `DMK_IGNORE_FILE` to the path of that file. The fingerprint is `commit:file:rule:line`. For an item in each commit, write `file:rule:line`. The file `gitleaks.ignore` of this folder has the fingerprints of the false positives in the data sets. Give the cause of each group in a comment line.
+3. Ignore one item: add its fingerprint to the file `gitleaks.ignore` in this folder. The fingerprint is `commit:file:rule:line`. For an item in each commit, write `file:rule:line`. Write the cause of each group in a comment line above the group.
 4. Change a gitleaks rule that finds usual words. The new gitleaks rule must find less text.
-5. Run `install-hooks.sh` again.
+5. Run `install-hooks.sh` again in each clone. The hook reads the copy of `gitleaks.ignore` that the script installs.
+6. Commit the change to `gitleaks.ignore` or to `gitleaks.toml`.
+
+To use a different ignore file for one git push, set `DMK_IGNORE_FILE` to the path of that file.
 
 ### The scan of `publish.sh` finds a secret in Gitea
 
@@ -280,7 +287,7 @@ If a private rules file is at the default path, the tests also use it. They make
 | `gitleaks.toml` | The gitleaks rules of the project. It adds to the default gitleaks rules. |
 | `private-rules.example.toml` | Example of the private rules file |
 | `allow-files.txt` | The allow-list |
-| `gitleaks.ignore` | The fingerprints of the false positives in the data sets |
+| `gitleaks.ignore` | The fingerprints of the false positives in the data sets. The hook and `publish.sh` read it. |
 | `test/run-tests.sh` | The tests |
 | `test/fake-gitea.py` | A test server for the Gitea API |
 

@@ -5,7 +5,8 @@
 #        install-hooks.sh --verify <clone>
 #
 # The script copies the hook to <clone>/.git/hooks/pre-push and the support
-# files (lib.sh, gitleaks.toml, allow-files.txt) to <clone>/.git/hooks/dmk-publish/.
+# files (lib.sh, gitleaks.toml, allow-files.txt, and gitleaks.ignore when this
+# folder has it) to <clone>/.git/hooks/dmk-publish/.
 # It records the SHA-256 checksum of every copied file in dmk-publish/SHA256SUMS.
 # The hook checks those checksums at the start of each push.
 # --upstream-base stores the revisions of an upstream project (for the llama.cpp
@@ -20,7 +21,7 @@ base=
 clone=
 
 usage() {
-  sed -n '2,12p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
+  sed -n '2,13p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
 }
 
 while [ $# -gt 0 ]; do
@@ -79,7 +80,15 @@ install -m 0755 "$here/pre-push" "$hooks/pre-push"
 install -m 0644 "$here/lib.sh" "$support/lib.sh"
 install -m 0644 "$here/gitleaks.toml" "$support/gitleaks.toml"
 install -m 0644 "$allow" "$support/allow-files.txt"
-(cd "$hooks" && sha256sum pre-push dmk-publish/lib.sh dmk-publish/gitleaks.toml dmk-publish/allow-files.txt >dmk-publish/SHA256SUMS)
+summed=(pre-push dmk-publish/lib.sh dmk-publish/gitleaks.toml dmk-publish/allow-files.txt)
+# The ignore file is optional. A copy that this folder no longer has must not stay.
+if [ -f "$here/gitleaks.ignore" ]; then
+  install -m 0644 "$here/gitleaks.ignore" "$support/gitleaks.ignore"
+  summed+=(dmk-publish/gitleaks.ignore)
+else
+  rm -f -- "$support/gitleaks.ignore"
+fi
+(cd "$hooks" && sha256sum "${summed[@]}" >dmk-publish/SHA256SUMS)
 
 if [ -n "$base" ]; then
   git -C "$clone" config --local dmk.upstreamBase "$base"

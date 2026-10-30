@@ -15,7 +15,7 @@
 #   DMK_UPSTREAM_BASE   upstream revisions whose history is never scanned (also: git config dmk.upstreamBase)
 #   DMK_MAX_FILE_BYTES  file size limit in bytes (default 5242880)
 #   DMK_ALLOWLIST       file allow-list (default: the copy installed beside this hook)
-#   DMK_IGNORE_FILE     gitleaks fingerprint ignore file (default: none)
+#   DMK_IGNORE_FILE     gitleaks fingerprint ignore file (default: the copy installed beside this hook, if any)
 #   DMK_GITLEAKS        path of the gitleaks program (default: gitleaks in PATH)
 set -u
 export LC_ALL=C
@@ -58,6 +58,12 @@ command -v "${DMK_GITLEAKS:-gitleaks}" >/dev/null 2>&1 || refuse "gitleaks is no
 . "$support/lib.sh"
 DMK_PUBLIC_CONFIG=$support/gitleaks.toml
 DMK_ALLOWLIST=${DMK_ALLOWLIST:-$support/allow-files.txt}
+# The installed ignore file has a recorded checksum. A copy without a checksum is not trusted.
+if [ -f "$support/gitleaks.ignore" ]; then
+  grep -q '  dmk-publish/gitleaks\.ignore$' "$support/SHA256SUMS" ||
+    refuse "The ignore file $support/gitleaks.ignore has no recorded checksum. Run tools/publish/install-hooks.sh again."
+  DMK_IGNORE_FILE=${DMK_IGNORE_FILE:-$support/gitleaks.ignore}
+fi
 dmk_init_tmp || refuse "Cannot create a temporary directory."
 trap dmk_cleanup EXIT
 
