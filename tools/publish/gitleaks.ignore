@@ -1,0 +1,26 @@
+# Findings of gitleaks that are false positives. publish.sh reads this file.
+# Each line has the shape <path>:<rule>:<line>. The file is part of the audit trail:
+# write the cause above each group of lines.
+#
+# Raw result files of the data set 2026-10-30-window1. In line 46 of each result file,
+# the list of changed decisions has the case name style03.secret. The rule
+# generic-api-key takes the next name in the list for a key. The text is a case name
+# of the benchmark. It is not a secret.
+data/2026-10-30-window1/raw/p1-bench-b1-D.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b1-S.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b2-D.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b2-S.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b3-D.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b3-S.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b4-D.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b4-S.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b5-D.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b5-S.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b6-D.json:generic-api-key:46
+data/2026-10-30-window1/raw/p1-bench-b6-S.json:generic-api-key:46
+#
+# Standard error of the racecheck run. Line 7 has a time stamp of the log of llama.cpp:
+# four numbers with dots between them (minutes, seconds, milliseconds, microseconds).
+# At minute 10 the first number is 10. The rule dmk-private-ipv4 reads the stamp as an
+# address in a private range.
+data/2026-10-30-window1/raw/p2-san-racecheck-D.err:dmk-private-ipv4:7

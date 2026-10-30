@@ -213,7 +213,7 @@ If the item is a secret, examine the other areas where the secret is. If other p
 
 1. Change the text if you can.
 2. Let a file through: add its path to `allow-files.txt` and write the cause.
-3. Ignore one item: put its fingerprint in a file and set `DMK_IGNORE_FILE` to the path of that file. The fingerprint is `commit:file:rule:line`.
+3. Ignore one item: put its fingerprint in a file and set `DMK_IGNORE_FILE` to the path of that file. The fingerprint is `commit:file:rule:line`. For an item in each commit, write `file:rule:line`. The file `gitleaks.ignore` of this folder has the fingerprints of the false positives in the data sets. Give the cause of each group in a comment line.
 4. Change a gitleaks rule that finds usual words. The new gitleaks rule must find less text.
 5. Run `install-hooks.sh` again.
 
@@ -280,6 +280,7 @@ If a private rules file is at the default path, the tests also use it. They make
 | `gitleaks.toml` | The gitleaks rules of the project. It adds to the default gitleaks rules. |
 | `private-rules.example.toml` | Example of the private rules file |
 | `allow-files.txt` | The allow-list |
+| `gitleaks.ignore` | The fingerprints of the false positives in the data sets |
 | `test/run-tests.sh` | The tests |
 | `test/fake-gitea.py` | A test server for the Gitea API |
 
