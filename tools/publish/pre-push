@@ -1,0 +1,116 @@
+#!/usr/bin/env bash
+# DMK-PUBLICATION-GATE pre-push hook.
+#
+# Install it with tools/publish/install-hooks.sh <clone>. Git calls it with the
+# remote name and URL as arguments and one line per ref update on stdin:
+#   <local ref> <local sha> <remote ref> <remote sha>
+# The hook scans only the commits that the push adds. It refuses the push when:
+#   - gitleaks finds a secret or a private name in file contents,
+#     commit messages, identities, ref names or tag messages;
+#   - a file is too large or has a model, binary or report type.
+# It also refuses when the private rules file is missing.
+#
+# Settings (environment, all optional):
+#   DMK_PRIVATE_RULES   private rules file (default ~/.config/decision-model-kernels/gitleaks-private.toml)
+#   DMK_UPSTREAM_BASE   upstream revisions whose history is never scanned (also: git config dmk.upstreamBase)
+#   DMK_MAX_FILE_BYTES  file size limit in bytes (default 5242880)
+#   DMK_ALLOWLIST       file allow-list (default: the copy installed beside this hook)
+#   DMK_IGNORE_FILE     gitleaks fingerprint ignore file (default: none)
+#   DMK_GITLEAKS        path of the gitleaks program (default: gitleaks in PATH)
+set -u
+export LC_ALL=C
+
+remote=${1:-}
+zero_re='^0+$'
+hooks_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+support=$hooks_dir/dmk-publish
+
+refuse() {
+  printf 'dmk-gate: PUSH REFUSED. %s\n' "$*" >&2
+  exit 1
+}
+
+# Read the ref updates before anything else uses stdin.
+updates=()
+while read -r lref lsha rref rsha; do
+  [ -n "${lsha:-}" ] || continue
+  updates+=("$lref $lsha $rref $rsha")
+done
+
+# A push that only deletes refs adds no commits. It passes.
+todo=()
+for u in "${updates[@]}"; do
+  read -r _ lsha _ _ <<<"$u"
+  if [[ ! $lsha =~ $zero_re ]]; then todo+=("$u"); fi
+done
+if [ "${#todo[@]}" -eq 0 ]; then exit 0; fi
+
+# The installed support files must match the recorded checksums.
+if [ ! -f "$support/SHA256SUMS" ] || [ ! -f "$support/lib.sh" ]; then
+  refuse "The gate support files are missing in $support. Run tools/publish/install-hooks.sh again."
+fi
+if ! (cd "$hooks_dir" && sha256sum --quiet -c dmk-publish/SHA256SUMS >/dev/null 2>&1); then
+  refuse "The gate files in $support differ from their recorded checksums. Run tools/publish/install-hooks.sh again."
+fi
+command -v "${DMK_GITLEAKS:-gitleaks}" >/dev/null 2>&1 || refuse "gitleaks is not installed or not in PATH. Set DMK_GITLEAKS to its path."
+
+# shellcheck source=lib.sh
+. "$support/lib.sh"
+DMK_PUBLIC_CONFIG=$support/gitleaks.toml
+DMK_ALLOWLIST=${DMK_ALLOWLIST:-$support/allow-files.txt}
+dmk_init_tmp || refuse "Cannot create a temporary directory."
+trap dmk_cleanup EXIT
+
+dmk_require_private_rules || refuse "The private rules file is not usable. Nothing was pushed."
+dmk_build_configs || refuse "The rules could not be loaded. Nothing was pushed."
+dmk_load_allowlist "$DMK_ALLOWLIST"
+
+repo=$(pwd -P)
+dmk_base_args "$repo" || refuse "The upstream base is not usable. Nothing was pushed."
+
+blocked=0
+DMK_FINDING_COUNT=0
+for u in "${todo[@]}"; do
+  read -r lref lsha rref rsha <<<"$u"
+  dmk_say "dmk-gate: checking $rref ($lref)"
+
+  if ! git -C "$repo" rev-parse --verify -q "$lsha^{commit}" >/dev/null; then
+    dmk_say "  BLOCKED: $lsha is not a commit or a tag of a commit. The gate cannot scan it."
+    blocked=1
+    continue
+  fi
+
+  # Commits that are new for the remote.
+  range=("$lsha")
+  if [[ ! $rsha =~ $zero_re ]] && git -C "$repo" cat-file -e "$rsha^{commit}" 2>/dev/null; then
+    range+=("^$rsha")
+    range+=("${DMK_BASE_ARGS[@]}")
+  else
+    # New branch (or an old remote commit that this clone lacks): skip what the
+    # remote-tracking refs and the upstream base already cover.
+    range+=("${DMK_BASE_ARGS[@]}")
+    range+=(--not "--remotes=$remote")
+  fi
+
+  dmk_scan_commits "$repo" "$rref" "${range[@]}"
+  rc=$?
+  if [ "$rc" -ne 0 ]; then blocked=1; fi
+
+  dmk_check_files "$repo" "$rref" "${range[@]}"
+  rc=$?
+  if [ "$rc" -ne 0 ]; then blocked=1; fi
+
+  printf '%s %s\n' "$lsha" "$rref" >"$DMK_TMPDIR/refs.txt"
+  dmk_write_meta "$repo" "$DMK_TMPDIR/meta.txt" "$DMK_TMPDIR/refs.txt" "${range[@]}"
+  dmk_scan_meta "$DMK_TMPDIR/meta.txt" "$rref"
+  rc=$?
+  if [ "$rc" -ne 0 ]; then blocked=1; fi
+done
+
+if [ "$blocked" -ne 0 ]; then
+  dmk_say "dmk-gate: PUSH REFUSED. Fix the items above, amend or rewrite the commits, then push again."
+  dmk_say "dmk-gate: A real finding that is already on the remote needs more work. See tools/publish/README.md."
+  exit 1
+fi
+dmk_say "dmk-gate: push allowed."
+exit 0

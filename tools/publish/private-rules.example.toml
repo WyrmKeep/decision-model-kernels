@@ -1,0 +1,50 @@
+# Example of the private rules file of the publication gate.
+#
+# Copy this file to ~/.config/decision-model-kernels/gitleaks-private.toml.
+# Set its mode to 0600. Replace each example name with a real internal name.
+# Never commit the real file. It lists the names that must stay private.
+#
+# Rules for this file:
+#   - It holds [[rules]] blocks only. Do not add an [extend] section or top-level keys.
+#   - Write each regex as a TOML literal string between three single quotes.
+#   - Match without case with the (?i) flag.
+#   - Test each rule on normal English text. A rule that fires on ordinary words is noise.
+
+[[rules]]
+id = "dmk-private-host"
+description = "Internal machine name or alias"
+regex = '''(?i)(?:examplehost|exampleserver[0-9]*)'''
+
+[[rules]]
+id = "dmk-private-network"
+description = "Internal domain or public address of the lab"
+regex = '''(?i)(?:example-tailnet|(?:^|[^0-9.])203\.0\.113\.250(?:[^0-9]|$))'''
+
+[[rules]]
+id = "dmk-private-user"
+description = "User name or personal name"
+regex = '''(?i)(?:^|[^a-z0-9])exampleuser(?:[^a-z0-9]|$)'''
+
+[[rules]]
+id = "dmk-private-project"
+description = "Code name of another private project"
+regex = '''(?i)(?:exampleproject|examplevault)'''
+
+# The owner name. Two uses are allowed: a GitHub URL of the owner and the license line.
+# The first alternative of the regex pulls the allowed text into the match.
+# Each allowlist then accepts exactly one allowed form.
+# The class [k] keeps the rule text from matching its own rule.
+[[rules]]
+id = "dmk-private-owner-name"
+description = "Owner account name. Allowed only in github.com/WyrmKeep/ URLs and in the license line."
+regex = '''(?i)(?:copyright \(c\) 2026 |github\.com/)?wyrm[k]eep/?'''
+
+[[rules.allowlists]]
+description = "GitHub owner in a URL"
+regexTarget = "match"
+regexes = ['''^github\.com/Wyrm[K]eep/$''']
+
+[[rules.allowlists]]
+description = "Copyright holder line of the license"
+regexTarget = "line"
+regexes = ['''(?m)^Copyright \(c\) 2026 Wyrm[K]eep\r?$''']

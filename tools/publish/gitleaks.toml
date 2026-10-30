@@ -1,0 +1,47 @@
+title = "decision-model-kernels publication gate, public rules"
+
+# Keep this block first and keep a blank line after it.
+# The gate removes it to build a rule set without the default allowlists.
+[extend]
+useDefault = true
+
+# The rules below find private network data and server paths.
+# They use no allowlist, so a path or file type that the default rules skip
+# is still scanned when the gate runs them alone.
+# Write each pattern so that its own text does not match it.
+
+[[rules]]
+id = "dmk-private-ipv4"
+description = "IPv4 address in a private range (RFC 1918) or in the carrier-grade NAT range"
+regex = '''(?m)(?:^|[^0-9.])(?:10(?:\.[0-9]{1,3}){3}|172\.(?:1[6-9]|2[0-9]|3[01])(?:\.[0-9]{1,3}){2}|192\.168(?:\.[0-9]{1,3}){2}|100\.(?:6[4-9]|[7-9][0-9]|1[01][0-9]|12[0-7])(?:\.[0-9]{1,3}){2})(?:[^0-9.]|\.(?:[^0-9]|$)|$)'''
+keywords = ["10.", "172.", "192.", "100."]
+
+[[rules]]
+id = "dmk-tailnet-ipv6"
+description = "IPv6 address in the Tailscale unique local prefix"
+regex = '''(?i)fd7a:115c:a1e[0]:'''
+keywords = ["fd7a"]
+
+[[rules]]
+id = "dmk-tailnet-hostname"
+description = "Tailnet host name that ends in the Tailscale domain"
+regex = '''(?i)\bts\.net\b'''
+keywords = [".net"]
+
+[[rules]]
+id = "dmk-uuid"
+description = "UUID, for example a vault item or a device identifier"
+regex = '''(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b'''
+keywords = ["-"]
+
+[[rules]]
+id = "dmk-server-path"
+description = "Path on a server, a storage mount, or a home directory"
+regex = '''(?m)(?:/mnt/(?:user0?|cache|disk[0-9]+|storage)/|/boot/(?:config)/|/var/(?:home|mnt)/|(?:^|[^A-Za-z0-9_.~/-])(?:/home/[A-Za-z0-9._-]+/|/(?:root)/))'''
+keywords = ["/mnt/", "/boot/", "/var/", "/home/", "/root"]
+
+[[rules]]
+id = "dmk-monitor-number"
+description = "Number of an uptime monitor"
+regex = '''(?i)\b(?:kuma|monitor)s?[ \t]*#[ \t]*[0-9]+'''
+keywords = ["kuma", "monitor"]

@@ -1,0 +1,65 @@
+# Configuration of the STE checker (tools/ste/ste_check.py).
+# Paths are relative to the repository root. The root is set below.
+
+[dictionary]
+# The checker reads the STE dictionary from a local copy of the official PDF.
+# The PDF is never committed. Its hash must match this value.
+pdf_sha256 = "d1f4ea9e7cd6e46b47aa9057209f99e78c0e9cfc4e27a5b07895b05c1a166431"
+pdf_url = "https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf"
+# Where the extracted dictionary is cached. The STE_CACHE variable has priority.
+# The folder must be outside the repository.
+cache_dir = "~/.cache/ste100"
+
+[files]
+# The repository root, relative to this file.
+root = "../.."
+# The project glossary of technical nouns, verbs and names.
+glossary = "docs/glossary.md"
+# Files that the checker skips. Patterns use shell wildcards on the path from the root.
+ignore = [
+  "LICENSE*",
+  "third_party/*",
+  "llama.cpp/*",
+  "node_modules/*",
+]
+
+[glossary]
+# Terms that the glossary may share with an approved word (rule 1.3).
+# Use this list only when the project meaning is part of the approved meaning.
+allow_approved = ["decision"]
+
+[procedure]
+# A list item under a heading that contains one of these phrases is a procedure step.
+# The match ignores case. A sentence that starts with an imperative verb is also a procedure.
+headings = [
+  "Reproduce",
+  "Quick start",
+  "Procedure",
+  "Steps",
+  "How to",
+  "Install",
+  "Run",
+  "Build",
+]
+
+[limits]
+procedure_sentence_words = 20
+description_sentence_words = 25
+paragraph_sentences = 6
+noun_cluster_words = 3
+
+[units]
+# A number that has one of these units counts as one word and is not checked (rule 8.6).
+names = [
+  "ms", "us", "µs", "ns", "s", "sec", "min", "h",
+  "B", "KB", "MB", "GB", "TB", "KiB", "MiB", "GiB", "TiB",
+  "Hz", "kHz", "MHz", "GHz", "W", "kW", "V", "mV", "A", "mA",
+  "°C", "°F", "K", "%", "x",
+  "TOPS", "TFLOPS", "GFLOPS", "FLOPS", "GB/s", "MB/s", "GiB/s", "TB/s", "Gbps", "Mbps",
+  "mm", "cm", "m", "km", "g", "kg", "mg", "px", "pt",
+  "tok/s",
+  "millisecond", "microsecond", "second", "minute", "hour", "watt", "bit", "bits", "byte",
+  "milliseconds", "microseconds", "seconds", "minutes", "hours", "percent", "watts",
+  "hertz", "megahertz", "gigahertz", "bytes", "kilobytes", "megabytes", "gigabytes",
+  "millimeters", "centimeters", "meters", "kilograms", "degrees",
+]
