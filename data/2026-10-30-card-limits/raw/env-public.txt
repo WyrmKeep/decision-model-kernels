@@ -1,0 +1,200 @@
+# Cleaned copy of env.txt of the run. Lines that differ from the original end with [cleaned]. See README.md of the data set.
+
+run.sh start:     2026-10-30T22:52:01Z  (host local UTC offset +0000)
+kernel:           Linux 6.12.54  [cleaned]
+gpu selector:     (UUID removed)  [cleaned]
+driver:           595.71.05, NVIDIA GeForce RTX 3060 Ti, 94.04.3A.40.A7  [cleaned]
+image:            ghcr.io/ggml-org/llama.cpp:server-cuda-b12004  image ID sha256:21e387d87dd526d2722a26ce65479b207b13e96bd72784ff701f3db201223c64, digest ghcr.io/ggml-org/llama.cpp@sha256:f25bfa096802cdf35ceb7d124816387a1e3ed5cbfc869eb242246cd29ab29352  [cleaned]
+only/quick:       mma,membw,cublaslt / 0
+shapes:           qwen35-4b-mix8.tsv  (58 rows, sha256 532d8c8c545152ed60c9ba7d738331281be9feece1c308583a8250a070d47d36)  [cleaned]
+containers:       the production server container was running and idle; the other containers are not listed  [cleaned]
+compute apps:     llama-server, 4370 MiB  [cleaned]
+
+## binaries
+9ed8ea6f850d90e34b192f693e37c42c462ef767d93721787035c975dcfa021c  mb-mma
+1a6b97fdae7134a380f7e34745911d9d8646fcb0d516f501f135c7a3243cbb30  mb-membw
+2a7bd4dd42b8ecca9ef2784d24bda99c3ed4864823c7c4a70ade23b3832e888b  mb-cublaslt-i8
+
+## nvidia-smi -q -d CLOCK,POWER,PERFORMANCE (before)
+
+==============NVSMI LOG==============
+
+Timestamp                                              : Fri Oct 30 22:52:01 2026
+Driver Version                                         : 595.71.05
+CUDA Version                                           : 13.2
+
+Attached GPUs                                          : 1
+GPU (PCI address removed)  [cleaned]
+    Performance State                                  : P8
+    Clocks Event Reasons
+        Idle                                           : Active
+        Applications Clocks Setting                    : Not Active
+        SW Power Cap                                   : Not Active
+        HW Slowdown                                    : Not Active
+            HW Thermal Slowdown                        : Not Active
+            HW Power Brake Slowdown                    : Not Active
+        Sync Boost                                     : Not Active
+        SW Thermal Slowdown                            : Not Active
+        Display Clock Setting                          : Not Active
+    Clocks Event Reasons Counters
+        SW Power Capping                               : 27951282 us
+        Sync Boost                                     : 0 us
+        SW Thermal Slowdown                            : 0 us
+        HW Thermal Slowdown                            : 0 us
+        HW Power Braking                               : 0 us
+    Sparse Operation Mode                              : N/A
+    GPU Power Readings
+        Average Power Draw                             : 14.15 W
+        Instantaneous Power Draw                       : 14.16 W
+        Current Power Limit                            : 200.00 W
+        Requested Power Limit                          : 200.00 W
+        Default Power Limit                            : 200.00 W
+        Min Power Limit                                : 100.00 W
+        Max Power Limit                                : 220.00 W
+    Power Samples
+        Duration                                       : 57.30 sec
+        Number of Samples                              : 119
+        Max                                            : 132.48 W
+        Min                                            : 14.12 W
+        Avg                                            : 20.87 W
+    GPU Memory Power Readings 
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+    Module Power Readings
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+        Current Power Limit                            : N/A
+        Requested Power Limit                          : N/A
+        Default Power Limit                            : N/A
+        Min Power Limit                                : N/A
+        Max Power Limit                                : N/A
+    EDPp Multiplier                                    : N/A
+    Clocks
+        Graphics                                       : 210 MHz
+        SM                                             : 210 MHz
+        Memory                                         : 405 MHz
+        Video                                          : 555 MHz
+    Applications Clocks
+        Graphics                                       : Requested functionality has been deprecated
+        Memory                                         : Requested functionality has been deprecated
+    Default Applications Clocks
+        Graphics                                       : Requested functionality has been deprecated
+        Memory                                         : Requested functionality has been deprecated
+    Deferred Clocks
+        Memory                                         : N/A
+    Max Clocks
+        Graphics                                       : 2100 MHz
+        SM                                             : 2100 MHz
+        Memory                                         : 7001 MHz
+        Video                                          : 1950 MHz
+    Max Customer Boost Clocks
+        Graphics                                       : N/A
+    SM Clock Samples
+        Duration                                       : Not Found
+        Number of Samples                              : Not Found
+        Max                                            : Not Found
+        Min                                            : Not Found
+        Avg                                            : Not Found
+    Memory Clock Samples
+        Duration                                       : Not Found
+        Number of Samples                              : Not Found
+        Max                                            : Not Found
+        Min                                            : Not Found
+        Avg                                            : Not Found
+    Clock Policy
+        Auto Boost                                     : N/A
+        Auto Boost Default                             : N/A
+
+
+## nvidia-smi -q -d CLOCK,POWER,PERFORMANCE (after)
+
+==============NVSMI LOG==============
+
+Timestamp                                              : Fri Oct 30 22:56:19 2026
+Driver Version                                         : 595.71.05
+CUDA Version                                           : 13.2
+
+Attached GPUs                                          : 1
+GPU (PCI address removed)  [cleaned]
+    Performance State                                  : P8
+    Clocks Event Reasons
+        Idle                                           : Active
+        Applications Clocks Setting                    : Not Active
+        SW Power Cap                                   : Not Active
+        HW Slowdown                                    : Not Active
+            HW Thermal Slowdown                        : Not Active
+            HW Power Brake Slowdown                    : Not Active
+        Sync Boost                                     : Not Active
+        SW Thermal Slowdown                            : Not Active
+        Display Clock Setting                          : Not Active
+    Clocks Event Reasons Counters
+        SW Power Capping                               : 34039712 us
+        Sync Boost                                     : 0 us
+        SW Thermal Slowdown                            : 0 us
+        HW Thermal Slowdown                            : 0 us
+        HW Power Braking                               : 0 us
+    Sparse Operation Mode                              : N/A
+    GPU Power Readings
+        Average Power Draw                             : 36.46 W
+        Instantaneous Power Draw                       : 26.20 W
+        Current Power Limit                            : 200.00 W
+        Requested Power Limit                          : 200.00 W
+        Default Power Limit                            : 200.00 W
+        Min Power Limit                                : 100.00 W
+        Max Power Limit                                : 220.00 W
+    Power Samples
+        Duration                                       : 4.36 sec
+        Number of Samples                              : 119
+        Max                                            : 232.32 W
+        Min                                            : 24.84 W
+        Avg                                            : 82.89 W
+    GPU Memory Power Readings 
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+    Module Power Readings
+        Average Power Draw                             : N/A
+        Instantaneous Power Draw                       : N/A
+        Current Power Limit                            : N/A
+        Requested Power Limit                          : N/A
+        Default Power Limit                            : N/A
+        Min Power Limit                                : N/A
+        Max Power Limit                                : N/A
+    EDPp Multiplier                                    : N/A
+    Clocks
+        Graphics                                       : 240 MHz
+        SM                                             : 240 MHz
+        Memory                                         : 405 MHz
+        Video                                          : 555 MHz
+    Applications Clocks
+        Graphics                                       : Requested functionality has been deprecated
+        Memory                                         : Requested functionality has been deprecated
+    Default Applications Clocks
+        Graphics                                       : Requested functionality has been deprecated
+        Memory                                         : Requested functionality has been deprecated
+    Deferred Clocks
+        Memory                                         : N/A
+    Max Clocks
+        Graphics                                       : 2100 MHz
+        SM                                             : 2100 MHz
+        Memory                                         : 7001 MHz
+        Video                                          : 1950 MHz
+    Max Customer Boost Clocks
+        Graphics                                       : N/A
+    SM Clock Samples
+        Duration                                       : Not Found
+        Number of Samples                              : Not Found
+        Max                                            : Not Found
+        Min                                            : Not Found
+        Avg                                            : Not Found
+    Memory Clock Samples
+        Duration                                       : Not Found
+        Number of Samples                              : Not Found
+        Max                                            : Not Found
+        Min                                            : Not Found
+        Avg                                            : Not Found
+    Clock Policy
+        Auto Boost                                     : N/A
+        Auto Boost Default                             : N/A
+
+
+run.sh end:       2026-10-30T22:56:19Z, 256 s of benchmarks, 0 failed

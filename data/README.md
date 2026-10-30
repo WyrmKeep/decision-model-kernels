@@ -2,7 +2,7 @@
 
 This folder holds the raw files and the derived tables of each measurement. A data set is the data of one test.
 
-At this time, the folder has no data set. It has this README only.
+The table below lists the data sets in this folder.
 
 The [harness](../harness/README.md) makes the raw files. The [method](../docs/method.md) gives the tests that compare builds.
 
@@ -10,7 +10,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 
 | Data set | Date | Contents |
 |---|---|---|
-| | | This table has no row at this time. |
+| [`2026-10-30-card-limits`](2026-10-30-card-limits/README.md) | 2026-10-30 | The highest rates of the `RTX 3060 Ti` for the tensor cores, the DRAM and the L2 cache, and the time of a cuBLASLt int8 GEMM for the weight shapes of the model. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 
