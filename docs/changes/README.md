@@ -1,0 +1,74 @@
+# Change documents
+
+This folder has one document for each change to llama.cpp. At this time, the folder has no change document. It has this README only.
+
+## Rules
+
+- Name each file `NNNN-<name>.md`. `NNNN` is the number of the change. The first change is `0001`. `<name>` is a short name of the change. The name has only `a-z`, `0-9`, and `-`.
+- The file has the same text as the pull request of the change.
+- A person who reads GitHub cannot see the pull requests of the project. The file gives the same text to this person.
+- Write the file before you open the pull request. When the pull request changes, change the file at the same time.
+- Use the eight sections below, in the same sequence, with the same headings.
+- Write in ASD-STE100 Issue 9. Run the [checker](../../tools/ste/README.md) on the file before you open the pull request.
+- Use relative links only. Link to the files in [data/](../../data/README.md) and to the [notebook](../notebook/README.md).
+
+## The eight sections
+
+| Section | Contents of the section |
+|---|---|
+| Summary | The change, and the cause of the change. Use 2 to 4 sentences. |
+| Equivalence class | The equivalence class of the change: `exact`, `re-associated`, or `approximation`. We select the equivalence class before we measure. The [method](../method.md) gives the tests that each equivalence class must have. |
+| Results | A table. For each request type it gives the time before (ms), the time after (ms), the difference (%), the 95 % confidence interval, the number of runs, the power limit, and the clocks. The first row is the baseline. The source is below the table. |
+| Prediction | The prediction that we wrote before the change. The result. The cause of each difference between them. |
+| Correctness | Each test, the threshold that we declared before the test, and the result (`pass` or `fail`). |
+| Reproduce | The full commands, the commit hashes, and the build flags. |
+| Limits | The risks. The parts of the change with no test. The procedure to go back to the baseline. |
+| Data | Relative links to the files in `data/`. |
+
+## Template
+
+Put a copy of this text in a new file. Change each text between `<` and `>`.
+
+```markdown
+# <Name of the change>
+
+## Summary
+
+<2 to 4 sentences: the change, and the cause of the change.>
+
+## Equivalence class
+
+<exact, re-associated, or approximation. The date on which we selected the class.>
+
+## Results
+
+| Request type | Before (ms) | After (ms) | Difference (%) | 95 % interval (%) | Runs | Power limit (W) | Clock (MHz) |
+|---|---:|---:|---:|---|---:|---:|---:|
+| <type> | <baseline> | <new build> | <difference> | <low to high> | <number> | <value> | <value> |
+
+Source: <data set, with a relative link>.
+
+## Prediction
+
+<The prediction, the date, the result, and the cause of each difference.>
+
+## Correctness
+
+| Test | Threshold | Result (pass or fail) |
+|---|---|---|
+| <test> | <value declared before the test> | <result> |
+
+## Reproduce
+
+1. <Command that gets the commit.>
+2. <Command that builds the binaries.>
+3. <Command that runs the test.>
+
+## Limits
+
+<The risks, what the tests do not test, and the procedure to go back to the baseline.>
+
+## Data
+
+- [<name of the data set>](../../data/<folder>/README.md)
+```
