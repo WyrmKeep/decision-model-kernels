@@ -1,0 +1,45 @@
+# Checks the documents: the unit tests of the STE checker, then the checker on all Markdown files.
+#
+# CI is never the privacy check. A scan in CI finds a leak only after the push, and then the
+# text is already on the server. The pre-push gate in tools/publish/ is the privacy check.
+#
+# The ASD-STE100 PDF is not in the repository. The job downloads it from the official site,
+# keeps it outside the checkout, and checks its hash against tools/ste/config.toml.
+name: docs
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ste:
+    runs-on: light
+    container:
+      image: node:22-trixie
+    env:
+      STE_PDF_URL: https://www.asd-ste100.org/assets/files/ASD-STE100_ISSUE9.pdf
+      STE_PDF: /opt/ste/ASD-STE100_ISSUE9.pdf
+      STE_CACHE: /opt/ste/cache
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Install python3 and poppler-utils
+        run: |
+          apt-get update
+          apt-get install --yes --no-install-recommends python3 poppler-utils
+
+      - name: Download the STE PDF and check its hash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$STE_PDF")" "$STE_CACHE"
+          expected=$(python3 -c "import tomllib; print(tomllib.load(open('tools/ste/config.toml', 'rb'))['dictionary']['pdf_sha256'])")
+          curl --fail --location --silent --show-error --output "$STE_PDF" "$STE_PDF_URL"
+          echo "$expected  $STE_PDF" | sha256sum --check -
+
+      - name: Run the unit tests of the checker
+        run: python3 -m unittest discover tools/ste/tests
+
+      - name: Run the checker on all Markdown files
+        run: python3 tools/ste/ste_check.py --strict
