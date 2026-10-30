@@ -88,7 +88,7 @@ An answer has these fields:
 | `probabilities` | object | Probability, 0 to 1 | Only for `choice`. The key is the name of a possible answer. |
 | `confidence` | number | Probability, 0 to 1 | Only for `choice`. The probability of the answer in `choice`. |
 
-Until you measure the reference, the file has no answers. It holds `"status": "not-measured"` and a `note`. While the file has this mark, the client does not calculate the metrics that compare the answers with the reference.
+The file `reference.json` in this repository holds the answers of the Q8_0 model that the project measured on 2026-10-30. The [README of the folder](README.md#source-of-the-reference) gives the source of the answers. A reference file with no measurement holds `"status": "not-measured"` and a `note`. While a file has this mark, the client does not calculate the metrics that compare the answers with the reference.
 
 ## baseline.json
 

@@ -24,15 +24,15 @@ The quality numbers must stay in the guards after a change to the server. The se
 | `launch.example.sh` | The example script that starts the server container. |
 | `bench.env.example` | Lists all environment variables of the scripts. |
 | `cases.json` | The 48 cases with their labels. |
-| `reference.json` | The Q8_0 reference answers. |
-| `baseline.json` | The guard numbers of the baseline build. |
+| `reference.json` | The Q8_0 reference answers. Measured on 2026-10-30. |
+| `baseline.json` | The guard numbers of the baseline build. Not measured at this time. |
 | `DATA.md` | The fields, units and meaning of each data file. |
 | `tools/make_cases.py` | Makes `cases.json`. |
 | `tools/make_baseline.py` | Makes `baseline.json` from baseline runs. |
 | `tools/count_tokens.py` | Counts the tokens of each case. |
 | `dectest/` | The smoke test with 32 cases and 52 decisions. |
 
-The files `reference.json` and `baseline.json` are empty slots until you make them. Each slot holds the text `"status": "not-measured"`. The client does not do the checks that use the data of an empty slot. The section [Make the reference and the baseline](#make-the-reference-and-the-baseline) shows how to put data in the slots.
+The file `reference.json` holds the answers of the Q8_0 model, measured on 2026-10-30. The section [Source of the reference](#source-of-the-reference) gives the source. The file `baseline.json` is an empty slot until the next measurement window. It holds the text `"status": "not-measured"`. The client does not do the checks that use the data of an empty slot. The section [Make the reference and the baseline](#make-the-reference-and-the-baseline) shows how to put data in the slot.
 
 ## The cases
 
@@ -244,9 +244,11 @@ A new build of `llama quantize` can make a file with different bytes. Run the be
 
 ## Make the reference and the baseline
 
-The reference answers and the baseline numbers are not available at this time. Measure the reference and the baseline one time. Use a GPU that does no other work, and the server image of the stock build. Do not start a different GPU program at the same time.
+The project measured the reference answers on 2026-10-30. The baseline numbers are not available at this time. The baseline comes from the next measurement window. Measure the baseline one time. Use a GPU that does no other work. Use a server build that has no change to the code of llama.cpp.
 
 The reference is the set of the answers of the Q8_0 model. The baseline is the quality of the build that you compare with. The baseline also holds three guard numbers. The runs of the baseline make the numbers.
+
+Steps 1 to 4 show how the project made the reference. Do them again only when you change `cases.json` or the reference model. Steps 5 to 9 make the baseline.
 
 1. Set `MODEL` to the Q8_0 file in `bench.env`. Keep the baseline server flags.
 2. Make the reference run:
@@ -280,6 +282,20 @@ The reference is the set of the answers of the Q8_0 model. The baseline is the q
 9. Commit `reference.json`, `baseline.json` and the files of the four runs.
 
 `make_baseline.py` stops when the quality numbers of the three runs are different. Find the cause before you continue.
+
+### Source of the reference
+
+| Item | Value |
+|---|---|
+| Run name | `p2-pub-ref-q8` |
+| Date | 2026-10-30, start at 22:33 UTC |
+| Model | `h2o-lightning-4b-Q8_0.gguf` |
+| Server | Build `D` of tag `b12004`, commit `3c809f44383bcebc318b8cddd8c6d11aaa861e9b`, with the production flags |
+| Timed passes | 1 |
+| Result | 93 of 100 decisions correct, 0 errors |
+| Raw files | [`p2-pub-ref-q8.*` in the data set](../data/2026-10-30-window1/raw/) |
+
+The production flags are `-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots`. Build `D` has no change to the code of llama.cpp. On the private benchmark, build `D` gives the same answers as the stock image. The answers have the same bits. The [result of phase 1](../docs/notebook/2026-10-30-phase1-equivalence-result.md) shows this. The [README of the data set](../data/2026-10-30-window1/README.md) gives the build flags, the image digests and the driver.
 
 ## Token length test
 

@@ -29,7 +29,7 @@ The folder `bench/` has the public benchmark. It has one host name for all syslo
 
 Each replacement has the same number of tokens as the text that it replaces. You can thus compare the speed numbers of the two benchmarks. The words of the two benchmarks are different. The answers can thus have small differences. The public benchmark has a different set of reference answers and a different baseline. You must not compare the quality numbers of the two benchmarks.
 
-The files `bench/reference.json` and `bench/baseline.json` hold the mark `"status": "not-measured"` until a person measures them. While the mark is there, the client does not do the checks that use them.
+The file `bench/reference.json` holds the answers of the Q8_0 model that the project measured on 2026-10-30. The file `bench/baseline.json` holds the mark `"status": "not-measured"` until the next measurement window. While the mark is there, the client does not do the checks that use it. The [README of the benchmark](../bench/README.md#source-of-the-reference) gives the source of the reference.
 
 ### The cases
 
