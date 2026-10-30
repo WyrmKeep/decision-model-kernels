@@ -1,153 +1,167 @@
 # Decision-model benchmark
 
-This folder holds the public benchmark for the decision model. It has 48 cases with 100 labeled decisions. It measures the speed and the answer quality of a `llama-server` that serves `POST /v1/systemone`.
+This folder holds the public benchmark for the decision model. It has 48 cases and 100 decisions. Each decision has a label. The benchmark measures the speed and the quality of a `llama-server`. The client sends the requests to `POST /v1/systemone` of that server.
 
-## What the benchmark measures
+## Results of the benchmark
 
-The benchmark sends each case to the server. A case has a text (the state) and one to three questions about the text. The server returns one answer for each question.
+The benchmark sends each case to the server. A case has one state and one to three questions about the state. The server sends back one answer for each question.
 
-The benchmark records two kinds of result:
+The benchmark records two types of result:
 
-- Speed: the time of each request.
-- Quality: the agreement of the answers with the labels and with the reference answers.
+- Speed: the latency of each request.
+- Quality: how many answers agree with the labels and with the reference answers.
 
-A change to the server passes only when the quality numbers stay inside the guards. The section [Guards](#guards) lists them.
+The quality numbers must stay in the guards after a change to the server. The section [Guards](#guards) lists them.
 
 ## Files
 
-| Path | Role |
+| Path | Description |
 |---|---|
 | `bench.py` | The client. It runs all phases and writes one result file. |
-| `summarize.py` | Prints the summary of one run and one TSV line. |
-| `remote_run.sh` | Makes one complete run on the machine that has the GPU. |
+| `summarize.py` | Shows the values of one run and one TSV line. |
+| `remote_run.sh` | Makes one full run on the host that has the GPU. |
 | `run_experiment.sh` | Runs `remote_run.sh` through SSH and copies the result back. |
-| `launch.example.sh` | Example script that starts the server container. |
-| `bench.env.example` | Lists every setting of the scripts. |
+| `launch.example.sh` | The example script that starts the server container. |
+| `bench.env.example` | Lists all environment variables of the scripts. |
 | `cases.json` | The 48 cases with their labels. |
 | `reference.json` | The Q8_0 reference answers. |
 | `baseline.json` | The guard numbers of the baseline build. |
-| `DATA.md` | The fields, units and meaning of every data file. |
+| `DATA.md` | The fields, units and meaning of each data file. |
 | `tools/make_cases.py` | Makes `cases.json`. |
 | `tools/make_baseline.py` | Makes `baseline.json` from baseline runs. |
 | `tools/count_tokens.py` | Counts the tokens of each case. |
 | `dectest/` | The smoke test with 32 cases and 52 decisions. |
 
-The files `reference.json` and `baseline.json` are empty slots until you make them. Each slot holds the marker `"status": "not-measured"`. The client skips the checks that need the missing data. The section [Make the reference and the baseline](#make-the-reference-and-the-baseline) shows how to fill the slots.
+The files `reference.json` and `baseline.json` are empty slots until you make them. Each slot holds the text `"status": "not-measured"`. The client does not do the checks that use the data of an empty slot. The section [Make the reference and the baseline](#make-the-reference-and-the-baseline) shows how to put data in the slots.
 
 ## The cases
 
-The cases are synthetic. They contain no real server data. The model reads each case as one state and a list of questions.
+A person or a script made all the cases. They hold no data of a server in use. The model reads each case as one state and a list of questions. The field `size` of a case gives its type: `short`, `medium` or `long`.
 
-| Kind | Cases | Decisions | State size (tokens) | Questions per case |
-|---|---:|---:|---|---:|
-| Short | 32 | 52 | 11 to 84, mean 37 | 1 or 2 |
-| Medium syslog excerpt | 8 | 24 | 985 to 1,307, mean 1,202 | 3 |
-| Long syslog excerpt | 8 | 24 | 2,899 to 3,414, mean 3,126 | 3 |
+| Type | Description | Cases | Decisions | State length, minimum (tokens) | State length, maximum (tokens) | State length, mean (tokens) | Questions for each case, minimum | Questions for each case, maximum |
+|---|---|---:|---:|---:|---:|---:|---:|---:|
+| `short` | Four tasks | 32 | 52 | 11 | 84 | 37 | 1 | 2 |
+| `medium` | A part of a syslog | 8 | 24 | 985 | 1,307 | 1,202 | 3 | 3 |
+| `long` | A part of a syslog | 8 | 24 | 2,899 | 3,414 | 3,126 | 3 | 3 |
 
 Source: token counts of the state text with the tokenizer of the model. Each question adds 11 to 94 tokens.
 
-The short cases come from four tasks.
+The `short` cases come from four tasks.
 
 | Task | Cases | Questions | State |
 |---|---:|---|---|
-| `triage` | 12 | `category` (six choices), `needs_action` (yes or no) | One notification of a home server |
+| `triage` | 12 | `category` (six possible answers), `needs_action` (yes or no) | One report of a home server |
 | `check` | 8 | `done` (yes or no) | A task and a report about the task |
-| `style` | 8 | `relative_date`, `secret` (yes or no) | One sentence from a document |
-| `commit` | 4 | `matches` (yes or no) | A commit message and its diff |
+| `style` | 8 | `relative_date`, `secret` (yes or no) | One sentence of a text |
+| `commit` | 4 | `matches` (yes or no) | A commit message and its `diff` |
 
-A syslog case holds routine log lines of a home server. A medium case has 20 routine lines. A long case has 58 routine lines.
+Source: `cases.json`.
 
-Half of the cases have a block of three or four fault lines at a random place. The fault kinds are `storage`, `memory` and `network`. The other cases have no fault. The three questions are `disk_error`, `oom_kill` and `worst`.
+A syslog case holds usual log lines of a home server. A `medium` case has 20 usual lines. A `long` case has 58 usual lines.
+
+75 % of the syslog cases (12 of 16) have a group of three or four fault lines at a random position. The fault types are `storage`, `memory` and `network`, with 4 cases each. The other 4 cases have no fault. The three questions are `disk_error`, `oom_kill` and `worst`.
 
 ## How the labels were made
 
-The author wrote each short case and its label together. No model chose a label.
+The person who made the benchmark wrote each short case and its label together. No model made a label.
 
-Three short labels are debatable: `triage00` (a status report that mentions disk usage), `triage07` (high CPU while a scheduled transcode runs) and `triage08` (a mover summary). Most misses of earlier tests were on these three cases.
+A person can give a different label to three short cases:
 
-The script `tools/make_cases.py` makes the syslog labels by construction. It chooses the fault kind first. It then inserts the fault lines into the routine lines. The label follows from the kind:
+- `triage00`: a report that tells how much of a disk is full.
+- `triage07`: the CPU does much work while a `transcode` runs that started at a set time.
+- `triage08`: a report of the `mover`.
+
+Most of the incorrect answers in the previous tests were for these three cases.
+
+The script `tools/make_cases.py` makes each syslog label together with its case. It selects the fault type first. It then puts the fault lines between the usual lines. The label comes from the type:
 
 - `disk_error` is true for `storage` only.
 - `oom_kill` is true for `memory` only.
-- `worst` is the fault kind, or `none`.
+- `worst` is the fault type, or `none`.
 
-Never change a label, a question, the seed or a guard to improve a result. If you find a fault in the benchmark, record the fault and make a new benchmark version with a new baseline.
+Do not change a label, a question, the seed or a guard to make a result better. If you find a fault in the benchmark, record the fault. Then make a new benchmark with a new baseline.
 
-## The public copy
+## The public benchmark
 
-The first version of this benchmark used the names of internal hosts, networks and paths. This public copy has generic names instead:
+The first benchmark used the names of internal hosts, networks and paths. The public benchmark does not use these names. It uses:
 
 - One host name for all syslog lines.
-- Addresses from the documentation ranges of RFC 5737 and from `2001:db8::/32`.
-- The domain `example.net`.
-- Generic paths.
+- IP addresses for examples, from the ranges of `RFC 5737` and from `2001:db8::/32`.
+- The domain name `example.net`.
+- Paths with general names.
 
-Each replacement has the same token count as the text it replaced. The check used the tokenizer of the model. It found no difference in the 48 cases, neither in a state nor in a question. The questions and the labels did not change.
+Each new name has the same token count as the name that it replaces. The check used the tokenizer of the model. It found no difference in the 48 cases, in a state or in a question. The questions and the labels did not change.
 
-The words differ, so the answers of a model can differ a little. The public copy therefore has its own reference and its own baseline. Do not compare quality numbers between the two copies. Speed numbers are comparable, because the token counts match.
+The words are different. Thus the answers of a model can have small differences. The public benchmark has a different reference and a different baseline. Do not compare quality numbers of the two benchmarks. You can compare speed numbers because the token counts are the same.
 
 ## Metrics
 
-The client prints one line at the end of a run. It also writes a result file. `summarize.py` prints these values.
+The client shows one line at the end of a run. It also writes a result file. `summarize.py` shows these values.
 
 | Metric | Unit | Meaning |
 |---|---|---|
-| `lat_ms` | ms | Primary metric. The median, over the timed passes, of the mean request time in one pass. |
-| `spread_pct` | % | Range of the pass means divided by their median. |
-| Mean and p95 for each size | ms | Mean and 95th percentile of the request time of short, medium and long cases. |
-| `p95` | ms | 95th percentile of all timed requests. |
-| `rps` | requests/s | Completed requests divided by wall time with `--conc` requests in flight. |
-| `decisions_per_s` | decisions/s | Answered questions divided by wall time in the same phase. |
-| `input_tokens_mean` | tokens | Mean of `usage.input_tokens` of the server, for each size. |
-| `correct` | decisions, of 100 | Decisions whose top answer equals the label. |
-| `agree` | fraction, 0 to 1 | Part of the 100 decisions whose top answer equals the reference answer. |
-| `mean_dp` | probability, 0 to 1 | Mean of the largest probability difference to the reference answer. |
-| `flips` | list | Decisions where the top answer differs from the reference. |
-| `cold_ms` | ms | Optional. Time of one short request after 30 s of idle time. |
-| VRAM peak | MiB | Largest `memory.used` that the sampler saw. |
-| Power, SM clock, P-state | W, MHz | Mean power and mean SM clock in the timed pass phase, and the P-states seen. |
-| `startup_s` | s | Time from the start of the launch script until the server is healthy. |
+| `lat_ms` | ms | The primary metric. Each timed pass gives a mean latency. `lat_ms` is the median of these means. |
+| `spread_pct` | % | The range of the mean latencies of the timed passes, divided by their median. |
+| Mean and `p95` for each `size` | ms | The mean and the 95th percentile of the latency of the short requests, the medium requests and the long requests. |
+| `p95` | ms | The 95th percentile of the latency of all requests in the timed passes. |
+| `rps` | requests/s | The number of requests that finish, divided by the time of the `tput` phase. The client sends `--conc` requests at the same time. |
+| `decisions_per_s` | decisions/s | The number of decisions that the server finishes, divided by the time of the `tput` phase. |
+| `input_tokens_mean` | tokens | The mean of `usage.input_tokens` of the server, for each `size`. |
+| `correct` | decisions, of 100 | The number of decisions with a top answer that is the same as the label. |
+| `agree` | number, 0 to 1 | The part of the 100 decisions with a top answer that is the same as the reference answer. |
+| `mean_dp` | probability, 0 to 1 | The mean of the largest probability difference to the reference answer. |
+| `flips` | list | The decisions where the top answer is different from the reference. |
+| `cold_ms` | ms | Optional. The latency of one short request after 30 s with no request. |
+| VRAM maximum | MiB | The largest value of `memory.used` in the sampler file. |
+| Mean power | W | The mean of `power.draw` in the `seq` phase. |
+| Mean SM clock | MHz | The mean of `clocks.sm` in the `seq` phase. |
+| `pstate` values | None | The `pstate` values that the sampler records in the `seq` phase. |
+| `startup_s` | s | The time from the start of the launch script until the server gives a good response to `/health`. |
 
-The top answer of a yes or no question is true when the probability is 0.5 or more. The top answer of a choice question is the choice with the highest probability. The probability difference of a choice question is the largest difference over all choices.
+Source: the result file of `bench.py` and the output of `summarize.py`.
+
+The top answer of a yes or no question is true when the probability is 0.5 or more. The top answer of a `choice` question is the possible answer with the highest probability. The probability difference of a `choice` question is the largest difference of the probabilities of all possible answers.
 
 ## Guards
 
-A run passes when every guard passes. The three quality guards show `n/a` when the baseline or the reference has no measured data.
+The result of a run is `PASS` when the run stays in all guards. The result is `n/a` when the baseline has no measurement: the quality guards did not run. The result is `FAIL` when the run does not stay in a guard.
 
-| Guard | Rule | Needs |
+| Guard | Rule | Data that the guard uses |
 |---|---|---|
-| Errors | No request fails | Nothing |
-| Correct | `correct` is at least the baseline value minus 1 | Measured baseline and reference |
-| Agreement | `agree` is at least the baseline value minus 0.02 | Measured baseline and reference |
-| Probability difference | `mean_dp` is at most the baseline value plus 0.01 | Measured baseline and reference |
-| VRAM | The peak is at most 6,144 MiB | The sampler file of `remote_run.sh` |
+| `errors` | No request gives an error | None |
+| `correct` | `correct` is not less than the baseline value minus 1 | Baseline and reference with measurements |
+| `agree` | `agree` is not less than the baseline value minus 0.02 | Baseline and reference with measurements |
+| `mean_dp` | `mean_dp` is not more than the baseline value plus 0.01 | Baseline and reference with measurements |
+| `vram` | The VRAM maximum is not more than 6,144 MiB | The sampler file of `remote_run.sh` |
 
-The VRAM limit is the default of `summarize.py`. Change it with `--vram-cap-mib` or with `BENCH_VRAM_CAP_MIB`. The VRAM guard fails when the run has no sampler file. The sampler counts all GPU memory in use, so stop other GPU programs first.
+Source: `bench.py` and `summarize.py`.
 
-## Order of the phases
+The VRAM limit is the default of `summarize.py`. You can change it with the flag `--vram-cap-mib` or with `BENCH_VRAM_CAP_MIB`. If the run has no sampler file, the result is `FAIL`. The sampler counts all GPU memory that programs use. Thus you must stop other GPU programs first.
 
-The client works in this order:
+## Sequence of the phases
 
-1. **Warmup.** Three requests, not counted.
-2. **Quality.** Each case once, with its raw state. The client scores the answers.
-3. **Timed passes.** Each pass sends all 48 cases, one request at a time, in a shuffled order. The default is 5 passes.
-4. **Throughput.** Each case three times, with `--conc` requests in flight. The default is 8.
-5. **Cold.** Optional. `--cold N` sends N short requests, each after 30 s of idle time.
+The client does the phases in this sequence:
 
-Each request except the quality requests starts with a line `Ref: <hash>`. The hash is different for each request. The line prevents the server from answering from a cache of an earlier request.
+1. **`warmup`.** The client sends three requests. It does not count them.
+2. **`quality`.** The client sends each case one time, with the state without change. It then calculates the quality numbers from the answers.
+3. **`seq`.** The client does 5 timed passes. This is the default. Each timed pass sends all 48 cases, one request at a time, in a random sequence.
+4. **`tput`.** The client sends each case three times. It sends `--conc` requests at the same time. The default is 8.
+5. **`cold`.** Optional. The flag `--cold N` sends `N` short requests. Each request comes after 30 s with no request.
 
-## Requirements
+All requests, but not the requests of the `quality` phase, start with a line `Ref: <hash>`. The hash is different for each request. The line makes sure that the server does not get a response from the cache of a previous request.
 
-- Python 3.8 or later. The client uses only the standard library.
-- A `llama-server` build with decision-model support, for example llama.cpp `b12004`.
-- For a complete run: a container tool (Docker or Podman), `nvidia-smi`, `curl` and `bash`.
-- For a run through SSH: `ssh`, `rsync` and `python3` on your workstation.
+## Necessary items
+
+- Python 3.8 or higher. The client uses only code that comes with Python.
+- A `llama-server` build that can run the decision model, for example llama.cpp `b12004`.
+- For a full run: a container tool, for example `docker` or `podman`, and the programs `nvidia-smi`, `curl` and `bash`.
+- For a run through SSH: `ssh`, `rsync` and `python3` on your device.
 
 ## Use the benchmark
 
-### Run the client against a running server
+### Run the client against a server
 
-1. Start the server. It must serve `POST /v1/systemone`.
+1. Start the server. It must receive the requests of `POST /v1/systemone`.
 2. Make a folder for the results: `mkdir runs`.
 3. Run the client:
 
@@ -155,65 +169,67 @@ Each request except the quality requests starts with a line `Ref: <hash>`. The h
    python3 bench.py --host 127.0.0.1 --port 18080 --out runs/my-run.json
    ```
 
-4. Show the summary:
+4. Show the values of the run:
 
    ```sh
    python3 summarize.py runs/my-run
    ```
 
-Use `BENCH_HOST` and `BENCH_PORT` instead of the options when you prefer variables. The client options are:
+The environment variables `BENCH_HOST` and `BENCH_PORT` are an alternative to the flags `--host` and `--port`. The client has the flags `--host`, `--port` and `--out`. It also has these flags:
 
-| Option | Default | Meaning |
+| Flag | Default | Meaning |
 |---|---|---|
-| `--passes N` | 5 | Number of timed passes |
-| `--conc N` | 8 | Requests in flight in the throughput phase |
-| `--cold N` | 0 | Number of cold requests |
-| `--cases`, `--reference`, `--baseline` | Files in this folder | Other input files |
-| `--write-reference LABEL` | None | Save the quality answers as `LABEL.reference.json` |
-| `--startup-s S` | None | Startup time to record in the result file |
+| `--passes N` | 5 | The number of timed passes |
+| `--conc N` | 8 | The number of requests at the same time in the `tput` phase |
+| `--cold N` | 0 | The number of requests in the `cold` phase |
+| `--cases`, `--reference`, `--baseline` | The files in this folder | The paths of other input files |
+| `--write-reference LABEL` | None | Writes the answers of the `quality` phase to `LABEL.reference.json` |
+| `--startup-s S` | None | The time that the server used to start. The client writes it in the result file. |
 
-### Make a complete run on the GPU machine
+Source: `bench.py`.
 
-A complete run also records the GPU memory, power and clocks. Do these steps on the machine that has the GPU.
+### Make a full run on the GPU host
 
-1. Make `bench.env` from `bench.env.example`. Edit it.
-2. Make `launch.sh` from `launch.example.sh`. Edit it when you need other server flags. The file `.gitignore` keeps both files out of git.
-3. Run the runner:
+A full run also records the GPU memory, the power and the clocks. Do these steps on the host that has the GPU.
+
+1. Make `bench.env` from `bench.env.example`. Change the values in it.
+2. Make `launch.sh` from `launch.example.sh`. Change it if you must use other server flags. The file `.gitignore` keeps the two files out of git.
+3. Run the script `remote_run.sh`:
 
    ```sh
    BENCH_ENV_FILE=bench.env bash remote_run.sh my-run
    ```
 
-4. Show the summary: `python3 summarize.py runs/my-run`.
+4. Show the values of the run: `python3 summarize.py runs/my-run`.
 
-### What the script does
+### The work of the script
 
-The script `remote_run.sh` does these things:
+The script `remote_run.sh` does these tasks:
 
-- It starts the GPU sampler, which writes `runs/my-run.smi`.
-- It runs `launch.sh`, then waits until `/health` answers.
-- It runs `bench.py` in a Python container on the host network.
-- It saves the server log and removes the containers.
-- It resets GPU clock locks only when you set `RESET_GPU_CLOCKS=1`.
+- It starts the GPU sampler. The sampler writes `runs/my-run.smi`.
+- It runs `launch.sh`. Then it waits until `/health` gives a response.
+- It runs `bench.py` in a Python container with the network of the host.
+- It writes the server log to a file and removes the containers.
+- It removes the clock locks of the GPU only when you set `RESET_GPU_CLOCKS=1`.
 
 ### Run through SSH
 
-1. Set `GPU_HOST` and `GPU_WORK_DIR` in `bench.env` or in your shell.
-2. Run the driver on your workstation:
+1. Set `GPU_HOST` and `GPU_WORK_DIR` in `bench.env` or as environment variables.
+2. Run the script `run_experiment.sh` on your device:
 
    ```sh
    ./run_experiment.sh my-run
    ```
 
-The driver copies this folder and `launch.sh` to the GPU machine. It runs the runner there and copies the files `runs/my-run.*` back. It then prints the summary.
+The script `run_experiment.sh` puts a copy of this folder and of `launch.sh` on the GPU host. It runs `remote_run.sh` there. It then puts a copy of the files `runs/my-run.*` on your device and shows the values of the run.
 
 ## Make the model files
 
-The benchmark uses two model files. Both come from one download.
+The two model files of the benchmark come from one download.
 
 1. Download the Q8_0 file from the `h2oai/h2o-lightning-4b-gguf` repository on Hugging Face. The file name is `h2o-lightning-4b-Q8_0.gguf`. It has 4.48 GB.
 2. Set `IMAGE` to the server image, for example `ghcr.io/ggml-org/llama.cpp:server-cuda-b12004`. Set `MODEL_DIR` to the folder with the file.
-3. Make the "mix8" file. It keeps Q8_0 for the attention, recurrent, embedding and output weights. It uses Q4_0 for the feed-forward weights.
+3. Make the `mix8` file. It keeps Q8_0 for the weights of the attention layers and of the recurrent layers. It also keeps Q8_0 for the embedding and for the output weights. It uses Q4_0 for the weights of the feed-forward layers.
 
    ```sh
    docker run --rm --cpus 6 -v "$MODEL_DIR:/models" --entrypoint /app/llama "$IMAGE" \
@@ -224,13 +240,13 @@ The benchmark uses two model files. Both come from one download.
      /models/h2o-lightning-4b-Q8_0.gguf /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf Q4_0 6
    ```
 
-A new build of `llama quantize` can make a file that is not byte-identical. Run the benchmark before you use such a file.
+A new build of `llama quantize` can make a file with different bytes. Run the benchmark before you use such a file.
 
 ## Make the reference and the baseline
 
-The reference answers and the baseline numbers do not exist yet. Measure both once, on a quiet GPU, with the stock server image. Do not start another GPU program at the same time.
+The reference answers and the baseline numbers are not available at this time. Measure the reference and the baseline one time. Use a GPU that does no other work, and the server image of the stock build. Do not start a different GPU program at the same time.
 
-The reference is the answer set of the Q8_0 model. The baseline is the quality of the build that you compare against. The baseline also holds three guard numbers. The runs of the baseline make the numbers.
+The reference is the set of the answers of the Q8_0 model. The baseline is the quality of the build that you compare with. The baseline also holds three guard numbers. The runs of the baseline make the numbers.
 
 1. Set `MODEL` to the Q8_0 file in `bench.env`. Keep the baseline server flags.
 2. Make the reference run:
@@ -246,7 +262,7 @@ The reference is the answer set of the Q8_0 model. The baseline is the quality o
    cp runs/ref-q8.reference.json reference.json
    ```
 
-5. Set `MODEL` to the mix8 file in `bench.env`.
+5. Set `MODEL` to the `mix8` file in `bench.env`.
 6. Make three baseline runs:
 
    ```sh
@@ -260,16 +276,16 @@ The reference is the answer set of the Q8_0 model. The baseline is the quality o
      --note "stock server image, mix8 model, date" --out baseline.json
    ```
 
-8. Make one more run: `./run_experiment.sh base-4`. Make sure that the guard says PASS.
+8. Make one more run: `./run_experiment.sh base-4`. Make sure that the result is `PASS`.
 9. Commit `reference.json`, `baseline.json` and the files of the four runs.
 
-`make_baseline.py` stops when the three runs have different quality numbers. Find the cause before you continue.
+`make_baseline.py` stops when the quality numbers of the three runs are different. Find the cause before you continue.
 
 ## Token length test
 
-Use this test after any change to a case.
+Use this test after you change a case.
 
-1. Start a server on the CPU. It needs no GPU flags:
+1. Start a server on the CPU. Do not use GPU flags:
 
    ```sh
    docker run --rm -p 127.0.0.1:8080:8080 -v "$MODEL_DIR:/models:ro" "$IMAGE" \
@@ -283,7 +299,7 @@ Use this test after any change to a case.
    python3 tools/count_tokens.py cases.json --url http://127.0.0.1:8080
    ```
 
-3. Compare two case files. The exit code is 1 when any case differs:
+3. Compare two case files. The exit code is 1 when a case has a different token count:
 
    ```sh
    python3 tools/count_tokens.py old-cases.json --compare cases.json --url http://127.0.0.1:8080
@@ -291,14 +307,14 @@ Use this test after any change to a case.
 
 ## Make the cases again
 
-The script `tools/make_cases.py` makes `cases.json` from `dectest/cases.json` and a fixed seed.
+The script `tools/make_cases.py` makes `cases.json` from `dectest/cases.json` and a seed that does not change.
 
 ```sh
 python3 tools/make_cases.py --check
 ```
 
-The command fails when `cases.json` differs from the script output. Do not change the seed, the line templates or the order of the random draws. Any such change moves the cases and makes older results incomparable.
+The command stops with an error if `cases.json` is different from the output of the script. Do not change the seed, the text of the log lines or the sequence of the random numbers. Such a change gives different cases. Then you cannot compare the new results with the previous results.
 
 ## Smoke test
 
-The folder [dectest/](dectest/README.md) holds the 32 short cases as a stand-alone test with 52 decisions. Use it for a fast check of answer quality after a change.
+The folder [`dectest/`](dectest/README.md) holds the 32 short cases as a test with 52 decisions. You can use the test without the other cases. Use it for a fast check of the answer quality after a change.
