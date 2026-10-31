@@ -151,14 +151,20 @@ The two tables have the same columns. The rows of `ranked.tsv` are in the sequen
 
 ### `tables/sum.tsv`
 
+The total gain of the targets `A`, `B`, `C`, `D`, `E`, `F`, `G` and `J`. The function `combined` in `make_tables.py` applies `J` first. The other targets then use the passes that stay. The comments in the script give the sequence. The table has one row for each request type and one row for `lat_ms`.
+
 | Column | Unit | Meaning |
 |---|---|---|
-| `targets` | None | The targets in the sum |
-| `lat_ms_now` | ms | `lat_ms` of the time model |
-| `lat_ms_predicted` | ms | `lat_ms` if each target gives the gain of its prediction |
-| `lat_ms_predicted_pct` | % | The change |
-| `lat_ms_expected` | ms | `lat_ms` if the script multiplies each gain by its confidence |
-| `lat_ms_expected_pct` | % | The change |
+| `scope` | None | The request type, or `lat_ms` for the mean of the 48 cases |
+| `targets` | None | The targets of the total gain |
+| `time_now_ms` | ms | The time of the time model with no change |
+| `simple_sum_ms` | ms | The sum of the gains of the targets in `savings.tsv`. It counts some kernel time two times. Use it only to compare with `all_pass_saved_ms`. |
+| `all_pass_saved_ms` | ms | The total gain if each target gives its full gain |
+| `all_pass_time_ms` | ms | `time_now_ms` minus `all_pass_saved_ms` |
+| `all_pass_pct` | % | The change |
+| `expected_saved_ms` | ms | The mean of the total gain for all 256 possible results. In each result, each target gives its full gain or no gain. The probability of the full gain is the confidence of the target. |
+| `expected_time_ms` | ms | `time_now_ms` minus `expected_saved_ms` |
+| `expected_pct` | % | The change |
 
 ## Files not added
 

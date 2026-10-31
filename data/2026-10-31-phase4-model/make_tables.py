@@ -54,10 +54,10 @@ def col_sum(t, col):
     return sum(f(p, col) for p in req_passes(t))
 
 
-def mmq_by_size(t, large, mid, small):
-    """Sum of MMQ ms times a factor that depends on the token count of the pass."""
+def mmq_by_size(plist, large, mid, small):
+    """Sum of MMQ ms of the passes times a factor that depends on the token count of the pass."""
     total = 0.0
-    for p in req_passes(t):
+    for p in plist:
         tok = p["tokens"]
         if tok in ("2048", "1025-2047"):
             total += f(p, "mmq_ms") * large
@@ -86,9 +86,9 @@ def saving(model, prm, t):
     if model == "fusion":
         return (col_sum(t, "quantize_ms") + col_sum(t, "rms_norm_ms") + col_sum(t, "elementwise_ms")) * prm["saved_fraction"]
     if model == "mmq":
-        return mmq_by_size(t, 1 - 1 / prm["speedup_large"], 1 - 1 / prm["speedup_mid"], 1 - 1 / prm["speedup_small"])
+        return mmq_by_size(req_passes(t), 1 - 1 / prm["speedup_large"], 1 - 1 / prm["speedup_mid"], 1 - 1 / prm["speedup_small"])
     if model == "mmq_tune":
-        return mmq_by_size(t, prm["saved_large"], prm["saved_other"], prm["saved_other"])
+        return mmq_by_size(req_passes(t), prm["saved_large"], prm["saved_other"], prm["saved_other"])
     if model == "ragged":
         suffixes = [p for p in req_passes(t) if p["pass_type"].startswith("suffix")]
         if len(suffixes) < 2:
@@ -105,7 +105,7 @@ def saving(model, prm, t):
     if model == "mmq_after_g":
         g = next(x for x in targets if x["model"] == "mmq")
         gp = params(g["parameters"])
-        left = mmq_by_size(t, 1 / gp["speedup_large"], 1 / gp["speedup_mid"], 1 / gp["speedup_small"])
+        left = mmq_by_size(req_passes(t), 1 / gp["speedup_large"], 1 / gp["speedup_mid"], 1 / gp["speedup_small"])
         return left * (1.0 - 1.0 / prm["speedup"])
     if model == "build":
         return f(r, "build_ms") * prm["saved_fraction"]
@@ -152,14 +152,97 @@ write_tsv("savings.tsv", header, rows)
 # Table 3: the same rows, sorted by the expected gain of lat_ms (gain times confidence).
 write_tsv("ranked.tsv", header, [r for _, r in sorted(ranked, key=lambda z: -z[0])])
 
-# Table 4: simple sum of a set of targets that do not change the same time.
-# H is left out because it changes the same MMQ time as G. N is left out because it comes after G.
-SUM_IDS = ["A", "B", "C", "D", "E", "F", "G", "J"]
-by_id = {r[0]: r for r in rows}
-lat_col = header.index("lat_ms")
-pred = sum(float(by_id[i][lat_col]) for i in SUM_IDS)
-expd = sum(float(by_id[i][lat_col]) * float(by_id[i][4]) for i in SUM_IDS)
-write_tsv("sum.tsv", ["targets", "lat_ms_now", "lat_ms_predicted", "lat_ms_predicted_pct", "lat_ms_expected", "lat_ms_expected_pct"],
-          [["+".join(SUM_IDS), f"{lat:.1f}", f"{lat - pred:.1f}", f"{-100 * pred / lat:.1f}", f"{lat - expd:.1f}", f"{-100 * expd / lat:.1f}"]])
+# Table 4: combined saving of a set of targets.
+# The savings of the targets do not add, because some targets change the same kernel time.
+# The model applies the targets of the set in this sequence:
+# 1. J replaces the suffix passes by one pass. The new pass has the kernel times of single_129_256,
+#    multiplied by its token count / 158, and one output head. J also removes the gaps between the
+#    suffix passes and adds extra_ms (the "ragged" function above).
+# 2. A, C, D, F and G then use the passes that remain. A uses the number of output passes that remain.
+# 3. E is the measured saving, multiplied by the share of the GLU and quantization time that remains after J.
+# 4. F uses the quantization, RMS norm and element-wise time that remains after E.
+# 5. B changes only the copies and the host time of the mask. J does not change the total mask bytes,
+#    because the mask bytes are proportional to the token count.
+# H and N change the same MMQ time as G, so the set does not have them.
+COMBO_IDS = ["A", "B", "C", "D", "E", "F", "G", "J"]
+tp = {x["id"]: params(x["parameters"]) for x in targets}
+tconf = {x["id"]: float(x["confidence"]) for x in targets}
+single_save = {x["id"]: {t: saving(x["model"], params(x["parameters"]), t) for t in TYPES} for x in targets}
+
+
+def merged_pass(tokens):
+    """The one suffix pass of J: the columns of single_129_256 times tokens / 158, with one output head."""
+    one = passes["single_129_256"]
+    m = {c: str(f(one, c) * tokens / 158.0) for c in one if c.endswith("_ms")}
+    m.update(pass_type="merged_suffix", tokens="129-256", gdn_kernel="gdn_single", head_ms=one["head_ms"])
+    return m
+
+
+def combined(t, active):
+    """Time saved for one request of type t when all targets in `active` give their predicted gains."""
+    r = requests[t]
+    plist = req_passes(t)
+    n_out = int(r["output_passes"])
+    save = 0.0
+    if "J" in active and sum(p["pass_type"].startswith("suffix") for p in plist) >= 2:
+        save += saving("ragged", tp["J"], t)
+        plist = [p for p in plist if not p["pass_type"].startswith("suffix")] + [merged_pass(tp["J"][t + "_tokens"])]
+        n_out = 1
+
+    def s(col):
+        return sum(f(p, col) for p in plist)
+
+    if "A" in active:
+        save += n_out * (f(passes["suffix_le8"], "head_ms") - tp["A"]["head_after_ms"])
+    if "B" in active:
+        save += saving("mask", tp["B"], t)
+    if "C" in active:
+        save += s("concat_ms") * (1.0 - tp["C"]["kept_fraction"])
+    if "D" in active:
+        save += sum(f(p, "gdn_ms") for p in plist if p["gdn_kernel"] == "gdn_single") * (1.0 - 1.0 / tp["D"]["speedup"])
+    e_ms = 0.0
+    if "E" in active:
+        share = (s("glu_ms") + s("quantize_ms")) / (col_sum(t, "glu_ms") + col_sum(t, "quantize_ms"))
+        e_ms = saving("measured", tp["E"], t) * share
+        save += e_ms
+    if "F" in active:
+        rest = s("quantize_ms") + s("rms_norm_ms") + s("elementwise_ms") - e_ms
+        save += max(0.0, rest) * tp["F"]["saved_fraction"]
+    if "G" in active:
+        g = tp["G"]
+        save += mmq_by_size(plist, 1 - 1 / g["speedup_large"], 1 - 1 / g["speedup_mid"], 1 - 1 / g["speedup_small"])
+    return save
+
+
+# Self-check: a set with one target gives the saving of Table 2 for that target.
+for i in COMBO_IDS:
+    for t in TYPES:
+        assert abs(combined(t, {i}) - single_save[i][t]) < 1e-9, (i, t)
+
+# Expected saving: the mean over all 2^8 outcomes. Each target passes with the probability of its
+# confidence, independently of the other targets.
+outcomes = []
+for mask in range(1 << len(COMBO_IDS)):
+    act = {COMBO_IDS[k] for k in range(len(COMBO_IDS)) if mask >> k & 1}
+    w = 1.0
+    for i in COMBO_IDS:
+        w *= tconf[i] if i in act else 1.0 - tconf[i]
+    outcomes.append((w, act))
+
+full = {t: combined(t, set(COMBO_IDS)) for t in TYPES}
+expd = {t: sum(w * combined(t, act) for w, act in outcomes) for t in TYPES}
+simple = {t: sum(single_save[i][t] for i in COMBO_IDS) for t in TYPES}
+rows = []
+for scope in TYPES + ["lat_ms"]:
+    if scope == "lat_ms":
+        wall = lat
+        fu, ex, si = (sum(d[t] * cases[t] for t in TYPES) / n_cases for d in (full, expd, simple))
+    else:
+        wall = f(requests[scope], "wall_ms")
+        fu, ex, si = full[scope], expd[scope], simple[scope]
+    rows.append([scope, "+".join(COMBO_IDS), f"{wall:.1f}", f"{si:.1f}", f"{fu:.1f}", f"{wall - fu:.1f}",
+                 f"{-100 * fu / wall:.1f}", f"{ex:.1f}", f"{wall - ex:.1f}", f"{-100 * ex / wall:.1f}"])
+write_tsv("sum.tsv", ["scope", "targets", "time_now_ms", "simple_sum_ms", "all_pass_saved_ms", "all_pass_time_ms",
+                      "all_pass_pct", "expected_saved_ms", "expected_time_ms", "expected_pct"], rows)
 print(f"lat_ms of the model: {lat:.1f}")
 print(f"wrote {OUT}/floors.tsv, savings.tsv, ranked.tsv, sum.tsv")

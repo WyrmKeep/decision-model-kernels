@@ -96,7 +96,8 @@ The gains do not add. Some targets change the same time:
 - `G`, `H` and `N` change the same MMQ time. `H` is a short test of the cause that `G` removes. `N` can give a gain only after `G`.
 - `J` removes 2 of the 3 output passes of `medium` and `long`. After `J`, `A` gives a gain for the output head of one pass only.
 - `B` and `L` make the attention mask smaller or remove its copy.
-- `E` is one of the fusions of `F`. The numbers of `F` do not include `E`.
+- `E` and `F` change the same quantization kernels. Thus the time model gives `F` only the quantization time that stays after `E`.
+- `J` replaces the suffix passes with one pass. That pass also has MMQ, GDN, concat and output head time. Thus the gains of `A`, `C`, `D`, `F` and `G` become smaller after `J`.
 - `P` and `K` remove the same idle time in the passes. Do `P` first, because it is smaller.
 
 ## Recommended sequence
@@ -112,19 +113,33 @@ The ranked list has the sequence of the expected gain. The sequence below also u
 7. **`F`, `L`, `P`, `K`, `O`.** Smaller targets. Do them if the rule to stop does not stop the project.
 8. **`N` and `M`.** We do not recommend them at this time. The effort is very large and the confidence is low.
 
-## Prediction of the sum
+## Prediction of the total gain
 
-The sum uses targets `A`, `B`, `C`, `D`, `E`, `F`, `G` and `J`. It does not use `H`, because `H` changes the same MMQ time as `G`. It does not use `N`, because `N` comes after `G`.
+Correction, 2026-10-31, before the measurement of a target: the first version of this section added the gains of the 8 targets. That sum counted some kernel time two times, because `J` removes passes that `A`, `C`, `F` and `G` also make faster. The section below replaces that sum.
 
-| Case | `lat_ms` (ms) | Change |
-|---|---:|---:|
-| At this time (time model) | 240.9 | 0 |
-| All 8 targets give the gains of their predictions | 153.7 | −36.2 % |
-| Each gain multiplied by its confidence | 195.9 | −18.7 % |
+The total gain uses targets `A`, `B`, `C`, `D`, `E`, `F`, `G` and `J`. It does not use `H`, because `H` changes the same MMQ time as `G`. It does not use `N`, because `N` comes after `G`.
+
+The time model applies the targets in this sequence:
+
+1. `J` replaces the suffix passes with one pass. The new pass has one output head. Its kernel times come from the pass of 158 tokens of `short1q`, multiplied by the number of tokens and divided by 158.
+2. `A`, `C`, `D`, `F` and `G` then use the passes that stay.
+3. The time model multiplies the gain that we measured for `E` by the part of the GLU and quantization time that stays after `J`.
+4. `F` uses the time of the quantization kernels, RMS norm kernels and element-wise kernels that stays after `E`.
+5. `B` changes only the copies and the host time of the attention mask. `J` does not change the total length of the attention masks.
+
+For the expected gain, the script calculates all 256 possible results. In each result, each target gives its full gain or no gain. The probability of the full gain is the confidence of the target. The time model also has an assumption: the result of one target does not change the probability of a different target.
+
+| Request type | Time at this time (ms) | Sum of the gains of the 8 targets (ms) | Time if each target gives its full gain (ms) | Change | Time with the expected gain (ms) | Change |
+|---|---:|---:|---:|---:|---:|---:|
+| `short1q` | 47.1 | 12.9 | 34.4 | −27.0 % | 40.3 | −14.4 % |
+| `short2q` | 87.1 | 36.5 | 53.8 | −38.3 % | 69.5 | −20.2 % |
+| `medium` | 360.0 | 137.9 | 230.2 | −36.1 % | 292.5 | −18.7 % |
+| `long` | 797.0 | 274.5 | 534.4 | −33.0 % | 659.9 | −17.2 % |
+| `lat_ms` | 240.9 | 87.2 | 158.4 | −34.2 % | 197.8 | −17.9 % |
 
 Source: `tables/sum.tsv` in [2026-10-31-phase4-model](../../data/2026-10-31-phase4-model/README.md).
 
-These numbers are the sum of the gains. Thus they are approximate.
+The column "Sum of the gains of the 8 targets" shows the first version. For `lat_ms`, it is 4.7 ms larger than the total gain. The new pass of `J` and the assumption about the probabilities can be incorrect. Thus the total gain is approximate.
 
 The time of a request is then 1.4 times (`long`) to 1.8 times (`short1q`) the roofline floor. Most of the remaining difference is in MMQ.
 
