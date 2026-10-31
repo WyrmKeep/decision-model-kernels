@@ -29,7 +29,7 @@ The folder `bench/` has the public benchmark. It has one host name for all syslo
 
 Each replacement has the same number of tokens as the text that it replaces. You can thus compare the speed numbers of the two benchmarks. The words of the two benchmarks are different. The answers can thus have small differences. The public benchmark has a different set of reference answers and a different baseline. You must not compare the quality numbers of the two benchmarks.
 
-The file `bench/reference.json` holds the answers of the Q8_0 model that the project measured on 2026-10-30. The file `bench/baseline.json` holds the mark `"status": "not-measured"` until the next measurement window. While the mark is there, the client does not do the checks that use it. The [README of the benchmark](../bench/README.md#source-of-the-reference) gives the source of the reference.
+The file `bench/reference.json` holds the answers of the Q8_0 model that the project measured on 2026-10-30. The file `bench/baseline.json` holds the numbers of build `D` with the model mix8 that the project measured on 2026-10-31. A file with the mark `"status": "not-measured"` is an empty slot. The client does not do the checks that use an empty slot. The [README of the benchmark](../bench/README.md#source-of-the-reference) gives the source of the reference. It also gives the [source of the baseline](../bench/README.md#source-of-the-baseline).
 
 ### The cases
 
@@ -97,7 +97,7 @@ The three quality guards use the baseline and the reference. If a file has the m
 
 The sampler writes 4 lines each second. The VRAM guard uses the largest value of `memory.used` in the sampler file of the run. If the run has no sampler file, the VRAM guard is false. The flag `--vram-cap-mib` or the environment variable `BENCH_VRAM_CAP_MIB` changes the limit of 6,144 MiB.
 
-The baseline numbers come from 3 runs of the baseline build. The script `bench/tools/make_baseline.py` makes the file `baseline.json`. It stops when the quality numbers of the 3 runs are different.
+The baseline numbers come from 3 runs of the baseline build. The script `bench/tools/make_baseline.py` makes the file `baseline.json`. It stops when the quality numbers of the 3 runs are different. The project measured the baseline on 2026-10-31, with 3 runs of build `D` and the model mix8. A fourth run gave `PASS`.
 
 ### The 52-decision set
 

@@ -25,14 +25,14 @@ The quality numbers must stay in the guards after a change to the server. The se
 | `bench.env.example` | Lists all environment variables of the scripts. |
 | `cases.json` | The 48 cases with their labels. |
 | `reference.json` | The Q8_0 reference answers. Measured on 2026-10-30. |
-| `baseline.json` | The guard numbers of the baseline build. Not measured at this time. |
+| `baseline.json` | The guard numbers of the baseline build. Measured on 2026-10-31. |
 | `DATA.md` | The fields, units and meaning of each data file. |
 | `tools/make_cases.py` | Makes `cases.json`. |
 | `tools/make_baseline.py` | Makes `baseline.json` from baseline runs. |
 | `tools/count_tokens.py` | Counts the tokens of each case. |
 | `dectest/` | The smoke test with 32 cases and 52 decisions. |
 
-The file `reference.json` holds the answers of the Q8_0 model, measured on 2026-10-30. The section [Source of the reference](#source-of-the-reference) gives the source. The file `baseline.json` is an empty slot until the next measurement window. It holds the text `"status": "not-measured"`. The client does not do the checks that use the data of an empty slot. The section [Make the reference and the baseline](#make-the-reference-and-the-baseline) shows how to put data in the slot.
+The file `reference.json` holds the answers of the Q8_0 model, measured on 2026-10-30. The file `baseline.json` holds the guard numbers of build `D` with the model mix8, measured on 2026-10-31. The sections [Source of the reference](#source-of-the-reference) and [Source of the baseline](#source-of-the-baseline) give the sources. A file with the text `"status": "not-measured"` is an empty slot. The client does not do the checks that use the data of an empty slot. The section [Make the reference and the baseline](#make-the-reference-and-the-baseline) shows how to make the two files again.
 
 ## The cases
 
@@ -124,7 +124,7 @@ The top answer of a yes or no question is true when the probability is 0.5 or mo
 
 ## Guards
 
-The result of a run is `PASS` when the run stays in all guards. The result is `n/a` when the baseline has no measurement: the quality guards did not run. The result is `FAIL` when the run does not stay in a guard.
+The result of a run is `PASS` when the run stays in all guards. The result is `n/a` when the baseline file or the reference file has the mark `not-measured`: the quality guards did not run. The result is `FAIL` when the run does not stay in a guard.
 
 | Guard | Rule | Data that the guard uses |
 |---|---|---|
@@ -244,7 +244,7 @@ A new build of `llama quantize` can make a file with different bytes. Run the be
 
 ## Make the reference and the baseline
 
-The project measured the reference answers on 2026-10-30. The baseline numbers are not available at this time. The baseline comes from the next measurement window. Measure the baseline one time. Use a GPU that does no other work. Use a server build that has no change to the code of llama.cpp.
+The project measured the reference answers on 2026-10-30 and the baseline numbers on 2026-10-31. The sections [Source of the reference](#source-of-the-reference) and [Source of the baseline](#source-of-the-baseline) give the sources. Make the files again only when you change `cases.json`, the reference model or the baseline build. Measure the baseline one time. Use a GPU that does no other work. Use a server build that has no change to the code of llama.cpp.
 
 The reference is the set of the answers of the Q8_0 model. The baseline is the quality of the build that you compare with. The baseline also holds three guard numbers. The runs of the baseline make the numbers.
 
@@ -296,6 +296,47 @@ Steps 1 to 4 show how the project made the reference. Do them again only when yo
 | Raw files | [`p2-pub-ref-q8.*` in the data set](../data/2026-10-30-window1/raw/) |
 
 The production flags are `-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots`. Build `D` has no change to the code of llama.cpp. On the private benchmark, build `D` gives the same answers as the stock image. The answers have the same bits. The [result of phase 1](../docs/notebook/2026-10-30-phase1-equivalence-result.md) shows this. The [README of the data set](../data/2026-10-30-window1/README.md) gives the build flags, the image digests and the driver.
+
+### Source of the baseline
+
+| Item | Value |
+|---|---|
+| Run names | `p3-pub-base-1`, `p3-pub-base-2` and `p3-pub-base-3` |
+| Date | 2026-10-31, start of the first run at 00:01 UTC |
+| Model | `h2o-lightning-4b-rq-Q4_0-mix8.gguf` ("mix8") |
+| Server | Build `D` of tag `b12004`, commit `3c809f44383bcebc318b8cddd8c6d11aaa861e9b`, with the production flags |
+| Reference | `reference.json`, the answers of `p2-pub-ref-q8` |
+| Timed passes | 5 for each run |
+| Errors | 0 in each run |
+| File | `baseline.json`, made with `tools/make_baseline.py` from the three runs |
+| Text in the field `note` | `from-source-b12004-sm86-build-D_mix8_production-flags_2026-10-31` |
+| Check run | `p3-pub-base-4`, with the new `baseline.json` |
+| Raw files | [`p3-pub-*` in the data set](../data/2026-10-31-public-baseline/raw/) |
+
+The baseline build is build `D`, not the stock image. The [README of the data set](../data/2026-10-31-public-baseline/README.md) gives the build flags, the image digests and the driver. It also tells which checks the script of the data set does.
+
+| Quantity | Unit | `p3-pub-base-1` | `p3-pub-base-2` | `p3-pub-base-3` | Value in `baseline.json` |
+|---|---|---:|---:|---:|---|
+| `correct` | decisions, of 100 | 94 | 94 | 94 | 94 |
+| `agree` | 0 to 1 | 0.97 | 0.97 | 0.97 | 0.97 |
+| `mean_dp` | probability | 0.014975 | 0.014975 | 0.014975 | 0.014975 |
+| `lat_ms` | ms | 236.2 | 236.9 | 237.3 | 236.2, 236.9 and 237.3 |
+| `short_ms` | ms | 71.1 | 71.3 | 71.3 | 71.1, 71.3 and 71.3 |
+| `rps` with 8 requests at the same time | requests/s | 4.23 | 4.23 | 4.24 | 4.23 |
+| Largest VRAM use | MiB | 4,415 | 4,415 | 4,415 | 4,415 |
+
+Source: the table `public-bench.tsv` and the table `baseline-check.tsv` of the [data set](../data/2026-10-31-public-baseline/README.md).
+
+The three runs have the same answers. In each run, three decisions have a top answer that is different from the reference: `triage07.needs_action`, `style03.secret` and `long07-none.worst`. In each run, six decisions have a top answer that is different from the label.
+
+With this baseline, the limits of the guards are:
+
+- `correct`: 93 or more.
+- `agree`: 0.95 or more.
+- `mean_dp`: 0.024975 or less.
+- VRAM: 6,144 MiB or less.
+
+The check run `p3-pub-base-4` has `lat_ms` 236.9 ms and the result `PASS`. The file `baseline.json` has the same bytes as the file `p3-pub-mkbase.baseline.json` in the data set.
 
 ## Token length test
 

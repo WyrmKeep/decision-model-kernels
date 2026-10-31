@@ -1,0 +1,6 @@
+# Public benchmark baseline (bench/README.md procedure): 3 runs with the measured Q8_0 reference, make_baseline.py, then a check run that must pass
+client p3-pub-base-1 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --out /runs/{name}.json --write-reference {name} --baseline /extra/pubbench/baseline.json
+client p3-pub-base-2 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --out /runs/{name}.json --write-reference {name} --baseline /extra/pubbench/baseline.json
+client p3-pub-base-3 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --out /runs/{name}.json --write-reference {name} --baseline /extra/pubbench/baseline.json
+client p3-pub-mkbase build:b12004-sm86 /extra/pubbench/tools/make_baseline.py /runs/p3-pub-base-1.json /runs/p3-pub-base-2.json /runs/p3-pub-base-3.json --note from-source-b12004-sm86-build-D_mix8_production-flags_2026-10-31 --out /runs/p3-pub-mkbase.baseline.json
+client p3-pub-base-4 build:b12004-sm86 /extra/pubbench/bench.py --cases /extra/pubbench/cases.json --reference /extra/pubbench/reference.json --out /runs/{name}.json --write-reference {name} --baseline /runs/p3-pub-mkbase.baseline.json
