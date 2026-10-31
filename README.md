@@ -22,7 +22,10 @@ Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked lis
 - The ranked list has 15 targets. The first change is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
 - The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and the changes 0001 (target `E`), 0003 (target `A`), 0004 (target `B`), 0005 (target `C`) and 0007 (target `P`).
 - The [first test of the stack](docs/notebook/2026-10-31-stack-1-result.md) compares the stack with build `D`. `lat_ms` is 8.04 % lower, `long_ms` is 8.71 % lower and `short_ms` is 6.00 % lower. The answers are the same as the answers of build `D`, bit for bit.
+- The [second test of the stack](docs/notebook/2026-10-31-stack-2-result.md) compares the stack with change 0003 with the image in production. `lat_ms` is 9.15 % lower, `short_ms` is 9.61 % lower and `long_ms` is 8.96 % lower. The answers are the same as the answers of the image, bit for bit.
 - The changes for the targets `D`, `G`, `H` and `J` are not in the stack. Their result entries give the causes.
+- The [rule to stop](docs/notebook/2026-10-31-phase5-rule-to-stop.md) stops the work on the kernels. The largest expected gain of a target that stays is 2.1 % for one request type.
+- The next step is the soak test of 24 hours of the stack. Then the server in production gets the build of the stack.
 
 ## How we got here
 
@@ -95,7 +98,7 @@ Source: the section "Prediction of the total gain" in the [phase 4 entry](docs/n
 
 ### Results at this time
 
-The baseline of all work is build `D`. Build `D` is the build of llama.cpp tag `b12004` that we make for `sm_86`. No change to the code is complete at this time.
+The baseline of all work is build `D`. Build `D` is the build of llama.cpp tag `b12004` that we make for `sm_86`. The last two rows give the second test of the stack, in a different measurement window.
 
 | Benchmark | Build | Runs | `lat_ms` (ms) | `short_ms` (ms) | `medium_ms` (ms) | `long_ms` (ms) | `correct` (of 100) |
 |---|---|---:|---:|---:|---:|---:|---:|
@@ -104,8 +107,12 @@ The baseline of all work is build `D`. Build `D` is the build of llama.cpp tag `
 | Public benchmark | `D`, run 1 | 1 | 236.2 | 71.1 | 356.2 | 778.7 | 94 |
 | Public benchmark | `D`, run 2 | 1 | 236.9 | 71.3 | 357.4 | 781.1 | 94 |
 | Public benchmark | `D`, run 3 | 1 | 237.3 | 71.3 | 357.8 | 781.7 | 94 |
+| Private benchmark | Stock image `b12004` (second test of the stack) | 6 | 237.0 | 71.3 | 357.5 | 781.7 | 94 |
+| Private benchmark | Stack at `419b8f612` (second test of the stack) | 6 | 215.3 | 64.4 | 324.4 | 711.6 | 94 |
 
-Source: the rows of the private benchmark are the means of 6 blocks. They come from the [result of phase 1](docs/notebook/2026-10-30-phase1-equivalence-result.md) and the table `speed-bench.tsv` of the [first data set](data/2026-10-30-window1/README.md). The rows of the public benchmark are the three baseline runs in the [data set of the baseline of the public benchmark](data/2026-10-31-public-baseline/README.md). The private benchmark is not in this repository. The [public benchmark](bench/README.md) has different words and a different baseline. Do not compare the quality numbers of the two benchmarks.
+Source: the rows of the private benchmark are the means of 6 blocks. They come from the [result of phase 1](docs/notebook/2026-10-30-phase1-equivalence-result.md) and the table `speed-bench.tsv` of the [first data set](data/2026-10-30-window1/README.md). The last two rows come from the [data set of the second test of the stack](data/2026-10-31-stack-2/README.md). The rows of the public benchmark are the three baseline runs in the [data set of the baseline of the public benchmark](data/2026-10-31-public-baseline/README.md).
+
+The private benchmark is not in this repository. The [public benchmark](bench/README.md) has different words and a different baseline. Do not compare the quality numbers of the two benchmarks.
 
 ## The method
 
@@ -181,6 +188,7 @@ The folder `data/` has these data sets.
 | [`2026-10-31-0009-mmq-pipeline`](data/2026-10-31-0009-mmq-pipeline/README.md) | The micro-benchmark of the Q4_0 tile load pipeline (target `G`) |
 | [`2026-10-31-stack-1`](data/2026-10-31-stack-1/README.md) | The first test of the stack against build `D` |
 | [`2026-10-31-0003-answer-head`](data/2026-10-31-0003-answer-head/README.md) | The test of change 0003 (the output head for the answer tokens only) |
+| [`2026-10-31-stack-2`](data/2026-10-31-stack-2/README.md) | The second test of the stack against the image in production |
 
 ## Condition of each change
 

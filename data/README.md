@@ -30,6 +30,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-31-0009-mmq-pipeline`](2026-10-31-0009-mmq-pipeline/README.md) | 2026-10-31 | The micro-benchmark of the Q4_0 tile load pipeline of the MMQ kernel (target `G`). It has 6 versions, 62 cells, and a bit compare against the baseline. |
 | [`2026-10-31-stack-1`](2026-10-31-stack-1/README.md) | 2026-10-31 | The first test of the stack (`dmk/stack` at `fbfd9cb8c`) against build `D`: 6 blocks of the private benchmark, 4 blocks of `llama bench`, the answers of 12 runs, the guards, and the result against the prediction. The data set also has 2 blocks of the latency for each request type. |
 | [`2026-10-31-0003-answer-head`](2026-10-31-0003-answer-head/README.md) | 2026-10-31 | The test of change 0003 (the output head for the answer tokens only). It has the speed test of arm `A3` against arm `L` and of arm `A3R` against arm `S` (4 blocks each), the answers, the unit tests, `compute-sanitizer`, and the runs of the last commit `419b8f612`. |
+| [`2026-10-31-stack-2`](2026-10-31-stack-2/README.md) | 2026-10-31 | The second test of the stack (`dmk/stack` at `419b8f612`) against the image in production: 6 blocks of the private benchmark, 4 blocks of `llama bench`, the answers of 12 runs, the guards, and the result against the prediction. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 
