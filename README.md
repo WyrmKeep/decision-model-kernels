@@ -20,7 +20,7 @@ Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked lis
 - A request uses 2.13 to 2.45 times its roofline floor.
 - The GPU runs a kernel for 90 % to 94 % of the time of a request. The host is not the limit.
 - The ranked list has 15 targets. The first change is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
-- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and the changes 0001 (target `E`), 0004 (target `B`), 0005 (target `C`) and 0007 (target `P`).
+- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and the changes 0001 (target `E`), 0003 (target `A`), 0004 (target `B`), 0005 (target `C`) and 0007 (target `P`).
 - The [first test of the stack](docs/notebook/2026-10-31-stack-1-result.md) compares the stack with build `D`. `lat_ms` is 8.04 % lower, `long_ms` is 8.71 % lower and `short_ms` is 6.00 % lower. The answers are the same as the answers of build `D`, bit for bit.
 - The changes for the targets `D`, `G`, `H` and `J` are not in the stack. Their result entries give the causes.
 
@@ -180,6 +180,7 @@ The folder `data/` has these data sets.
 | [`2026-10-31-0008-ragged-suffix-retest`](data/2026-10-31-0008-ragged-suffix-retest/README.md) | The second test of change 0008, on the branch `dmk/stack` |
 | [`2026-10-31-0009-mmq-pipeline`](data/2026-10-31-0009-mmq-pipeline/README.md) | The micro-benchmark of the Q4_0 tile load pipeline (target `G`) |
 | [`2026-10-31-stack-1`](data/2026-10-31-stack-1/README.md) | The first test of the stack against build `D` |
+| [`2026-10-31-0003-answer-head`](data/2026-10-31-0003-answer-head/README.md) | The test of change 0003 (the output head for the answer tokens only) |
 
 ## Condition of each change
 
@@ -190,7 +191,7 @@ A change gets its number when it gets its document. The table shows the changes 
 | `E` | Change [0001](docs/changes/0001-glu-into-quantize.md): pull request #30489, GLU fused into the quantization of the activation | `exact` | Measured as a lead: `lat_ms` is 1.94 % lower. In the branch `dmk/stack`. Not in production. |
 | `D` | Change [0002](docs/changes/0002-gdn-value-split.md): value-split path of `gdn_single` | `exact` | We do not use it. The best value-split path is 1.15 to 1.31 times as slow as the whole-head path. The tensor cores are the limit of the kernel, and a value-split path adds work. |
 | `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | We do not use it. No rule that the code can use gives a gain. The [result entry](docs/notebook/2026-10-31-0006-mmq-tiles-result.md) has the sweep. |
-| `A` | Output head for the answer tokens only | `exact` | In work. |
+| `A` | Change [0003](docs/changes/0003-answer-head.md): output head for the answer tokens only | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.48 % lower and `short_ms` is 3.73 % lower on the stack. Not in production. |
 | `B` | Change [0004](docs/changes/0004-gpu-mask.md): attention mask on the GPU | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. Not in production. |
 | `C` | Change [0005](docs/changes/0005-concat-conv.md): concat folded into `ssm_conv` | `exact` | In the branch `dmk/stack`. `lat_ms` is 3.02 % lower, `medium_ms` is 3.21 % lower and `long_ms` is 3.15 % lower. Not in production. |
 | `P` | Change [0007](docs/changes/0007-input-copies.md): the scheduler skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower, `long_ms` is 1.3 % lower, and `lat_ms` is 0.9 % lower (the interval includes 0). Not in production. |

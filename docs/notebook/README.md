@@ -46,6 +46,8 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Target G: MMQ tile load pipeline (result)](2026-10-31-0009-mmq-pipeline-result.md) | Results | Complete. We do not use target `G` in this shape. The Q4_0 pipeline gives the same bits and a mean ratio of 1.042 at 1,025 tokens or more. The limit is 1.08. |
 | 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (prediction)](2026-10-31-stack-1-prediction.md) | Prediction | Committed at 08:38 UTC, before the first run of the speed test at 08:43 UTC. |
 | 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (result)](2026-10-31-stack-1-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 8.04 % lower. 7 of 8 results are in their range. `short_ms` is better than its range: -6.0 % against -2.4 % to -5.4 %. A second test of 2 blocks gives -5.0 % for `short_ms`, in the range. |
+| 2026-10-31 | [Change 0003: output head for the answer tokens only (prediction)](2026-10-31-0003-answer-head-prediction.md) | Prediction | Committed at 06:18 UTC, before the first run of the speed test at 10:32 UTC. |
+| 2026-10-31 | [Change 0003: output head for the answer tokens only (result)](2026-10-31-0003-answer-head-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 0.87 % lower on arm `L` (prediction: 1.5 % lower) and 1.48 % lower on the stack. The model gives no text, thus no run shows the repair of the last commit. |
 
 Source: the files in this folder.
 

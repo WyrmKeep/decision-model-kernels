@@ -6,6 +6,7 @@ This folder has one document for each change to llama.cpp.
 |---|---|---|---|
 | [`0001`](0001-glu-into-quantize.md) | GLU fused into the quantization of the activation in MMQ (upstream pull request #30489) | `exact` | In the branch `dmk/stack`. Not in production. |
 | [`0002`](0002-gdn-value-split.md) | Test cases for the shape of `gdn_single` and a comment at the selection of its path. We do not use the value-split path. | `exact` | In the branch `dmk/stack`. The program does not change. |
+| [`0003`](0003-answer-head.md) | The output head calculates the answer tokens only. The server gives a list of tokens to `llama_context` for a batch of decisions. | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.48 % lower on the stack and 0.87 % lower on arm `L`. Not in production. |
 | [`0004`](0004-gpu-mask.md) | The attention mask on the GPU | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. Not in production. |
 | [`0005`](0005-concat-conv.md) | One CUDA kernel replaces `concat`, the copy of the conv state, `ssm_conv` and `SILU` | `exact` | In the branch `dmk/stack`. `lat_ms` is 3.02 % lower. Not in production. |
 | [`0007`](0007-input-copies.md) | The scheduler of ggml skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower and `long_ms` is 1.3 % lower. Not in production. |
