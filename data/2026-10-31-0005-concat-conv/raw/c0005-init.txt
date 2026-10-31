@@ -1,0 +1,4 @@
+# Change 0005: initcheck of the model run with 300 tokens found errors in mul_mat_q (the quantized matrix product) of build:0005-concat-conv.
+# The control run uses the same arguments on build:lead-30489 (the parent). The run with 256 tokens is the size of the sanitizer runs of change 0001.
+tool@initcheck c0005-init-L300 build:lead-30489 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 300 -ub 300 -c 300 --chunks 1 -f /work/domain-medium-long.txt
+tool@initcheck c0005-init-C256 build:0005-concat-conv perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 256 -ub 256 -c 256 --chunks 1 -f /work/domain-medium-long.txt
