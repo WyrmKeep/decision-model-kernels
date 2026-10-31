@@ -25,6 +25,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-31-0004-gpu-mask`](2026-10-31-0004-gpu-mask/README.md) | 2026-10-31 | The test of change 0004 (the attention mask on the GPU) against the build of `dmk/stack`: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, the GPU attention mask against the CPU attention mask, and `compute-sanitizer`. |
 | [`2026-10-31-0006-mmq-tiles`](2026-10-31-0006-mmq-tiles/README.md) | 2026-10-31 | The sweep of 142 MMQ tile adjustments on 6 weight shapes and 29 numbers of tokens. Each variant has a bit compare against the baseline. We do not use target `H`. The data set also has the ablation runs that measure the ceiling of target `G`. |
 | [`2026-10-31-0005-concat-conv`](2026-10-31-0005-concat-conv/README.md) | 2026-10-31 | The test of change 0005 (one kernel for `concat`, the copy of the conv state, `ssm_conv` and `SILU`) against the build of `dmk/stack`: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, `test-backend-ops`, `compute-sanitizer`, the bit check of 470 cases and the SASS compare. |
+| [`2026-10-31-stack-1`](2026-10-31-stack-1/README.md) | 2026-10-31 | The first test of the stack (`dmk/stack` at `fbfd9cb8c`) against build `D`: 6 blocks of the private benchmark, 4 blocks of `llama bench`, the answers of 12 runs, the guards, and the result against the prediction. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 

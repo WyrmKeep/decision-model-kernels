@@ -39,6 +39,8 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Target H: MMQ tile and occupancy adjustments (result)](2026-10-31-0006-mmq-tiles-result.md) | Results | Complete. We do not use target `H`: no rule that the code can use gives a gain. The entry also measures the ceiling of target `G`: the loads make the kernels wait for 12.4 % of `lat_ms`. `G` is above the limit of the rule to stop, but only by a small quantity. |
 | 2026-10-31 | [Change 0005: concat folded into `ssm_conv` (prediction)](2026-10-31-0005-concat-conv-prediction.md) | Prediction | Committed at 05:15 UTC, before the first run of the speed test at 06:34 UTC. |
 | 2026-10-31 | [Change 0005: concat folded into `ssm_conv` (result)](2026-10-31-0005-concat-conv-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 3.02 % lower. The prediction was 2.7 %. |
+| 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (prediction)](2026-10-31-stack-1-prediction.md) | Prediction | Committed at 08:38 UTC, before the first run of the speed test at 08:43 UTC. |
+| 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (result)](2026-10-31-stack-1-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 8.04 % lower. 7 of 8 results are in their range. `short_ms` is better than its range: -6.0 % against -2.4 % to -5.4 %. |
 
 Source: the files in this folder.
 
