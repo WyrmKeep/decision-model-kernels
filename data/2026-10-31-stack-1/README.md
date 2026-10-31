@@ -7,8 +7,9 @@ This data set holds the raw files and the derived tables of the first test of th
 1. Speed: Is the build of the stack (arm `S`) faster than build `D` for the model "mix8"? Is each result in its range in the prediction? The test has 6 blocks of the private benchmark and 4 blocks of `llama bench`.
 2. Answers: Each change in the stack is in the equivalence class `exact`. Does arm `S` give the same answers as arm `D`, bit for bit?
 3. Guards: Are all guards of the private benchmark true in all 12 runs?
+4. Request types: Is arm `S` faster than arm `D` for each request type? This test has 2 blocks of the client `latency_by_type.py`.
 
-We committed the [prediction](../../docs/notebook/2026-10-31-stack-1-prediction.md) on 2026-10-31 at 08:38 UTC, before the first run at 08:43 UTC.
+We committed the [prediction](../../docs/notebook/2026-10-31-stack-1-prediction.md) on 2026-10-31 at 08:38 UTC, before the first run at 08:43 UTC. The prediction entry has no prediction for the request types. We ran the test of the request types after the result of the 6 blocks of the private benchmark.
 
 ## Dates
 
@@ -17,11 +18,14 @@ We committed the [prediction](../../docs/notebook/2026-10-31-stack-1-prediction.
 | First run starts | 2026-10-31 08:43:08 UTC |
 | Last run of the private benchmark starts | 2026-10-31 09:02:45 UTC |
 | Last run of `llama bench` starts | 2026-10-31 09:05:37 UTC |
-| Measurement window | 08:42:52 to 09:06:05 UTC |
+| Measurement window of the private benchmark and `llama bench` | 08:42:52 to 09:06:05 UTC |
+| First run of the request types starts | 2026-10-31 10:05:04 UTC |
+| Last run of the request types starts | 2026-10-31 10:08:19 UTC |
+| Measurement window of the request types | 10:04:49 to 10:09:40 UTC |
 
-The 12 runs of the private benchmark used about 21 minutes. The 8 runs of `llama bench` used about 1 minute. The project stopped the server in production for the measurement window. One run at a time used the GPU.
+The 12 runs of the private benchmark used about 21 minutes. The 8 runs of `llama bench` used about 1 minute. The 4 runs of the request types used about 4 minutes. The project stopped the server in production for each measurement window. One run at a time used the GPU.
 
-Source: the `start_utc` column of [runs.tsv](tables/runs.tsv). The times of the measurement window are from its log. We did not add that log (see "Files not added").
+Source: the `start_utc` column of [runs.tsv](tables/runs.tsv) and [type-runs.tsv](tables/type-runs.tsv). The times of the measurement windows are from their logs. We did not add these logs (see "Files not added").
 
 ## Project commit
 
@@ -37,8 +41,9 @@ The speed numbers come from the client of the private benchmark. The measurement
 |---|---|---|
 | `stack1-bench-*` | The private benchmark, with 100 decisions | No |
 | `stack1-llb-*` | `llama bench`, with prompts of 64, 256 and 3,000 tokens | Not applicable |
+| `stack1-type-*` | The client `latency_by_type.py`: the phase `seq` of the private benchmark, with the latency for each request type | The source is in the folder `code/` |
 
-The [method](../../docs/method.md) gives the private benchmark, its phases and its metrics.
+The [method](../../docs/method.md) gives the private benchmark, its phases and its metrics. The client of the request types sends the 48 cases of the private benchmark in 5 passes, one request at a time. It uses the method of the phase `seq`. The harness puts the folder of the client in the container as `/extra`. The folder `code/` has the source of the client `latency_by_type.py`.
 
 ## Build commits
 
@@ -112,7 +117,9 @@ The power limit was 200 W in all runs. The project did not change it.
 
 ## Clocks
 
-We did not lock the clocks. The GPU used its default clocks. The column `sm_clock_mhz_median` of [runs.tsv](tables/runs.tsv) shows the median SM clock of each run. It is 1,845 to 1,860 MHz for the private benchmark and 1,860 to 1,905 MHz for `llama bench`. The column `throttle_reasons_at_start` has the value `0x0000000000000001` for the first run of the private benchmark and `0x0000000000000000` for the 11 other runs. The bit `0x01` is `GpuIdle` of the driver.
+We did not lock the clocks. The GPU used its default clocks. The column `sm_clock_mhz_median` of [runs.tsv](tables/runs.tsv) shows the median SM clock of each run. It is 1,845 to 1,860 MHz for the private benchmark and 1,860 to 1,905 MHz for `llama bench`. The same column of [type-runs.tsv](tables/type-runs.tsv) is 1,845 to 1,875 MHz.
+
+The column `throttle_reasons_at_start` has the value `0x0000000000000001` for the first run of the private benchmark and `0x0000000000000000` for the 11 other runs. In the 4 runs of the request types, it has the value `0x0000000000000001` for the first run and `0x0000000000000000` for the 3 other runs. The bit `0x01` is `GpuIdle` of the driver.
 
 ## Server flags
 
@@ -135,12 +142,13 @@ The host has 12 CPU threads. The host did other work during the schedule. The ca
 | Block 5 of the private benchmark | 3.11 to 18.08 |
 | Block 6 of the private benchmark | 2.03 to 3.11 |
 | The 8 runs of `llama bench` | 1.71 to 1.97 |
+| The 4 runs of the request types | 12.82 to 17.43 |
 
-The columns `load1_before` and `load1_after` of [runs.tsv](tables/runs.tsv) show the load of each run. The tables [speed-bench-blocks.tsv](tables/speed-bench-blocks.tsv) and [speed-llama-bench-blocks.tsv](tables/speed-llama-bench-blocks.tsv) show it for each block.
+The columns `load1_before` and `load1_after` of [runs.tsv](tables/runs.tsv) and [type-runs.tsv](tables/type-runs.tsv) show the load of each run. The tables [speed-bench-blocks.tsv](tables/speed-bench-blocks.tsv) and [speed-llama-bench-blocks.tsv](tables/speed-llama-bench-blocks.tsv) show it for each block.
 
 ## Commands
 
-The schedules came from `make_schedule.py`. The file [raw/stack1-bench.txt](raw/stack1-bench.txt) and the file [raw/stack1-llb.txt](raw/stack1-llb.txt) have the lines. The prediction has the same two commands.
+The schedules of the private benchmark and of `llama bench` came from `make_schedule.py`. The file [raw/stack1-bench.txt](raw/stack1-bench.txt) and the file [raw/stack1-llb.txt](raw/stack1-llb.txt) have the lines. The prediction has the same two commands.
 
 ```
 python3 harness/make_schedule.py --prefix stack1-bench --blocks 6 --seed 61001 \
@@ -151,7 +159,15 @@ python3 harness/make_schedule.py --prefix stack1-llb --blocks 4 --seed 61002 \
     --args "bench -m /models/{model} -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json"
 ```
 
-The script of the measurement window stopped the server in production, ran the two schedules, and started the server in production again. The harness ran each schedule with this command:
+The schedule of the request types came from this command. The path `/extra/0008/latency_by_type.py` is the path in the container. The file is [code/latency_by_type.py](code/latency_by_type.py) in this data set. A person replaced the first word `tool` of each line with `client`. Then the harness runs the client with `run_client.sh`. The file [raw/stack1-type.txt](raw/stack1-type.txt) has the lines with `client`.
+
+```
+python3 harness/make_schedule.py --prefix stack1-type --blocks 2 --seed 61003 \
+    --arm D=build:b12004-sm86 --arm S=build:stack-fbfd9cb --kind tool \
+    --args "/extra/0008/latency_by_type.py 18080 5"
+```
+
+A script of the measurement window stopped the server in production, ran the schedules, and started the server in production again. The first measurement window ran the schedules of the private benchmark and of `llama bench`. The second measurement window ran the schedule of the request types. The harness ran each schedule with this command:
 
 ```
 DMK_ENV=<env file> harness/run_schedule.sh <schedule file> <results folder>
@@ -174,17 +190,18 @@ python3 data/2026-10-31-stack-1/make_tables.py
 | `D` | `build:b12004-sm86` | Tag `b12004` of llama.cpp, built from source, in the image of the stock build |
 | `S` | `build:stack-fbfd9cb` | The branch `dmk/stack` at `fbfd9cb8c`, in the same image |
 
-Each run of the private benchmark started a new server. In each block, a seed set the sequence of the two arms. In the private benchmark, arm `S` ran first in blocks 1, 4 and 6, and arm `D` ran first in blocks 2, 3 and 5. In `llama bench`, arm `D` ran first in blocks 1 and 3, and arm `S` ran first in blocks 2 and 4.
+Each run of the private benchmark started a new server. In each block, a seed set the sequence of the two arms. In the private benchmark, arm `S` ran first in blocks 1, 4 and 6, and arm `D` ran first in blocks 2, 3 and 5. In `llama bench`, arm `D` ran first in blocks 1 and 3, and arm `S` ran first in blocks 2 and 4. In the request types, arm `S` ran first in block 1, and arm `D` ran first in block 2.
 
 ## Raw files
 
-The folder `raw/` has 120 files. The harness wrote 118 of them, and they have no change. A person added the two manifests of the builds. The table groups the files by the name of the run. The `<N>` is the number of the block.
+The folder `raw/` has 145 files. The harness wrote 140 of them, and they have no change. A person added the two manifests of the builds. The 3 schedule files are the other files. The table groups the files by the name of the run. The `<N>` is the number of the block.
 
 | Files | Number | Written by | Contents |
 |---|---:|---|---|
 | `stack1-bench-b<N>-<D or S>.*` | 84 | `run_bench.sh` | 12 runs of the private benchmark, with 7 files each: `.json`, `.reference.json`, `.server.log`, `.smi`, `.meta`, `.load0`, `.load1` |
 | `stack1-llb-b<N>-<D or S>.*` | 32 | `run_tool.sh` | 8 runs of `llama bench`, with 4 files each: `.out`, `.err`, `.smi`, `.meta` |
-| `stack1-bench.txt`, `stack1-llb.txt` | 2 | `make_schedule.py` | The schedules, with a comment line |
+| `stack1-type-b<N>-<D or S>.*` | 24 | `run_client.sh` | 4 runs of the client of the request types, with 6 files each: `.client.out`, `.server.log`, `.smi`, `.meta`, `.load0`, `.load1` |
+| `stack1-bench.txt`, `stack1-llb.txt`, `stack1-type.txt` | 3 | `make_schedule.py` | The schedules, with a comment line. A person changed the first word of the lines of `stack1-type.txt`. |
 | `build/MANIFEST-<arm>.txt` | 2 | `build.sh` | The facts of each build: the commit, the tools, the `cmake` command and the SHA-256 value of each file |
 
 The [harness document](../../harness/README.md) gives the meaning of each file type of a run. Each `.err` file and each `.server.log` file starts with this text: `ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11`. The container set-up of the driver writes it. It does not come from llama.cpp.
@@ -265,12 +282,38 @@ The gain in ms of each change and of the stack, for the four metrics of the priv
 | `gain_of_stack_ms` | ms | The gain in the test of the stack |
 | `stack_minus_sum_ms` | ms | `gain_of_stack_ms` minus `sum_of_gains_ms` |
 
+### type-runs.tsv
+
+The result of each of the 4 runs of the client of the request types. One row for each run. The script reads the line that starts with `RESULT` in the `.client.out` file of each run.
+
+The types are `short1q` (a short request with one question), `short2q` (a short request with two questions), `medium` and `long`. A pass has 12, 20, 8 and 8 requests of these types. The client sends 5 passes. Thus a run has 60, 100, 40 and 40 requests.
+
+| Column | Unit | Meaning |
+|---|---|---|
+| `run`, `block`, `arm_tag`, `arm` | None | The name of the run, its block, its arm tag and its arm |
+| `start_utc`, `load1_before`, `load1_after`, `throttle_reasons_at_start`, `sm_clock_mhz_median` | As in `runs.tsv` | The same columns as in `runs.tsv` |
+| `<type>_n` | requests | The number of requests of the type in the run |
+| `<type>_mean_ms`, `<type>_median_ms` | ms | The mean and the median latency of the requests of the type in the run |
+
+### speed-type.tsv
+
+The mean latency of arm `D` and of arm `S` for each request type, in the 2 blocks. It has 6 rows. The first 4 rows are the 4 types. The row `short_ms` is the mean of all requests of `short1q` and `short2q`, with the numbers of requests as weights. The row `all_ms` is the same mean for all 240 requests of a run. The table has no bootstrap interval, because it has only 2 blocks.
+
+| Column | Unit | Meaning |
+|---|---|---|
+| `metric` | None | `short1q_ms`, `short2q_ms`, `medium_ms`, `long_ms`, `short_ms` or `all_ms` |
+| `blocks` | blocks | The number of blocks |
+| `a_mean`, `b_mean` | ms | The mean of the blocks of arm `D` and of arm `S` |
+| `diff_pct` | % | The mean of the blocks of 100 times (the ratio of `S` to `D` minus 1) |
+| `gain_ms` | ms | `a_mean` minus `b_mean` |
+| `block1_diff_pct`, `block2_diff_pct` | % | 100 times (the ratio of `S` to `D` minus 1) in each block |
+
 ## Steps to make the tables again
 
 1. Run `python3 data/2026-10-31-stack-1/make_tables.py` in the repository folder.
 2. Compare the new tables with the tables in the repository.
 
-The script gives the same tables each time. It uses Python 3 and no other library.
+The script gives the same tables each time. It uses Python 3 and no other library. The data sets of the four changes must be in the repository.
 
 ## Files not added
 
@@ -278,8 +321,8 @@ We added all files of the results folders of the two schedules, with these diffe
 
 | Files | Cause |
 |---|---|
-| The 12 files `stack1-bench-b<N>-<D or S>.launch.log` | Each file has one line: the SHA-256 name of a container of the host. It has no measurement. |
-| The log of the measurement window | It has the names of programs of the host. |
+| The 16 files `stack1-bench-b<N>-<D or S>.launch.log` and `stack1-type-b<N>-<D or S>.launch.log` | Each file has one line: the SHA-256 name of a container of the host. It has no measurement. |
+| The logs of the two measurement windows | They have the names of programs of the host. |
 | The cubins, the libraries and the files of the build | They are binary files or large files. The manifests give the SHA-256 value of each library. |
 
 ## Files that the scan of the folder finds

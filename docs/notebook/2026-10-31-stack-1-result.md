@@ -1,6 +1,6 @@
 # Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (result)
 
-Written 2026-10-31, after the measurement window (08:42 to 09:06 UTC).
+Written 2026-10-31, after the two measurement windows (08:42 to 09:06 UTC and 10:04 to 10:10 UTC).
 
 ## Task of this entry
 
@@ -16,6 +16,7 @@ This entry gives the result of the first test of the stack. The [prediction](202
 - `lat_ms` is in its range (-5.3 % to -8.3 %), but near the end of the range. The low end of its interval (-8.50 %) is 0.2 points more than the end.
 - 7 of the 8 results show more gain than the predicted gain. The ratios of the tests of the four changes, multiplied, give less gain than the stack.
 - The cause of `short_ms` is not one measured fact. The range of the prediction (±1.5 points) is too small for the four tests of the changes together (±2.1 points). The result is at the edge of that interval. [INFERENCE: this is the largest part of the cause.]
+- A second test of the same two arms (2 blocks, the client `latency_by_type.py`) gives the gain for each request type. It gives -4.97 % for `short_ms`. This value is in the range, and it is 1.03 points less than the result of the 6 blocks. The test has no prediction, and we ran it after the first result.
 - The stack can go to the next step, a long test on the requests of production. The section "Next step" gives the rule.
 
 ## Prediction against result
@@ -142,8 +143,8 @@ The prediction entry tells: if a result is not in its range, the result entry gi
 
 Each of the changes 0004 and 0007 removes a part of the uploads before the first kernel of a short pass. The possible cause is that the two changes together remove all of them. The gains then add to more than the ratios, multiplied. We check this with the documents.
 
-- The result entry of change 0007 shows that a pass of the new build has 7 uploads, not 0. The upload phase is 0.175 ms to 0.100 ms for a pass of 1 to 64 tokens. It is 0.538 ms to 0.224 ms for a pass of 65 to 256 tokens.
-- The result entry of change 0004 tells that the new input `info` has the same number of copies as the attention mask had. Thus change 0004 does not decrease the number of uploads.
+- The result entry of change 0007 shows that a pass of the new build has 7 uploads, not 0. The upload phase of a pass of 1 to 64 tokens is 0.100 ms in the new build and 0.175 ms in the build before the change. For a pass of 65 to 256 tokens, it is 0.224 ms and 0.538 ms.
+- The result entry of change 0004 tells that the new input `info` has the same number of copies as the attention mask had. That entry marks this as an [INFERENCE]. Thus change 0004 does not decrease the number of uploads.
 - The upload time of a short request in phase 4 is 0.71 ms for `short1q` and 1.08 ms for `short2q`. The result entry of change 0004 gives these values. The mean for the 12 cases of `short1q` and the 20 cases of `short2q` is 0.94 ms.
 - The gain of the stack is 1.55 ms more than the sum of the gains. A removal of all upload time gives 0.94 ms at most. The stack does not remove all uploads. [INFERENCE: the upload time of phase 4 is the largest gain that a change of the uploads gives.] Thus the uploads can cause a part of the 1.55 ms at most.
 - In the tests of the changes, change 0007 gave 0.16 ms for `short_ms` and change 0004 gave -0.06 ms. The prediction of change 0007 had 0.51 ms for `short1q` and 0.85 ms for `short2q`.
@@ -177,14 +178,37 @@ The range was too small for `short_ms`. This is a fact about the documents. The 
 - Blocks 5 and 6 have the lowest load. Their `short_ms` is -5.67 % and -5.66 %. Each value has more gain than the end of the range (-5.4 %).
 - Without block 1, `short_ms` is -5.66 %. This value also has more gain than the end of the range.
 - The host load can change the ratio. The data do not show a load that gives the result. [INFERENCE: no test changed only the load.]
+- The test of the request types ran at a load of 12.82 to 17.43 and gives `short_ms` -4.97 %. In block 6 of the private benchmark, the load was 2.03 to 3.11 and `short_ms` is -5.66 %. [INFERENCE: two tests cannot show a link between the load and the gain.]
 
 ### Gain for each request type
 
-We did not measure the gain of the stack for each request type (`short1q`, `short2q`, `medium` and `long`) in this test. The benchmark gives `short_ms` for the two short types together. Thus we cannot tell which short type has the larger gain.
+We ran a second test after the result of the 6 blocks. The prediction entry has no prediction for it. The test used the same two arms and the client `latency_by_type.py`. The client sends the 48 cases of the private benchmark in 5 passes, one request at a time.
+
+It gives the mean latency for each request type. The test has 2 blocks, in the sequence `S`, `D`, `D`, `S`. The measurement window was 10:04 to 10:10 UTC, about 1 hour after the first measurement window.
+
+| Request type | Requests in a run | `D` mean (ms) | `S` mean (ms) | `S` against `D` (%) | Gain (ms) | Block 1 (%) | Block 2 (%) |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| `short1q`: short, one question | 60 | 48.429 | 46.264 | -4.47 | 2.17 | -3.62 | -5.33 |
+| `short2q`: short, two questions | 100 | 88.380 | 83.842 | -5.13 | 4.54 | -5.24 | -5.03 |
+| `medium` | 40 | 362.816 | 334.236 | -7.88 | 28.58 | -8.10 | -7.66 |
+| `long` | 40 | 792.666 | 723.715 | -8.70 | 68.95 | -9.02 | -8.38 |
+| `short_ms`: the two short types together | 160 | 73.398 | 69.750 | -4.97 | 3.65 | -4.84 | -5.10 |
+| All requests | 240 | 241.513 | 222.825 | -7.74 | 18.69 | -7.94 | -7.53 |
+
+Source: the table [speed-type.tsv](../../data/2026-10-31-stack-1/tables/speed-type.tsv). The estimate is the mean of the 2 block ratios. The row `short_ms` and the row of all requests use the numbers of requests as weights. The test has no interval, because it has only 2 blocks.
+
+- The `short_ms` of this test is -4.97 %. It is in the range of the prediction (-2.4 % to -5.4 %). The result of the 6 blocks is -6.00 %. The difference is 1.03 points. The value of this test is 0.33 points above the high end of the interval of the 6 blocks (-5.30 %).
+- The value for all requests is -7.74 %. It is 0.30 points less than `lat_ms` of the 6 blocks (-8.04 %), and it is in the interval of the 6 blocks (-8.50 % to -7.62 %). `medium_ms` is -7.88 % in this test and -8.30 % in the 6 blocks. `long_ms` is -8.70 % and -8.71 %.
+- The gain of the two short types is almost the same as a part of the latency: -4.47 % and -5.13 %. The gain in ms is 2.17 ms for `short1q` and 4.54 ms for `short2q`. The mean latency of a `short2q` request is 1.8 times the mean latency of a `short1q` request. Its gain is 2.1 times the gain of a `short1q` request.
+- The client has no quality phase and no phase with 8 requests at the same time. The load of the host was 12.82 to 17.43 in the 4 runs.
+- The 6 blocks of the private benchmark are 2.64 points apart for `short_ms` (-7.69 % to -5.05 %). The difference between the two tests is 1.03 points. [INFERENCE: a difference of 1.03 points is possible between two tests of the same arms, from the noise of the measurement. The result of the 6 blocks can have a part that comes from this noise.]
+- The gain for each type does not show which possible cause is the cause. We have no gain for each type for each change.
 
 ### Finding
 
-The cause of the result is not one measured fact. The documents show that the range of the prediction was too small for `short_ms`. The test of change 0007 has the widest interval. The uploads can cause a part of the difference. The host load does not give the result. All three are [INFERENCE].
+The cause of the result is not one measured fact. The documents show that the range of the prediction was too small for `short_ms`. The test of change 0007 has the widest interval. The uploads can cause a part of the difference. The host load does not give the result. Each possible cause is an [INFERENCE].
+
+A second test of the same two arms gives -4.97 % for `short_ms`. This value is in the range of the prediction. The second test has 2 blocks, no prediction and a different client. Thus it does not replace the first test.
 
 The result is better than the prediction. It does not change the decision about the stack. For the next prediction of a stack, use the interval of the table `stack-estimate.tsv` and not the range of ±1.5 points.
 
@@ -201,3 +225,5 @@ The tests of correctness of each change are in the data sets of the changes. Thi
 - The ratios of the changes, multiplied, give less gain than the result for 7 of the 8 metrics, by 0.13 to 2.15 points. One test of the stack cannot show if the method has a bias. The next tests of the stack can show it.
 - The possible cause 1 has a test: the stack without the changes 0004 and 0007 against the full stack.
 - This data set has no profile of the stack. A profile can show the time that each change removes in the stack.
+- The test of the request types has 2 blocks and no interval. We ran it after we knew the result of the first test.
+- More blocks of the client of the request types can show the gain of `short_ms` with an interval.

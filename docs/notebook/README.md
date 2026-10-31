@@ -40,7 +40,7 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Change 0005: concat folded into `ssm_conv` (prediction)](2026-10-31-0005-concat-conv-prediction.md) | Prediction | Committed at 05:15 UTC, before the first run of the speed test at 06:34 UTC. |
 | 2026-10-31 | [Change 0005: concat folded into `ssm_conv` (result)](2026-10-31-0005-concat-conv-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 3.02 % lower. The prediction was 2.7 %. |
 | 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (prediction)](2026-10-31-stack-1-prediction.md) | Prediction | Committed at 08:38 UTC, before the first run of the speed test at 08:43 UTC. |
-| 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (result)](2026-10-31-stack-1-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 8.04 % lower. 7 of 8 results are in their range. `short_ms` is better than its range: -6.0 % against -2.4 % to -5.4 %. |
+| 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (result)](2026-10-31-stack-1-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 8.04 % lower. 7 of 8 results are in their range. `short_ms` is better than its range: -6.0 % against -2.4 % to -5.4 %. A second test of 2 blocks gives -5.0 % for `short_ms`, in the range. |
 
 Source: the files in this folder.
 

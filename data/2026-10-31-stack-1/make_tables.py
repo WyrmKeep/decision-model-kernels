@@ -378,12 +378,18 @@ def type_tables():
                                 "throttle_reasons_at_start", "sm_clock_mhz_median"]
               + [f"{t}_n" for t in TYPES] + [f"{t}_mean_ms" for t in TYPES] + [f"{t}_median_ms" for t in TYPES], rows)
     blocks = sorted({block_of(r) for r in res})
+
+    def mean_of(run, names):
+        """The mean latency of all requests of the named types in one run: the means of the types, weighted with the numbers of requests."""
+        return sum(res[run][t]["n"] * res[run][t]["mean_ms"] for t in names) / sum(res[run][t]["n"] for t in names)
+
+    groups = [(t + "_ms", (t,)) for t in TYPES] + [("short_ms", ("short1q", "short2q")), ("all_ms", TYPES)]
     rows = []
-    for t in TYPES:
-        a = [res[f"{TYPE_PREFIX}-b{b}-D"][t]["mean_ms"] for b in blocks]
-        s = [res[f"{TYPE_PREFIX}-b{b}-S"][t]["mean_ms"] for b in blocks]
+    for name, names in groups:
+        a = [mean_of(f"{TYPE_PREFIX}-b{b}-D", names) for b in blocks]
+        s = [mean_of(f"{TYPE_PREFIX}-b{b}-S", names) for b in blocks]
         ratios = [y / x for x, y in zip(a, s)]
-        rows.append([t + "_ms", len(blocks), num(statistics.fmean(a), 3), num(statistics.fmean(s), 3),
+        rows.append([name, len(blocks), num(statistics.fmean(a), 3), num(statistics.fmean(s), 3),
                      num(100 * (statistics.fmean(ratios) - 1), 3), num(statistics.fmean(a) - statistics.fmean(s), 3)]
                     + [num(100 * (r - 1), 3) for r in ratios])
     write_tsv("speed-type.tsv", ["metric", "blocks", "a_mean", "b_mean", "diff_pct", "gain_ms"]
