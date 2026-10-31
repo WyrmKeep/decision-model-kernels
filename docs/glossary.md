@@ -16,6 +16,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 
 | Term | Type | Meaning |
 |---|---|---|
+| ablation | technical noun | A test with a build that does not do the work of one operation class. The time that the test removes is the maximum gain for the operation class. |
 | access key | technical noun | A text that a program uses to get access to a server. |
 | access token | technical noun | A text that a program gives to a server to get access. |
 | accumulator | technical noun | The matrix of an MMA instruction that holds the sum. The instruction adds each new result to it. |
@@ -34,6 +35,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | arena | technical noun | A memory pool that only one part of the program uses. |
 | arm | technical noun | One set of programs that a test compares with a different set. An arm is `stock` or `build:<name>`. |
 | ASD | technical name | The group that makes the STE specification. |
+| assumption | technical noun | A fact or a number that a prediction uses and that we did not measure. |
 | attention | technical noun | The step of a model layer that compares each token with the previous tokens. Do not use `self-attention`. |
 | attention layer | technical noun | A model layer that does attention. It keeps data of the previous tokens in the KV cache. |
 | attention mask | technical noun | A matrix with one value for each pair of a token and a KV cell. The value shows if the token can use the data of that KV cell. |
@@ -42,6 +44,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | backend | technical noun | A part of llama.cpp that runs the graph on one type of device. CUDA is one backend. |
 | backend sampling | technical noun | A mode in which the backend selects the next token. The host then does not read all logits. The flag `-bs` starts it. |
 | bandwidth | technical noun | The number of bytes that a memory moves in one second. |
+| barrier | technical noun | An instruction in a kernel. A thread waits at it until all threads of its thread block come to it. |
 | base file | technical noun | The file that `llama perplexity` writes with the flag `--kl-divergence-base`. It keeps the log-probabilities of the tokens of a text for one build. |
 | baseline | technical noun | The build and the numbers that you compare with. Do not change a baseline after a test starts. |
 | batch | technical noun | A group of tokens that the program gives to the model together. The flag `-b` sets its largest number of tokens. |
@@ -56,6 +59,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | bootstrap | technical noun | A method that makes many new sets of values from one set. It selects values from the set at random. It can select the same value more than one time. |
 | bot | technical noun | A program that writes comments or closes items on GitHub without a person. |
 | branch | technical noun | A sequence of commits in a git repository. It has a name. |
+| budget | technical noun | The quantity of work that the owner gives to the project. |
 | buffer | technical noun | A part of the memory that a program uses for data. |
 | build | technical noun | The program that the compiler makes from one commit. |
 | build | technical verb | To make a build. |
@@ -93,6 +97,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | compiler | technical noun | A program that changes source code to a program that a device can run. |
 | compute capability | technical noun | A number of two parts for the type of an NVIDIA GPU, for example 8.6. The name `sm_86` has the same number. |
 | concat | technical noun | The operation that puts two tensors together in one tensor along one dimension. |
+| confidence | technical noun | The probability that a change passes the test of its equivalence class and gives 50 % or more of the gain of its prediction. We give it before the test. |
 | confidence interval | technical noun | A range of values that we calculate from the data of a test. The true value is in the range with a probability that we write with the range, for example 95 %. |
 | configuration file | technical noun | The file `tools/ste/config.toml`. It holds the limits and the lists of words of the checker. |
 | contraction | technical noun | Two words that a person writes as one word with a mark, for example `don't`. |
@@ -111,6 +116,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | CUTLASS | technical name | The library of NVIDIA that has kernels for matrix operations on the GPU. |
 | D | technical name | The short name of the build of the tag `b12004` that the project makes from source for `sm_86` only. Arm D uses it. |
 | data set | technical noun | The data of one test. It is in one folder of the folder `data`. It has raw files, derived tables, and a README. |
+| day | technical noun | A unit of time. One day has 24 h. |
 | decimal place | technical noun | One position after the point in a number. The number 3.25 has two decimal places. |
 | decision | technical noun | One question with the answer of the model. |
 | declare | technical verb | To write a value in a document before a test. We do not change the value after the test starts. |
@@ -132,6 +138,8 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | draft pull request | technical noun | A pull request that the person who wrote it marks as not complete. A person cannot merge it. |
 | DRAM | technical name | The memory parts on the GPU that hold the VRAM. The GPU gets data from the L2 cache faster than from DRAM. |
 | driver | technical noun | The program that lets the other programs use a device, for example the GPU. |
+| effort | technical noun | The work to write and test a change. The values are `S` (1 day or less), `M` (2 to 5 days), `L` (1 to 2 weeks) and `XL` (more than 2 weeks). |
+| element-wise kernel | technical noun | A kernel that does the same operation on each value of a tensor. A value does not use the values at other positions. |
 | email address | technical noun | The text with the mark `@` that names one person on a network, for example `name@example.com`. |
 | embedding | technical noun | The model weights that give a list of numbers for each token. |
 | env file | technical noun | The file with the environment variables of the harness. The environment variable `DMK_ENV` gives its path. |
@@ -140,6 +148,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | equivalence class | technical noun | A group of changes that must have the same tests of correctness. The three groups are `exact`, `re-associated`, and `approximation`. |
 | equivalence margin | technical noun | The largest difference between two builds that we accept as no difference. We declare it before a test. |
 | exit code | technical noun | The number that a program gives when it stops. The number 0 shows that the program found no error. |
+| expected gain | technical noun | The gain of a prediction multiplied by the confidence. It is not a measurement. |
 | expert | technical noun | One of the feed-forward layers of an MoE layer. |
 | false | technical name | The value of a condition that is not correct. |
 | false positive | technical noun | An item that gitleaks finds in a text that has no private data. |
@@ -158,6 +167,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | fork | technical noun | A copy of a repository that you can change. |
 | fuse | technical verb | To make a fusion of two or more kernels. |
 | fusion | technical noun | The change of two or more kernels to one kernel. It removes the steps that write and read data between them. |
+| gain | technical noun | The time that a change removes from the time of a request. A prediction or a measurement gives it, in ms or in %. |
 | garbage collection | technical noun | The work of git or Gitea that removes the data that no ref holds. |
 | Gated DeltaNet | technical name | The type of recurrent layer in this model. |
 | gather | technical noun | The operation that reads pieces of data from different positions and writes them together in one new area. |
@@ -170,6 +180,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | Gitea | technical name | The git server that the project uses for its work. Only the persons of the project can read it. |
 | gitleaks | technical name | A program that reads the files and the history of a repository. It finds the text that a gitleaks rule marks. |
 | gitleaks rule | technical noun | One entry in a `.toml` file for gitleaks. It marks one type of text. |
+| global memory | technical noun | The memory of the GPU that all thread blocks can read and write. It is in the VRAM. |
 | glossary | technical noun | This file. It gives one meaning to each term. |
 | GLU | technical name | A step of a feed-forward layer. It multiplies two lists of numbers of the layer, number by number. |
 | GPU | technical name | The device that does the work of the kernels. In this project it is the `RTX 3060 Ti`. |
@@ -193,6 +204,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | Hugging Face | technical name | A server that keeps model files. You can download the files from it. |
 | hybrid memory | technical noun | The memory code of llama.cpp for a hybrid model. It keeps the KV cache of the attention layers and the layer states of the recurrent layers. |
 | hybrid model | technical noun | A model that has attention layers and recurrent layers. |
+| idle time | technical noun | The time in which the GPU runs no kernel. |
 | image | technical noun | A program with all the files that it must have. A container tool starts a container from an image. |
 | image ID | technical noun | The SHA-256 name that a host gives to a local image. |
 | imperative verb | technical noun | A verb that tells a person to do a task. It is the first word of a step. |
@@ -209,6 +221,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | KL floor | technical noun | The KL divergence of a run against a base file that the same build wrote. It is small and not 0. |
 | KV cache | technical noun | The cache of an attention layer. It keeps data of the previous tokens. |
 | KV cell | technical noun | One part of the KV cache that keeps the data of one token. |
+| KV window | technical noun | The range of KV cells that the kernel for flash attention reads for one sequence. |
 | L | technical name | The short name of the build of `D` with the patch of pull request #30489. Arm L uses it. |
 | L2 cache | technical noun | The cache that all SMs of the GPU use together. It is between the SMs and the DRAM. |
 | label | technical noun | The correct answer to one question of a case. A person writes it. |
@@ -280,9 +293,11 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | NVRTC | technical name | The library of CUDA that has a compiler for kernels. A program can use it while the program runs. |
 | occupancy | technical noun | The part of the largest number of warps that are active on one SM. |
 | operand | technical noun | A matrix that an MMA instruction reads. |
+| operation class | technical noun | A group of kernels that do the same type of operation, for example the MMQ kernels or the GDN kernels. |
 | output head | technical noun | The last model weights of the model. They change the data of one token to one logit for each token of the vocabulary. |
 | overhead | technical noun | The time that a program uses for steps that are not the task, for example a kernel launch. |
 | override | technical noun | A value that a schedule line sets for that line only. It replaces the value of the env file for the run of that line. |
+| owner | technical noun | The person who selects the next step of the project. |
 | owner account | technical noun | The name that the project uses on GitHub and on Gitea for its repositories. |
 | P-state | technical noun | A power mode of the GPU. The mode P0 is the fastest mode. The mode P8 is for no load. |
 | padding | technical noun | The tokens that the program adds to a sequence or to a ubatch to make it longer. |
@@ -294,6 +309,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | passive verb | technical noun | A verb group, for example `is removed`. It does not show who does the work. |
 | path | technical noun | The name of a file or a folder, with the names of the folders that hold it. |
 | PCI address | technical noun | The text that names the slot of a GPU in a host. |
+| PCIe | technical name | The connection between the GPU and the host. The version and the width of the slot give the rate of the copies. |
 | PDF | technical name | A type of file for text. The STE specification is a PDF. |
 | percentile | technical noun | A value in a list of numbers. Some numbers of the list are below it. The 95th percentile has 95 % of the numbers below it. |
 | perplexity | technical noun | A number that the program calculates from the probabilities that the model gives to the tokens of a text. A smaller number shows a better model for that text. |
@@ -305,6 +321,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | power | technical noun | The electrical supply that a device uses, in watts. |
 | power cap | technical noun | The condition in which the driver lowers the clock of the GPU to keep the power below the power limit. |
 | power limit | technical noun | The largest power that the GPU is permitted to use. This project does not change it. |
+| predict | technical verb | To write a prediction. |
 | prediction | technical noun | The result that we think a test will give. We write it before the test. |
 | prefill | technical noun | The part of a request in which the model reads the prompt. It reads many tokens in one pass. |
 | prefix | technical noun | The first tokens of a prompt. |
@@ -335,6 +352,8 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | query | technical noun | The text that a client sends to a server to find items. The response gives the items that have the words of the text. |
 | question | technical noun | One item that the model must answer about a case. A question has a name. |
 | ragged batching | technical noun | A method to put sequences of different lengths in one batch. The program adds no tokens to make the lengths equal. |
+| rank | technical noun | The position of a target in the ranked list. The first target has rank 1. |
+| ranked list | technical noun | The list of the targets in the sequence of their expected gain. The target with the largest expected gain is first. |
 | ratio | technical noun | The value of one number divided by a different number. |
 | raw file | technical noun | A file that a program wrote. A person does not change it after that. |
 | reaction | technical noun | A small symbol that a person adds to an issue, a pull request, or a comment on GitHub. |
@@ -360,6 +379,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | RFC | technical name | A document that gives a standard for networks. Each RFC has a number. |
 | RMS norm | technical noun | A step of a model layer that changes the numbers of one token to the same level. It then multiplies them by model weights. |
 | rollback | technical noun | The change of the layer state back to a snapshot. |
+| roofline floor | technical noun | The sum of the times of the kernels of one request. The time of a kernel is the larger of two times: the time of its memory work and the time to calculate. |
 | root folder | technical noun | The folder that has all other files of the repository. |
 | rotation | technical noun | The change of a tensor with a matrix that does not change. It turns each list of numbers of the tensor and does not change the length of the list. |
 | rsync | technical name | The program that puts the changes of a folder into a folder on a different host. |
@@ -397,6 +417,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | split KV cache | technical noun | A KV cache with one different part for each slot. The unified KV cache is not the same. |
 | SSH | technical name | The program that gives you a terminal on a different host. The link is safe. |
 | SSM state | technical noun | The part of the layer state of a Gated DeltaNet layer that is not the conv state. |
+| stall sample | technical noun | A sample of Nsight Compute in which a warp waits and does not run an instruction. The sample shows the instruction at which the warp waits. |
 | state | technical noun | The text of one case. The model reads it before it answers the questions. |
 | STE | technical name | The short name of `Simplified Technical English`. ASD-STE100 gives its rules. |
 | stock build | technical noun | A build of llama.cpp that does not have the changes of this project. |
@@ -404,6 +425,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | stream synchronization | technical noun | A step in which the host or one CUDA stream waits until the work of other CUDA streams stops. |
 | stream-k | technical noun | A method of MMQ that divides the total work of one matrix multiply in equal parts between the thread blocks. |
 | string | technical noun | A sequence of text in a program or in a data file. |
+| suffix | technical noun | The tokens of a prompt after the shared prefix. They have one question. |
 | summary | technical noun | A short section at the start of a document. It gives the primary facts. |
 | switch point | technical noun | The number of columns in a batch at which llama.cpp changes from MMVQ to MMQ. Each GPU and each type of quantization can have a different switch point. |
 | syslog | technical noun | The log of the system of a host. Each line of a syslog has a time, a host name, a program, and a text. |
@@ -427,6 +449,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | threshold | technical noun | A limit for a result. We write it before the test. |
 | throughput | technical noun | The number of decisions that the server finishes in one second. |
 | tile | technical noun | A small part of a matrix that one thread block reads and writes at one time. |
+| time model | technical noun | The functions of the script `make_tables.py` in the data set `2026-10-31-phase4-model`. They calculate the time of a request after a change, from the kernel times and the assumptions. |
 | timed pass | technical noun | One time that the client sends all cases to the server, one request at a time, in a random sequence. The client measures the latency of each request. |
 | title | technical noun | The text that gives a name to an issue or to a pull request. |
 | TMA | technical name | The part of a Hopper GPU or of a Blackwell GPU that copies tiles between VRAM and shared memory. |
@@ -445,6 +468,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | user | technical noun | A person or a program that uses a server or a host. |
 | UTC | technical name | The standard of time for all dates and times of the project. |
 | UUID | technical name | A code of 128 bits that gives a name to one item. |
+| value-split path | technical noun | A path of the kernel `gdn_single`. Different thread blocks calculate different value columns of one head. |
 | variant | technical noun | One time that the server gives a question to the model. The possible answers are in one sequence. The server can give a question more than one time, with a different sequence each time. It then calculates the mean of the probabilities. |
 | vault item ID | technical noun | The UUID of one item in a program that keeps the secrets of a person. |
 | VBIOS | technical name | The program code in the memory of the GPU that starts it. Its version is a text, for example `94.04.3A.40.A7`. |
@@ -459,6 +483,9 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | warp | technical noun | A group of 32 threads that do the same step at the same time. |
 | warp divergence | technical noun | The condition when the threads of one warp do different steps of the code. |
 | WebUI | technical name | The interface of llama-server that a person can use to send text to the model. The flag `--no-webui` turns it off. |
+| week | technical noun | A unit of time. One week has 7 days. |
+| weight floor | technical noun | The sum of the times of the passes of one request. The time of a pass is the larger of two times: the time to read the weights from the DRAM, and the time of the int8 operations. |
 | weight-read floor | technical noun | The time that the GPU uses to read all weights of the model from the DRAM at the best DRAM read rate. No pass is faster than it. |
+| whole-head path | technical noun | A path of the kernel `gdn_single`. One thread block calculates all value columns of one head. |
 | word | technical noun | One unit of text between two spaces. |
 | wrapper | technical noun | A program that starts a second program. It records or checks the work of the second program. |

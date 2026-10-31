@@ -1,0 +1,16 @@
+id	target	class	effort	confidence	model	parameters
+A	Output head for the answer tokens only	exact	M	0.85	head	head_after_ms=0.02
+B	Attention mask made on the GPU	exact	M	0.70	mask	gpu_fraction=0.017
+C	Concatenation folded into ssm_conv	exact	M	0.70	concat	kept_fraction=0.10
+D	Value-split path of gdn_single	exact	S	0.45	gdn	speedup=1.6
+E	PR 30489: GLU fused into the quantization	exact	S	0.95	measured	short1q=1.23;short2q=1.23;medium=1.99;long=2.25
+F	Fusions of norm, element-wise and quantization kernels	exact	M-L	0.50	fusion	saved_fraction=0.35
+G	MMQ with asynchronous, multi-stage tile loads	exact	L	0.40	mmq	speedup_large=1.35;speedup_mid=1.30;speedup_small=1.15
+H	MMQ tile and occupancy settings for this GPU	exact or re-associated	S-M	0.30	mmq_tune	saved_large=0.08;saved_other=0.05
+J	Ragged batch for the question suffixes	re-associated	L	0.45	ragged	short2q_tokens=171;medium_tokens=163;long_tokens=163;extra_ms=2.0;gap_ms=0.74;gap3_ms=1.30
+K	CUDA graphs for passes with more than one token	exact	M	0.30	graphs	saved_fraction=0.70
+L	Smaller K/V window for flash attention (PR 28495)	exact	M	0.50	fa	saved_fraction=0.30
+N	New MMQ design after G	re-associated	XL	0.20	mmq_after_g	speedup=1.30
+O	Cache of the prompt tokens	exact	S-M	0.50	build	saved_fraction=0.70
+M	One kernel for each layer (megakernel)	re-associated	XL	0.10	mega	saved_fraction=0.03
+P	Remove the stream syncs in a pass	exact	S-M	0.40	graphs	saved_fraction=0.80
