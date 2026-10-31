@@ -1,0 +1,6 @@
+# Change 0005 (build:0005-concat-conv): compute-sanitizer on the model, as in the sanitizer runs of change 0001 and of window 1.
+# One chunk of 300 tokens (not a multiple of 32, so the last tile of the kernel is partial): every Gated DeltaNet layer runs the fused concat, cpy, ssm_conv and silu kernel.
+tool@memcheck c0005-san-memcheck-C build:0005-concat-conv perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 300 -ub 300 -c 300 --chunks 1 -f /work/domain-medium-long.txt
+tool@initcheck c0005-san-initcheck-C build:0005-concat-conv perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 300 -ub 300 -c 300 --chunks 1 -f /work/domain-medium-long.txt
+tool@synccheck c0005-san-synccheck-C build:0005-concat-conv perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 300 -ub 300 -c 300 --chunks 1 -f /work/domain-medium-long.txt
+tool@racecheck c0005-san-racecheck-C build:0005-concat-conv perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 300 -ub 300 -c 300 --chunks 1 -f /work/domain-medium-long.txt

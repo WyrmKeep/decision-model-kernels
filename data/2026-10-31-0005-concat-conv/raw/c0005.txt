@@ -1,0 +1,20 @@
+# Change 0005: concat folded into ssm_conv. A/B of build:lead-30489 (L, the parent) and build:0005-concat-conv (C).
+# 4 blocks of the private benchmark (quality pass with --write-reference in every run) and 4 blocks of llama bench; the arm order in a block is random.
+# make_schedule.py --prefix c0005-bench --blocks 4 --seed 50051 --arm L=build:lead-30489 --arm C=build:0005-concat-conv --kind bench
+bench c0005-bench-b1-L build:lead-30489 --write-reference c0005-bench-b1-L
+bench c0005-bench-b1-C build:0005-concat-conv --write-reference c0005-bench-b1-C
+bench c0005-bench-b2-L build:lead-30489 --write-reference c0005-bench-b2-L
+bench c0005-bench-b2-C build:0005-concat-conv --write-reference c0005-bench-b2-C
+bench c0005-bench-b3-C build:0005-concat-conv --write-reference c0005-bench-b3-C
+bench c0005-bench-b3-L build:lead-30489 --write-reference c0005-bench-b3-L
+bench c0005-bench-b4-L build:lead-30489 --write-reference c0005-bench-b4-L
+bench c0005-bench-b4-C build:0005-concat-conv --write-reference c0005-bench-b4-C
+# make_schedule.py --prefix c0005-llb --blocks 4 --seed 50052 --arm L=build:lead-30489 --arm C=build:0005-concat-conv --kind tool
+tool c0005-llb-b1-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0005-llb-b1-C build:0005-concat-conv bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0005-llb-b2-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0005-llb-b2-C build:0005-concat-conv bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0005-llb-b3-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0005-llb-b3-C build:0005-concat-conv bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0005-llb-b4-C build:0005-concat-conv bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0005-llb-b4-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
