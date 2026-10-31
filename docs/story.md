@@ -1,6 +1,6 @@
 # How we got here
 
-This document tells how the project went from its first question to the checkpoint of phase 4. It goes phase by phase. For each phase it gives the question, the method, the result, the problems that we found, and the corrections. You can read it with no other information. Each number has a link to its source in the repository.
+This document tells how the project went from its first question to the end of the changes of phase 5. It goes phase by phase. For each phase it gives the question, the method, the result, the problems that we found, and the corrections. You can read it with no other information. Each number has a link to its source in the repository.
 
 All times are UTC. The mark [INFERENCE] shows a sentence that has information that we did not measure. The [README](../README.md) has the short version.
 
@@ -17,8 +17,21 @@ All times are UTC. The mark [INFERENCE] shows a sentence that has information th
 | 2026-10-30, 22:52 to 22:56 | The run for the limits of the GPU. | [Data set of the limits](../data/2026-10-30-card-limits/README.md) |
 | 2026-10-31, 00:02 to 01:14 | Measurement window 2: the baseline of the public benchmark, the ablation, the profiles, and the lead #30489. | [Entry of phase 3](notebook/2026-10-31-phase3-where-the-time-goes.md) |
 | 2026-10-31, about 02:30 | The checkpoint of phase 4: the ranked list. | [Entry of phase 4](notebook/2026-10-31-phase4-ranked-targets.md) |
+| 2026-10-31, 05:15:13 | We wrote the prediction entry of change 0005. The first run was at 06:34. | [Prediction of change 0005](notebook/2026-10-31-0005-concat-conv-prediction.md) |
+| 2026-10-31, 05:24 | We wrote the prediction entry of change 0004. The first run was at 07:11. | [Prediction of change 0004](notebook/2026-10-31-0004-gpu-mask-prediction.md) |
+| 2026-10-31, 05:32:15 | We wrote the prediction entry of change 0007. The first run was at 05:53:42. | [Prediction of change 0007](notebook/2026-10-31-0007-input-copies-prediction.md) |
+| 2026-10-31, 05:40 to 08:11 | Four measurement windows for the sweep and the ablation of target `H`. | [Result for target `H`](notebook/2026-10-31-0006-mmq-tiles-result.md) |
+| 2026-10-31, 05:53 to 07:29 | The speed tests of changes 0007, 0005 and 0004. The test of target `D` ran from 06:17 to 06:31. | [Result of change 0007](notebook/2026-10-31-0007-input-copies-result.md), [result of change 0005](notebook/2026-10-31-0005-concat-conv-result.md), [result of change 0004](notebook/2026-10-31-0004-gpu-mask-result.md), [result for target `D`](notebook/2026-10-31-0002-gdn-value-split-result.md) |
+| 2026-10-31, 06:18:10 | We wrote the prediction entry of change 0003. The first run was at 10:32:12. | [Prediction of change 0003](notebook/2026-10-31-0003-answer-head-prediction.md) |
+| 2026-10-31, 07:02:58 | We wrote the prediction entry of the first test of change 0008. The first test ran from 07:51 to 08:43. | [Prediction of the first test of change 0008](notebook/2026-10-31-0008-ragged-suffix-prediction.md) |
+| 2026-10-31, 08:32 to 10:04 | The measurement windows for the pipeline of target `G`. | [Result for target `G`](notebook/2026-10-31-0009-mmq-pipeline-result.md) |
+| 2026-10-31, 08:38:18 | We wrote the prediction entry of the first test of the stack. The first run was at 08:43:08. The first test ran from 08:42 to 09:06 and from 10:04 to 10:10. | [Prediction of the first test of the stack](notebook/2026-10-31-stack-1-prediction.md) |
+| 2026-10-31, 09:19:03 | We wrote the prediction entry of the second test of change 0008. The second test ran from 09:22 to 09:59. | [Prediction of the second test of change 0008](notebook/2026-10-31-0008-ragged-suffix-retest-prediction.md) |
+| 2026-10-31, 10:32 to 10:44 | The speed test of change 0003. | [Result of change 0003](notebook/2026-10-31-0003-answer-head-result.md) |
+| 2026-10-31, 20:43:36 | We wrote the prediction entry of the second test of the stack. The first run was at 20:43:55. | [Prediction of the second test of the stack](notebook/2026-10-31-stack-2-prediction.md) |
+| 2026-10-31, about 21:30 | We wrote the entry of the rule to stop. The soak test of 24 hours and the change of production are the next steps. | [Entry of the rule to stop](notebook/2026-10-31-phase5-rule-to-stop.md) |
 
-Source: the dates in the notebook entries and in the README of each data set. The owner gave the start time and the time of the checkpoint. They are not in a file of the repository.
+Source: the dates in the notebook entries and in the README of each data set. The times of the predictions are the commit times that the notebook gives. The owner gave the start time and the time of the checkpoint. They are not in a file of the repository.
 
 ## Start: the model, the task, and the GPU
 
@@ -614,47 +627,343 @@ Source: the [entry of phase 4](notebook/2026-10-31-phase4-ranked-targets.md#rule
 
 Thus the rule does not stop the project at the checkpoint. The budget of the project stops at the entry of phase 4. The owner selects the next step from the list.
 
+## Phase 5: the changes, one at a time
+
+### The question and the method of each change
+
+Phase 4 gave a ranked list of 15 targets. Phase 5 had a different question for each target: does the change give its predicted gain, and does it keep the answers? The owner approved the sequence of the ranked list. The owner also let the project operate the GPU when it was necessary. A change goes into the stack only when its tests are in their limits.
+
+Each change had the same five parts.
+
+- **The prediction entry.** We wrote a prediction entry in the notebook and committed it before the first run of the speed test. It gives the equivalence class, the arms, the schedule, the tolerances, the predicted gain, and the results that show an incorrect prediction. We did not change it after the measurement started. The commit time shows that the prediction came first.
+- **The tests of correctness.** The equivalence class sets the tests. For `exact`, the answers of all 100 decisions must be the same bit for bit as the answers of the baseline. For `re-associated`, the errors of `test-backend-ops` must be in their limits. The KL divergence must be at the level of the noise, and all guards must be true. A change with a new kernel also has `compute-sanitizer` and a test of the SASS.
+- **The speed test.** The test has 4 blocks of the private benchmark and 4 blocks of `llama bench`. Each block has one run of each arm, in a random sequence. The estimate is the mean of the ratios of the blocks. The interval is the 95 % bootstrap interval of the blocks.
+- **The change document.** Each change has one document in `docs/changes/`, with the same text as its pull request. It has eight sections: the summary, the equivalence class, the results, the prediction, the correctness, the procedure to reproduce, the limits, and the data.
+- **The branch and the stack.** Each change has one branch in the fork. The branch starts from `dmk/stack`, and we compare it with the build of `dmk/stack`. A change that is correct and gives a gain goes into the stack. Each other change stays on its branch.
+
+A rule also applies. A gain of less than 50 % of the prediction has a cause that we must find before the next change. The [method](method.md#equivalence-classes) gives the tests of each equivalence class, and the [change documents](changes/README.md) give the shape of a document.
+
+### The result of each target
+
+The table gives the nine targets that had work. The sections after it give the change, the prediction, and the result of each target. The sequence is the sequence of the work. Some work ran at the same time.
+
+| Target | Change | Equivalence class | Prediction of `lat_ms` (%) | Result of `lat_ms` (%) | Condition |
+|---|---|---|---:|---:|---|
+| `E` | 0001 | `exact` | -2.0 | -1.94 | In the stack |
+| `P` | 0007 | `exact` | -1.3 | -0.93 | In the stack. The interval of the result includes 0. |
+| `D` | 0002 | `exact` | -2.1 | No speed test | Not used. The best value-split path is 1.15 to 1.31 times as slow. |
+| `B` | 0004 | `exact` | -2.8 | -1.06 | In the stack |
+| `C` | 0005 | `exact` | -2.7 | -3.02 | In the stack |
+| `H` | None | `exact` or `re-associated` | -4.2 | No speed test | Not used. No rule that the code can use gives a gain. |
+| `J` | 0008 | `re-associated` | -3.3 | -2.46 | Not used. One limit for the error is not true. |
+| `G` | None | `exact` | -14.8 | No speed test | Not used in this shape. The pipeline gives 1.042 times at 1,025 tokens or more. The limit was 1.08. |
+| `A` | 0003 | `exact` | -1.5 | -0.87 | In the stack. On the stack, the result is -1.48. |
+
+Source: the prediction entries, the result entries, and the [change documents](changes/README.md). The prediction of `E`, `D`, `H` and `G` is the value of the [ranked list of phase 4](notebook/2026-10-31-phase4-ranked-targets.md#ranked-list). The other predictions come from the prediction entry of each change. The result is the difference from the build before the change, and a number less than 0 is a faster build. For `J`, the numbers are from the second test. The first test gave -3.32 % against a prediction of -6.6 %.
+
+### Target `E`: GLU in the quantization (change 0001)
+
+Change 0001 is pull request #30489 of upstream llama.cpp. The project did not write it. In `b12004`, the feed-forward layer ran one kernel for SiLU of `gate` times `up`. That kernel wrote an F32 tensor, and the quantization kernel of MMQ then read it. With the change, the quantization kernel reads `gate` and `up`, calculates SiLU of `gate` times `up` in registers, and writes the Q8_1 data. The program does not write the F32 tensor and does not read it again.
+
+Phase 3 measured the pull request as a lead, thus this target has no prediction entry that came before its measurement. The ranked list of phase 4 uses the gain of the lead as the prediction: 2.0 % of `lat_ms`, with a confidence of 0.95. The measurement is the result. `lat_ms` is 1.94 % lower (95 % interval -2.38 % to -1.50 %), and the answers are the same bit for bit.
+
+Phase 5 added the tests that the lead did not have. `test-backend-ops` gave 310 of 310 correct new cases. The 187 operations of the graph gave the same result as build `D`. The four tools of `compute-sanitizer` found no error in the new kernel. The SASS is the same for 6,744 of 6,748 kernel names. The change applies only to a pass of more than 8 tokens, because a pass of 8 tokens or less uses MMVQ.
+
+Change 0001 is the first change of the stack. Each subsequent change starts from it.
+
+### Target `P`: the uploads of the scheduler (change 0007)
+
+Phase 4 thought that the host runs `cudaStreamSynchronize` 21 to 25 times in each pass. It also thought that the GPU waits 40 µs to 50 µs after each one. It did not find the code that starts them. The prediction was 1.0 % of `lat_ms`, with a confidence of 0.40.
+
+The [prediction entry](notebook/2026-10-31-0007-input-copies-prediction.md) of change 0007 found the code. We committed it at 05:32:15 UTC, before the first run at 05:53:42 UTC. The sync calls are in the scheduler of ggml. A pass has 12 of them before the uploads of the inputs and 9 or 10 in the uploads. Each decision has 1 more at its end.
+
+All sync calls are before the first kernel of a pass. No sync call is between two kernels. The spaces between two kernels are 1 µs to 2 µs, thus the profiles do not show that the GPU waits 40 µs to 50 µs. A change that makes the uploads not wait gives 0.1 ms to 0.15 ms in a pass at most. The entry does not make that change.
+
+The entry found a different gain. A pass uploads 10 inputs to the GPU. The model gets tokens only, and the graph selects the path of the tokens. The nodes of the `mixed` path have no `GGML_TENSOR_FLAG_COMPUTE` flag, and no backend calculates them.
+
+But the scheduler uploaded 3 inputs of these nodes. They have 7 of the 22 sync calls of a pass. [INFERENCE: we did not record the names of the inputs. The bytes, the flags and the sequence agree with the graph code.]
+
+The change makes the scheduler record, for each upload, if a node with the flag reads it. The scheduler does not make an upload that no such node reads. The change is 26 lines in `ggml/src/ggml-backend.cpp`. It adds no kernel and no operation. A pass has 7 uploads and not 10, and 14 to 18 sync calls and not 21 to 25.
+
+The entry predicted -1.27 % for `lat_ms` (range -0.9 % to -1.7 %), -1.0 % for `short_ms`, -1.28 % for `medium_ms` and -1.37 % for `long_ms`. The total is almost the same as the total of phase 4, but the cause is different. The gain for a short request is less than in phase 4 (0.51 ms and 0.85 ms, against 0.8 ms and 2.2 ms). The gain for a medium request and a long request is more (4.55 ms and 10.58 ms, against 3.8 ms and 3.6 ms).
+
+The answers are the same bit for bit in 8 runs. The SASS is the same for 6,766 of 6,766 names. A pass of the new build has 3 uploads and 8 sync calls less. The prediction had 7 sync calls less. `lat_ms` is 0.93 % lower (interval -2.05 % to +0.12 %), `medium_ms` is 1.01 % lower, and `long_ms` is 1.27 % lower. `short_ms` is 0.21 % lower, and its interval includes 0.
+
+The prediction is correct for 5 of 7 metrics. The rule of the entry is that the interval must not include 0. By this rule, the prediction is incorrect for `lat_ms` and `short_ms`. The host load was 14.6 to 21.5 in blocks 1 and 2, and 3.3 to 6.5 in blocks 3 and 4. We did not run a second measurement.
+
+### Target `D`: the value-split path of `gdn_single` (change 0002)
+
+The kernel `gdn_single` has a whole-head path. It runs 32 thread blocks on the 38 SMs of the GPU. The code that selects the path uses it, because 32 heads × 2 is more than 38 SMs. Phase 4 thought that a value-split path with 128 thread blocks makes `gdn_single` 1.6 times faster. This is 5.0 ms (2.1 %) of `lat_ms`, with a confidence of 0.45. The ratio of 1.6 was an assumption and not a test.
+
+We measured the kernel time of each path before we changed the code that selects the path. The test build has 8 paths. `test-backend-ops perf` ran them on 21 shapes with 1, 2 or 3 sequences and 65 to 2,048 tokens. The whole-head path is the fastest path in all 21 shapes. The best value-split path is 1.15 to 1.31 times as slow. One sequence of 2,048 tokens uses 1,290 µs with the whole-head path and 1,696 µs with `<16,64,1>`, which is the best value-split path for one sequence.
+
+The cause is the work of each thread block. The MMA instructions of the whole-head path fill 55 % of the time at the highest rate of the tensor core. Each slice of a value-split path does again the work that is the same for all slices. The MMA instructions of one head go from 1,344 to 1,440, 1,632 and 2,016 for slices of 64, 32 and 16 columns.
+
+The 6 SMs that the whole-head path does not use are 16 % of the SMs. They give less than the work that the slices do again. [INFERENCE: we did not measure the time of the work that a slice does again, other than the MMA instructions. We did not make a profile of a value-split path.]
+
+All 8 paths give the same bits in 9 shapes. All 43 cases of `GATED_DELTA_NET` in `test-backend-ops` agree with the CPU backend for each path. Thus the equivalence class `exact` was correct, but the speed is not.
+
+We do not use `D`. The path selector keeps the whole-head path for a GPU with 38 SMs. There is no speed test, and thus no prediction entry for one. Change 0002 is a set of perf cases for `test-backend-ops` and a comment at the path selector. The program does not change.
+
+The branch `dmk/0002-gdn-split-candidate` adds the kernel `gdn_single<16,64,1>`, and we do not merge it. [INFERENCE: we calculated that this branch makes `lat_ms` 4.1 ms (1.7 %) slower. No request ran with it.] The time model of phase 4 then has no gain from `D`. The expected gain of the total goes from 17.9 % to 16.9 % of `lat_ms`.
+
+### Target `B`: the attention mask on the GPU (change 0004)
+
+Before the change, the host wrote the attention mask of each pass and sent it to the GPU. A large pass has an attention mask of 28 MB, and the copy uses time. The change sends one small input, `info`, with the position and the sequences of each KV cell and of each token (16 bytes for each). A new operation, `KQ_MASK`, makes the attention mask on the GPU from it. The kernel uses 72 µs for the largest pass. The change is commit `cf3913bed` on the branch `dmk/0004-gpu-mask`.
+
+The path on the GPU is on if three conditions are true. The cells of the pass are in one group of sequences. The model has no `SWA` and no `ALiBi`. The pass has 32 sequences or less. Each other case uses the CPU path as before, and `LLAMA_KQ_MASK_DEVICE=0` goes back to the CPU path.
+
+We committed the [prediction](notebook/2026-10-31-0004-gpu-mask-prediction.md) at 05:24 UTC, before the first run at 07:11 UTC. It used the model of phase 4. The gain is the upload time of all inputs plus the host time of the attention mask, less the new work of the kernel. It predicted -2.8 % for `lat_ms` (range -1.8 % to -3.8 %), a gain of 6.7 ms. The prediction for `short_ms` was -1.3 %. Phase 4 gave -2.9 % for `lat_ms`.
+
+The answers are the same bit for bit. `test-backend-ops` gave 24 of 24 correct cases for `KQ_MASK`. We compared 1,285 attention masks of the model and found 0 different values. `compute-sanitizer` with `memcheck` found no error, but the log of the server has no summary line.
+
+The [result](notebook/2026-10-31-0004-gpu-mask-result.md) is less than the prediction. `lat_ms` is 1.06 % lower (interval -1.56 % to -0.54 %), `long_ms` is 1.52 % lower, and `medium_ms` is 1.12 % lower. `short_ms` is 0.08 % higher, and its interval includes 0.
+
+The gain is 2.51 ms for `lat_ms`, 4.02 ms for `medium_ms` and 11.76 ms for `long_ms`. This is 37 %, 40 % and 44 % of the predicted gain. No point estimate is in its predicted range.
+
+The cause is in the model of phase 4 and not in the code. The model used the upload time of all inputs as the copy time of the attention mask. The upload time is 7 times the copy time of the attention mask for a medium request and 3.6 times for a long request. The copy time plus the host time, less the new work, gives 3.67 ms and 11.33 ms. The gain in the test is in 0.5 ms of these values.
+
+[INFERENCE: the other parts of the upload time are the other inputs. They also include the time that the host waits for the GPU at each copy of an input. We did not measure them.]
+
+The change goes into the stack. The rule of the method applies because the gain is less than 50 % of the prediction. The cause is in the two paragraphs above.
+
+### Target `C`: the concat in `ssm_conv` (change 0005)
+
+Each Gated DeltaNet layer makes the input of `ssm_conv` with a `concat`. The `concat` puts the conv state of 3 columns before the new input. The new input is the transposed output of the `QKV` projection, thus its tokens are not adjacent in memory. The `concat` then uses the slow kernel `concat_non_cont`, which uses 12.9 ms in a pass of 2,048 tokens. A second kernel copies the last 3 columns to the cache as the new conv state.
+
+Change 0005 is one kernel that replaces the `concat`, the copy of the conv state, `ssm_conv` and `SILU`. The kernel reads the conv state and the new input where they are. It does not write the `concat` tensor. The change is commit `a67acc087906d2049c52d7ace2a275123656eb09` on the branch `dmk/0005-concat-conv`.
+
+We committed the [prediction](notebook/2026-10-31-0005-concat-conv-prediction.md) at 05:15:13 UTC, before the first run at 06:34 UTC. It used the rule of phase 4 that the change removes 90 % of the time of the `concat` kernel. The predicted gain is 6.4 ms (2.7 %) of `lat_ms`, with limits of 3.2 ms to 10.2 ms.
+
+The answers are the same bit for bit. A first version of the kernel did not add the value 0 at the end of each sum. `ssm_conv` adds it when it has no bias. This changes the sign of a sum that is `-0.0`. The first test found 6,222 different bytes.
+
+We repaired the kernel, and 470 random test cases then gave the same files. `test-backend-ops` gave 122 of 122 correct cases for the new operation. The SASS is the same for 6,766 names, and 6 names are new.
+
+`compute-sanitizer` found 0 errors in the new kernel. `initcheck` on the model with 300 tokens found 136,608 errors in `mul_mat_q`. The baseline has 136,628 errors in the same kernel, and with 256 tokens the new build has 0 errors.
+
+The [result](notebook/2026-10-31-0005-concat-conv-result.md) is more than the prediction. `lat_ms` is 3.02 % lower (interval -3.88 % to -1.81 %), which is a gain of 7.13 ms and 1.11 times the prediction. The prompt speed of `llama bench` is +3.35 %, +3.54 % and +3.86 %, and this is more than the predicted range. The cause of the larger gain can be that the new kernel reads with adjacent threads, and `ssm_conv` ran at 67 % of the bandwidth. [INFERENCE: no profile shows this, because the `nsys` run did not start.]
+
+The change goes into the stack. The host load was 6 in the first block and 15 to 16 in the last block.
+
+### Target `H`: the tile adjustments of MMQ (no change document)
+
+Phase 4 thought that other tile dimensions and other `__launch_bounds__` can put two thread blocks on one SM. The loads of one block then overlap the MMA work of the other block. The prediction was 8 % of the MMQ time at 1,025 tokens or more and 5 % at less. This is 4.2 % of `lat_ms`, with a confidence of 0.30.
+
+We did not change the code of llama.cpp. A sweep in a micro-benchmark ran 142 tile adjustments of the MMQ kernel. It used 6 weight shapes of the model and 29 numbers of tokens from 9 to 2,048. The baseline gives 54.3 TOPS int8 for `ffn_up` at 2,048 tokens.
+
+At 256 tokens or more, the three large shapes have no adjustment that is more than 1.05 times faster than the baseline. The noise is 2 % to 3 %. More thread blocks on one SM do not give back load time at 1,173 tokens or more. The time of two blocks of 8 warps is 1.09 to 1.27 times the time of the baseline.
+
+At less than 256 tokens, 57 of 174 cells have an adjustment that is 10 % faster or more. In all 57 cells, the baseline runs the fix-up kernel, and the fast adjustment gives other bits. Thus these changes are `re-associated` and not `exact`.
+
+The [result entry](notebook/2026-10-31-0006-mmq-tiles-result.md) uses the `oracle`, which is the fastest row for each cell. The `oracle` removes 0.79 % of `lat_ms`, and 0.67 % with the limit `guard3`. For 1,025 to 2,048 tokens it removes 0.54 % of the MMQ time, against the 8 % that phase 4 predicted. The fastest rows with the same bits remove 0.21 % of `lat_ms`. The rules that the code can have make `lat_ms` 2.40 % to 0.06 % slower.
+
+We do not use `H`, and there is no change document. No rule that the code can have gives a gain. A table of about 170 rows in the code gives 0.79 % at most, and this value includes the noise.
+
+The cells with a large gain are `re-associated`. They must have the test of KL divergence and keep a difference from upstream. The rule to stop uses a limit of 3 %. Phase 4 gave `H` 1.3 % at most, and the sweep gives 1.0 %.
+
+### Target `J`: ragged batching of the suffixes (change 0008)
+
+The server runs the questions of one request as sequences with the same prefix. After the prefix, the suffixes of the questions have different lengths. The equal split of the hybrid memory gives all sequences of a ubatch the same number of tokens. A request then runs more passes, and each pass reads all weights. Ragged batching puts all suffixes in one pass. A ubatch with 2 sequences removes 1 pass at most, and a ubatch with 3 sequences removes 2 passes at most.
+
+Two new operations, `SSM_CONV_RAGGED` and `GATED_DELTA_NET_RAGGED`, have a CPU version and a CUDA version. The Gated DeltaNet kernel runs one token at a time and uses about 28 µs for each token. A step between two lengths can be 128 tokens at most. If a condition is not true, the equal split runs. `LLAMA_RAGGED_SPLIT=0` also selects the equal split.
+
+The equivalence class is `re-associated`. A pass with more tokens uses other matrix-multiply kernels. MMQ runs for more than 8 tokens, and MMVQ runs for 8 tokens or less. The sums then occur in a different sequence, and the last bits of the results can be different.
+
+We committed the [first prediction](notebook/2026-10-31-0008-ragged-suffix-prediction.md) at 07:02:58 UTC. It predicted -6.6 % for `lat_ms`, with a confidence of 0.45. It gave limits for the correctness, all against the equal split. The mean KL divergence must be 1e-5 or less. The largest probability difference of the answers must be 0.01 or less, and the NMSE of each layer state must be 5e-4 or less.
+
+The [result of the first test](notebook/2026-10-31-0008-ragged-suffix-result.md) is -3.32 % for `lat_ms` (interval -4.18 % to -2.63 %), which is 50 % of the predicted gain. `rps8` is 5.96 % higher, in the predicted range. The cause of the smaller gain is the number of ubatches with suffixes of different lengths. The phase `seq` of the benchmark has 20 of them. The prediction counted 52 removed passes for one run of the benchmark, but the 20 ubatches remove 23 passes at most.
+
+The third question of a request can wait for the first two. The log line is `waiting for parent slot to complete`. We did not change the server.
+
+The limits were not true. The mean KL divergence is 3.9e-4 to 1.8e-3 against a limit of 1e-5. The largest probability difference of the answers is 0.0224 against a limit of 0.01. The NMSE of the layer states is more than its limit, and no decision has a different top answer. The prediction has an [INFERENCE] that the conv states are the same bit for bit. The test shows that this is not true.
+
+A control gives the cause. The limits were against the equal split. The control compares the equal split with a decode of one sequence at a time. The distance is as large as the distance of ragged batching from the equal split.
+
+The cause is the selection of the kernel. In the equal split, a pass of 8 tokens or less uses MMVQ. Ragged batching and a decode of one sequence use MMQ.
+
+All other tests are in their limits. They are the tests of the two new operations, the graph of 187 operations, the guards, and the 52-decision set. They also include `compute-sanitizer` and `split_equal`.
+
+We did not change the limits after we saw the data. The [second prediction](notebook/2026-10-31-0008-ragged-suffix-retest-prediction.md) has new limits and 8 new inputs. We committed it at 09:19:03 UTC, before the first run at 09:26 UTC. The test used the stack at `fbfd9cb8c`, and the change is commit `7b3698d45` on the branch `dmk/0008-ragged-suffix`.
+
+The reference is a decode of one sequence at a time, because it is the correct result for a request. For each quantity, `d(equal)` is the distance of the equal split from the reference, and `d(ragged)` is the same for ragged batching. The sum of `d(ragged)` for the 8 inputs must be 1.5 times the sum of `d(equal)` or less. The value of one input must be 3 times `d(equal)` or less. The prediction for `lat_ms` was -3.3 % (range -1.8 % to -4.5 %), with a confidence of 0.65.
+
+The [result of the second test](notebook/2026-10-31-0008-ragged-suffix-retest-result.md) shows that the speed is in the predicted range. `lat_ms` is 2.46 % lower (interval -3.80 % to -1.46 %). `short_ms` is 2.00 % lower, `medium_ms` is 4.68 % lower, and `long_ms` is 1.75 % lower. A short request with 1 question is 1.38 % slower, and we do not know the cause. `rps8` is 4.80 % higher.
+
+The sums are in the limit of 1.5 times. The five ratios are 0.78, 1.29, 1.17, 0.92 and 1.08. The largest probability difference of the answers is 0.019074, against 0.022426 for build A with `-np 3`. The 52-decision set is in its limit.
+
+But the limit of 3 times for one input is not true for 3 of 40 pairs of an input and a quantity. Input 7 has a largest KL divergence of 3.76 times its reference value. Input 8 has 1 row with a different top token, and its reference has 0. Input 1 has an NMSE of the conv state of 4.51 times its reference value.
+
+The rule of the test is that the change stays out of `dmk/stack` when a limit is not true. Change 0008 stays out, and the branch `dmk/0008-ragged-suffix` keeps it. A new limit after this result must have a new prediction and new inputs.
+
+The server can start all questions together. [INFERENCE: this gives 1 % to 2 % of `lat_ms` at most. We did not measure it.] We did not make that change, and it gives a gain only together with ragged batching.
+
+### Target `G`: the load pipeline of MMQ (no change document)
+
+Phase 4 thought that a pipeline with `cp.async` loads makes MMQ 1.35 times faster at 1,025 tokens or more. The loads of the next step then run while the MMA instructions of this step run. The prediction was 14.8 % of `lat_ms`, with a confidence of 0.40.
+
+The entry of `H` measured the ceiling of `G` with variants of the kernel. Without the loads (`no_loads`), the MMQ time is 27.6 % lower, which is 15.6 % of `lat_ms`. Phase 4 used this value, the full load time, as the gain. The warps wait for data in 21.8 % of the MMQ time (`same_loads`), which is 12.4 % of `lat_ms`. A pipeline cannot remove the instructions of the loads.
+
+The entry set the confidence of a pipeline at 0.42 for Q4_0 and 0.17 for Q8_0. A first change that gives Q4_0 less than 1.08 times at 1,025 tokens or more is below the limit of the rule to stop. [INFERENCE: this value is 41 % of the ceiling `same_loads` for `ffn_up` at 2,048 tokens.]
+
+We made a pipeline for Q4_0 in a micro-benchmark. The last of 6 versions loads the weights and the activations of the next step with `cp.async` while the MMA instructions run. It is commit `4f7bc1fe7` on the branch `dmk/0009-mmq-pipeline`. The shared memory goes from 57,856 bytes to 94,720 bytes at `J` of 128, and the kernel uses 255 registers. The change adds 257 lines and removes 22 lines.
+
+The output has the same bits in all 62 cells of 13 runs. The mean ratio is 1.042 at 1,025 tokens or more, against a limit of 1.08. The largest cell is 1.088. `ffn_up` and `ffn_gate` give 1.027, and `ffn_down` gives 1.056. Version 1 loads the weights only and gives 0.934, thus the loads of the activations give the gain. The pipeline removes 18 % of the ceiling `same_loads` at 1,025 tokens or more.
+
+We calculated the gain for each request type from the micro-benchmark. It is 2.21 % for `short1q`, 1.96 % for `short2q`, 0.95 % for `medium`, 1.84 % for `long`, and 1.65 % for `lat_ms`. The largest value is below 3 % with a confidence of 1. This is a projection and not a speed test.
+
+A pipeline for Q8_0 must have 111,104 bytes of shared memory, and the limit is 101,376 bytes. We did not make it. We did not try other alternatives, for example a pipeline for the loads from the L2 cache or a warp that only loads. The column `ndiff` of the micro-benchmark is the only test of correctness.
+
+We do not use `G` in this shape. We do not run a test with two arms, and we do not open a pull request. The branches `dmk/0009-mmq-pipeline` and `dmk/0009-mmq-pipeline-bench` are for reference and not for a merge.
+
+### Target `A`: the output head for the answer tokens (change 0003)
+
+The server gets the answer of a decision from the logits of some label tokens. The output head calculates the logits of all 248,320 tokens. Its weight has the type Q8_0, and a pass reads 675 MB for it. Change 0003 gives `llama_context` a list of tokens (`llama_set_logit_tokens`). If the list is set, the head calculates the rows of the weight for these tokens only. The server sets the list for a batch of decisions.
+
+A new operation, `ggml_mul_mat_rows`, reads these rows. The change applies for 4 output rows at most and a list of 64 tokens at most. The first version is commit `f0a2033e7` on the branch `dmk/0003-answer-head`. The last commits are `ca69612da`, `c4175ae75` and `419b8f612` on the branch `dmk/0003-answer-head-rebased`.
+
+We committed the [prediction](notebook/2026-10-31-0003-answer-head-prediction.md) at 06:18:10 UTC. The first run was at 10:32:12 UTC. The prediction was a gain of 1.75 ms for each pass with outputs. This is the head kernel of 1.64 ms and the copy of the logits of 0.15 ms, less the new work of 0.04 ms. The prediction for `lat_ms` was -1.5 % (3.6 ms), and for `short_ms` it was -3.9 %. It holds if `lat_ms` is -0.8 % or less and its interval is below 0.
+
+The [result](notebook/2026-10-31-0003-answer-head-result.md) on arm `L`, which is the stack with change 0001 only, holds the prediction. `lat_ms` is 0.87 % lower (interval -1.38 % to -0.33 %). `short_ms` is 3.15 % lower, `medium_ms` is 0.84 % lower, and `long_ms` is 0.09 % lower with an interval that includes 0. `rps8` is 1.24 % higher. The gain is about 1.4 ms for each pass with outputs, against 1.75 ms in the prediction.
+
+On the stack (arm `A3R`), `lat_ms` is 1.48 % lower (interval -2.03 % to -0.81 %). `short_ms` is 3.73 % lower, `medium_ms` is 1.33 % lower, and `long_ms` is 0.58 % lower. This test has no prediction. The tests of the branch give the same answers bit for bit, and `memcheck` found 0 errors.
+
+The tests found two faults in the first build. The first build gave 378 `graph reallocation` lines in one run of the benchmark. Log level 4 shows these lines, and the default level does not. A first check at the default level found 0 lines, and this result was not correct. The repair is a second `sched_reserve` with a list of 64 tokens. It uses about 0.2 s one time, and the number of lines is then 0.
+
+The second fault is in the MMVQ launch. The test `test-mul-mat-rows` gave 120 of 480 cases with different values, and all 120 have K = 1,536. The guard was not correct with `ids`. After the repair, 0 of 480 cases give different values. The head of the model has K = 2,560 and did not use this launch.
+
+The test cases `-p same_rows` with `n_ids` of 1 had an NMSE above the limit (6 of 177 on `f0a2033e7`, and 2 on `ca69612da`). Commit `c4175ae75` changed them to `n_ids` of 10 and 33. The result is 121 of 121 correct cases in 3 runs.
+
+The first version of the server change had a fault that no test shows. It made the list from the labels of the decision slots if the first slot of a batch was a decision. A text slot in the same batch then had no logits. [INFERENCE: we found this fault when we read the code, and not in a run.] Commit `419b8f612` repairs it. The server sets the list only if each slot of the batch holds a decision.
+
+The model gives `HTTP 501` for each text request, thus a batch with a text slot cannot occur with this model. The two runs with text requests gave `HTTP 501` for 25 of 25 requests. They do not show the fault or its repair. We have no other model on the host to examine it.
+
+### The two tests of the stack
+
+Each change in the stack is `exact`. Thus the answers of the stack must be the same bit for bit as the answers of build `D` and of the image in production. The [phase 1 result](notebook/2026-10-30-phase1-equivalence-result.md) shows that build `D` and the image give the same answers bit for bit. The stack has two speed tests. Each test has 6 blocks of the private benchmark and 4 blocks of `llama bench`.
+
+The first test compares `dmk/stack` at `fbfd9cb8c` with build `D`. The stack has the changes 0001, 0007, 0002 (test cases only), 0004 and 0005. We committed the [prediction](notebook/2026-10-31-stack-1-prediction.md) at 08:38:18 UTC, before the first run at 08:43:08 UTC. The prediction multiplies the ratios of the tests of the changes. The range is ±1.5 points.
+
+The first line of the prediction gave the time "about 08:45". A commit at 08:38:30 UTC changed it to "about 08:35". The commit changed no other text and no number.
+
+The [result](notebook/2026-10-31-stack-1-result.md) is a faster build with the same answers bit for bit in 12 runs. `lat_ms` is 8.04 % lower (interval -8.50 % to -7.62 %), a gain of 19.34 ms. The prediction was -6.8 % (range -5.3 % to -8.3 %). Seven of the 8 results show more gain than the prediction. `short_ms` is 6.00 % lower, and this is not in its range of -2.4 % to -5.4 %.
+
+The result entry does not find one measured cause for `short_ms`. The range of ±1.5 points is too small for the four tests of the changes together, which have ±2.08 points. [INFERENCE: this is the largest part of the cause.] A second test of the same two arms with the client `latency_by_type.py` (2 blocks) gives -4.97 % for `short_ms`, which is in the range. We wrote no prediction for it, and we ran it after the first result.
+
+The second test compares `dmk/stack` at `419b8f612` with the image `server-cuda-b12004`, which the server in production uses. This stack also has change 0003. We committed the [prediction](notebook/2026-10-31-stack-2-prediction.md) at 20:43:36 UTC, and the first run started at 20:43:55 UTC. This is the last speed test before the stack goes into production.
+
+The prediction multiplies three ratios for each metric. The first ratio is build `D` against the image (phase 1). The second is the first test of the stack. The third is change 0003, and it is 1 for `llama bench` because the change does not touch that path. The range is ±2.0 points, because the first test had a range of ±1.5 points and one result that was not in it.
+
+The first line of this prediction gives the time "about 20:45 UTC". This time is after the commit and after the first run. We did not change the file. The time of the commit is the true time.
+
+The [result](notebook/2026-10-31-stack-2-result.md) is a faster build with the same answers bit for bit in 12 runs. All 8 results are in their ranges. Each result has less gain than the predicted value, by 0.1 to 0.7 points. The load of the host was 1.14 to 2.64, and the largest VRAM use was 4,425 MiB.
+
+| Metric | Predicted change (%) | Range (%) | Result (%) | 95 % interval (%) |
+|---|---:|---|---:|---|
+| `lat_ms` | -9.8 | -11.8 to -7.8 | -9.145 | -9.280 to -8.978 |
+| `short_ms` | -9.8 | -11.8 to -7.8 | -9.611 | -9.743 to -9.462 |
+| `medium_ms` | -9.8 | -11.8 to -7.8 | -9.264 | -9.386 to -9.115 |
+| `long_ms` | -9.4 | -11.4 to -7.4 | -8.963 | -9.077 to -8.799 |
+| `rps8` | +10.7 | +8.7 to +12.7 | +10.340 | +10.209 to +10.465 |
+| `llama bench`, 64 tokens | +6.0 | +4.0 to +8.0 | +5.882 | +5.770 to +5.999 |
+| `llama bench`, 256 tokens | +7.7 | +5.7 to +9.7 | +7.266 | +7.177 to +7.354 |
+| `llama bench`, 3,000 tokens | +9.5 | +7.5 to +11.5 | +9.388 | +9.206 to +9.503 |
+
+Source: the [prediction](notebook/2026-10-31-stack-2-prediction.md), the [result](notebook/2026-10-31-stack-2-result.md) and the [data set](../data/2026-10-31-stack-2/README.md) of the second test of the stack. The range is the predicted change ±2.0 points. A latency less than 0 is a faster build. A number more than 0 for `rps8` and `llama bench` is also a faster build.
+
+| Arm | `lat_ms` (ms) | `short_ms` (ms) | `medium_ms` (ms) | `long_ms` (ms) |
+|---|---:|---:|---:|---:|
+| `P`, the image in production | 237.015 | 71.264 | 357.505 | 781.715 |
+| `S2`, the stack | 215.339 | 64.414 | 324.386 | 711.649 |
+
+Source: the [result](notebook/2026-10-31-stack-2-result.md) of the second test of the stack. The gain of `lat_ms` is 21.68 ms.
+
+The result of `pp256_ts` is not in the interval of the three tests together (+7.27 % against +7.57 % to +7.79 %). It is in the range of the prediction. The result of `short_ms` is 3.84 points more than in the first test, which is near the 3.73 % of change 0003 for `short_ms`. [INFERENCE: the two tests have different arms and a different host load. The data do not show which part comes from change 0003.]
+
+### The rule to stop
+
+The [entry of the rule to stop](notebook/2026-10-31-phase5-rule-to-stop.md) applies the rule of phase 4 again. The work stops when the expected gain is below 3 % for each request type. The entry makes two corrections.
+
+The stack removed about 9 % of the time of each request. A target that removes the same time in ms is then a larger part of the new time. We multiply each gain of phase 4 by 1.1. The confidence of `N` goes from 0.20 to 0.10, because the test of `G` gave much less than its prediction.
+
+| Target | Work | Largest gain in phase 4 (%) | Request type | Confidence | Expected gain (%) |
+|---|---|---:|---|---:|---:|
+| `N` | New MMQ kernels | 11.0 | `short2q` | 0.10 | 1.2 |
+| `F` | Fusion of RMS norm kernels, element-wise kernels and quantization kernels | 3.8 | `long` | 0.50 | 2.1 |
+| `L` | Smaller KV window for flash attention | 1.3 | `medium`, `long` | 0.50 | 0.7 |
+| `K` | CUDA graphs for passes with more than one token | 2.2 | `short2q` | 0.30 | 0.7 |
+| `M` | One kernel for each layer | 6.1 | `short2q` | 0.10 | 0.7 |
+| `O` | Cache of the prompt tokens | 1.0 | `short2q` | 0.50 | 0.6 |
+
+Source: the [entry of the rule to stop](notebook/2026-10-31-phase5-rule-to-stop.md) and `tables/ranked.tsv` of the [time model](../data/2026-10-31-phase4-model/README.md). The confidence of `N` was 0.20 in phase 4. At 0.20 the expected gain of `N` is 2.4 %.
+
+The largest expected gain of one target for one request type is 2.1 % (`F`, `long`). It is below 3 %. Thus the rule stops the work on the kernels, and the project does not make the targets `F`, `L`, `K`, `M`, `N` and `O`.
+
+The entry gives two more items that are not in the ranked list. The first item is the uploads that stay before the first kernel of a pass. They use 15.5 ms in a long request. If a change removes all of them, the gain is 2.2 % of `long_ms` (711.6 ms), which is below 3 % before the confidence. The second item is to start the third question of a request after the other questions. This gives 1 % to 2 % of `lat_ms` or less, and only together with ragged batching, which we do not use.
+
+### The facts that phase 5 shows
+
+- **The changes in the stack remove work that the answers do not use.** They write less data between kernels (`E` and `C`), send less data to the GPU (`P` and `B`), or read less of the output head (`A`). All of them are `exact`. The three targets that try to speed the matrix work (`D`, `H` and `G`) gave no gain that the project can use.
+- **A value of phase 4 is a ceiling and not a prediction.** The ratio of 1.6 for `D` was an assumption, and the value of 1.35 for `G` was the full load time. The model of `B` used all upload time as the copy time of the attention mask. `B` gave 37 % to 44 % of its predicted gain. The prediction for `H` was 8 % of the MMQ time, and the oracle gave 0.54 %. The cause of `P` was not the cause of phase 4.
+- **A short test before the speed test can stop a target.** The profiles of `P` and the micro-benchmarks of `D`, `H` and `G` showed the problem before a speed test. The speed test of `B` showed it after the work.
+- **A limit must be against the correct reference.** The first limits of `J` were against the equal split. The control showed that the equal split is as far from a decode of one sequence at a time as ragged batching is. New limits and new inputs gave sums in the limit, but 3 of 40 pairs were above the limit of 3 times.
+- **Tests find faults, and an inspection of the code finds a fault that no run shows.** The tests of `A` found two faults, and the tests of `C` found the sign of `-0.0`. The third fault of `A` is in a case that this model cannot give. [INFERENCE: we found it when we read the code, and not in a run.]
+- **The range of a prediction for a stack must come from the intervals of its tests.** The first prediction had ±1.5 points, and `short_ms` was not in it. The four tests together have ±2.08 points. The second prediction had ±2.0 points, and all 8 results were in their ranges.
+
+The stack is 9.145 % faster for `lat_ms` than the image in production, with the same answers bit for bit. The prediction of phase 4 for the total was 17.9 % with the expected gains. The sets of targets are not the same, thus we cannot compare the two numbers.
+
+The soak test of 24 hours and the change of production are the last steps. The section [The next steps](#the-next-steps) gives them.
+
 ## The next steps
 
-No target had code at the checkpoint. The target `E` had a measurement as a lead, and the project did not use it in production. This document stops at the checkpoint.
+The changes of phase 5 are complete, and the rule to stop stops the work on the kernels. The [conditions of the README](../README.md#condition-of-each-change) show the state of each target. The stack at `419b8f612` has the changes 0001, 0007, 0002 (test cases only), 0004, 0005 and 0003. It is 9.145 % faster for `lat_ms` than the image in production, with the same answers bit for bit.
 
-After the checkpoint, the owner approved phase 5. The owner approved the sequence of the ranked list. The project can operate the GPU when it is necessary. A build with the changes can go into production after its tests. Each target that the project does gets a prediction entry, a result entry, and a change document. The [notebook](notebook/README.md) has the entries of phase 5.
+The rule of the project for a build has three steps before production. The first step is the tests of correctness, and the second step is the test with two arms. The third step is a long test on the requests of production. The project did the first two steps for the stack. The third step and the change of production stay, and they do not change the code.
 
-The [conditions of the README](../README.md#condition-of-each-change) show the state of each target.
+1. Run the soak test of 24 hours on the stack at `419b8f612` with the requests of production.
+2. Check that the soak test has no GPU fault and no error of `compute-sanitizer`.
+3. Check that the answers are the same all the time.
+4. Change the server in production to the build of the stack after a correct soak test.
+5. Keep the image `server-cuda-b12004` as the build to go back to after the change of production.
 
-The tests are different for each equivalence class. A change in the equivalence class `exact` must give the same answers bit for bit. A change in the equivalence class `re-associated` must have three results. `test-backend-ops` must be in its limits. The KL divergence must be at the level of the noise. The guards of the benchmark must be in their limits.
+The image `server-cuda-b12004` gives the same answers as build `D`, and the stack gives the same answers as the image. Each change document gives the procedure to go back to the build before its change. Change 0004 goes back with the environment variable `LLAMA_KQ_MASK_DEVICE=0`. The other changes in the stack go back with `git revert` or with a build before the change.
 
-The [method](method.md) gives the rules.
+The lead #30489 had six steps before use in production. The project did three of them. `test-backend-ops` gave 310 of 310 correct cases for the GLU cases. The four tools of `compute-sanitizer` found no error in the new kernel. The [change document 0001](changes/0001-glu-into-quantize.md) has the equivalence class `exact`.
 
-Before the project uses #30489 in production, it must do six steps:
+Three items stay open for change 0001. We cannot write a prediction entry before a measurement that we made. No test measures only change 0001 again with more blocks at a low load. The change document gives no profile of the two builds.
 
-1. Write a prediction entry and commit it before the measurement.
-2. Run `test-backend-ops` for the GLU cases of the commit.
-3. Run the four tools of `compute-sanitizer` on the build with the patch.
-4. Measure again at a low load, with more blocks and a different sequence of the arms in each block.
-5. Make a profile of the two builds.
-6. Write a change document in `docs/changes/` with the equivalence class `exact`.
-
-Source: the section ["Limits and next work"](notebook/2026-10-31-lead-30489.md#limits-and-next-work) of the entry of the lead.
+Source: the section ["Limits and next work"](notebook/2026-10-31-lead-30489.md#limits-and-next-work) of the entry of the lead, the [change documents](changes/README.md), and the ["Next step"](notebook/2026-10-31-stack-2-result.md#next-step) of the second test of the stack.
 
 ## Known and unknown facts
 
-At the checkpoint, the project knows these facts:
+After phase 5, the project knows these facts:
 
 - The speed and the answers of build `D` are the same as the speed and the answers of the stock image. Thus a change of the project compares with build `D`.
 - The GPU is the limit of a request, and MMQ is the largest part of the kernel time.
 - The MMQ kernels are at 32.5 % to 39.2 % of the int8 peak. The structure of the MMQ loop can be the cause [INFERENCE].
-- Fusions of kernels give a gain. The lead #30489 gave 1.94 % for `lat_ms`.
-- The host code, CUDA graphs, and the launches are not the limit.
+- No tile adjustment of MMQ gives more than 1.05 times at 256 tokens or more for the three large shapes. A load pipeline for Q4_0 gives 1.042 times at 1,025 tokens or more.
+- The value-split path of `gdn_single` is 1.15 to 1.31 times as slow as the whole-head path on this GPU.
+- Fusions of kernels give a gain. The lead #30489 gave 1.94 % for `lat_ms`, and change 0005 gave 3.02 %.
+- A pass has 21 to 25 sync calls. All of them are before the first kernel of a pass, and the uploads of the scheduler cause them.
+- The uploads that stay use 15.5 ms in a long request.
+- The equal split is as far from a decode of one sequence at a time as ragged batching is from the equal split.
+- The stack is 9.145 % faster for `lat_ms` than the image in production, with the same answers bit for bit in 12 runs.
 
 The project does not know these facts:
 
-- The cause of the sync calls, which are about 23 for each pass.
 - The cause of the faster second request with the same case.
 - The cause of the high DRAM value of two MMQ kernels.
 - How much of the cap of the matrix kernels comes from the higher clock.
 - The width of the PCIe link of the test device [INFERENCE: PCIe 3.0 x8 fits the rate].
-- The result of a change when the load of the host is low and the number of blocks is large.
+- The result of one change at a low load with a large number of blocks. The second test of the stack had a low load, but it tests all changes together.
+- The part of each change in the gain of the stack.
+- The cause of the larger gain of change 0005 than the prediction.
+- The cause of the smaller gain of change 0003 for the `medium` request and the `long` request.
+- The cause of the `short1q` request that is 1.38 % slower with change 0008.
+- The cause of the different number of ubatches in the benchmark and in the client with change 0008.
+- The cause of the small gain of the load pipeline of target `G`.
+- If the repair of commit `419b8f612` shows in a run. No model on the host can examine it.
+- The cause of the lower value of `pp256_ts` than the estimate (+7.27 % against +7.57 % to +7.79 %). [INFERENCE: change 0003 or the code layout of the build can cause a part.]
+- The result of a test of 24 hours for the stack.
 
 ## Problems and corrections
 
@@ -670,6 +979,18 @@ The table lists each problem that we found and its correction. It is the list th
 | 3 | The `DMK_OPS` table has no rows. | The commit `de091da69` repairs the build. We have no test of it. | [Entry of the ablation](notebook/2026-10-31-phase3-ablation-caps.md#the-error-in-the-table-dmk_ops) |
 | 3 | The caps do not add. | The entries give a cap as a ceiling and not as a prediction. | [Entry of the ablation](notebook/2026-10-31-phase3-ablation-caps.md) |
 | 4 | The first total gain added the gains of the targets. | The time model replaced it before the measurement of a target. | [Entry of phase 4](notebook/2026-10-31-phase4-ranked-targets.md#prediction-of-the-total-gain) |
+| 5 | The phase 4 cause of target `P` was not true. The profiles do not show that the GPU waits 40 µs to 50 µs after a sync call. | The prediction entry of change 0007 found the code. The change skips 3 uploads. | [Prediction of change 0007](notebook/2026-10-31-0007-input-copies-prediction.md) |
+| 5 | Other programs ran on the GPU, with no GPU lock, in the first measurement window of target `D` (05:11 to 05:28). | We did not use that measurement window. We made the test again with the GPU lock (06:17 to 06:31). | [Result for target `D`](notebook/2026-10-31-0002-gdn-value-split-result.md) |
+| 5 | Other work ran on the GPU from 05:45:30 to 05:48:30, in the first measurement window of the sweep of target `H`. It changed the rows of the Q8_0 shape with 8,192 rows. | We ran the Q8_0 shapes with 8,192 rows and 4,096 rows again (07:05 to 07:10). The tables use the second run. | [Result for target `H`](notebook/2026-10-31-0006-mmq-tiles-result.md) |
+| 5 | Small tasks ran on the GPU with no GPU lock, at times with no measurement window (for example 05:26:10 to 05:27:52). Other measurement windows were open at these times. | The entry of change 0004 lists the times. The data set of change 0004 has no run from that time. | [Result of change 0004](notebook/2026-10-31-0004-gpu-mask-result.md#limits-and-next-work) |
+| 5 | The prediction of change 0004 used all upload time as the copy time of the attention mask. The gain was 37 % to 44 % of the prediction. | The result entry gives the cause. The copy of the attention mask is a part of the upload time. | [Result of change 0004](notebook/2026-10-31-0004-gpu-mask-result.md) |
+| 5 | A first version of the kernel of change 0005 did not add 0 at the end of each sum. It gave 6,222 different bytes. | We repaired the kernel. 470 random test cases give the same files. | [Result of change 0005](notebook/2026-10-31-0005-concat-conv-result.md) |
+| 5 | Some limits of the first prediction of change 0008 were not true. They were against the equal split, and the conv states are not the same bit for bit. | The second prediction has new limits against a decode of one sequence at a time and 8 new inputs. 3 of 40 pairs are above the limit of 3 times, and we do not use change 0008. | [Result of the first test](notebook/2026-10-31-0008-ragged-suffix-result.md), [result of the second test](notebook/2026-10-31-0008-ragged-suffix-retest-result.md) |
+| 5 | The first build of change 0003 gave 378 `graph reallocation` lines. A first count at the default log level was not correct. | We count at log level 4. A second `sched_reserve` with a list of 64 tokens gives 0 lines. | [Result of change 0003](notebook/2026-10-31-0003-answer-head-result.md) |
+| 5 | The first version of the server change of 0003 gave no logits to a text slot in a batch with decisions. We found this fault when we read the code [INFERENCE]. | Commit `419b8f612` repairs it. No run shows the fault or its repair. | [Result of change 0003](notebook/2026-10-31-0003-answer-head-result.md) |
+| 5 | The range of ±1.5 points was too small for the first test of the stack. `short_ms` was not in its range. | The second test of the stack has a range of ±2.0 points. All 8 results are in their ranges. | [Result of the first test of the stack](notebook/2026-10-31-stack-1-result.md#finding), [result of the second test of the stack](notebook/2026-10-31-stack-2-result.md) |
+| 5 | The first line of the prediction of the first test of the stack gave a time after the first run (about 08:45). | A commit 12 seconds after the first commit changed it to about 08:35. No other text and no number changed. | [Result of the first test of the stack](notebook/2026-10-31-stack-1-result.md) |
+| 5 | The first line of the prediction of the second test of the stack gives the time about 20:45. This time is after the commit and after the first run. | We did not change the file. The time of the commit is the true time. | [Result of the second test of the stack](notebook/2026-10-31-stack-2-result.md) |
 
 Source: the entries in the last column.
 

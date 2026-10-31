@@ -29,7 +29,7 @@ Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked lis
 
 ## How we got here
 
-The project started on 2026-10-30 at 21:05 UTC. The checkpoint of phase 4 is at about 02:30 UTC on 2026-10-31. Each row of the table gives the primary result of one phase and a link to its notebook entry. The [long version](docs/story.md) has the full text for each phase.
+The project started on 2026-10-30 at 21:05 UTC. The checkpoint of phase 4 is at about 02:30 UTC on 2026-10-31. The end of the changes of phase 5 is at about 21:30 UTC on the same day. Each row of the table gives the primary result of one phase and a link to its notebook entry. The [long version](docs/story.md) has the full text for each phase.
 
 | Phase | Question | Primary result | Notebook entry |
 |---|---|---|---|
@@ -38,6 +38,7 @@ The project started on 2026-10-30 at 21:05 UTC. The checkpoint of phase 4 is at 
 | 2 | Which numbers must a change keep? | The KL budget is 0.027830. The 52-decision set gives 48 correct. `test-backend-ops` gives 181 of 187. | [Correctness baseline](docs/notebook/2026-10-30-phase2-correctness-baseline.md) |
 | 3 | Where does the time of a request go? | The GPU runs a kernel for 90 % to 94 % of the time. MMQ is about 63 % of the kernel time at 32.5 % to 39.2 % of the int8 peak. | [Where the time goes](docs/notebook/2026-10-31-phase3-where-the-time-goes.md) |
 | 4 | Which changes come first? | 158.4 ms for `lat_ms` if the 8 targets all pass (prediction). The first change is `E`. | [Ranked list](docs/notebook/2026-10-31-phase4-ranked-targets.md) |
+| 5 | Which changes give a gain, and when does the work stop? | Five changes are correct and give a gain: `E`, `P`, `B`, `C` and `A`. The stack is 9.15 % faster for `lat_ms` than the image in production (interval -9.28 % to -8.98 %), and the answers are the same bit for bit. The project does not use the targets `D`, `G`, `H` and `J`. The rule to stop stops the work on the kernels, because the largest expected gain is 2.1 %. | [Second test of the stack](docs/notebook/2026-10-31-stack-2-result.md), [rule to stop](docs/notebook/2026-10-31-phase5-rule-to-stop.md) |
 
 Source: the notebook entries in the last column.
 
