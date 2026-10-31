@@ -263,7 +263,7 @@ The tables use the rows of the second measurement window for these two shapes. T
 
 The ablation runs measure the time of the loads of the loop on `K`. The [results entry](../../docs/notebook/2026-10-31-0006-mmq-tiles-result.md) gives the method and the result.
 
-The measurement window `0006-abl-r1` ran from 07:50:47 to 07:51:23 UTC on 2026-10-31. Its two runs ended with an error in 2 s, because the program was not on the GPU host. They gave no data, and we did not add their files.
+The measurement window `0006-abl-r1` ran from 07:50:47 to 07:51:23 UTC on 2026-10-31. Its two runs stopped with an error in 2 s, because the program was not on the GPU host. They gave no data, and we did not add their files.
 
 The measurement window `0006-abl-r2` ran from 07:57:45 to 07:59:11 UTC. The run `0006-abl-r2-q4` started at 07:58:00 UTC, and the run `0006-abl-r2-q8` started at 07:58:19 UTC. It used the first three ablation variants.
 
