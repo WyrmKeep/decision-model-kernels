@@ -58,7 +58,7 @@ The test has 4 blocks. Each block has one run of each arm. The power limit was 2
 
 Source: table `speed-bench.tsv`.
 
-The difference of `lat_ms` in the four blocks is -2.45 %, -4.52 %, -3.13 % and -3.16 %. Arm B is faster than arm A in all 4 blocks. Arm A gives 235.9 ms. In the [lead 30489](2026-10-31-lead-30489.md), arm `L` gave 236.5 ms.
+The difference of `lat_ms` in the four blocks is -2.45 %, -4.52 %, -3.13 % and -3.16 %. Arm B is faster than arm A in all 4 blocks. The mean `lat_ms` is 235.9 ms in arm A. In the [lead 30489](2026-10-31-lead-30489.md), the mean was 236.5 ms in arm `L`.
 
 ## Speed for each request type
 
