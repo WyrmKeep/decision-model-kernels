@@ -43,6 +43,7 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Change 0008: ragged batching of the question suffixes (result)](2026-10-31-0008-ragged-suffix-result.md) | Results | Complete. `lat_ms` is 3.32 % lower, 50 % of the prediction. The limits for the error were not true. A control shows that these limits were smaller than the error of the equal split. |
 | 2026-10-31 | [Change 0008: second test (prediction)](2026-10-31-0008-ragged-suffix-retest-prediction.md) | Prediction | Committed at 09:19 UTC, before the first run at 09:26 UTC. New inputs, and limits against a pass for each sequence. |
 | 2026-10-31 | [Change 0008: second test (result)](2026-10-31-0008-ragged-suffix-retest-result.md) | Results | Complete. `lat_ms` is 2.46 % lower. The limit of 3 times for one input is not true for 3 of 40 pairs. We do not use the change. |
+| 2026-10-31 | [Target G: MMQ tile load pipeline (result)](2026-10-31-0009-mmq-pipeline-result.md) | Results | Complete. We do not use target `G` in this shape. The Q4_0 pipeline gives the same bits and a mean ratio of 1.042 at 1,025 tokens or more. The limit is 1.08. |
 
 Source: the files in this folder.
 

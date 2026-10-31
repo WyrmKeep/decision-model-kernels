@@ -27,6 +27,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-31-0005-concat-conv`](2026-10-31-0005-concat-conv/README.md) | 2026-10-31 | The test of change 0005 (one kernel for `concat`, the copy of the conv state, `ssm_conv` and `SILU`) against the build of `dmk/stack`: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, `test-backend-ops`, `compute-sanitizer`, the bit check of 470 cases and the SASS compare. |
 | [`2026-10-31-0008-ragged-suffix`](2026-10-31-0008-ragged-suffix/README.md) | 2026-10-31 | The first test of change 0008 (ragged batching of the question suffixes) against the build of `b12004` with change 0001: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, the tests of the operations, the KL divergence and the number of ubatches with suffixes of different lengths. |
 | [`2026-10-31-0008-ragged-suffix-retest`](2026-10-31-0008-ragged-suffix-retest/README.md) | 2026-10-31 | The second test of change 0008 against the build of `dmk/stack`: 8 new inputs against a pass for each sequence, the answers with `-np 3` and `-np 1`, 4 blocks of the private benchmark and the latency of each request type. |
+| [`2026-10-31-0009-mmq-pipeline`](2026-10-31-0009-mmq-pipeline/README.md) | 2026-10-31 | The micro-benchmark of the Q4_0 tile load pipeline of the MMQ kernel (target `G`). It has 6 versions, 62 cells, and a bit compare against the baseline. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 
