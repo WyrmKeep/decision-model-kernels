@@ -58,6 +58,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | Blackwell | technical name | A type of NVIDIA GPU. It comes after Hopper. |
 | blobless clone | technical noun | A copy of a repository that has all commits but not the data of the files. Git downloads a file when a command must read it. |
 | block | technical noun | A group of runs in a schedule. It has one run of each arm, in a random sequence. |
+| blog post | technical noun | A text that the owner writes for other persons about the work of the project. A person can read it on a server. |
 | bootstrap | technical noun | A method that makes many new sets of values from one set. It selects values from the set at random. It can select the same value more than one time. |
 | bot | technical noun | A program that writes comments or closes items on GitHub without a person. |
 | branch | technical noun | A sequence of commits in a git repository. It has a name. |

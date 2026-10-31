@@ -122,11 +122,11 @@ The baseline is the stock build. The private benchmark measured it before this p
 |---|---:|---:|---:|---:|
 | Stock build `b12004` (baseline) | 71 | 357 | 779 | 236 |
 
-Source: the private benchmark, as in the [README](../README.md), and the token counts in [bench/README.md](../bench/README.md). The public benchmark has a different baseline.
+Source: the private benchmark, which we ran before this project started, and the token counts in [bench/README.md](../bench/README.md). The [README](../README.md) has the results of the project for the private benchmark. The public benchmark has a different baseline.
 
 ## Where the time goes
 
-The numbers in this part come from work that we did before this project started. That work used the private benchmark and a profiler. The project will replace the numbers with new measurements in the [notebook](notebook/README.md). The last column shows which numbers we measured. Each other number has the mark [INFERENCE].
+The numbers in this part come from work that we did before this project started. That work used the private benchmark and a profiler. The [entry of phase 3](notebook/2026-10-31-phase3-where-the-time-goes.md) gives new measurements of the project. The last column shows which numbers we measured. Each other number has the mark [INFERENCE].
 
 | Quantity | Value | Unit | Measured |
 |---|---:|---|---|
