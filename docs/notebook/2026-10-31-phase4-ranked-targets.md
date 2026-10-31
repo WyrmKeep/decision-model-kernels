@@ -86,7 +86,8 @@ The rank comes from the expected gain of `lat_ms`. Each cell gives the gain of t
 | 11 | `L`. Smaller KV window for flash attention (pull request 28495) | `exact` | `M` | 0.50 | 0.2 (0.4 %) | 0.8 (0.9 %) | 4.6 (1.3 %) | 10.0 (1.3 %) | 1.2 % | 0.6 % |
 | 12 | `M`. One kernel for each layer (megakernel) | `re-associated` | `XL` | 0.10 | 2.2 (4.7 %) | 5.3 (6.1 %) | 15.1 (4.2 %) | 27.4 (3.4 %) | 4.1 % | 0.4 % |
 | 13 | `O`. Cache of the prompt tokens | `exact` | `S-M` | 0.50 | 0.4 (0.9 %) | 0.9 (1.0 %) | 2.9 (0.8 %) | 5.7 (0.7 %) | 0.8 % | 0.4 % |
-| 14 | `K`. CUDA graphs for passes with more than one token | `exact` | `M` | 0.30 | 0.7 (1.4 %) | 2.0 (2.2 %) | 3.4 (0.9 %) | 3.2 (0.4 %) | 0.9 % | 0.3 % |
+| 14 | `P`. Remove the stream synchronizations in a pass | `exact` | `S-M` | 0.40 | 0.8 (1.6 %) | 2.2 (2.6 %) | 3.8 (1.1 %) | 3.6 (0.5 %) | 1.0 % | 0.4 % |
+| 15 | `K`. CUDA graphs for passes with more than one token | `exact` | `M` | 0.30 | 0.7 (1.4 %) | 2.0 (2.2 %) | 3.4 (0.9 %) | 3.2 (0.4 %) | 0.9 % | 0.3 % |
 
 Source: `tables/ranked.tsv` in [2026-10-31-phase4-model](../../data/2026-10-31-phase4-model/README.md).
 
@@ -96,6 +97,7 @@ The gains do not add. Some targets change the same time:
 - `J` removes 2 of the 3 output passes of `medium` and `long`. After `J`, `A` gives a gain for the output head of one pass only.
 - `B` and `L` make the attention mask smaller or remove its copy.
 - `E` is one of the fusions of `F`. The numbers of `F` do not include `E`.
+- `P` and `K` remove the same idle time in the passes. Do `P` first, because it is smaller.
 
 ## Recommended sequence
 
@@ -107,7 +109,7 @@ The ranked list has the sequence of the expected gain. The sequence below also u
 4. **`B` and `C`.** These changes are `exact` and have a high confidence. `B` has the largest gain for `long`. `C` has a gain for all types.
 5. **`G`.** The largest target. Do it after `H`, because the result of `H` can change the method of `G`.
 6. **`J`.** The largest target for `short2q`. `ssm_conv`, the GDN kernels and the code that divides the batch must accept sequences of different lengths.
-7. **`F`, `L`, `K`, `O`.** Smaller targets. Do them if the rule to stop does not stop the project.
+7. **`F`, `L`, `P`, `K`, `O`.** Smaller targets. Do them if the rule to stop does not stop the project.
 8. **`N` and `M`.** We do not recommend them at this time. The effort is very large and the confidence is low.
 
 ## Prediction of the sum
@@ -214,10 +216,11 @@ Thus the rule to stop does not stop the project at this time.
 - **Cause.** With `--kv-unified`, a slot behind other slots reads more KV cells than are necessary. The kernel for flash attention then uses 87 % more time.
 - **Prediction.** It removes 30 % of the time of flash attention.
 
-### `M`, `O` and `K`
+### `M`, `O`, `P` and `K`
 
 - **`M`.** One kernel for each layer removes most launches and some of the movement of data in the memory. The GPU runs a kernel during 90 % or more of the time. Thus the gain is small for a very large effort.
 - **`O`.** A cache of the tokens of the prompt prefix removes 70 % of the time to make the prompt and its tokens.
+- **`P`.** The host runs `cudaStreamSynchronize` 21 to 25 times in each pass. After each synchronization, the GPU waits 40 to 50 µs for the next kernel. We did not find the code that starts these synchronizations. If they are not necessary, the change removes 80 % of the idle time in the passes.
 - **`K`.** CUDA graphs remove part of the idle time in the passes. The shape of a pass changes with each request. Thus a new graph can be necessary for each pass, and that can use more time than it removes.
 
 ## Causes of an incorrect prediction
