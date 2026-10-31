@@ -17,6 +17,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | Term | Type | Meaning |
 |---|---|---|
 | ablation | technical noun | A test with a build that does not do the work of one operation class. The time that the test removes is the maximum gain for the operation class. |
+| ablation build | technical noun | The build of the branch `dmk/ablate-timing`. It skips the work of the parts that an environment variable names. |
 | access key | technical noun | A text that a program uses to get access to a server. |
 | access token | technical noun | A text that a program gives to a server to get access. |
 | accumulator | technical noun | The matrix of an MMA instruction that holds the sum. The instruction adds each new result to it. |
@@ -66,6 +67,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | builder image | technical noun | The image that has the compiler and the other programs that build llama.cpp. The script `build.sh` builds in a container from it. |
 | cache | technical noun | A small memory that gives fast reads of data that you use many times. |
 | cache key | technical noun | The value that a program uses to find an entry in a cache. |
+| cap | technical noun | The time of the arm `base` minus the time of an arm of an ablation. It is the largest time that a faster part can remove from a request. |
 | capability | technical noun | One type of task that Linux lets a program do. The flag `--cap-add` of Docker gives a container one capability. |
 | capture | technical verb | To record the kernel launches of one pass in a CUDA graph. The program can then start all of them with one launch. |
 | carrier-grade NAT range | technical noun | A range of IP addresses that RFC 6598 gives for internal use in large networks. |
@@ -102,6 +104,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | configuration file | technical noun | The file `tools/ste/config.toml`. It holds the limits and the lists of words of the checker. |
 | contraction | technical noun | Two words that a person writes as one word with a mark, for example `don't`. |
 | conv state | technical noun | A part of the layer state of a Gated DeltaNet layer. It has the last inputs of the layer. The kernel `ssm_conv` reads it. |
+| convolution | technical noun | The step of a recurrent layer that mixes each token with the tokens before it. The node `SSM_CONV` does it. |
 | copyright | technical noun | The control that a person or a group has on the copies of a work. |
 | correctness | technical noun | The quality of a build that gives the correct answers. |
 | CPU | technical name | The part of a host that does the work of most programs. The GPU does the work of the kernels. |
@@ -137,6 +140,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | draft | technical noun | A small and fast part that writes the next tokens before the model checks them. |
 | draft pull request | technical noun | A pull request that the person who wrote it marks as not complete. A person cannot merge it. |
 | DRAM | technical name | The memory parts on the GPU that hold the VRAM. The GPU gets data from the L2 cache faster than from DRAM. |
+| drift | technical noun | A slow change of the speed of the host during a test. |
 | driver | technical noun | The program that lets the other programs use a device, for example the GPU. |
 | effort | technical noun | The work to write and test a change. The values are `S` (1 day or less), `M` (2 to 5 days), `L` (1 to 2 weeks) and `XL` (more than 2 weeks). |
 | element-wise kernel | technical noun | A kernel that does the same operation on each value of a tensor. A value does not use the values at other positions. |
@@ -306,6 +310,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | parent task | technical noun | The first task of a group of questions. It runs the model on the shared prefix of the group. |
 | Pascal | technical name | A type of NVIDIA GPU. It comes before Volta. |
 | pass | technical noun | One run of the model on one ubatch, from tokens to logits. Do not use `forward`. |
+| pass spread | technical noun | The difference between the highest and the lowest mean latency of the timed passes of one run, in % of the mean of the pass means. |
 | passive verb | technical noun | A verb group, for example `is removed`. It does not show who does the work. |
 | path | technical noun | The name of a file or a folder, with the names of the folders that hold it. |
 | PCI address | technical noun | The text that names the slot of a GPU in a host. |
@@ -336,6 +341,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | program | technical noun | A set of steps in code that a device can run. |
 | programmatic dependent launch | technical noun | The function of CUDA that lets a kernel start before the kernel that comes before it stops. |
 | project | technical noun | The work in this repository. |
+| projection | technical noun | A matrix multiply of the activations with one weight matrix of a layer. A feed-forward layer has three projections: `ffn_up`, `ffn_gate` and `ffn_down`. |
 | prompt | technical noun | The tokens that go into the model at the start of a request. |
 | prompt cache | technical noun | A cache of the server. It keeps the data of slots for previous prompts. The server uses the data again when a new prompt has the same prefix. |
 | proposal | technical noun | An issue or a pull request that tells the project to make a change that the code does not have. |
@@ -408,6 +414,8 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | shared memory | technical noun | A fast memory on an SM. The threads of one thread block use it together. |
 | shared prefix | technical noun | The prefix that is the same in the prompts of two or more questions. |
 | short request | technical noun | A request for a case with a short state. The state has less than 100 tokens. |
+| SiLU | technical name | The function `x/(1+exp(-x))`. |
+| skip | technical verb | To make no launch for a node or a kernel. The ablation skips the work of a part of the model. |
 | SM | technical noun | One part of the GPU. It runs the threads of a thread block. The `RTX 3060 Ti` has 38 SMs. |
 | snapshot | technical noun | A copy of the layer state of a recurrent layer at one token. The memory keeps it. The program can then go back to that token. |
 | softmax | technical noun | A function that changes logits to probabilities. The sum of the probabilities is 1. |
@@ -417,6 +425,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | split KV cache | technical noun | A KV cache with one different part for each slot. The unified KV cache is not the same. |
 | SSH | technical name | The program that gives you a terminal on a different host. The link is safe. |
 | SSM state | technical noun | The part of the layer state of a Gated DeltaNet layer that is not the conv state. |
+| stage | technical noun | A group of runs of the ablation. Stage 1 has one run for each arm. Stage 2 has more blocks for some arms. |
 | stall sample | technical noun | A sample of Nsight Compute in which a warp waits and does not run an instruction. The sample shows the instruction at which the warp waits. |
 | state | technical noun | The text of one case. The model reads it before it answers the questions. |
 | STE | technical name | The short name of `Simplified Technical English`. ASD-STE100 gives its rules. |
@@ -427,6 +436,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | string | technical noun | A sequence of text in a program or in a data file. |
 | suffix | technical noun | The tokens of a prompt after the shared prefix. They have one question. |
 | summary | technical noun | A short section at the start of a document. It gives the primary facts. |
+| SwiGLU | technical name | The GLU of the feed-forward layers of this model. It multiplies the SiLU of the first list by the second list. |
 | switch point | technical noun | The number of columns in a batch at which llama.cpp changes from MMVQ to MMQ. Each GPU and each type of quantization can have a different switch point. |
 | syslog | technical noun | The log of the system of a host. Each line of a syslog has a time, a host name, a program, and a text. |
 | table | technical noun | Data in rows and columns. |
@@ -489,14 +499,3 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | whole-head path | technical noun | A path of the kernel `gdn_single`. One thread block calculates all value columns of one head. |
 | word | technical noun | One unit of text between two spaces. |
 | wrapper | technical noun | A program that starts a second program. It records or checks the work of the second program. |
-| ablation | technical noun | A test in which a build skips the work of one part of the program. The time of a request then shows how much time that part uses. |
-| ablation build | technical noun | The build of the branch `dmk/ablate-timing`. It skips the work of the parts that an environment variable names. |
-| cap | technical noun | The time of the arm `base` minus the time of an arm of an ablation. It is the largest time that a faster part can remove from a request. |
-| convolution | technical noun | The step of a recurrent layer that mixes each token with the tokens before it. The node `SSM_CONV` does it. |
-| drift | technical noun | A slow change of the speed of the host during a test. |
-| projection | technical noun | A matrix multiply of the activations with one weight matrix of a layer. A feed-forward layer has three projections: `ffn_up`, `ffn_gate` and `ffn_down`. |
-| skip | technical verb | To make no launch for a node or a kernel. The ablation skips the work of a part of the model. |
-| stage | technical noun | A group of runs of the ablation. Stage 1 has one run for each arm. Stage 2 has more blocks for some arms. |
-| SiLU | technical name | The function `x/(1+exp(-x))`. |
-| SwiGLU | technical name | The GLU of the feed-forward layers of this model. It multiplies the SiLU of the first list by the second list. |
-| pass spread | technical noun | The difference between the highest and the lowest mean latency of the timed passes of one run, in % of the mean of the pass means. |
