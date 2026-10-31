@@ -1,0 +1,7 @@
+# Change 0004 (attention mask on the GPU, build:0004-gpu-mask): correctness runs, not timed.
+# 1. LLAMA_KQ_MASK_CHECK=1: each pass compares the mask from the GPU with the mask from the host (production flags).
+DMK_DOCKER_EXTRA="-e LLAMA_KQ_MASK_CHECK=1" DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0004-check-unified build:0004-gpu-mask --passes 1 --write-reference 0004-check-unified
+# 2. The same check without --kv-unified (one KV stream for each slot).
+DMK_DOCKER_EXTRA="-e LLAMA_KQ_MASK_CHECK=1" DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --no-webui --no-slots -lv 4" bench 0004-check-streams build:0004-gpu-mask --passes 1 --write-reference 0004-check-streams
+# 3. compute-sanitizer memcheck on the server, one request of each type (short with 1 question, short with 2, medium, long).
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" DMK_SERVER_WRAP="timeout 1800 /tools/compute-sanitizer-12.8.93/bin/compute-sanitizer --tool memcheck --error-exitcode 99" client 0004-san-memcheck build:0004-gpu-mask /extra/0004/memcheck_client.py 18080 /runs/{name}.answers.json
