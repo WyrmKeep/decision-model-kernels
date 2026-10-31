@@ -1,0 +1,22 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+warn: LLAMA_ARG_PORT environment variable is set, but will be overwritten by command line argument --port
+==WARNING== Note: Running with unmodified GPU clocks. If not controlled otherwise, profiling results may be inconsistent.
+==PROF== Connected to process 51 (/opt/dmk/llama-server)
+0.00.480.510 I srv  llama_server: initializing ...
+0.00.480.531 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.480.671 I srv  init_listene: The UI is disabled
+0.00.480.673 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.480.781 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.482.620 I srv    load_model: loading model '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.03.123.499 I cmn          init: llama threadpool init, n_threads = 6
+0.03.129.257 I srv          init: decision model type: h2o-lightning
+==PROF== Profiling "rms_norm_f32" - 0 (1/6): 0%
+==WARNING== Backing up device memory in system memory. Kernel replay might be slow. Consider using "--replay-mode application" to avoid memory save-and-restore.
+....50%....100% - 19 passes
+==PROF== Profiling "scale_f32" - 1 (2/6): 0%....50%....100% - 19 passes
+==PROF== Profiling "k_get_rows_float" - 2 (3/6): 0%....50%....100% - 19 passes
+==PROF== Profiling "quantize_q8_1" - 3 (4/6): 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_vec_q" - 4 (5/6): 0%....50%....100% - 19 passes
+==PROF== Profiling "concat_non_cont" - 5 (6/6): 0%....50%....100% - 19 passes
+==PROF== Trying to shutdown target application
+==PROF== Report: /runs/p3-ncu-smoke-a.ncu-repz

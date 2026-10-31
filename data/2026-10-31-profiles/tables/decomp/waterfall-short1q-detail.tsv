@@ -1,0 +1,20 @@
+column	what	mean_ms	p50_ms	p95_ms	share_of_wall_pct
+http_in_ms	client send -> server handler start	0.1475	0.1502	0.1621	0.3148
+parse_ms	JSON parse + parse_questions/state + prepare_state	0.0164	0.0160	0.0186	0.0349
+build_ms	prompt render + tokenize + task grouping	0.5761	0.5670	0.6324	1.2298
+sched_ms	post_tasks -> first llama_decode start (queue wake-up, slot launch, batch build)	0.1190	0.1195	0.1331	0.2541
+first_setup_ms	first llama_decode start -> first ubatch start (batch alloc, memory init_batch, output reserve)	0.1205	0.1170	0.1361	0.2572
+prepare_ms	host graph preparation of all passes: memory apply, graph build, alloc, set inputs	0.8800	1.0740	1.1373	1.8786
+submit_ms	host time of the compute submit (op dispatch / CUDA launches) of all passes	8.6532	9.6010	10.3103	18.4715
+between_ms	host time between passes (end of ubatch i -> start of ubatch i+1) without the GPU waits	0.0000	0.0000	0.0000	0.0000
+post_submit_ms	end of the last ubatch -> start of the blocking sync (decode tail, post_decode, logits read call)	0.0206	0.0180	0.0337	0.0440
+gpu_wait_ms	host blocked for the GPU (all syncs)	35.9343	34.4210	39.8187	76.7068
+tail_server_ms	end of the last sync -> results ready in the HTTP thread (send_decision, release, queue, wake-up)	0.0688	0.0640	0.0931	0.1469
+format_ms	answer formatting (softmax of the answer tokens, JSON of the answers)	0.0138	0.0140	0.0171	0.0295
+http_out_ms	server request line -> response body read by the client (res->ok JSON dump, HTTP write, loopback, docker proxy, client read)	0.2962	0.2908	0.3366	0.6322
+apply_ms	  of prepare: memory context apply	0.0148	0.0150	0.0156	0.0316
+graph_build_ms	  of prepare: ggml graph build (0 if graph reused)	0.4628	0.5705	0.6137	0.9880
+alloc_ms	  of prepare: scheduler alloc (0 if reused)	0.3579	0.4410	0.4560	0.7640
+inputs_ms	  of prepare: set_inputs	0.0445	0.0440	0.0490	0.0950
+sched_wake_est_ms	  of sched [estimate, slot-line anchor]: post_tasks -> launch_slot_ (queue wake-up, get_available_slot)	0.0364	0.0360	0.0396	0.0777
+sched_launch_est_ms	  of sched [estimate]: launch_slot_ -> decode start (update_slots batch build)	0.0826	0.0825	0.0931	0.1764

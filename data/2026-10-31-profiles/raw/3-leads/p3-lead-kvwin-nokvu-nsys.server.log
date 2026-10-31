@@ -1,0 +1,99 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+warn: LLAMA_ARG_PORT environment variable is set, but will be overwritten by command line argument --port
+0.00.345.526 I srv  llama_server: initializing ...
+0.00.346.420 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.346.608 I srv  init_listene: The UI is disabled
+0.00.346.613 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.346.740 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.349.302 I srv    load_model: loading model '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.03.423.540 W llama_context: n_ctx is not divisible by n_seq_max - rounding down to 16896
+0.03.574.077 I cmn          init: llama threadpool init, n_threads = 6
+0.03.677.905 I srv          init: decision model type: h2o-lightning
+0.03.705.791 I srv    load_model: initializing, n_slots = 3, n_ctx_slot = 5632, kv_unified = 'false'
+0.03.705.921 I srv    load_model: decision model: prompt cache disabled by default, use `--cache-ram N` to enable it
+0.03.711.857 I srv  server_run_i: model loaded
+0.03.711.878 I srv  server_on_li: listening on http://0.0.0.0:8080
+0.04.662.041 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.04.662.066 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+0.04.733.960 I slot      release: id  0 | task 0 | stop processing: n_tokens = 161, truncated = 0
+0.04.736.770 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.197 (> 0.100 thold), f_keep = 0.255
+0.04.736.785 I slot launch_slot_: id  1 | task 3 | processing task, is_child = 1
+0.04.736.787 I slot launch_slot_: id  0 | task 2 | processing task, is_child = 0
+0.04.839.649 I slot      release: id  0 | task 2 | stop processing: n_tokens = 208, truncated = 0
+0.04.839.672 I slot      release: id  1 | task 3 | stop processing: n_tokens = 139, truncated = 0
+0.04.849.361 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.04.849.373 I slot launch_slot_: id  1 | task 7 | processing task, is_child = 1
+0.04.849.379 I slot launch_slot_: id  0 | task 8 | processing task, is_child = 1
+0.04.849.382 I slot launch_slot_: id  2 | task 6 | processing task, is_child = 0
+0.05.568.921 I slot      release: id  2 | task 6 | stop processing: n_tokens = 3265, truncated = 0
+0.05.624.011 I slot      release: id  0 | task 8 | stop processing: n_tokens = 3295, truncated = 0
+0.05.624.458 I slot      release: id  1 | task 7 | stop processing: n_tokens = 3269, truncated = 0
+0.05.639.118 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176794760072
+0.05.639.289 I slot launch_slot_: id  1 | task 14 | processing task, is_child = 1
+0.05.639.295 I slot launch_slot_: id  2 | task 15 | processing task, is_child = 1
+0.05.639.301 I slot launch_slot_: id  0 | task 13 | processing task, is_child = 0
+0.06.459.727 I slot      release: id  0 | task 13 | stop processing: n_tokens = 3469, truncated = 0
+0.06.459.784 I slot      release: id  1 | task 14 | stop processing: n_tokens = 3473, truncated = 0
+0.06.460.225 I slot      release: id  2 | task 15 | stop processing: n_tokens = 3499, truncated = 0
+0.06.471.068 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176795595799
+0.06.471.284 I slot launch_slot_: id  2 | task 20 | processing task, is_child = 1
+0.06.471.325 I slot launch_slot_: id  0 | task 21 | processing task, is_child = 1
+0.06.471.336 I slot launch_slot_: id  1 | task 19 | processing task, is_child = 0
+0.07.199.948 I slot      release: id  1 | task 19 | stop processing: n_tokens = 3238, truncated = 0
+0.07.199.974 I slot      release: id  2 | task 20 | stop processing: n_tokens = 3242, truncated = 0
+0.07.230.118 I slot      release: id  0 | task 21 | stop processing: n_tokens = 3268, truncated = 0
+0.07.240.956 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176796335989
+0.07.241.119 I slot launch_slot_: id  0 | task 27 | processing task, is_child = 1
+0.07.241.151 I slot launch_slot_: id  1 | task 28 | processing task, is_child = 1
+0.07.241.160 I slot launch_slot_: id  2 | task 26 | processing task, is_child = 0
+0.07.915.163 I slot      release: id  2 | task 26 | stop processing: n_tokens = 3000, truncated = 0
+0.07.969.699 I slot      release: id  0 | task 27 | stop processing: n_tokens = 3004, truncated = 0
+0.07.970.121 I slot      release: id  1 | task 28 | stop processing: n_tokens = 3030, truncated = 0
+0.07.982.236 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176797105718
+0.07.982.427 I slot launch_slot_: id  1 | task 34 | processing task, is_child = 1
+0.07.982.434 I slot launch_slot_: id  2 | task 35 | processing task, is_child = 1
+0.07.982.440 I slot launch_slot_: id  0 | task 33 | processing task, is_child = 0
+0.08.720.964 I slot      release: id  0 | task 33 | stop processing: n_tokens = 3039, truncated = 0
+0.08.721.005 I slot      release: id  1 | task 34 | stop processing: n_tokens = 3043, truncated = 0
+0.08.721.335 I slot      release: id  2 | task 35 | stop processing: n_tokens = 3069, truncated = 0
+0.08.733.006 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176797857019
+0.08.733.181 I slot launch_slot_: id  2 | task 40 | processing task, is_child = 1
+0.08.733.190 I slot launch_slot_: id  0 | task 41 | processing task, is_child = 1
+0.08.733.195 I slot launch_slot_: id  1 | task 39 | processing task, is_child = 0
+0.09.481.174 I slot      release: id  1 | task 39 | stop processing: n_tokens = 3269, truncated = 0
+0.09.481.194 I slot      release: id  2 | task 40 | stop processing: n_tokens = 3273, truncated = 0
+0.09.511.713 I slot      release: id  0 | task 41 | stop processing: n_tokens = 3299, truncated = 0
+0.09.522.111 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176798617209
+0.09.522.235 I slot launch_slot_: id  0 | task 47 | processing task, is_child = 1
+0.09.522.245 I slot launch_slot_: id  1 | task 48 | processing task, is_child = 1
+0.09.522.250 I slot launch_slot_: id  2 | task 46 | processing task, is_child = 0
+0.10.300.043 I slot      release: id  2 | task 46 | stop processing: n_tokens = 3512, truncated = 0
+0.10.354.335 I slot      release: id  0 | task 47 | stop processing: n_tokens = 3516, truncated = 0
+0.10.354.720 I slot      release: id  1 | task 48 | stop processing: n_tokens = 3542, truncated = 0
+0.10.365.517 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176799490352
+0.10.365.805 I slot launch_slot_: id  1 | task 54 | processing task, is_child = 1
+0.10.365.814 I slot launch_slot_: id  2 | task 55 | processing task, is_child = 1
+0.10.365.828 I slot launch_slot_: id  0 | task 53 | processing task, is_child = 0
+0.11.153.721 I slot      release: id  0 | task 53 | stop processing: n_tokens = 3265, truncated = 0
+0.11.153.754 I slot      release: id  1 | task 54 | stop processing: n_tokens = 3269, truncated = 0
+0.11.154.206 I slot      release: id  2 | task 55 | stop processing: n_tokens = 3295, truncated = 0
+0.11.166.623 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176800289770
+0.11.166.874 I slot launch_slot_: id  2 | task 60 | processing task, is_child = 1
+0.11.166.882 I slot launch_slot_: id  0 | task 61 | processing task, is_child = 1
+0.11.166.887 I slot launch_slot_: id  1 | task 59 | processing task, is_child = 0
+0.11.919.964 I slot      release: id  1 | task 59 | stop processing: n_tokens = 3265, truncated = 0
+0.11.919.984 I slot      release: id  2 | task 60 | stop processing: n_tokens = 3269, truncated = 0
+0.11.950.925 I slot      release: id  0 | task 61 | stop processing: n_tokens = 3295, truncated = 0
+0.11.963.304 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176801055999
+0.11.963.457 I slot launch_slot_: id  0 | task 67 | processing task, is_child = 1
+0.11.963.474 I slot launch_slot_: id  1 | task 68 | processing task, is_child = 1
+0.11.963.479 I slot launch_slot_: id  2 | task 66 | processing task, is_child = 0
+0.12.687.597 I slot      release: id  2 | task 66 | stop processing: n_tokens = 3265, truncated = 0
+0.12.742.651 I slot      release: id  0 | task 67 | stop processing: n_tokens = 3269, truncated = 0
+0.12.743.281 I slot      release: id  1 | task 68 | stop processing: n_tokens = 3295, truncated = 0
+0.12.999.554 I srv    operator(): operator(): cleaning up before exit...
+Collecting data...
+Generating '/tmp/nsys-root/nsys-report-47a0.qdstrm'
+[1/1] [0%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [0%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [1%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [2%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [5%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [6%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [7%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [9%                          ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [11%                         ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [12%                         ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [14%                         ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [=16%                        ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [=17%                        ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [==19%                       ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [==20%                       ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [=======================93%  ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [=======================96%  ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [========================98% ] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [========================100%] p3-lead-kvwin-nokvu-nsys.nsys-rep[1/1] [========================100%] p3-lead-kvwin-nokvu-nsys.nsys-rep
+Generated:
+	/runs/p3-lead-kvwin-nokvu-nsys.nsys-rep

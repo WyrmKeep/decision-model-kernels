@@ -1,0 +1,84 @@
+table	column	unit	meaning
+childpass-requests.tsv	run	None	label of the log: the log file name without .server.log
+childpass-requests.tsv	k	None	index of the request line in that log (0-based)
+childpass-requests.tsv	kind	None	request type (short1q, short2q, medium3q, long3q): from the client JSON when given, else derived from the request line
+childpass-requests.tsv	case	None	benchmark case id from the client JSON; empty without a client JSON
+childpass-requests.tsv	phase	None	client phase from the client JSON; empty without a client JSON
+childpass-requests.tsv	n_q	count	questions of the request (request line n_questions)
+childpass-requests.tsv	n_ubatches_obs	count	ubatch lines (model passes) of the request
+childpass-requests.tsv	slots	None	slot ids of the question tasks in task order, parent first, as a tuple such as (0, 2); empty when the slot lines do not fit the request
+childpass-requests.tsv	select	None	how the parent slot was chosen (slot line): LRU, LCP or id
+childpass-requests.tsv	structure	None	census slot structure of the model that reproduces the ubatches: P<seqs> prefix pass, F whole prompt in one pass, S<seqs> suffix pass, separated by spaces; ? = no model reproduces them
+childpass-requests.tsv	describe	None	passes of that model: P<tokens>, F<tokens>, S<seqs>x<tokens per seq>, joined by +; a leading ~ = rebuilt from the observed ubatches only
+childpass-requests.tsv	below	None	True when a child slot has a lower slot id than the parent slot
+childpass-requests.tsv	unified_ok	None	True when the census default model (unified split, sequential = false) reproduces the observed ubatches (n_tokens, n_seqs, n_outputs) for the observed slots
+childpass-requests.tsv	seq_ok	None	True when the sequential-split model (sequential = true, the split of --no-kv-unified) reproduces the observed ubatches
+childpass-requests.tsv	expected_mode	None	model expected for the cache mode of the log (kv_unified of the load_model line): unified or seq
+childpass-requests.tsv	expected_ok	None	True when the expected model reproduces the observed ubatches
+childpass-requests.tsv	n_dec	count	llama_decode calls (decode lines) of the request
+childpass-requests.tsv	pred_dec	count	llama_decode calls that the census default model predicts
+childpass-requests.tsv	fixed_dec	count	llama_decode calls of the fixed-order model: parent slot forced to the lowest id, all children in the parent's suffix batch
+childpass-requests.tsv	pred_ub	count	ubatches that the census default model predicts
+childpass-requests.tsv	fixed_ub	count	ubatches of the fixed-order model
+childpass-requests.tsv	total_us	us	total_us of the request line (handler entry to end of handler)
+childpass-requests.tsv	wait_us	us	wait_us of the request line (post_tasks to wait_for_all)
+childpass-requests.tsv	client_wall_ms	ms	client wall time of the request from the client JSON; empty without a client JSON
+childpass-requests.tsv	more_ub	None	True when the observed ubatch count is above pred_ub
+childpass-requests.tsv	dec_vs_fixed	count	n_dec minus fixed_dec (positive = more llama_decode calls than the fixed order)
+childpass-requests.tsv	sizes_vs_fixed	None	True when the observed ubatch sizes (n_tokens, n_seqs, n_outputs) differ from the fixed-order model
+kvwin-nsys-passes.tsv	trace	None	nsys run name (the run column of the passes table); in the old-trace file the trace name long, medium or short
+kvwin-nsys-passes.tsv	req	None	client request index of the pass (client_idx of the passes table); in the old-trace file the request index in the trace
+kvwin-nsys-passes.tsv	j	None	index of the pass in its request, 0-based
+kvwin-nsys-passes.tsv	phase	None	client phase of the request: warmup, T1, other, T2, T3, T4; in the old-trace file the trace name
+kvwin-nsys-passes.tsv	kind	None	pass kind of the passes table (prefix-large, prefix-small, suffix, ...)
+kvwin-nsys-passes.tsv	case	None	benchmark case id
+kvwin-nsys-passes.tsv	N	count	tokens of the pass (n_tokens)
+kvwin-nsys-passes.tsv	seen	cells	window seen: n_kv_padded = KQ-mask host-to-device bytes / (2 x n_tokens), padded to 256
+kvwin-nsys-passes.tsv	needed	cells	window needed: own cells of the longest sequence of the pass, padded to 256 (census attn_cost); old traces: n_kv_window_model of crosscheck-passes.tsv
+kvwin-nsys-passes.tsv	pool	cells	cells of the request in a perfectly compact unified pool (prefix cells + suffix cells of the sequences already placed), padded to 256; empty in the old-trace file
+kvwin-nsys-passes.tsv	eff	cells	mean cells a query tile reads when the own cells sit at the front of the pool and the masked tail is skipped (N >= 1024); equal to needed for N < 1024
+kvwin-nsys-passes.tsv	fa	ms	flash-attention kernel time of the pass, 8 layers (t_cat_flash_ms: flash kernels including mask scan and fix-up)
+kvwin-nsys-passes.tsv	busy	ms	GPU busy time of the pass: union of the kernel intervals (gpu_busy_ms)
+kvwin-nsys-passes.tsv	wall	ms	wall time of the pass in the trace: start of its first GPU kernel to end of its last kernel (wall_ms)
+kvwin-nsys-passes.tsv	w_impl	cells	window the kernel appears to read: (fa - a) / (b x N) with the fit fa = a + b x N x seen over the passes with N < 1024
+kvwin-nsys-passes.tsv	pred_need	ms	fit prediction at the needed window (need_eff); for N >= 1024 scaled by c_scan, the smallest observed / model ratio of the scan passes
+kvwin-nsys-passes.tsv	gain	ms	possible gain if the window were exact: b x N x (seen - needed) for N < 1024; fa above pred_need for N >= 1024 (never negative); empty when no needed window
+kvwin-nsys-passes.tsv	describe	None	pass structure of the model that reproduces the request, e.g. P88+S2x51+S1x69; ? = no model reproduces it
+kvwin-nsys-nokvu-passes.tsv	trace	None	nsys run name (the run column of the passes table); in the old-trace file the trace name long, medium or short
+kvwin-nsys-nokvu-passes.tsv	req	None	client request index of the pass (client_idx of the passes table); in the old-trace file the request index in the trace
+kvwin-nsys-nokvu-passes.tsv	j	None	index of the pass in its request, 0-based
+kvwin-nsys-nokvu-passes.tsv	phase	None	client phase of the request: warmup, T1, other, T2, T3, T4; in the old-trace file the trace name
+kvwin-nsys-nokvu-passes.tsv	kind	None	pass kind of the passes table (prefix-large, prefix-small, suffix, ...)
+kvwin-nsys-nokvu-passes.tsv	case	None	benchmark case id
+kvwin-nsys-nokvu-passes.tsv	N	count	tokens of the pass (n_tokens)
+kvwin-nsys-nokvu-passes.tsv	seen	cells	window seen: n_kv_padded = KQ-mask host-to-device bytes / (2 x n_tokens), padded to 256
+kvwin-nsys-nokvu-passes.tsv	needed	cells	window needed: own cells of the longest sequence of the pass, padded to 256 (census attn_cost); old traces: n_kv_window_model of crosscheck-passes.tsv
+kvwin-nsys-nokvu-passes.tsv	pool	cells	cells of the request in a perfectly compact unified pool (prefix cells + suffix cells of the sequences already placed), padded to 256; empty in the old-trace file
+kvwin-nsys-nokvu-passes.tsv	eff	cells	mean cells a query tile reads when the own cells sit at the front of the pool and the masked tail is skipped (N >= 1024); equal to needed for N < 1024
+kvwin-nsys-nokvu-passes.tsv	fa	ms	flash-attention kernel time of the pass, 8 layers (t_cat_flash_ms: flash kernels including mask scan and fix-up)
+kvwin-nsys-nokvu-passes.tsv	busy	ms	GPU busy time of the pass: union of the kernel intervals (gpu_busy_ms)
+kvwin-nsys-nokvu-passes.tsv	wall	ms	wall time of the pass in the trace: start of its first GPU kernel to end of its last kernel (wall_ms)
+kvwin-nsys-nokvu-passes.tsv	w_impl	cells	window the kernel appears to read: (fa - a) / (b x N) with the fit fa = a + b x N x seen over the passes with N < 1024
+kvwin-nsys-nokvu-passes.tsv	pred_need	ms	fit prediction at the needed window (need_eff); for N >= 1024 scaled by c_scan, the smallest observed / model ratio of the scan passes
+kvwin-nsys-nokvu-passes.tsv	gain	ms	possible gain if the window were exact: b x N x (seen - needed) for N < 1024; fa above pred_need for N >= 1024 (never negative); empty when no needed window
+kvwin-nsys-nokvu-passes.tsv	describe	None	pass structure of the model that reproduces the request, e.g. P88+S2x51+S1x69; ? = no model reproduces it
+kvwin-old-passes.tsv	src	None	source of the row: old (the three old traces)
+kvwin-old-passes.tsv	trace	None	nsys run name (the run column of the passes table); in the old-trace file the trace name long, medium or short
+kvwin-old-passes.tsv	req	None	client request index of the pass (client_idx of the passes table); in the old-trace file the request index in the trace
+kvwin-old-passes.tsv	j	None	index of the pass in its request, 0-based
+kvwin-old-passes.tsv	phase	None	client phase of the request: warmup, T1, other, T2, T3, T4; in the old-trace file the trace name
+kvwin-old-passes.tsv	kind	None	pass kind of the passes table (prefix-large, prefix-small, suffix, ...)
+kvwin-old-passes.tsv	case	None	benchmark case id
+kvwin-old-passes.tsv	N	count	tokens of the pass (n_tokens)
+kvwin-old-passes.tsv	seen	cells	window seen: n_kv_padded = KQ-mask host-to-device bytes / (2 x n_tokens), padded to 256
+kvwin-old-passes.tsv	needed	cells	window needed: own cells of the longest sequence of the pass, padded to 256 (census attn_cost); old traces: n_kv_window_model of crosscheck-passes.tsv
+kvwin-old-passes.tsv	pool	cells	cells of the request in a perfectly compact unified pool (prefix cells + suffix cells of the sequences already placed), padded to 256; empty in the old-trace file
+kvwin-old-passes.tsv	eff	cells	mean cells a query tile reads when the own cells sit at the front of the pool and the masked tail is skipped (N >= 1024); equal to needed for N < 1024
+kvwin-old-passes.tsv	need_eff	cells	window used for the prediction: needed for N < 1024, eff for N >= 1024
+kvwin-old-passes.tsv	fa	ms	flash-attention kernel time of the pass, 8 layers (t_cat_flash_ms: flash kernels including mask scan and fix-up)
+kvwin-old-passes.tsv	busy	ms	GPU busy time of the pass: union of the kernel intervals (gpu_busy_ms)
+kvwin-old-passes.tsv	wall	ms	wall time of the pass in the trace: start of its first GPU kernel to end of its last kernel (wall_ms)
+kvwin-old-passes.tsv	w_impl	cells	window the kernel appears to read: (fa - a) / (b x N) with the fit fa = a + b x N x seen over the passes with N < 1024
+kvwin-old-passes.tsv	pred_seen	ms	fit prediction a + b x N x seen at the window seen (N < 1024 only)
+kvwin-old-passes.tsv	pred_need	ms	fit prediction at the needed window (need_eff); for N >= 1024 scaled by c_scan, the smallest observed / model ratio of the scan passes
+kvwin-old-passes.tsv	gain	ms	possible gain if the window were exact: b x N x (seen - needed) for N < 1024; fa above pred_need for N >= 1024 (never negative); empty when no needed window

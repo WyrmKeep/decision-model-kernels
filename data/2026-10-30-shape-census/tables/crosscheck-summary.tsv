@@ -1,0 +1,13 @@
+check	passed	total	all_passed
+matmul count (MMQ) per pass	72	72	yes
+matmul count (MMVQ) per pass	72	72	yes
+stream-k fix-up launches per pass	72	72	yes
+quantize launches per pass	72	72	yes
+flash attention launches per pass	72	72	yes
+Gated DeltaNet launches per pass	72	72	yes
+launch keys (type, tile, need_check, grid.x, fix-up) identical as multiset, passes with launch records	37	37	yes
+flash-attention K/V window (padded n_kv) per pass	33	72	NO
+pass sequence of the request reproduced by a slot arrangement	20	20	yes
+tokens evaluated per request = shared prefix + sum of suffixes	20	20	yes
+flash-attention kernel template (ncols1) over the whole trace	7	7	yes
+Gated DeltaNet kernel and grid (sequences) over the whole trace	10	10	yes

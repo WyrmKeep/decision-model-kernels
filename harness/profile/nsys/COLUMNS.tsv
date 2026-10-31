@@ -1,0 +1,304 @@
+table	column	unit	meaning
+passes.tsv	row_kind	None	pass is one model pass. request is the sum over the passes of one request. trace_total is the sum over the capture.
+passes.tsv	trace	None	Run name of the capture, for example p3-nsys-short1q. Same value as run.
+passes.tsv	request_idx	None	Index of the request in the client JSON of the run, from 0 (same value as client_idx). The value is empty for the trace_total row.
+passes.tsv	pass_idx_in_request	None	Index of the pass in its request, from 0. The value is empty for request and trace_total rows.
+passes.tsv	pass_idx_in_trace	None	Index of the pass among all valid passes of the capture, from 0 (same value as pass_idx_global). Passes of the server start before the first request count too; mmq-launches.tsv uses the same index. The value is empty for request and trace_total rows.
+passes.tsv	case_id_inferred	None	Case of the request, taken from the client JSON (same value as case). The name is kept from the census table, where the case was inferred.
+passes.tsv	pass_kind	None	prefix-large (no output head, 2048 tokens), prefix-small (no output head, fewer tokens) or suffix (with output head) for a pass; request for a request row; trace_total for the total row.
+passes.tsv	pass_kind_evidence	None	The facts that decide pass_kind: output head kernel, device-to-host logits copy, host-to-device output ids. Request rows: the number of prefix and suffix passes; trace_total row: the number of requests.
+passes.tsv	n_tokens	tokens	Tokens of the pass: grid.x of its first rms_norm kernel. The request and trace rows give the sum over their passes.
+passes.tsv	n_kv_padded	cells	K/V window of the flash attention, padded to 256. The script derives it from the size of the attention mask copy: bytes divided by 2 and by n_tokens.
+passes.tsv	n_outputs	None	Output rows of the pass: bytes of the device-to-host logits copy divided by 993280.
+passes.tsv	n_passes	None	Number of passes of the row. Only the request and trace_total rows have it.
+passes.tsv	start_ns	ns	Start of the first kernel of the row, as a timestamp of the capture.
+passes.tsv	start_rel_ms	ms	Start of the first kernel of the row, from the start of the first kernel of the capture.
+passes.tsv	wall_ms	ms	Time from the start of the first kernel to the end of the last kernel of the row.
+passes.tsv	gpu_busy_ms	ms	Time in which at least one kernel runs: the union of the kernel intervals.
+passes.tsv	kernel_time_sum_ms	ms	Sum of the kernel durations.
+passes.tsv	gap_total_ms	ms	wall_ms minus gpu_busy_ms. A request or trace row includes the idle time between the passes.
+passes.tsv	gap_total_excl_d2d_ms	ms	gap_total_ms minus the time of the device-to-device copies that lie between the kernels.
+passes.tsv	gap_share_of_wall_pct	%	gap_total_ms divided by wall_ms.
+passes.tsv	gap_n_over_5us	None	Number of gaps between two kernels of a pass that are longer than 5 us.
+passes.tsv	gap_n_over_20us	None	Number of gaps between two kernels of a pass that are longer than 20 us.
+passes.tsv	gap_median_us	us	Median gap between two consecutive kernels of a pass.
+passes.tsv	gap_max_us	us	Longest gap between two consecutive kernels of a pass.
+passes.tsv	gap_max_after_kernel	None	Short name of the kernel before the longest gap.
+passes.tsv	gap_intra_pass_ms	ms	Sum of the gaps inside the passes.
+passes.tsv	gap_inter_pass_ms	ms	Idle time between the passes. Only the request and trace_total rows have it.
+passes.tsv	pre_gap_ms	ms	Time from the end of the previous pass to the start of this pass. The value is empty for the first pass.
+passes.tsv	idle_before_request_ms	ms	pre_gap_ms of the first pass of a request. The value is empty for other passes and for the first request.
+passes.tsv	gpu_busy_pct_of_span_incl_idle_before	%	Request rows only: gpu_busy_ms divided by the time from the end of the previous request to the end of this request.
+passes.tsv	h2d_lead_ms	ms	Time from the end of the previous pass to the start of the first host-to-device copy of this pass.
+passes.tsv	h2d_span_ms	ms	Time from the start of the first host-to-device copy of the pass to the end of the last one.
+passes.tsv	h2d_tail_ms	ms	Time from the end of the last host-to-device copy to the start of the first kernel.
+passes.tsv	gap_n_lt1us	None	Number of gaps between two kernels of a pass that are shorter than 1 us.
+passes.tsv	gap_t_lt1us_ms	ms	Sum of the gaps that are shorter than 1 us.
+passes.tsv	gap_n_1_5us	None	Number of gaps between two kernels of a pass that are from 1 us to 5 us.
+passes.tsv	gap_t_1_5us_ms	ms	Sum of the gaps that are from 1 us to 5 us.
+passes.tsv	gap_n_5_20us	None	Number of gaps between two kernels of a pass that are from 5 us to 20 us.
+passes.tsv	gap_t_5_20us_ms	ms	Sum of the gaps that are from 5 us to 20 us.
+passes.tsv	gap_n_20_100us	None	Number of gaps between two kernels of a pass that are from 20 us to 100 us.
+passes.tsv	gap_t_20_100us_ms	ms	Sum of the gaps that are from 20 us to 100 us.
+passes.tsv	gap_n_gt100us	None	Number of gaps between two kernels of a pass that are longer than 100 us.
+passes.tsv	gap_t_gt100us_ms	ms	Sum of the gaps that are longer than 100 us.
+passes.tsv	n_kernels	None	Number of kernels.
+passes.tsv	n_mmq	None	Number of mul_mat_q kernels (main kernels of the MMQ path).
+passes.tsv	n_mmq_fixup	None	Number of mul_mat_q_stream_k_fixup kernels.
+passes.tsv	n_mmvq	None	Number of mul_mat_vec_q kernels (MMVQ path).
+passes.tsv	n_quantize	None	Number of quantize_mmq_q8_1 and quantize_q8_1 kernels.
+passes.tsv	n_flash_attn	None	Number of flash_attn_ext_f16 kernels.
+passes.tsv	n_flash_aux	None	Number of other flash attention kernels: the mask kernel and the fix-up kernels.
+passes.tsv	n_gdn	None	Number of Gated DeltaNet kernels.
+passes.tsv	gdn_kernel	None	Short names of the Gated DeltaNet kernels of the row, separated by semicolons.
+passes.tsv	conv_kernel	None	Short names of the convolution kernels of the row, separated by semicolons.
+passes.tsv	n_scale_f32	None	Number of scale_f32 kernels.
+passes.tsv	n_other	None	Number of kernels that are not in the groups of the columns n_mmq to n_gdn.
+passes.tsv	n_cat_mmq	None	Number of kernels of the group: MMQ matmul with the stream-k fix-up.
+passes.tsv	n_cat_gdn	None	Number of kernels of the group: Gated DeltaNet.
+passes.tsv	n_cat_gated_act	None	Number of kernels of the group: gated activations (SwiGLU, sigmoid and softplus gates).
+passes.tsv	n_cat_flash	None	Number of kernels of the group: flash attention.
+passes.tsv	n_cat_quant	None	Number of kernels of the group: quantization to int8.
+passes.tsv	n_cat_copy	None	Number of kernels of the group: copies, concatenation and row gathers.
+passes.tsv	n_cat_rms_norm	None	Number of kernels of the group: RMS norm.
+passes.tsv	n_cat_conv1d	None	Number of kernels of the group: 1D convolution.
+passes.tsv	n_cat_elementwise	None	Number of kernels of the group: element-wise operations.
+passes.tsv	n_cat_mmvq	None	Number of kernels of the group: MMVQ matmul.
+passes.tsv	n_cat_other	None	Number of kernels of the group: all other kernels.
+passes.tsv	t_cat_mmq_ms	ms	Sum of the kernel durations of the group: MMQ matmul with the stream-k fix-up.
+passes.tsv	t_cat_gdn_ms	ms	Sum of the kernel durations of the group: Gated DeltaNet.
+passes.tsv	t_cat_gated_act_ms	ms	Sum of the kernel durations of the group: gated activations (SwiGLU, sigmoid and softplus gates).
+passes.tsv	t_cat_flash_ms	ms	Sum of the kernel durations of the group: flash attention.
+passes.tsv	t_cat_quant_ms	ms	Sum of the kernel durations of the group: quantization to int8.
+passes.tsv	t_cat_copy_ms	ms	Sum of the kernel durations of the group: copies, concatenation and row gathers.
+passes.tsv	t_cat_rms_norm_ms	ms	Sum of the kernel durations of the group: RMS norm.
+passes.tsv	t_cat_conv1d_ms	ms	Sum of the kernel durations of the group: 1D convolution.
+passes.tsv	t_cat_elementwise_ms	ms	Sum of the kernel durations of the group: element-wise operations.
+passes.tsv	t_cat_mmvq_ms	ms	Sum of the kernel durations of the group: MMVQ matmul.
+passes.tsv	t_cat_other_ms	ms	Sum of the kernel durations of the group: all other kernels.
+passes.tsv	n_cuda_graph_launches	None	Number of CUDA graph launches in the row.
+passes.tsv	n_kernels_with_graph_node	None	Number of kernels that belong to a CUDA graph node.
+passes.tsv	n_cudaLaunchKernel_api_calls	None	Number of cudaLaunchKernel calls.
+passes.tsv	n_memcpy	None	Number of copies on the GPU.
+passes.tsv	n_memcpy_h2d	None	Number of host-to-device copies.
+passes.tsv	n_memcpy_d2h	None	Number of device-to-host copies.
+passes.tsv	n_memcpy_d2d	None	Number of device-to-device copies.
+passes.tsv	memcpy_h2d_bytes	B	Bytes of the host-to-device copies.
+passes.tsv	memcpy_d2h_bytes	B	Bytes of the device-to-host copies.
+passes.tsv	memcpy_d2d_bytes	B	Bytes of the device-to-device copies.
+passes.tsv	memcpy_h2d_gpu_ms	ms	Sum of the durations of the host-to-device copies.
+passes.tsv	d2d_gpu_in_pass_ms	ms	Time of the device-to-device copies that lie inside the time of the kernels of the pass.
+passes.tsv	n_sync_calls	None	Number of synchronization calls.
+passes.tsv	cpu_api_time_ms	ms	Sum of the durations of all CUDA runtime calls on the host.
+passes.tsv	cpu_launch_api_ms	ms	Sum of the durations of the cudaLaunchKernel calls.
+passes.tsv	cpu_memcpy_api_ms	ms	Sum of the durations of the cudaMemcpy calls.
+passes.tsv	cpu_sync_api_ms	ms	Sum of the durations of the synchronization calls.
+passes.tsv	cpu_launch_span_ms	ms	Time from the start of the first cudaLaunchKernel call to the end of the last one.
+passes.tsv	launch_api_median_us	us	Median duration of one cudaLaunchKernel call.
+passes.tsv	n_launch_late	None	Number of kernels whose launch call returned after the previous kernel had ended.
+passes.tsv	gap_launch_late_ms	ms	Sum of the gaps before these kernels.
+passes.tsv	launch_queue_depth_median	None	Median number of kernels that the host had launched but the GPU had not started, when a kernel started.
+passes.tsv	launch_queue_depth_max	None	The highest value of the same number.
+passes.tsv	n_cmdbuf_full_events	None	Number of overhead records of the type command buffer full.
+passes.tsv	cmdbuf_full_ms	ms	Sum of the durations of these records.
+passes.tsv	n_module_load_events	None	Number of overhead records of the module loading (lazy loading of CUDA modules).
+passes.tsv	module_load_ms	ms	Sum of the durations of these records.
+passes.tsv	streams_used	None	Ids of the CUDA streams of the kernels, joined with +.
+passes.tsv	streams_used_memcpy	None	Ids of the CUDA streams of the copies, joined with +.
+passes.tsv	run	None	Run name of the capture, for example p3-nsys-short1q.
+passes.tsv	segment	None	Client segment of the request: short1q, short2q, medium3q, long3q or all48 (the segment of the run, not the kind of the request).
+passes.tsv	client_idx	None	Index of the request in the client JSON of the run, from 0. The value is empty for the trace_total row.
+passes.tsv	kind	None	Request kind of the case: short1q, short2q, medium3q or long3q. The trace_total row has all.
+passes.tsv	case	None	Case id of the request in cases.json. The value is empty for the trace_total row.
+passes.tsv	phase	None	warmup or timed: the phase of the request in the client JSON.
+passes.tsv	pass_type	None	prefix-large (no output head, 2048 tokens), prefix-small (no output head, fewer tokens), suffix (output head) or single (the only pass of a request). Request rows: request. Total row: trace_total.
+passes.tsv	n_class	None	Token class of the pass: N<=8, 9-32, 33-64, 65-128, 129-256, 257-1024, 1025-2047 or 2048. The value is empty for request and trace_total rows.
+passes.tsv	boundary	None	What precedes the pass: first (first pass of the capture), request-start, or <previous pass type>-><this pass type>. The value is empty for request and trace_total rows.
+passes.tsv	pass_idx_global	None	Index of the pass among all valid passes of the capture, from 0. Startup before the first valid pass is dropped; passes outside requests are counted but not written. The value is empty for request and trace_total rows.
+passes.tsv	host_gap_drain_ms	ms	Pass rows: time from the end of the last kernel of the previous pass until the CUDA call that was already running (stream synchronization, logits copy) returns.
+passes.tsv	host_gap_cpu_ms	ms	Pass rows: part of the idle time before the pass with no CUDA API call in flight: server host code (sampling, HTTP, batching).
+passes.tsv	host_gap_cuda_api_ms	ms	Pass rows: part of the idle time before the pass in other CUDA API calls before the first launch of the pass (input upload copies, synchronizations).
+passes.tsv	host_gap_first_launch_ms	ms	Pass rows: time from the first cudaLaunchKernel call of the pass to the start of its first kernel.
+passes.tsv	host_gap_cpu_os_wait_ms	ms	Pass rows: part of host_gap_cpu_ms inside wait-class OS calls (futex, pthread_cond*, poll, epoll, select, recv, nanosleep). The value is empty without an OSRT_API table.
+passes.tsv	host_gap_cpu_busy_ms	ms	Pass rows: host_gap_cpu_ms minus host_gap_cpu_os_wait_ms; it includes preemption. The value is empty without an OSRT_API table.
+passes.tsv	host_gap_n_osrt_calls	None	Pass rows: number of OS runtime calls in the CPU part of the gap. The value is empty without an OSRT_API table.
+passes.tsv	host_gap_osrt_top	None	Pass rows: the three OS runtime calls with the longest total time in the CPU part, as name:milliseconds joined with semicolons.
+passes.tsv	client_wall_ms	ms	Request rows: wall time of the request on the client, from send to receive.
+passes.tsv	send_to_first_cuda_api_ms	ms	Request rows: time from the send of the request to its first CUDA API call.
+passes.tsv	send_to_first_kernel_ms	ms	Request rows: time from the send of the request to the start of its first kernel.
+passes.tsv	last_kernel_to_recv_ms	ms	Request rows: time from the end of the last kernel of the request to the receive on the client.
+passes.tsv	window_assignment	None	window: passes were assigned to requests by the client time window; order: by the order of the passes and the expected number of passes per request kind (analyze --assign). Empty for the total row.
+kernels.tsv	trace	None	Run name of the capture, for example p3-nsys-short1q.
+kernels.tsv	kernel_short	None	Short name of the kernel with its template arguments, for example mul_mat_q<Q8_0,64,false>.
+kernels.tsv	kernel_full	None	Full demangled name of the kernel.
+kernels.tsv	category	None	Kernel group, for example `MMQ matmul (incl. stream-k fix-up)`. There are 11 groups.
+kernels.tsv	grid_x	None	Grid size, dimension x.
+kernels.tsv	grid_y	None	Grid size, dimension y.
+kernels.tsv	grid_z	None	Grid size, dimension z.
+kernels.tsv	block_x	None	Block size, dimension x.
+kernels.tsv	block_y	None	Block size, dimension y.
+kernels.tsv	block_z	None	Block size, dimension z.
+kernels.tsv	smem_static_b	B	Static shared memory of the kernel.
+kernels.tsv	smem_dynamic_b	B	Dynamic shared memory of the launch.
+kernels.tsv	regs	registers per thread	Registers per thread.
+kernels.tsv	n_launches	None	Number of launches with this name, grid, block, memory and registers in the capture.
+kernels.tsv	total_us	us	Sum of the durations of these launches.
+kernels.tsv	mean_us	us	Mean duration of one launch.
+kernels.tsv	min_us	us	Shortest duration of one launch.
+kernels.tsv	max_us	us	Longest duration of one launch.
+kernels.tsv	share_pct_of_trace_kernel_time	%	total_us divided by the sum of all kernel durations of the capture.
+kernels.tsv	n_passes_containing	None	Number of passes that contain the kernel.
+kernels.tsv	launches_per_pass_median_all	None	Median number of launches per pass, over the passes that contain the kernel.
+kernels.tsv	lpp_median_prefix_large	None	The same median over the prefix-large passes (no output head, 2048 tokens).
+kernels.tsv	n_passes_prefix_large	None	Number of prefix-large passes that contain the kernel.
+kernels.tsv	lpp_median_prefix_small	None	The same median over the prefix-small passes (no output head, fewer than 2048 tokens).
+kernels.tsv	n_passes_prefix_small	None	Number of prefix-small passes that contain the kernel.
+kernels.tsv	lpp_median_suffix	None	The same median over the suffix passes (with output head).
+kernels.tsv	n_passes_suffix	None	Number of suffix passes that contain the kernel.
+mmq-launches.tsv	trace	None	Run name of the capture, for example p3-nsys-short1q.
+mmq-launches.tsv	pass_idx_in_trace	None	Index of the pass in the capture (pass_idx_global of passes.tsv). The table has the first pass of each (run, pass kind, n_tokens).
+mmq-launches.tsv	request_idx	None	Index of the request in the client JSON of the run.
+mmq-launches.tsv	pass_idx_in_request	None	Index of the pass in its request.
+mmq-launches.tsv	pass_kind	None	prefix-large, prefix-small or suffix.
+mmq-launches.tsv	n_tokens	tokens	Tokens of the pass.
+mmq-launches.tsv	n_kv_padded	cells	K/V window of the pass, padded to 256.
+mmq-launches.tsv	launch_kind	None	mmq (mul_mat_q) or mmvq (mul_mat_vec_q).
+mmq-launches.tsv	order_in_pass	None	Index of the launch among the launches of the same kind in the pass.
+mmq-launches.tsv	position_in_pass	None	Index of the kernel among all kernels of the pass.
+mmq-launches.tsv	kernel_short	None	Short name of the kernel with its template arguments.
+mmq-launches.tsv	quant_type	None	ggml type of the weights: Q4_0 or Q8_0.
+mmq-launches.tsv	mmq_x	None	Tile width J of the MMQ kernel, in columns. The field is empty for MMVQ rows.
+mmq-launches.tsv	need_check	None	true if the MMQ kernel is the fallback kernel for a row count that is not a multiple of 128. The field is empty for MMVQ rows.
+mmq-launches.tsv	ncols_dst	None	Number of columns of the MMVQ kernel (tokens). The field is empty for MMQ rows.
+mmq-launches.tsv	has_fusion	None	true if the kernel fuses the following operation (gate, up and SwiGLU, or down and add).
+mmq-launches.tsv	small_k	None	true for the MMVQ kernel variant for a small K. The field is empty for MMQ rows.
+mmq-launches.tsv	halve_iters	None	The template argument halve_iters of the MMVQ kernel. The field is empty for MMQ rows.
+mmq-launches.tsv	grid_x	None	Grid size, dimension x.
+mmq-launches.tsv	grid_y	None	Grid size, dimension y.
+mmq-launches.tsv	grid_z	None	Grid size, dimension z.
+mmq-launches.tsv	block_x	None	Block size, dimension x.
+mmq-launches.tsv	block_y	None	Block size, dimension y.
+mmq-launches.tsv	block_z	None	Block size, dimension z.
+mmq-launches.tsv	smem_static_b	B	Static shared memory of the kernel.
+mmq-launches.tsv	smem_dynamic_b	B	Dynamic shared memory of the launch.
+mmq-launches.tsv	regs	registers per thread	Registers per thread.
+mmq-launches.tsv	dur_us	us	Duration of the kernel.
+mmq-launches.tsv	start_in_pass_us	us	Start of the kernel, from the start of the first kernel of the pass.
+mmq-launches.tsv	prev_quant_kernel	None	Short name of the last quantize kernel before the launch.
+mmq-launches.tsv	prev_quant_position	None	Index of that quantize kernel among the kernels of the pass.
+mmq-launches.tsv	prev_quant_distance	None	position_in_pass minus prev_quant_position.
+mmq-launches.tsv	prev_quant_grid_x	None	Grid size, dimension x, of that quantize kernel.
+mmq-launches.tsv	prev_quant_grid_y	None	Grid size, dimension y, of that quantize kernel.
+mmq-launches.tsv	prev_quant_grid_z	None	Grid size, dimension z, of that quantize kernel.
+mmq-launches.tsv	prev_quant_n_rows	rows	Rows that the quantize kernel handles: grid.x for MMQ, grid.y for MMVQ.
+mmq-launches.tsv	prev_quant_k_padded512	None	Padded K of the quantize kernel: grid.y times 512 for MMQ, grid.x times 256 for MMVQ.
+mmq-launches.tsv	prev_quant_dur_us	us	Duration of the quantize kernel.
+mmq-launches.tsv	prev_quant_reuse_index	None	Number of earlier matmul launches of the same kind that used the same quantize kernel.
+mmq-launches.tsv	has_fixup	None	MMQ rows: 1 if a mul_mat_q_stream_k_fixup kernel follows the launch, else 0. The field is empty for MMVQ rows.
+mmq-launches.tsv	fixup_dur_us	us	Duration of the fix-up kernel.
+mmq-launches.tsv	fixup_short	None	Short name of the fix-up kernel.
+mmq-launches.tsv	fixup_grid_x	None	Grid size, dimension x, of the fix-up kernel.
+mmq-launches.tsv	fixup_grid_y	None	Grid size, dimension y, of the fix-up kernel.
+mmq-launches.tsv	fixup_grid_z	None	Grid size, dimension z, of the fix-up kernel.
+mmq-launches.tsv	op	None	Operation of the matmul, derived from the layer structure (32 layers: 24 GDN + 8 attention) and the grid check: attn_qkv, attn_gate(z), attn_q, attn_k|attn_v, attn_output, ssm_beta|ssm_alpha, ssm_out, ffn_up|ffn_gate, ffn_down, ffn_gate+up(fused) or output_head; ? if the launch could not be mapped. Labels that cannot be told apart by shape stay combined.
+mmq-launches.tsv	layer_idx	None	Index of the layer of the launch, from 0. The value is empty for the output head.
+mmq-launches.tsv	layer_type	None	GDN (Gated DeltaNet layer), ATTN (attention layer), head (output head) or ? (not mapped).
+mmq-launches.tsv	M	None	Rows M of the weight matrix of the op (output dimension); the vocabulary size for the output head. The value is empty if the op is not mapped.
+mmq-launches.tsv	K_quant	None	Input dimension K of the matmul (quantized).
+mmq-launches.tsv	expected_grid_x	None	grid_x that the tile arithmetic gives: MMQ launches without a stream-k fix-up: ceil(M / 128) * ceil(n_tokens / mmq_x); MMVQ launches: M if ncols_dst is 1, else ceil(M / 2). The value is empty where no check applies (MMQ launches with a fix-up, op not mapped).
+mmq-launches.tsv	grid_matches	None	1 if grid_x equals expected_grid_x, else 0. The value is empty where expected_grid_x is empty.
+classes.tsv	scope	None	A run name, or ALL for all runs pooled.
+classes.tsv	pass_type	None	prefix-large, prefix-small, suffix or single (see passes.tsv).
+classes.tsv	n_class	None	Token class of the passes: N<=8, 9-32, 33-64, 65-128, 129-256, 257-1024, 1025-2047 or 2048.
+classes.tsv	request_kinds	None	Request kinds of the passes of the group as kind:count, joined with semicolons.
+classes.tsv	n_passes	None	Number of passes in the group (scope, pass_type, n_class).
+classes.tsv	n_tokens_min	tokens	Smallest token count of the passes of the group.
+classes.tsv	n_tokens_max	tokens	Largest token count of the passes of the group.
+classes.tsv	level	None	total (all kernels of the passes), class (one kernel class) or label (one label of a class, for example a matmul op with its type and K).
+classes.tsv	class	None	Kernel class: MMQ, MMVQ, GDN, FA, quantize, rms_norm, glu, copy, elementwise, ssm_conv or other. The value is empty at level total.
+classes.tsv	label	None	Label inside the class, for example MMQ ffn_down Q4_0 K=9216. The value is empty at levels total and class.
+classes.tsv	launches_per_pass_mean	None	Mean number of launches per pass of the group.
+classes.tsv	launches_per_pass_p50	None	Median number of launches per pass of the group.
+classes.tsv	kernel_ms_per_pass_mean	ms	Mean over the passes of the sum of the kernel durations.
+classes.tsv	kernel_ms_per_pass_p50	ms	Median over the passes of the sum of the kernel durations.
+classes.tsv	share_of_gpu_busy_pct	%	Sum of the kernel durations of the row divided by the GPU busy time of the passes of the group.
+classes.tsv	mean_us_per_launch	us	Mean duration of one launch of the row.
+classes.tsv	fixup_launches_per_pass_mean	None	Label rows: mean number of stream-k fix-up launches per pass that belong to the label. The value is empty where there is none.
+requests.tsv	run	None	Run name of the capture, for example p3-nsys-short1q.
+requests.tsv	segment	None	Client segment of the request.
+requests.tsv	client_idx	None	Index of the request in the client JSON, from 0.
+requests.tsv	kind	None	Request kind: short1q, short2q, medium3q or long3q.
+requests.tsv	case	None	Case id of the request.
+requests.tsv	phase	None	warmup or timed.
+requests.tsv	input_tokens	tokens	Input tokens of the request as logged by the client.
+requests.tsv	n_passes	None	Number of passes assigned to the request.
+requests.tsv	client_wall_ms	ms	Wall time of the request on the client, from send to receive.
+requests.tsv	send_to_first_cuda_api_ms	ms	Time from the send to the first CUDA API call of the request.
+requests.tsv	send_to_first_kernel_ms	ms	Time from the send to the start of the first kernel of the request. It must be >= 0.
+requests.tsv	kernel_span_ms	ms	Time from the start of the first kernel to the end of the last kernel of the request: gpu_busy_ms + gap_in_pass_ms + gap_between_passes_ms.
+requests.tsv	gpu_busy_ms	ms	Time in which at least one kernel of the request runs.
+requests.tsv	gap_in_pass_ms	ms	Idle time of the GPU inside the passes of the request.
+requests.tsv	gap_between_passes_ms	ms	Idle time of the GPU between the passes of the request.
+requests.tsv	last_kernel_to_recv_ms	ms	Time from the end of the last kernel to the receive on the client. It must be >= 0.
+requests.tsv	gpu_busy_pct_of_client_wall	%	gpu_busy_ms divided by client_wall_ms.
+requests.tsv	n_cuda_api_calls	None	Number of CUDA runtime calls of the request.
+requests.tsv	n_launch_calls	None	Number of cudaLaunchKernel calls of the request.
+requests.tsv	n_sync_calls	None	Number of synchronization calls of the request.
+requests.tsv	n_memcpy	None	Number of copies on the GPU of the request.
+requests.tsv	send_to_first_kernel_epoch_clock_ms	ms	send_to_first_kernel_ms with the epoch clock of the client (--clock epoch mapping) instead of CLOCK_MONOTONIC.
+requests.tsv	last_kernel_to_recv_epoch_clock_ms	ms	last_kernel_to_recv_ms with the epoch clock of the client.
+requests.tsv	epoch_minus_mono_send_ms	ms	Difference between the two mappings of the send time onto the nsys timeline (epoch minus monotonic). It is close to 0 when both clocks agree.
+osrt-request-start.tsv	run	None	Run name of the capture, for example p3-nsys-short1q.
+osrt-request-start.tsv	client_idx	None	Index of the first timed request of the segment in the client JSON.
+osrt-request-start.tsv	case	None	Case id of that request.
+osrt-request-start.tsv	thread	None	decode for the thread that launches the decode kernels, else t1, t2, ... in the order of appearance.
+osrt-request-start.tsv	call	None	Name of the OS runtime call (futex, pthread_cond_wait, poll, ...). Only calls of nesting level 0 are listed.
+osrt-request-start.tsv	start_rel_send_ms	ms	Start of the call relative to the send of the request. It is negative for a call that began before the send and was still running in the window.
+osrt-request-start.tsv	dur_ms	ms	Duration of the call.
+osrt-request-start.tsv	class	None	wait for a wait-class call (futex, pthread_cond*, poll, epoll, select, recv, nanosleep, ...), else other.
+overhead.tsv	run	None	Profiled run, or ALL for all profiled runs pooled.
+overhead.tsv	kind	None	Request kind: short1q, short2q, medium3q or long3q.
+overhead.tsv	n_pairs	None	Number of pairs: a request of the profiled run and the control request with the same Ref line (same case, same text).
+overhead.tsv	ctl_mean_ms	ms	Mean client wall time of the control requests of the pairs.
+overhead.tsv	nsys_mean_ms	ms	Mean client wall time of the profiled requests of the pairs.
+overhead.tsv	delta_mean_ms	ms	nsys_mean_ms minus ctl_mean_ms: the mean of the paired differences.
+overhead.tsv	delta_pct_of_ctl_mean	%	delta_mean_ms divided by ctl_mean_ms.
+overhead.tsv	ctl_p50_ms	ms	Median client wall time of the control requests of the pairs.
+overhead.tsv	nsys_p50_ms	ms	Median client wall time of the profiled requests of the pairs.
+overhead.tsv	delta_p50_of_pairs_ms	ms	Median of the paired differences.
+overhead.tsv	delta_sd_ms	ms	Standard deviation of the paired differences.
+overhead.tsv	delta_ci95_halfwidth_ms	ms	95 % half-width of the mean difference: 1.96 times delta_sd_ms divided by the square root of n_pairs (normal approximation).
+overhead-pairs.tsv	run	None	Profiled run.
+overhead-pairs.tsv	kind	None	Request kind.
+overhead-pairs.tsv	case	None	Case id.
+overhead-pairs.tsv	phase	None	warmup or timed (warm-up requests are left out unless --include-warmup).
+overhead-pairs.tsv	segment	None	Client segment of the profiled request.
+overhead-pairs.tsv	ref	None	Ref line of the request: the key of the pair.
+overhead-pairs.tsv	nsys_idx	None	Index of the request in the client JSON of the profiled run.
+overhead-pairs.tsv	ctl_idx	None	Index of the request in the client JSON of the control run.
+overhead-pairs.tsv	nsys	ms	Client wall time of the profiled request.
+overhead-pairs.tsv	ctl	ms	Client wall time of the control request.
+overhead-vs-dec.tsv	kind	None	Request kind.
+overhead-vs-dec.tsv	cases_in_both	None	Number of cases that are in the decomposition client JSON (phases unique and cycle) and in the profiled runs.
+overhead-vs-dec.tsv	dec_mean_ms	ms	Mean over those cases of the mean wall time in the decomposition client JSON.
+overhead-vs-dec.tsv	ctl_mean_ms	ms	The same for the control run.
+overhead-vs-dec.tsv	nsys_mean_ms	ms	The same for the profiled runs.
+overhead-vs-dec.tsv	nsys_minus_dec_ms	ms	nsys_mean_ms minus dec_mean_ms.
+overhead-vs-dec.tsv	nsys_minus_dec_pct	%	nsys_minus_dec_ms divided by dec_mean_ms.
+overhead-where.tsv	run	None	Profiled run.
+overhead-where.tsv	kind	None	Request kind.
+overhead-where.tsv	requests	None	Number of profiled requests (warm-up left out).
+overhead-where.tsv	ctl_wall_ms	ms	Mean client wall time of the control requests (ctl_mean_ms of overhead.tsv).
+overhead-where.tsv	nsys_wall_ms	ms	Mean client wall time of the profiled requests (client_wall_ms of the request rows of passes.tsv).
+overhead-where.tsv	delta_ms	ms	delta_mean_ms of overhead.tsv.
+overhead-where.tsv	send_to_first_kernel_ms	ms	Mean over the profiled requests.
+overhead-where.tsv	gpu_busy_ms	ms	Mean over the profiled requests.
+overhead-where.tsv	gap_in_pass_ms	ms	Mean over the profiled requests.
+overhead-where.tsv	gap_between_passes_ms	ms	Mean over the profiled requests.
+overhead-where.tsv	last_kernel_to_recv_ms	ms	Mean over the profiled requests. The five time columns add up to the wall time of the profiled requests.
+overhead-where.tsv	host_share_of_nsys_wall_pct	%	(send_to_first_kernel_ms + gap_between_passes_ms + last_kernel_to_recv_ms) divided by nsys_wall_ms.
+overhead-where.tsv	launches_per_request	None	Mean number of cudaLaunchKernel calls per request.
+overhead-where.tsv	cuda_api_calls_per_request	None	Mean number of launch, synchronization and copy calls per request.
+overhead-where.tsv	delta_us_per_cuda_api_call	us	delta_ms divided by cuda_api_calls_per_request: an upper bound of the cost of one call under the hypothesis that the whole difference is per-call cost.
+overhead-where.tsv	delta_us_per_launch	us	delta_ms divided by launches_per_request: an upper bound of the cost of one launch under the same hypothesis.
+overhead-where.tsv	delta_pct_of_host_time	%	delta_ms divided by the host-side time (send_to_first_kernel_ms + gap_between_passes_ms + last_kernel_to_recv_ms).

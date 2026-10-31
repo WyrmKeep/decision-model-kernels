@@ -1,0 +1,26 @@
+# phase 3, package 3: upstream lead tests (harness/profile/leads/NOTES.txt). One client sequence (harness/profile/extra/prof/kvwin_client.py), four server configurations.
+# Sequence per run: 2 warm-up requests (check03, triage09), T1 = long00-storage on a nearly fresh pool, 6 other long cases, then T2, T3, T4 = long00-storage again
+# (11 long requests, unique 10-digit Refs, identical token counts). Question (#28495): does the flash-attention window n_kv of T2..T4 grow beyond the sequence's own
+# cells because stale cells of other slots sit in the shared --kv-unified pool, and what does it cost? #30779 (child pass structure): read from the server logs of the timing runs.
+# Order: timing runs first (no profiler), then the nsys runs.
+#   1 p3-lead-kvwin-timing        production flags, build ablate-timing with DMK_TIMING=1: request/sync/slot lines in the server log
+#   2 p3-lead-kvwin-nokvu-timing  the same with --no-kv-unified (the upstream workaround): does T2 take as long as T1? which pass structure and syncs?
+#   3 p3-lead-kvwin-nsys          production flags, build b12004-sm86 under nsys: window seen (n_kv_padded), FA kernel time and pass time of every pass of T1..T4
+#   4 p3-lead-kvwin-nokvu-nsys    the same with --no-kv-unified (LAST line: the one to drop if the schedule has to be shortened)
+# GPU-minute estimate (sequential; server start and stop included). Observed: startup_s of 12 runs in the data set data/2026-10-30-window1 = 3.6-5.6 s (one 9.6 s); long3q mean latency 787 ms
+# (shape census, harness/profile/census); short requests 37 ms and about 95 ms. Everything else is [INFERENCE]: client container start 2 s, teardown + log copy 5 s, nsys start 15 s (about 3x the
+# unprofiled start), nsys stop + report write 45 s (15-60 s; about 70,000 kernels plus OS-runtime records), nsys inflation of long requests 3 %.
+#   timing run : start 5.6 s (worst observed 9.6 s) + client start 2 s + (2 warm-up 0.13 s + 11 x 0.787 s = 8.8 s) + stop and copy 5 s = 21.4 s = 0.36 min (worst 25.4 s = 0.42 min)
+#   nsys run   : start 15 s + client start 2 s + (8.8 s x 1.03 = 9.1 s, rounded up to 10 s) + stop and report 45 s + copy 5 s = 77 s = 1.3 min
+#   sum        : 2 x 0.36 + 2 x 1.3 = 3.3 min nominal (lines 1-3 only: 2.0 min); 4.5 min with a safety factor 1.5 on both nsys runs: inside the 5 min of the package.
+# nsys lines (3, 4), as in 2-nsys.txt: DMK_STOP_TIMEOUT=180 (run_client.sh ends the wrapped server with 'docker stop -t 180': SIGTERM to PID 1 = nsys, which writes the report; the default of 600 s is cut so that a
+# hung stop costs at most 3 minutes, and 180 s is four times the 45 s assumed above) and --force-overwrite=true in the nsys wrapper (a repeated run replaces a leftover report instead of failing at start).
+# The nsys lines mount the nsys folder of the GPU host ($DMK_REMOTE_DIR/tools/nsys) as .../target-linux-x64. The work folder of the harness stands in the two -v options below as a placeholder:
+# write the file with  bash harness/profile/make_sched.sh --remote-dir <work folder on the GPU host> --out <dir>  before you run it.
+# Client JSON of every run: /runs/<run>.client.json (the name nsys_census.py analyze reads). Analysis: harness/profile/leads/NOTES.txt (analyze_kvwin.py for all four runs; analyze_childpass.py for the
+# server logs of the two timing runs and of package 1's p3-dec-timing; the pass-structure model expected by analyze_childpass.py is the unified split (census default) for lines 1 and 3 and the sequential split for line 2).
+# DMK_DOCKER_EXTRA="-e DMK_TIMING=1" on lines 1 and 2 replaces the env file of the build (builds/ablate-timing/dist/abl/timing.env), which holds only DMK_TIMING=1: the effect is the same.
+DMK_DOCKER_EXTRA="-e DMK_TIMING=1" client p3-lead-kvwin-timing build:ablate-timing /extra/prof/kvwin_client.py --out /runs/{name}.client.json --target long00-storage --others 6 --repeat-target 1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --no-kv-unified --no-webui --no-slots" DMK_DOCKER_EXTRA="-e DMK_TIMING=1" client p3-lead-kvwin-nokvu-timing build:ablate-timing /extra/prof/kvwin_client.py --out /runs/{name}.client.json --target long00-storage --others 6 --repeat-target 1
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/p3-lead-kvwin-nsys" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client p3-lead-kvwin-nsys build:b12004-sm86 /extra/prof/kvwin_client.py --out /runs/{name}.client.json --target long00-storage --others 6 --repeat-target 1
+DMK_STOP_TIMEOUT=180 DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --no-kv-unified --no-webui --no-slots" DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/p3-lead-kvwin-nokvu-nsys" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client p3-lead-kvwin-nokvu-nsys build:b12004-sm86 /extra/prof/kvwin_client.py --out /runs/{name}.client.json --target long00-storage --others 6 --repeat-target 1

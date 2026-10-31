@@ -1,0 +1,265 @@
+# Decomposition of the request time: run `p3-dec-timing`, reference `p3-dec-ref`
+
+client file raw/1-decomp/p3-dec-timing.client.json: 348 requests, 0 errors, reconnects 0; server log raw/1-decomp/p3-dec-timing.server.log: 5713 lines, 3816 DMK_TIMING lines (0 unusable), 348 request lines, 1873 slot lines
+
+### Clock check: server request line against the client stamps (same CLOCK_MONOTONIC)
+
+| interval | n | mean_ms | p50_ms | min_ms | max_ms | n_negative |
+|---|---|---|---|---|---|---|
+| client send -> server request start (http_in_ms) | 348 | 0.172 | 0.141 | 0.111 | 8.760 | 0 |
+| server request end -> client receive (http_out_ms) | 348 | 0.317 | 0.313 | 0.214 | 0.466 | 0 |
+
+Source: client t_send/t_recv_mono_ns; server `request` t and total_us. Both intervals must be >= 0 for every request.
+
+Matching: 348 client requests, 348 server request lines, 348 matched by time (100.0 %) -> mode **time**.
+Clock check passed (>= 95 % of the client requests contain exactly one match); 0 server request line(s) without a client request, 0 client request(s) without a server line.
+
+DMK_TIMING lines outside any request (server start-up warm-up, other endpoints): 8 ([('cuda_compute', 2), ('ubatch', 2), ('decode', 2), ('sync', 2)])
+Slot-line clock anchor from `t_last` of 128 LRU selections: log time + 173512.168205 s = CLOCK_MONOTONIC (MAD 1 us). The scheduling split (sched_wake_est_ms / sched_launch_est_ms) uses it.
+
+Requests analysed: 348 matched, 348 valid for the tables (excluded: 0; flags {}); client requests without a server request: 0 []
+Residual (wall minus the sum of the stacked components): max |residual| 0.0050 ms, mean |residual| 0.0009 ms over valid requests.
+
+### 1. Client wall time per request type and phase (warmup rows are not used anywhere else)
+
+| kind | phase | n | mean_ms | p50_ms | p95_ms | min_ms | max_ms | server_total_mean_ms |
+|---|---|---|---|---|---|---|---|---|
+| short1q | warmup | 3 | 55.82 | 49.69 | 70.68 | 44.76 | 73.01 | 52.50 |
+| short1q | unique | 30 | 46.85 | 46.45 | 49.93 | 43.82 | 50.04 | 46.40 |
+| short1q | cycle | 24 | 46.60 | 45.99 | 51.13 | 44.04 | 51.77 | 46.15 |
+| short1q | pair1 | 15 | 48.33 | 46.93 | 50.43 | 46.29 | 50.62 | 47.87 |
+| short1q | pair2 | 15 | 47.71 | 46.46 | 49.92 | 45.27 | 50.21 | 47.24 |
+| short2q | warmup | 3 | 86.30 | 89.58 | 92.03 | 77.00 | 92.31 | 85.81 |
+| short2q | unique | 30 | 89.84 | 89.74 | 90.81 | 89.30 | 91.01 | 89.37 |
+| short2q | cycle | 40 | 85.31 | 87.43 | 90.67 | 76.98 | 93.13 | 84.85 |
+| short2q | pair1 | 15 | 88.83 | 89.56 | 90.04 | 87.21 | 90.25 | 88.38 |
+| short2q | pair2 | 15 | 89.26 | 89.91 | 90.48 | 87.81 | 90.52 | 88.82 |
+| medium3q | warmup | 3 | 371.7 | 366.3 | 381.1 | 366.0 | 382.7 | 371.2 |
+| medium3q | unique | 30 | 368.4 | 367.7 | 375.6 | 362.8 | 376.1 | 367.9 |
+| medium3q | cycle | 16 | 357.1 | 359.7 | 375.3 | 313.3 | 379.7 | 356.7 |
+| medium3q | pair1 | 15 | 373.4 | 373.3 | 380.0 | 367.9 | 380.0 | 372.9 |
+| medium3q | pair2 | 15 | 366.3 | 365.7 | 373.4 | 360.9 | 374.3 | 365.8 |
+| long3q | warmup | 3 | 790.1 | 788.2 | 826.0 | 751.8 | 830.2 | 789.6 |
+| long3q | unique | 30 | 807.3 | 807.2 | 813.8 | 801.7 | 815.2 | 806.8 |
+| long3q | cycle | 16 | 797.0 | 795.8 | 870.3 | 750.8 | 870.8 | 796.5 |
+| long3q | pair1 | 15 | 836.4 | 829.1 | 857.7 | 805.6 | 860.2 | 836.0 |
+| long3q | pair2 | 15 | 795.5 | 786.4 | 816.9 | 777.7 | 817.6 | 795.0 |
+
+Source: p3-dec-timing.client.json wall_ms (client send stamp -> response body read); server_total = `request` total_us.
+
+### 2. Stacked decomposition of the client wall time (mean over the valid requests, ms; the columns add up to wall_ms)
+
+| kind | phase | n | http_in_ms | parse_ms | build_ms | sched_ms | first_setup_ms | prepare_ms | submit_ms | between_ms | post_submit_ms | gpu_wait_ms | tail_server_ms | format_ms | http_out_ms | wall_ms | residual_mean_ms | residual_absmax_ms |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short1q | unique | 30 | 0.147 | 0.016 | 0.576 | 0.119 | 0.121 | 0.880 | 8.653 | 0.000 | 0.021 | 35.93 | 0.069 | 0.014 | 0.296 | 46.85 | -0.000 | 0.002 |
+| short1q | cycle | 24 | 0.158 | 0.017 | 0.569 | 0.125 | 0.119 | 1.100 | 9.597 | 0.000 | 0.021 | 34.51 | 0.071 | 0.014 | 0.299 | 46.60 | 0.000 | 0.001 |
+| short1q | pair1 | 15 | 0.159 | 0.017 | 0.588 | 0.124 | 0.124 | 1.147 | 10.00 | 0.000 | 0.023 | 35.76 | 0.072 | 0.014 | 0.302 | 48.33 | -0.000 | 0.001 |
+| short1q | pair2 | 15 | 0.161 | 0.017 | 0.582 | 0.142 | 0.127 | 0.068 | 5.177 | 0.000 | 0.024 | 41.00 | 0.086 | 0.014 | 0.308 | 47.71 | 0.000 | 0.001 |
+| short2q | unique | 30 | 0.151 | 0.028 | 1.301 | 0.140 | 0.088 | 3.103 | 63.27 | 0.296 | 0.025 | 20.91 | 0.183 | 0.025 | 0.324 | 89.84 | 0.000 | 0.003 |
+| short2q | cycle | 40 | 0.145 | 0.026 | 1.126 | 0.125 | 0.085 | 3.046 | 62.81 | 0.276 | 0.025 | 17.14 | 0.173 | 0.020 | 0.309 | 85.31 | 0.000 | 0.003 |
+| short2q | pair1 | 15 | 0.141 | 0.028 | 1.267 | 0.132 | 0.085 | 3.156 | 62.27 | 0.299 | 0.026 | 20.92 | 0.180 | 0.022 | 0.302 | 88.83 | -0.000 | 0.003 |
+| short2q | pair2 | 15 | 0.138 | 0.028 | 1.264 | 0.128 | 0.090 | 3.154 | 62.73 | 0.291 | 0.025 | 20.90 | 0.188 | 0.023 | 0.301 | 89.26 | -0.000 | 0.004 |
+| medium3q | unique | 30 | 0.144 | 0.061 | 4.113 | 0.332 | 0.741 | 7.099 | 329.2 | 0.954 | 0.024 | 25.18 | 0.141 | 0.024 | 0.333 | 368.4 | -0.000 | 0.004 |
+| medium3q | cycle | 16 | 0.137 | 0.056 | 3.845 | 0.326 | 0.697 | 6.878 | 318.1 | 0.924 | 0.025 | 25.63 | 0.149 | 0.024 | 0.315 | 357.1 | 0.000 | 0.002 |
+| medium3q | pair1 | 15 | 0.142 | 0.060 | 4.013 | 0.337 | 0.719 | 7.102 | 334.1 | 0.924 | 0.022 | 25.46 | 0.144 | 0.024 | 0.332 | 373.4 | -0.000 | 0.002 |
+| medium3q | pair2 | 15 | 0.147 | 0.060 | 4.065 | 0.465 | 0.702 | 6.911 | 327.5 | 0.807 | 0.023 | 25.07 | 0.135 | 0.024 | 0.323 | 366.3 | 0.000 | 0.003 |
+| long3q | unique | 30 | 0.151 | 0.112 | 8.094 | 0.494 | 1.174 | 16.42 | 751.4 | 2.606 | 0.030 | 26.16 | 0.217 | 0.024 | 0.336 | 807.3 | -0.000 | 0.005 |
+| long3q | cycle | 16 | 0.135 | 0.102 | 7.489 | 0.477 | 1.148 | 15.72 | 743.3 | 2.465 | 0.023 | 25.56 | 0.210 | 0.024 | 0.318 | 797.0 | -0.000 | 0.004 |
+| long3q | pair1 | 15 | 0.138 | 0.104 | 7.699 | 0.466 | 1.126 | 16.07 | 781.2 | 2.556 | 0.026 | 26.49 | 0.208 | 0.023 | 0.334 | 836.4 | 0.001 | 0.003 |
+| long3q | pair2 | 15 | 0.138 | 0.109 | 7.813 | 0.807 | 1.130 | 14.29 | 742.8 | 2.169 | 0.024 | 25.62 | 0.202 | 0.022 | 0.327 | 795.5 | -0.000 | 0.004 |
+
+Source: requests.tsv; column definitions in COLUMNS.tsv and NOTES.txt (section 7) next to analyze_decomp.py. Interval definitions: see the table in the same NOTES.txt.
+
+### 3. Every component: mean, p50, p95 (ms) and share of the mean wall time
+
+(240 rows, not printed: see components.tsv)
+
+Source: requests.tsv
+
+## View a. short-1q (phase unique) against the weight floor and the earlier 36.7 ms
+
+### a1. Waterfall: where the short-1q request time goes, starting at the weight floor (mean over the valid requests)
+
+| step | mean_ms | p50_ms | cumulative_mean_ms | share_of_wall_pct |
+|---|---|---|---|---|
+| weight floor of one pass with output (census-passes.tsv, check03) | 7.444 | 7.444 | 7.444 | 15.89 |
+| HTTP / client (send -> handler start, response -> client) | 0.444 | 0.441 | 7.888 | 0.947 |
+| parse + build + tokenize (request.parse_us, build_us) | 0.592 | 0.583 | 8.480 | 1.265 |
+| scheduling (post_tasks -> first decode start, decode setup) | 0.240 | 0.239 | 8.720 | 0.511 |
+| host graph build + submit (prepare, submit, between passes, post-submit) | 9.554 | 10.69 | 18.27 | 20.39 |
+| tail (server wake-up after the sync, softmax/format/JSON) | 0.083 | 0.077 | 18.36 | 0.176 |
+| GPU wait beyond the floor (gpu_wait_ms - floor; negative = part of the GPU time hides under the host submit) | 28.49 | 26.98 | 46.85 | 60.82 |
+| = client wall time | 46.85 | 46.45 | 46.85 | 100.0 |
+| residual (wall - stack) | -0.000 | -0.000 | - | -0.000 |
+
+Source: 30 requests of check03 (phase unique); floor from the census table census-passes.tsv. cumulative: floor + the steps above it = wall. p50 of a sum is the p50 of that sum per request, so the p50 column does not add up.
+
+### a2. The same, every component
+
+| column | what | mean_ms | p50_ms | p95_ms | share_of_wall_pct |
+|---|---|---|---|---|---|
+| http_in_ms | client send -> server handler start | 0.147 | 0.150 | 0.162 | 0.315 |
+| parse_ms | JSON parse + parse_questions/state + prepare_state | 0.016 | 0.016 | 0.019 | 0.035 |
+| build_ms | prompt render + tokenize + task grouping | 0.576 | 0.567 | 0.632 | 1.230 |
+| sched_ms | post_tasks -> first llama_decode start (queue wake-up, slot launch, batch build) | 0.119 | 0.119 | 0.133 | 0.254 |
+| first_setup_ms | first llama_decode start -> first ubatch start (batch alloc, memory init_batch, output reserve) | 0.121 | 0.117 | 0.136 | 0.257 |
+| prepare_ms | host graph preparation of all passes: memory apply, graph build, alloc, set inputs | 0.880 | 1.074 | 1.137 | 1.879 |
+| submit_ms | host time of the compute submit (op dispatch / CUDA launches) of all passes | 8.653 | 9.601 | 10.31 | 18.47 |
+| between_ms | host time between passes (end of ubatch i -> start of ubatch i+1) without the GPU waits | 0.000 | 0.000 | 0.000 | 0.000 |
+| post_submit_ms | end of the last ubatch -> start of the blocking sync (decode tail, post_decode, logits read call) | 0.021 | 0.018 | 0.034 | 0.044 |
+| gpu_wait_ms | host blocked for the GPU (all syncs) | 35.93 | 34.42 | 39.82 | 76.71 |
+| tail_server_ms | end of the last sync -> results ready in the HTTP thread (send_decision, release, queue, wake-up) | 0.069 | 0.064 | 0.093 | 0.147 |
+| format_ms | answer formatting (softmax of the answer tokens, JSON of the answers) | 0.014 | 0.014 | 0.017 | 0.030 |
+| http_out_ms | server request line -> response body read by the client (res->ok JSON dump, HTTP write, loopback, docker proxy, client read) | 0.296 | 0.291 | 0.337 | 0.632 |
+| apply_ms |   of prepare: memory context apply | 0.015 | 0.015 | 0.016 | 0.032 |
+| graph_build_ms |   of prepare: ggml graph build (0 if graph reused) | 0.463 | 0.571 | 0.614 | 0.988 |
+| alloc_ms |   of prepare: scheduler alloc (0 if reused) | 0.358 | 0.441 | 0.456 | 0.764 |
+| inputs_ms |   of prepare: set_inputs | 0.044 | 0.044 | 0.049 | 0.095 |
+| sched_wake_est_ms |   of sched [estimate, slot-line anchor]: post_tasks -> launch_slot_ (queue wake-up, get_available_slot) | 0.036 | 0.036 | 0.040 | 0.078 |
+| sched_launch_est_ms |   of sched [estimate]: launch_slot_ -> decode start (update_slots batch build) | 0.083 | 0.083 | 0.093 | 0.176 |
+
+Source: requests.tsv
+
+### a3. Reference numbers
+
+| quantity | ms (or ratio) |
+|---|---|
+| weight floor, pass with output (census-passes.tsv) | 7.444 |
+| int8 compute floor | 7.644 |
+| pass floor = max(weight, int8) | 7.644 |
+| roofline floor (sum over kernels of max(bytes/BW, ops/peak)) | 19.07 |
+| earlier measurement 'a whole short prompt in one pass' (deep review, untraced) | 36.70 |
+| this run: client wall, mean | 46.85 |
+| this run: client wall, p50 | 46.45 |
+| this run: GPU span (start of the first pass -> end of the sync), mean; upper bound of the GPU time of the pass | 45.49 |
+| this run: GPU wait (blocked at the sync), mean; lower bound of the GPU time | 35.93 |
+| wall - weight floor | 39.40 |
+| wall - 36.7 (this run against the earlier measurement) | 10.15 |
+| span - weight floor (GPU-side excess incl. launch exposure) | 38.04 |
+| wall - span (everything outside the GPU span: HTTP, parse, build, scheduling, tail) | 1.358 |
+| span / weight floor | 6.111 |
+| wall / weight floor | 6.293 |
+
+Source: census-passes.tsv (rep case), requests.tsv. Observed N tokens: F159x10, F158x8, F161x6; census N = 158
+
+## View b. Warm path: the same request twice in a row (pair2 against pair1)
+
+### b1. Pair 2 minus pair 1, mean over the pairs of the case (ms; negative = the second request is faster)
+
+| kind | case | n_pairs | wall1_mean_ms | wall2_mean_ms | d_wall_ms | d_wall_se_ms | d_http_in_ms | d_parse_ms | d_build_ms | d_sched_ms | d_first_setup_ms | d_prepare_ms | d_submit_ms | d_between_ms | d_post_submit_ms | d_gpu_wait_ms | d_tail_server_ms | d_format_ms | d_http_out_ms |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short1q | check03 | 8 | 46.59 | 45.91 | -0.678 | 0.103 | 0.005 | -0.000 | -0.028 | 0.024 | 0.005 | -1.055 | -4.456 | 0.000 | 0.001 | 4.823 | 0.009 | 0.000 | -0.006 |
+| short1q | check04 | 7 | 50.32 | 49.76 | -0.565 | 0.121 | -0.001 | 0.001 | 0.019 | 0.011 | 0.001 | -1.105 | -5.251 | 0.000 | 0.001 | 5.720 | 0.018 | -0.001 | 0.020 |
+| short2q | triage09 | 8 | 89.82 | 90.29 | 0.467 | 0.070 | -0.001 | 0.000 | -0.004 | -0.007 | 0.001 | 0.020 | 0.490 | 0.009 | -0.001 | -0.052 | 0.009 | 0.000 | 0.003 |
+| short2q | triage10 | 7 | 87.68 | 88.08 | 0.401 | 0.124 | -0.006 | 0.000 | -0.002 | -0.001 | 0.010 | -0.029 | 0.433 | -0.027 | 0.000 | 0.019 | 0.007 | 0.002 | -0.005 |
+| medium3q | medium01-memory | 8 | 371.6 | 364.6 | -7.048 | 0.331 | 0.012 | 0.002 | 0.099 | 0.133 | -0.025 | -0.146 | -6.642 | -0.127 | 0.000 | -0.338 | -0.010 | -0.001 | -0.005 |
+| medium3q | medium02-network | 7 | 375.4 | 368.2 | -7.191 | 0.546 | -0.003 | -0.001 | -0.003 | 0.122 | -0.008 | -0.244 | -6.477 | -0.106 | 0.003 | -0.452 | -0.008 | 0.000 | -0.013 |
+| long3q | long00-storage | 8 | 821.7 | 781.6 | -40.18 | 1.775 | 0.005 | 0.006 | 0.178 | 0.306 | -0.031 | -1.876 | -37.30 | -0.406 | 0.001 | -1.028 | -0.010 | -0.002 | -0.014 |
+| long3q | long01-memory | 7 | 853.2 | 811.3 | -41.91 | 0.364 | -0.004 | 0.003 | 0.041 | 0.381 | 0.043 | -1.664 | -39.65 | -0.365 | -0.006 | -0.680 | -0.003 | -0.000 | 0.002 |
+
+Source: requests.tsv; pairs = the same body (same Ref) sent twice back to back. d_<col> = mean(pair2 - pair1) of that component. Differences below 2 x d_wall_se_ms are noise.
+
+### b2. Did the server do less work the second time? (tokens of the ubatches, passes, graph reuse, slot choice)
+
+| kind | case | phase | n | tokens_evaluated_mean | ubatches_mean | decodes_mean | graph_reuse_mean | census_tokens_evaluated | n_census_match | slot_select | passes_most_common |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| short1q | check03 | pair1 | 8 | 158.6 | 1.000 | 1.000 | 0.000 | 158 | 8 | LCP:8 | F160 |
+| short1q | check03 | pair2 | 8 | 158.6 | 1.000 | 1.000 | 1.000 | 158 | 8 | LCP:8 | F160 |
+| short1q | check04 | pair1 | 7 | 165.1 | 1.000 | 1.000 | 0.000 | 166 | 7 | LCP:7 | F165 |
+| short1q | check04 | pair2 | 7 | 165.1 | 1.000 | 1.000 | 1.000 | 166 | 7 | LCP:7 | F165 |
+| short2q | triage09 | pair1 | 8 | 257.9 | 3.000 | 2.000 | 0.000 | 257 | 8 | LCP:8 | P87+S2x51+S1x69 |
+| short2q | triage09 | pair2 | 8 | 257.9 | 3.000 | 2.000 | 0.000 | 257 | 8 | LCP:8 | P87+S2x51+S1x69 |
+| short2q | triage10 | pair1 | 7 | 248.1 | 3.000 | 2.000 | 0.000 | 249 | 7 | LCP:7 | P77+S2x51+S1x69 |
+| short2q | triage10 | pair2 | 7 | 248.1 | 3.000 | 2.000 | 0.000 | 249 | 7 | LCP:7 | P77+S2x51+S1x69 |
+| medium3q | medium01-memory | pair1 | 8 | 1451.4 | 4.000 | 2.625 | 0.000 | 1451 | 8 | LRU:8 | P1288+S1x43+S2x47+S1x26 |
+| medium3q | medium01-memory | pair2 | 8 | 1451.4 | 4.000 | 2.625 | 0.000 | 1451 | 8 | LCP:8 | P1288+S1x43+S2x47+S1x26 |
+| medium3q | medium02-network | pair1 | 7 | 1499.6 | 4.000 | 2.714 | 0.000 | 1498 | 7 | LRU:7 | P1336+S2x43+S1x4+S1x73 |
+| medium3q | medium02-network | pair2 | 7 | 1499.6 | 4.000 | 2.714 | 0.000 | 1498 | 7 | LCP:7 | P1336+S2x43+S1x4+S1x73 |
+| long3q | long00-storage | pair1 | 8 | 3383.2 | 5.000 | 3.625 | 0.000 | 3384 | 8 | LRU:8 | P2048+P1173+S3x43+S2x4+S1x26 |
+| long3q | long00-storage | pair2 | 8 | 3383.2 | 5.000 | 3.625 | 0.000 | 3384 | 8 | LCP:8 | P2048+P1173+S3x43+S2x4+S1x26 |
+| long3q | long01-memory | pair1 | 7 | 3587.4 | 5.000 | 3.714 | 0.000 | 3586 | 7 | LRU:7 | P2048+P1376+S2x43+S1x4+S1x73 |
+| long3q | long01-memory | pair2 | 7 | 3587.4 | 5.000 | 3.714 | 0.000 | 3586 | 7 | LCP:7 | P2048+P1376+S2x43+S1x4+S1x73 |
+
+Source: requests.tsv; census_tokens_evaluated = census-cases.tsv, variant ref (full evaluation of the prompt, Ref line of median length). tokens_evaluated below that number means the server reused cached tokens.
+
+## View c. Instrumentation check: client wall time with DMK_TIMING against the reference run
+
+### c. Client wall time: timing build with DMK_TIMING=1 against the reference build (ms)
+
+| kind | phase | n_timing | n_ref | mean_timing_ms | mean_ref_ms | d_mean_ms | d_mean_pct | p50_timing_ms | p50_ref_ms | d_p50_ms | d_p50_pct | se_d_mean_ms | verdict_unpaired_2se | n_paired | paired_d_mean_ms | paired_se_ms | verdict_paired_2se |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short1q | unique | 30 | 30 | 46.85 | 47.03 | -0.182 | -0.387 | 46.45 | 46.62 | -0.167 | -0.357 | 0.422 | within noise | 30 | -0.182 | 0.024 | DIFFERENT |
+| short1q | cycle | 24 | 24 | 46.60 | 46.77 | -0.170 | -0.362 | 45.99 | 46.21 | -0.216 | -0.467 | 0.726 | within noise | 24 | -0.170 | 0.027 | DIFFERENT |
+| short1q | pair1 | 15 | 15 | 48.33 | 48.52 | -0.183 | -0.377 | 46.93 | 47.10 | -0.171 | -0.362 | 0.707 | within noise | 15 | -0.183 | 0.048 | DIFFERENT |
+| short1q | pair2 | 15 | 15 | 47.71 | 47.83 | -0.119 | -0.249 | 46.46 | 46.34 | 0.118 | 0.254 | 0.735 | within noise | 15 | -0.119 | 0.077 | within noise |
+| short1q | all timed | 84 | 84 | 47.20 | 47.36 | -0.167 | -0.353 | 46.48 | 46.63 | -0.146 | -0.313 | 0.325 | within noise | 84 | -0.167 | 0.020 | DIFFERENT |
+| short2q | unique | 30 | 30 | 89.84 | 90.18 | -0.333 | -0.369 | 89.74 | 90.07 | -0.325 | -0.361 | 0.100 | DIFFERENT | 30 | -0.333 | 0.068 | DIFFERENT |
+| short2q | cycle | 40 | 40 | 85.31 | 85.69 | -0.389 | -0.454 | 87.43 | 87.78 | -0.354 | -0.403 | 1.162 | within noise | 40 | -0.389 | 0.044 | DIFFERENT |
+| short2q | pair1 | 15 | 15 | 88.83 | 89.14 | -0.318 | -0.356 | 89.56 | 89.90 | -0.336 | -0.374 | 0.411 | within noise | 15 | -0.318 | 0.074 | DIFFERENT |
+| short2q | pair2 | 15 | 15 | 89.26 | 89.66 | -0.401 | -0.448 | 89.91 | 90.34 | -0.434 | -0.480 | 0.413 | within noise | 15 | -0.401 | 0.053 | DIFFERENT |
+| short2q | all timed | 100 | 100 | 87.79 | 88.15 | -0.363 | -0.412 | 89.55 | 89.96 | -0.412 | -0.458 | 0.552 | within noise | 100 | -0.363 | 0.030 | DIFFERENT |
+| medium3q | unique | 30 | 30 | 368.4 | 369.2 | -0.797 | -0.216 | 367.7 | 368.8 | -1.144 | -0.310 | 1.065 | within noise | 30 | -0.797 | 0.145 | DIFFERENT |
+| medium3q | cycle | 16 | 16 | 357.1 | 357.4 | -0.320 | -0.090 | 359.7 | 359.7 | -0.001 | -0.000 | 6.448 | within noise | 16 | -0.320 | 0.155 | DIFFERENT |
+| medium3q | pair1 | 15 | 15 | 373.4 | 373.9 | -0.585 | -0.156 | 373.3 | 374.1 | -0.727 | -0.194 | 1.477 | within noise | 15 | -0.585 | 0.196 | DIFFERENT |
+| medium3q | pair2 | 15 | 15 | 366.3 | 366.8 | -0.554 | -0.151 | 365.7 | 366.3 | -0.584 | -0.160 | 1.570 | within noise | 15 | -0.554 | 0.190 | DIFFERENT |
+| medium3q | all timed | 76 | 76 | 366.6 | 367.2 | -0.607 | -0.165 | 367.8 | 368.9 | -1.052 | -0.285 | 1.701 | within noise | 76 | -0.607 | 0.086 | DIFFERENT |
+| long3q | unique | 30 | 30 | 807.3 | 807.9 | -0.603 | -0.075 | 807.2 | 806.5 | 0.695 | 0.086 | 1.086 | within noise | 30 | -0.603 | 0.288 | DIFFERENT |
+| long3q | cycle | 16 | 16 | 797.0 | 798.2 | -1.248 | -0.156 | 795.8 | 797.5 | -1.709 | -0.214 | 14.76 | within noise | 16 | -1.248 | 0.262 | DIFFERENT |
+| long3q | pair1 | 15 | 15 | 836.4 | 837.6 | -1.162 | -0.139 | 829.1 | 829.5 | -0.383 | -0.046 | 6.329 | within noise | 15 | -1.162 | 0.233 | DIFFERENT |
+| long3q | pair2 | 15 | 15 | 795.5 | 796.0 | -0.523 | -0.066 | 786.4 | 787.8 | -1.357 | -0.172 | 5.758 | within noise | 15 | -0.523 | 0.223 | DIFFERENT |
+| long3q | all timed | 76 | 76 | 808.5 | 809.4 | -0.833 | -0.103 | 807.7 | 807.9 | -0.204 | -0.025 | 4.227 | within noise | 76 | -0.833 | 0.144 | DIFFERENT |
+
+Source: raw/1-decomp/p3-dec-ref.client.json and the run's client.json. d = timing - ref. se_d_mean = sqrt(se_timing^2 + se_ref^2); unpaired verdict: |d_mean| < 2 se. paired = same request (same idx, case and Ref) in both runs. Different builds (ablate-timing vs b12004-sm86): a difference is DMK_TIMING plus the extra host code of the ablate build; the two cannot be separated by this table alone.
+
+## View d. Fraction of the wall time per request type
+
+Definitions. **GPU wait** = time the host thread is blocked in the sync (sum of `sync.wait_us`): the GPU is certainly busy then.
+**Host submit + prepare** = ubatch `apply+build+alloc+inputs+submit` (all host work of the passes). **Not overlapped**: the log has no GPU
+timeline, so the part of the host work that runs while the GPU is idle can only be bounded. Inside the span of a sync group (start of
+its first pass -> end of the sync) the host is busy for `span - wait`. Lower bound of the not overlapped part = the prepare phase
+of the first pass of the group (the GPU has nothing queued yet: certain). Upper bound = `min(span - wait, span - max(wait, sum of the census pass floors))`
+(the GPU needs at least its floor, so it can idle at most the rest) and never less than the lower bound. The real value lies between.
+Accounting split of the submit column (`submit_first_pass_pct`, `submit_later_passes_pct`): the submit of the first pass of every sync group
+runs while the GPU has nothing earlier to execute; the submit of later passes of the group can run under the GPU execution of the earlier pass.
+That is a rule by pass order, not a measurement (a later pass is hidden only if the GPU is still busy with the earlier one).
+
+
+### d. Share of the wall time (mean over valid requests; not_overlapped_* and submit_first/later are parts of host_prepare_submit, not extra shares)
+
+| kind | phase | n | wall_ms | gpu_wait_pct | host_prepare_submit_pct | not_overlapped_min_pct | not_overlapped_max_pct | between_passes_pct | post_submit_pct | client_http_pct | parse_build_pct | scheduling_pct | tail_pct | submit_first_pass_pct | submit_later_passes_pct | sum_pct |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short1q | unique | 30 | 46.85 | 76.71 | 20.35 | 1.879 | 20.39 | 0.000 | 0.044 | 0.947 | 1.265 | 0.511 | 0.176 | 18.47 | 0.000 | 100.0 |
+| short1q | cycle | 24 | 46.60 | 74.06 | 22.95 | 2.360 | 23.00 | 0.000 | 0.046 | 0.980 | 1.256 | 0.524 | 0.184 | 20.59 | 0.000 | 100.00 |
+| short1q | pair1 | 15 | 48.33 | 73.99 | 23.07 | 2.372 | 23.12 | 0.000 | 0.047 | 0.954 | 1.250 | 0.513 | 0.179 | 20.70 | 0.000 | 100.0 |
+| short1q | pair2 | 15 | 47.71 | 85.94 | 10.99 | 0.143 | 11.04 | 0.000 | 0.050 | 0.983 | 1.255 | 0.565 | 0.209 | 10.85 | 0.000 | 100.00 |
+| short2q | unique | 30 | 89.84 | 23.27 | 73.87 | 1.207 | 74.20 | 0.330 | 0.028 | 0.529 | 1.479 | 0.254 | 0.231 | 6.548 | 63.87 | 100.00 |
+| short2q | cycle | 40 | 85.31 | 20.09 | 77.20 | 1.272 | 73.21 | 0.324 | 0.029 | 0.532 | 1.349 | 0.247 | 0.227 | 6.935 | 66.70 | 100.00 |
+| short2q | pair1 | 15 | 88.83 | 23.55 | 73.65 | 1.282 | 74.01 | 0.336 | 0.029 | 0.499 | 1.458 | 0.244 | 0.227 | 6.548 | 63.55 | 100.0 |
+| short2q | pair2 | 15 | 89.26 | 23.42 | 73.81 | 1.202 | 74.15 | 0.326 | 0.028 | 0.492 | 1.448 | 0.244 | 0.236 | 4.803 | 65.47 | 100.0 |
+| medium3q | unique | 30 | 368.4 | 6.835 | 91.30 | 1.242 | 74.05 | 0.259 | 0.007 | 0.130 | 1.133 | 0.291 | 0.045 | 11.98 | 77.39 | 100.0 |
+| medium3q | cycle | 16 | 357.1 | 7.178 | 91.00 | 1.237 | 73.84 | 0.259 | 0.007 | 0.127 | 1.092 | 0.286 | 0.048 | 13.30 | 75.77 | 100.00 |
+| medium3q | pair1 | 15 | 373.4 | 6.819 | 91.38 | 1.241 | 74.11 | 0.247 | 0.006 | 0.127 | 1.091 | 0.283 | 0.045 | 12.32 | 77.16 | 100.0 |
+| medium3q | pair2 | 15 | 366.3 | 6.845 | 91.31 | 1.215 | 73.61 | 0.220 | 0.006 | 0.129 | 1.126 | 0.319 | 0.043 | 12.22 | 77.20 | 100.00 |
+| long3q | unique | 30 | 807.3 | 3.241 | 95.12 | 1.185 | 75.95 | 0.323 | 0.004 | 0.060 | 1.016 | 0.207 | 0.030 | 8.603 | 84.48 | 100.0 |
+| long3q | cycle | 16 | 797.0 | 3.208 | 95.24 | 1.158 | 76.03 | 0.309 | 0.003 | 0.057 | 0.952 | 0.204 | 0.029 | 8.629 | 84.64 | 100.0 |
+| long3q | pair1 | 15 | 836.4 | 3.167 | 95.32 | 1.069 | 76.29 | 0.306 | 0.003 | 0.056 | 0.933 | 0.190 | 0.028 | 8.450 | 84.95 | 100.00 |
+| long3q | pair2 | 15 | 795.5 | 3.221 | 95.18 | 0.987 | 75.06 | 0.273 | 0.003 | 0.059 | 0.996 | 0.243 | 0.028 | 8.264 | 85.12 | 100.0 |
+
+Source: requests.tsv. sum_pct adds gpu_wait, host_prepare_submit, between, post_submit, client_http, parse_build, scheduling, tail (the stack, 100 minus residual). not_overlapped_min/max are bounds of the part of the host time in the GPU spans (prepare, submit and between passes) that runs with an idle GPU. submit_first_pass_pct + submit_later_passes_pct = the submit part of host_prepare_submit_pct.
+
+## View e. Is a pass host-bound? Sum of the submit times against the GPU time
+
+### e. Sum of host submit against the GPU span per request (mean, ms)
+
+| kind | phase | n | ubatches | prepare_ms | submit_ms | gpu_wait_ms | gpu_span_ms | floor_max_ms | floor_roofline_ms | submit_over_span | wait_over_span | span_over_floor | submit_per_pass_ms | hint |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short1q | unique | 30 | 1.000 | 0.880 | 8.653 | 35.93 | 45.49 | 7.709 | 19.19 | 0.190 | 0.790 | 5.901 | 8.653 | GPU-bound: the GPU finishes well after the last launch |
+| short1q | cycle | 24 | 1.000 | 1.100 | 9.597 | 34.51 | 45.23 | 7.665 | 18.48 | 0.212 | 0.763 | 5.901 | 9.597 | GPU-bound: the GPU finishes well after the last launch |
+| short2q | unique | 30 | 3.000 | 3.103 | 63.27 | 20.91 | 87.60 | 20.74 | 39.75 | 0.722 | 0.239 | 4.225 | 21.09 | mixed |
+| short2q | cycle | 40 | 3.000 | 3.046 | 62.81 | 17.14 | 83.30 | 20.74 | 38.35 | 0.754 | 0.206 | 4.017 | 20.94 | mixed |
+| medium3q | unique | 30 | 4.000 | 7.099 | 329.2 | 25.18 | 362.3 | 84.59 | 169.1 | 0.909 | 0.070 | 4.283 | 82.31 | host-bound: the launch loop fills the span |
+| medium3q | cycle | 16 | 4.000 | 6.878 | 318.1 | 25.63 | 351.4 | 83.02 | 165.7 | 0.905 | 0.073 | 4.232 | 79.53 | host-bound: the launch loop fills the span |
+| long3q | unique | 30 | 5.000 | 16.42 | 751.4 | 26.16 | 796.4 | 177.9 | 371.5 | 0.944 | 0.033 | 4.475 | 150.3 | host-bound: the launch loop fills the span |
+| long3q | cycle | 16 | 5.000 | 15.72 | 743.3 | 25.56 | 786.9 | 175.9 | 367.2 | 0.945 | 0.032 | 4.472 | 148.7 | host-bound: the launch loop fills the span |
+
+Source: requests.tsv. gpu_span = sum over sync groups of (sync end - start of its first pass): an upper bound of the GPU busy time; gpu_wait: a lower bound; floor_max = sum of census pass floors max(weights, int8) (nominal 448 GB/s, so slightly optimistic); floor_roofline = sum of census_lib roofline floors. hint rule [INFERENCE]: submit >= 0.9 span -> host-bound; wait >= 0.5 span -> GPU-bound; else mixed. The traces (nsys, not this table) showed ~1,300 launches in 6-8 ms of CPU and 12 ms of GPU for a 4-token pass.

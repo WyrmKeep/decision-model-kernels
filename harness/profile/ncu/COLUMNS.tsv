@@ -1,0 +1,191 @@
+table	column	unit	meaning
+kernels.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+kernels.tsv	id	None	Launch id of the profiled launch in the report (the ID column of ncu).
+kernels.tsv	window	None	Label of the planned window of the planned launch that this launch matches, for example 'MMQ layer 0, P0 N=86'. The value is empty for launches with align unplanned or no plan.
+kernels.tsv	class	None	Class of the launch. For a launch matched to the plan, the model class of the plan (op, weight type, J, N, for example 'mmq attn_qkv Q8_0 J=96 N=86'); otherwise named from the kernel name and grid only (for example 'mul_mat_vec_q grid=(4096,1,1)').
+kernels.tsv	align	None	ALIGNED, PARTIAL or SHIFTED (the alignment status of the run) if the launch is matched to a planned launch; unplanned if the run has a plan and this launch matches none of it (every launch of a MISALIGNED run); no plan if there is no plan/<run>.json.
+kernels.tsv	function	None	Function name of the kernel, without template arguments.
+kernels.tsv	grid	None	Grid size as XxYxZ.
+kernels.tsv	block	None	Block size as XxYxZ.
+kernels.tsv	duration_us	us	Duration of the kernel (gpu__time_duration.sum), measured by ncu under replay with flushed caches and unlocked clocks.
+kernels.tsv	nsys_proxy_us	us	Duration of the same kernel in the nsys trace of the model pass that the plan uses as its proxy. The value is empty where the plan has no such kernel.
+kernels.tsv	sm_clock_mhz	MHz	SM clock during the kernel (gpc__cycles_elapsed.avg.per_second).
+kernels.tsv	sm_cycles_k	thousand cycles	SM cycles of the kernel: SM clock times duration.
+kernels.tsv	dram_clock_mhz	MHz	DRAM clock (dram__cycles_elapsed.avg.per_second).
+kernels.tsv	dram_read_mb	MB	DRAM bytes read (dram__bytes_read.sum), 10^6 bytes.
+kernels.tsv	dram_write_mb	MB	DRAM bytes written (dram__bytes_write.sum), 10^6 bytes.
+kernels.tsv	dram_gb_s	GB/s	DRAM throughput: bytes read plus written divided by the duration.
+kernels.tsv	dram_pct_of_422	%	dram_gb_s divided by 422 GB/s, the best DRAM read rate of the card.
+kernels.tsv	ncu_dram_pct_peak	%	DRAM throughput as ncu reports it, in percent of the peak (gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed).
+kernels.tsv	l2_mb	MB	L2 traffic (lts__t_bytes.sum), 10^6 bytes.
+kernels.tsv	l2_hit_pct	%	L2 sector hit rate (lts__t_sector_hit_rate.pct).
+kernels.tsv	l1_hit_pct	%	L1 sector hit rate (l1tex__t_sector_hit_rate.pct).
+kernels.tsv	imma_pipe_pct	%	Tensor pipe active for IMMA (int8) instructions, in percent of the peak (sm__pipe_tensor_op_imma_cycles_active.avg.pct_of_peak_sustained_active).
+kernels.tsv	hmma_pipe_pct	%	Tensor pipe active for HMMA (fp16) instructions, in percent of the peak (sm__pipe_tensor_op_hmma_cycles_active.avg.pct_of_peak_sustained_active).
+kernels.tsv	imma_inst_pct	%	IMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_imma.avg.pct_of_peak_sustained_active).
+kernels.tsv	hmma_inst_pct	%	HMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_hmma.avg.pct_of_peak_sustained_active).
+kernels.tsv	imma_inst_m	million	IMMA instructions executed (sm__inst_executed_pipe_tensor_op_imma.sum).
+kernels.tsv	int8_gops	G ops	Executed int8 tensor operations (sm__ops_path_tensor_src_int8.sum), padding included.
+kernels.tsv	inst_m	million	Instructions executed (smsp__inst_executed.sum).
+kernels.tsv	issue_active_pct	%	Issue slots active, in percent of the peak (smsp__issue_active.avg.pct_of_peak_sustained_active).
+kernels.tsv	sm_throughput_pct	%	SM throughput, in percent of the peak (sm__throughput.avg.pct_of_peak_sustained_elapsed).
+kernels.tsv	warps_active_pct	%	Achieved warps per SM, in percent of the peak (sm__warps_active.avg.pct_of_peak_sustained_active).
+kernels.tsv	warps_max_pct	%	Theoretical warps per SM, in percent of the peak (sm__maximum_warps_per_active_cycle_pct).
+kernels.tsv	latency_cycles	cycles	Warp latency per issued instruction (smsp__average_warp_latency_per_inst_issued.ratio).
+kernels.tsv	regs	registers per thread	Registers per thread (launch__registers_per_thread).
+kernels.tsv	smem_static_b	B	Static shared memory per block (launch__shared_mem_per_block_static).
+kernels.tsv	smem_dyn_b	B	Dynamic shared memory per block (launch__shared_mem_per_block_dynamic).
+kernels.tsv	waves_per_sm	waves	Waves per SM (launch__waves_per_multiprocessor).
+kernels.tsv	occ_limit_regs	blocks per SM	Occupancy limit by registers (launch__occupancy_limit_registers).
+kernels.tsv	occ_limit_smem	blocks per SM	Occupancy limit by shared memory (launch__occupancy_limit_shared_mem).
+kernels.tsv	occ_limit_warps	blocks per SM	Occupancy limit by warps (launch__occupancy_limit_warps).
+kernels.tsv	occ_limit_blocks	blocks per SM	Occupancy limit by the block count of the SM (launch__occupancy_limit_blocks).
+kernels.tsv	passes	None	Replay passes that ncu needed for the launch (profiler__replayer_passes).
+kernels.tsv	stall_top3	None	The three largest stall reasons with their share in percent, for example 'long_scoreboard 22%; lg_throttle 19%; math_pipe_throttle 19%'.
+kernels.tsv	stall_long_scoreboard_pct	%	Share of the stall reason long_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_short_scoreboard_pct	%	Share of the stall reason short_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_barrier_pct	%	Share of the stall reason barrier among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_mio_throttle_pct	%	Share of the stall reason mio_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_math_pipe_throttle_pct	%	Share of the stall reason math_pipe_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_wait_pct	%	Share of the stall reason wait among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_wait_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_no_instruction_pct	%	Share of the stall reason no_instruction among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_lg_throttle_pct	%	Share of the stall reason lg_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio; selected and not_selected excluded).
+kernels.tsv	stall_dispatch_stall_pct	%	Share of the stall reason dispatch_stall among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_dispatch_stall_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+classes.tsv	class	None	Class of the launch. For a launch matched to the plan, the model class of the plan (op, weight type, J, N, for example 'mmq attn_qkv Q8_0 J=96 N=86'); otherwise named from the kernel name and grid only (for example 'mul_mat_vec_q grid=(4096,1,1)').
+classes.tsv	n	None	Number of launches of the class in the run.
+classes.tsv	window	None	Window label of the first launch of the class.
+classes.tsv	function	None	Function name of the first launch of the class.
+classes.tsv	grid	None	Grid size of the first launch of the class.
+classes.tsv	block	None	Block size of the first launch of the class.
+classes.tsv	align	None	align of the first launch of the class (see kernels.tsv).
+classes.tsv	duration_min_us	us	Shortest duration of a launch of the class.
+classes.tsv	duration_max_us	us	Longest duration of a launch of the class.
+classes.tsv	duration_us	us	Mean over the launches of the class. Duration of the kernel (gpu__time_duration.sum), measured by ncu under replay with flushed caches and unlocked clocks.
+classes.tsv	nsys_proxy_us	us	Mean over the launches of the class. Duration of the same kernel in the nsys trace of the model pass that the plan uses as its proxy. The value is empty where the plan has no such kernel.
+classes.tsv	sm_clock_mhz	MHz	Mean over the launches of the class. SM clock during the kernel (gpc__cycles_elapsed.avg.per_second).
+classes.tsv	sm_cycles_k	thousand cycles	Mean over the launches of the class. SM cycles of the kernel: SM clock times duration.
+classes.tsv	dram_clock_mhz	MHz	Mean over the launches of the class. DRAM clock (dram__cycles_elapsed.avg.per_second).
+classes.tsv	dram_read_mb	MB	Mean over the launches of the class. DRAM bytes read (dram__bytes_read.sum), 10^6 bytes.
+classes.tsv	dram_write_mb	MB	Mean over the launches of the class. DRAM bytes written (dram__bytes_write.sum), 10^6 bytes.
+classes.tsv	dram_gb_s	GB/s	Mean over the launches of the class. DRAM throughput: bytes read plus written divided by the duration.
+classes.tsv	dram_pct_of_422	%	Mean over the launches of the class. dram_gb_s divided by 422 GB/s, the best DRAM read rate of the card.
+classes.tsv	ncu_dram_pct_peak	%	Mean over the launches of the class. DRAM throughput as ncu reports it, in percent of the peak (gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed).
+classes.tsv	l2_mb	MB	Mean over the launches of the class. L2 traffic (lts__t_bytes.sum), 10^6 bytes.
+classes.tsv	l2_hit_pct	%	Mean over the launches of the class. L2 sector hit rate (lts__t_sector_hit_rate.pct).
+classes.tsv	l1_hit_pct	%	Mean over the launches of the class. L1 sector hit rate (l1tex__t_sector_hit_rate.pct).
+classes.tsv	imma_pipe_pct	%	Mean over the launches of the class. Tensor pipe active for IMMA (int8) instructions, in percent of the peak (sm__pipe_tensor_op_imma_cycles_active.avg.pct_of_peak_sustained_active).
+classes.tsv	hmma_pipe_pct	%	Mean over the launches of the class. Tensor pipe active for HMMA (fp16) instructions, in percent of the peak (sm__pipe_tensor_op_hmma_cycles_active.avg.pct_of_peak_sustained_active).
+classes.tsv	imma_inst_pct	%	Mean over the launches of the class. IMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_imma.avg.pct_of_peak_sustained_active).
+classes.tsv	hmma_inst_pct	%	Mean over the launches of the class. HMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_hmma.avg.pct_of_peak_sustained_active).
+classes.tsv	imma_inst_m	million	Mean over the launches of the class. IMMA instructions executed (sm__inst_executed_pipe_tensor_op_imma.sum).
+classes.tsv	int8_gops	G ops	Mean over the launches of the class. Executed int8 tensor operations (sm__ops_path_tensor_src_int8.sum), padding included.
+classes.tsv	inst_m	million	Mean over the launches of the class. Instructions executed (smsp__inst_executed.sum).
+classes.tsv	issue_active_pct	%	Mean over the launches of the class. Issue slots active, in percent of the peak (smsp__issue_active.avg.pct_of_peak_sustained_active).
+classes.tsv	sm_throughput_pct	%	Mean over the launches of the class. SM throughput, in percent of the peak (sm__throughput.avg.pct_of_peak_sustained_elapsed).
+classes.tsv	warps_active_pct	%	Mean over the launches of the class. Achieved warps per SM, in percent of the peak (sm__warps_active.avg.pct_of_peak_sustained_active).
+classes.tsv	warps_max_pct	%	Mean over the launches of the class. Theoretical warps per SM, in percent of the peak (sm__maximum_warps_per_active_cycle_pct).
+classes.tsv	latency_cycles	cycles	Mean over the launches of the class. Warp latency per issued instruction (smsp__average_warp_latency_per_inst_issued.ratio).
+classes.tsv	regs	registers per thread	Mean over the launches of the class. Registers per thread (launch__registers_per_thread).
+classes.tsv	smem_static_b	B	Mean over the launches of the class. Static shared memory per block (launch__shared_mem_per_block_static).
+classes.tsv	smem_dyn_b	B	Mean over the launches of the class. Dynamic shared memory per block (launch__shared_mem_per_block_dynamic).
+classes.tsv	waves_per_sm	waves	Mean over the launches of the class. Waves per SM (launch__waves_per_multiprocessor).
+classes.tsv	occ_limit_regs	blocks per SM	Mean over the launches of the class. Occupancy limit by registers (launch__occupancy_limit_registers).
+classes.tsv	occ_limit_smem	blocks per SM	Mean over the launches of the class. Occupancy limit by shared memory (launch__occupancy_limit_shared_mem).
+classes.tsv	occ_limit_warps	blocks per SM	Mean over the launches of the class. Occupancy limit by warps (launch__occupancy_limit_warps).
+classes.tsv	occ_limit_blocks	blocks per SM	Mean over the launches of the class. Occupancy limit by the block count of the SM (launch__occupancy_limit_blocks).
+classes.tsv	passes	None	Mean over the launches of the class. Replay passes that ncu needed for the launch (profiler__replayer_passes).
+classes.tsv	stall_long_scoreboard_pct	%	Mean over the launches of the class. Share of the stall reason long_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_short_scoreboard_pct	%	Mean over the launches of the class. Share of the stall reason short_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_barrier_pct	%	Mean over the launches of the class. Share of the stall reason barrier among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_mio_throttle_pct	%	Mean over the launches of the class. Share of the stall reason mio_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_math_pipe_throttle_pct	%	Mean over the launches of the class. Share of the stall reason math_pipe_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_wait_pct	%	Mean over the launches of the class. Share of the stall reason wait among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_wait_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_no_instruction_pct	%	Mean over the launches of the class. Share of the stall reason no_instruction among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_lg_throttle_pct	%	Mean over the launches of the class. Share of the stall reason lg_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_dispatch_stall_pct	%	Mean over the launches of the class. Share of the stall reason dispatch_stall among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_dispatch_stall_per_issue_active.ratio; selected and not_selected excluded).
+classes.tsv	stall_top3	None	Mean over the launches of the class. The three largest stall reasons with their share in percent, for example 'long_scoreboard 22%; lg_throttle 19%; math_pipe_throttle 19%'.
+sol.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+sol.tsv	case	None	Case of the planned request of the run (plan/<run>.json). The value is empty for classes that have no plan record (launches with align unplanned).
+sol.tsv	class	None	Class of the launch. For a launch matched to the plan, the model class of the plan (op, weight type, J, N, for example 'mmq attn_qkv Q8_0 J=96 N=86'); otherwise named from the kernel name and grid only (for example 'mul_mat_vec_q grid=(4096,1,1)').
+sol.tsv	n	None	Number of launches of the class in the run.
+sol.tsv	pass_k	None	Index of the pass of the request that the class comes from, from 0 (P0, P1, ...), from the plan record of the first launch of the class. The value is empty without a plan record.
+sol.tsv	n_tokens	tokens	Tokens N of that pass (plan record). The value is empty without a plan record.
+sol.tsv	launches_per_pass	None	Launches of the class per pass of the traced request (plan record, from the census). The value is empty without a plan record.
+sol.tsv	duration_us	us	Mean measured duration of one launch of the class (ncu).
+sol.tsv	nsys_proxy_us	us	Mean duration of the same kernel in the nsys trace of the model pass that serves as the proxy of the traced pass.
+sol.tsv	bound	None	The limit that sets floor_us (the most frequent one among the launches of the class): DRAM, INT8, FP16, FP32 or launch.
+sol.tsv	floor_us	us	Time at the limit, mean over the launches of the class: the largest of model bytes / 422 GB/s, useful int8 ops / 149.3 TOP/s, fp16 flops / 38 TFLOP/s, fp32 flops / 18.1 TFLOP/s and the launch floor of 1.0 us.
+sol.tsv	pct_of_limit	%	floor_us divided by duration_us.
+sol.tsv	gap_us	us	duration_us minus floor_us: the gap per launch.
+sol.tsv	ms_per_pass	ms	duration_us times launches_per_pass: time of the class in one pass. The value is empty without launches_per_pass.
+sol.tsv	gap_ms_per_pass	ms	gap_us times launches_per_pass. The value is empty without launches_per_pass.
+sol.tsv	pass_nsys_ms	ms	GPU time of the traced pass in the nsys trace (plan record). The value is empty without a plan record.
+sol.tsv	share_of_pass_pct	%	ms_per_pass divided by pass_nsys_ms.
+sol.tsv	dram_gb_s	GB/s	Mean DRAM throughput of the launches of the class.
+sol.tsv	dram_pct_of_422	%	Mean of dram_pct_of_422 of the launches of the class.
+sol.tsv	useful_tops	TOP/s	Useful int8 operations of the plan (2*M*N*K) divided by duration_us. The value is empty for kernels with no int8 model.
+sol.tsv	useful_tops_pct	%	useful_tops divided by 149.3 TOP/s.
+sol.tsv	padded_over_useful	None	Executed int8 operations (sm__ops_path_tensor_src_int8.sum, mean over the launches) divided by the useful operations.
+sol.tsv	padded_expected	None	Padded operations divided by useful operations that the tile grid of the plan gives: the value that padded_over_useful should have.
+sol.tsv	imma_pipe_pct	%	Mean tensor pipe active for IMMA instructions.
+sol.tsv	l2_hit_pct	%	Mean L2 sector hit rate.
+sol.tsv	sm_clock_mhz	MHz	Mean SM clock.
+sol.tsv	stall_top3	None	The three largest stall reasons with their share in percent, for example 'long_scoreboard 22%; lg_throttle 19%; math_pipe_throttle 19%'.
+sol.tsv	floor_parts	None	The limit times of the first launch of the class that floor_us is the largest of, for example 'DRAM=60.1; INT8=24.2; launch=1.0' (microseconds).
+sol.tsv	floor_source	None	Where the bytes of the floor come from: 'model bytes' (weights + q8_1 input + f32 output for matmuls, or the read and write bytes of the model, from the plan) or 'measured DRAM bytes (no byte model for this kernel)'.
+alignment.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+alignment.tsv	planned_launches	None	Number of launches that the plan expects in the window.
+alignment.tsv	profiled_launches	None	Number of launches in the report.
+alignment.tsv	matching	None	Number of profiled launches that match the planned kernels (function, grid, block) at the best shift.
+alignment.tsv	shift	None	Best shift in launches of the filter stream between the profiled launches and the plan (0 for an aligned window).
+alignment.tsv	status	None	ALIGNED, PARTIAL, SHIFTED by +s (with the plan_ncu.py --shift hint), MISALIGNED or EMPTY, with its explanation.
+ffn_up_q4_0_N2048-instructions.tsv	address	None	Address of the SASS line in the kernel.
+ffn_up_q4_0_N2048-instructions.tsv	sass	None	The SASS text of the line.
+ffn_up_q4_0_N2048-instructions.tsv	opcode	None	The opcode of the line: the first word of the SASS text, without the predicate and without the part after the first dot.
+ffn_up_q4_0_N2048-instructions.tsv	stall_samples_all	count	All stall samples at the line.
+ffn_up_q4_0_N2048-instructions.tsv	stall_samples_not_issued	count	The stall samples at the line in which the warp did not issue an instruction.
+ffn_up_q4_0_N2048-instructions.tsv	instructions_executed	count	Number of times that the kernel ran the instruction, for all warps.
+ffn_up_q4_0_N2048-instructions.tsv	stall_barrier	count	Stall samples with the stall reason barrier.
+ffn_up_q4_0_N2048-instructions.tsv	stall_branch_resolving	count	Stall samples with the stall reason branch_resolving.
+ffn_up_q4_0_N2048-instructions.tsv	stall_dispatch	count	Stall samples with the stall reason dispatch.
+ffn_up_q4_0_N2048-instructions.tsv	stall_drain	count	Stall samples with the stall reason drain.
+ffn_up_q4_0_N2048-instructions.tsv	stall_imc	count	Stall samples with the stall reason imc_miss.
+ffn_up_q4_0_N2048-instructions.tsv	stall_lg	count	Stall samples with the stall reason lg_throttle.
+ffn_up_q4_0_N2048-instructions.tsv	stall_long_sb	count	Stall samples with the stall reason long_scoreboard.
+ffn_up_q4_0_N2048-instructions.tsv	stall_math	count	Stall samples with the stall reason math_pipe_throttle.
+ffn_up_q4_0_N2048-instructions.tsv	stall_membar	count	Stall samples with the stall reason membar.
+ffn_up_q4_0_N2048-instructions.tsv	stall_mio	count	Stall samples with the stall reason mio_throttle.
+ffn_up_q4_0_N2048-instructions.tsv	stall_misc	count	Stall samples with the stall reason misc.
+ffn_up_q4_0_N2048-instructions.tsv	stall_no_inst	count	Stall samples with the stall reason no_instruction.
+ffn_up_q4_0_N2048-instructions.tsv	stall_not_selected	count	Stall samples with the stall reason not_selected.
+ffn_up_q4_0_N2048-instructions.tsv	stall_selected	count	Stall samples with the stall reason selected.
+ffn_up_q4_0_N2048-instructions.tsv	stall_short_sb	count	Stall samples with the stall reason short_scoreboard.
+ffn_up_q4_0_N2048-instructions.tsv	stall_sleep	count	Stall samples with the stall reason sleeping.
+ffn_up_q4_0_N2048-instructions.tsv	stall_tex	count	Stall samples with the stall reason tex_throttle.
+ffn_up_q4_0_N2048-instructions.tsv	stall_wait	count	Stall samples with the stall reason wait.
+ffn_up_q4_0_N2048-opcodes.tsv	opcode	None	Opcode of the SASS instruction. The last row `TOTAL` sums all opcodes.
+ffn_up_q4_0_N2048-opcodes.tsv	sass_lines	count	Number of SASS lines with this opcode.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_samples_all	count	All stall samples at the lines of this opcode.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_samples_share_pct	%	The stall samples of this opcode as a part of all stall samples.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_samples_not_issued	count	The stall samples of this opcode in which the warp did not issue an instruction.
+ffn_up_q4_0_N2048-opcodes.tsv	instructions_executed	count	Number of times that the kernel ran instructions of this opcode.
+ffn_up_q4_0_N2048-opcodes.tsv	instructions_executed_share_pct	%	The instructions of this opcode that the kernel ran, as a part of all instructions that it ran.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_barrier	count	Stall samples with the stall reason barrier.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_branch_resolving	count	Stall samples with the stall reason branch_resolving.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_dispatch	count	Stall samples with the stall reason dispatch.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_drain	count	Stall samples with the stall reason drain.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_imc	count	Stall samples with the stall reason imc_miss.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_lg	count	Stall samples with the stall reason lg_throttle.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_long_sb	count	Stall samples with the stall reason long_scoreboard.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_math	count	Stall samples with the stall reason math_pipe_throttle.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_membar	count	Stall samples with the stall reason membar.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_mio	count	Stall samples with the stall reason mio_throttle.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_misc	count	Stall samples with the stall reason misc.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_no_inst	count	Stall samples with the stall reason no_instruction.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_not_selected	count	Stall samples with the stall reason not_selected.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_selected	count	Stall samples with the stall reason selected.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_short_sb	count	Stall samples with the stall reason short_scoreboard.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_sleep	count	Stall samples with the stall reason sleeping.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_tex	count	Stall samples with the stall reason tex_throttle.
+ffn_up_q4_0_N2048-opcodes.tsv	stall_wait	count	Stall samples with the stall reason wait.

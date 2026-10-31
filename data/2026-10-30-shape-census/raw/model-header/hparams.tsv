@@ -1,0 +1,55 @@
+parameter	value	source	unit
+arch	qwen35	general.architecture	
+model_name	H2O Lightning 4B	general.name	
+gguf_file_bytes	3349945376	size of the GGUF file	B
+gguf_data_offset	10972192	gguf-py	B
+head_bytes_fetched	16000000	first N bytes of the GGUF file (smallest N in 16/32/64/128 MB that parses)	B
+n_tensors	426	GGUF.tensor_count	
+n_layer_all (block_count)	33	qwen35.block_count	
+n_layer_nextn	1	qwen35.nextn_predict_layers	
+n_layer (executed)	32	block_count - nextn_predict_layers (qwen35.cpp: the NextN/MTP layer has no tensors in this file and is not executed)	
+n_embd	2560	qwen35.embedding_length	
+n_ff	9216	qwen35.feed_forward_length	
+n_head	16	qwen35.attention.head_count	
+n_head_kv	4	qwen35.attention.head_count_kv	
+head_dim_k	256	qwen35.attention.key_length	
+head_dim_v	256	qwen35.attention.value_length	
+gqa_ratio	4	n_head / n_head_kv	
+attn_q_rows (query + output gate)	8192	wq ne1 = 2 * n_head * head_dim	
+attn_kv_rows (each of K, V)	1024	n_head_kv * head_dim	
+attn_o_in	4096	n_head * head_dim_v	
+rope_dimension_count	64	qwen35.rope.dimension_count	
+rope_sections	11 11 10 0	qwen35.rope.dimension_sections (M-RoPE)	
+rope_freq_base	10000000.0	qwen35.rope.freq_base	
+rms_norm_eps	9.999999974752427e-07	qwen35.attention.layer_norm_rms_epsilon	
+context_length_train	262144	qwen35.context_length	
+full_attention_interval	4	qwen35.full_attention_interval	
+n_layers_recurrent (Gated DeltaNet)	24	attention.recurrent_layers[:n_layer]	
+n_layers_attention	8	n_layer - recurrent	
+layer_pattern	RRRARRRARRRARRRARRRARRRARRRARRRA	attention.recurrent_layers (R = Gated DeltaNet, A = full attention)	
+ssm_conv_kernel	4	qwen35.ssm.conv_kernel	
+ssm_inner_size (d_inner)	4096	qwen35.ssm.inner_size	
+ssm_state_size = GDN head_k_dim	128	qwen35.ssm.state_size	
+ssm_group_count = GDN num_k_heads	16	qwen35.ssm.group_count	
+ssm_time_step_rank = GDN num_v_heads	32	qwen35.ssm.time_step_rank	
+GDN head_v_dim	128	d_inner / num_v_heads	
+GDN conv_channels	8192	d_inner + 2 * n_group * d_state	
+GDN qkv rows (attn_qkv ne1)	8192	2 * n_group * d_state + d_inner	
+GDN recurrent state per layer per sequence	2097152	head_v_dim^2 * num_v_heads * 4 B (F32)	B
+GDN conv state per layer per sequence	98304	(d_conv-1) * conv_channels * 4 B (F32)	B
+n_vocab	248320	len(tokenizer.ggml.tokens)	
+output head	tied to token_embd	tensor list (no output.weight in the file => LM head = token_embd, Q8_0)	
+decision.type	h2o-lightning	qwen35.decision.type	
+decision.n_labels	255	qwen35.decision.labels	
+decision.label_first_5	 A| B| C| D| E	qwen35.decision.labels	
+tokenizer	gpt2/qwen2	tokenizer.ggml.model / .pre	
+general.file_type	2	general.file_type (2 = MOSTLY_Q4_0, mixed per tensor)	
+tensor bytes, type F32	3846144	sum over tensors.tsv	B
+tensor elements, type F32	961536	sum over tensors.tsv	
+tensor bytes, type Q4_0	1274019840	sum over tensors.tsv	B
+tensor elements, type Q4_0	2264924160	sum over tensors.tsv	
+tensor bytes, type Q8_0	2061107200	sum over tensors.tsv	B
+tensor elements, type Q8_0	1939865600	sum over tensors.tsv	
+tensor bytes in the 32 layers	2663532544	sum over tensors.tsv (layer >= 0)	B
+tensor bytes token_embd (= LM head)	675430400	tensors.tsv	B
+matmul weight elements in the 32 layers	3569090560	sum over Q4_0/Q8_0 tensors of the layers	

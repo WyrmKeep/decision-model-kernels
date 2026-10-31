@@ -1,0 +1,226 @@
+Phase 3, package 1: where does the request time go, without a profiler
+======================================================================
+
+Question: of the client wall time of one /v1/systemone request, how many ms are HTTP/client, JSON parse, prompt build + tokenize, slot scheduling,
+host graph build, host kernel submit, GPU wait, time between passes and tail (softmax/format/JSON)? Compared with the 7.44 ms weight floor of one pass with
+output (census-passes.tsv of the census data set) and the 36.7 ms measured earlier (deep review, untraced: "a whole short prompt in one pass takes 36.7 ms").
+Nothing is profiled: the client records its own stamps, the server prints DMK_TIMING lines (build ablate-timing), the analysis joins both.
+
+Status when this text was written: the scripts had run only on synthetic data with invented durations (section 10). The print formats, the request plan,
+the pass structure and the floors in the synthetic data are real; every duration is made up. The first real run (schedule sched/1-decomp.txt) was analysed with these
+scripts afterwards: its numbers are in the profiles data set that harness/profile/README.md names. The remarks marked [INFERENCE] below come from before that run.
+
+1. Files
+--------
+
+| file | what |
+|---|---|
+| harness/profile/extra/prof/decomp_client.py | client for the harness (/extra/prof/decomp_client.py, python stdlib, import common) |
+| harness/profile/sched/1-decomp.txt | the two schedule lines (p3-dec-timing, p3-dec-ref) |
+| harness/profile/decomp/analyze_decomp.py | analysis (also --self-test) |
+| harness/profile/decomp/make_synthetic.py | synthetic results directory with known truth (used by --self-test) |
+| harness/profile/decomp/COLUMNS.tsv | table, column, unit and meaning of every column of every TSV that analyze_decomp.py writes |
+
+2. How to run
+-------------
+
+    bash harness/profile/make_sched.sh --out SCHED 1-decomp.txt          # this schedule needs no remote dir
+    DMK_ENV=ENVFILE DMK_EXTRA_DIR=harness/profile/extra bash harness/run_schedule.sh SCHED/1-decomp.txt RESULTS    # GPU host: stop other servers first
+    python3 harness/profile/decomp/analyze_decomp.py RESULTS --run p3-dec-timing --ref p3-dec-ref
+    python3 harness/profile/decomp/analyze_decomp.py RESULTS --out-dir OUT          # same, output elsewhere (default: RESULTS/decomp-analysis)
+    python3 harness/profile/decomp/analyze_decomp.py --self-test                    # synthetic data in a temporary folder (TMPDIR), 36 checks, about 1 s; --test-dir DIR keeps the data and the log
+
+RESULTS/ must contain p3-dec-timing.client.json, p3-dec-timing.server.log and (for view c) p3-dec-ref.client.json. The report is OUT/summary.txt.
+The census tables (census-cases.tsv, census-passes.tsv) come from the census data set: the folder that $DMK_CENSUS_DATA names (default data/2026-10-30-shape-census).
+Options: --ref '' skips view c; --tol-us N (default 3) is the tolerance of all stamp comparisons (the log has 1 us resolution, durations are printed rounded to 1 us).
+Exit code 2 and a message on stderr if an input is missing or the log has no DMK_TIMING lines (the message shows the first log lines).
+
+3. The run
+----------
+
+Two runs of the production server flags (-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified):
+
+| run | build | env | purpose |
+|---|---|---|---|
+| p3-dec-timing | ablate-timing | DMK_TIMING=1 (timing.env) | client stamps + request, decode, ubatch, sync, cuda_compute and slot lines |
+| p3-dec-ref | b12004-sm86 | none | client wall times without any instrumentation (instrumentation check, nsys-overhead reference) |
+
+The same client, the same plan (seed 20261031) in both. Per request type, strictly sequential, one keep-alive connection, no pause between requests:
+
+| phase | requests per type | content |
+|---|---|---|
+| warmup | 3 | the cases that follow the representative case in the type's list, unique Ref; recorded, not used in any statistic |
+| unique | 30 | the representative case (check03, triage09, medium01-memory, long00-storage), each with a new Ref: line |
+| cycle | 2 x n_cases | all cases of the type, 2 rounds, each round shuffled (random.Random(seed)), unique Refs: the case-to-case spread |
+| pair1, pair2 | 15 + 15 | the SAME body (same Ref, same case) twice back to back: the warm path. Pair i uses the representative case when i is odd and the next case of the list when i is even; every pair has its own Ref |
+
+Requests per run: short1q 3+30+24+30 = 87 (12 cases), short2q 3+30+40+30 = 103 (20 cases), medium3q 3+30+16+30 = 79 (8), long3q 79 (8): 348.
+(An earlier plan counted 99 for short1q; 3+30+2x12+30 is 87.) A pause of 1 s between two types.
+
+Client record per request: idx kind case phase pair ref t_send_mono_ns t_header_mono_ns t_recv_mono_ns t_send_epoch_ns wall_ms input_tokens.
+wall_ms = from just before the request is written to the socket until the response body is read completely (the client's own json.loads is after the stamp).
+meta.reconnects counts the times the keep-alive connection was reopened.
+
+4. GPU-minute estimate
+----------------------
+
+Per run: T_run = sum_kinds n_requests x mean_latency + 3 x 1 s + t_start + t_client + t_stop.
+
+| term | value | source |
+|---|---|---|
+| requests | 87 x 0.0367 + 103 x 0.095 + 79 x 0.3607 + 79 x 0.7871 = 3.2 + 9.8 + 28.5 + 62.2 = 104 s | mean latencies of the shape census, harness/profile/census (short1q 36.7 ms, short2q about 95 ms derived, medium3q 360.7 ms, long3q 787.1 ms) |
+| pauses between types | 3 s | --sleep-between-kinds 1.0 |
+| server start (model load, health) | 6 s | startup_s of 12 runs in the data set data/2026-10-30-window1: 3.6-5.6 s, one 9.6 s |
+| client container start | 2 s | [INFERENCE] |
+| stop + log copy | 5 s | [INFERENCE] |
+| one run | about 120 s = 2.0 min | |
+| with margin (requests +20 %, start 10 s) | about 145 s = 2.4 min | |
+
+Both runs: 4.0 min expected, 4.8 min with margin (budget of the job: 6 min). The cost of DMK_TIMING on the request time is [INFERENCE] (a few us per line,
+about 10 lines per request); it is measured by view c. The 2 s and 5 s overheads are [INFERENCE] until the first run.
+
+5. What the server lines mean (read from the source, not measured)
+------------------------------------------------------------------
+
+Source: the ablate build of llama.cpp (build ablate-timing): src/dmk-timing.h, src/llama-context.cpp:893-897, 1530-1611, 1865, 1964-2008, tools/server/server-context.cpp:6621-6719.
+t= is steady_clock seconds with 6 decimals = CLOCK_MONOTONIC, the same clock as the client's time.monotonic_ns [INFERENCE until the clock check of the first run passes].
+The server log (docker logs) has stdout and stderr in one file.
+
+| line | t is | start | fields used |
+|---|---|---|---|
+| ubatch | end of the compute submit (mark 5 of process_ubatch) | t - total_us (mark 0, before the memory apply) | apply_us (memory context apply), build_us (graph build, 0 when the graph was reused), alloc_us, inputs_us, submit_us (host time of the compute call, not the GPU run); the five add up to total_us; n_tokens n_seqs n_seq_tokens n_outputs n_nodes reuse |
+| cuda_compute | end of one backend graph compute | t - host_us | mode (direct, graph_capture, graph_replay) |
+| decode | end of llama_decode | t - total_us | n_tokens, n_ubatches, init_us (ubatch split + memory init_batch) |
+| sync | end of synchronize() | t - wait_us | passes pending, tokens, wait_us (host blocked for the GPU), since_first_submit_us (sync end - start of the first pending ubatch), since_last_submit_us. Printed only if passes > 0. In the decision server the logits read in send_decision triggers it, so it comes after the decode line |
+| request | end of the handler (after format_answer) | t - total_us = handler entry, after the HTTP body was read | parse_us (json::parse, parse_questions, parse_state, prepare_state), build_us (fill_task + server_decision_group_tasks), wait_us (post_tasks -> wait_for_all), format_us (format_answer), n_questions, n_groups (grouped parent tasks, not children) |
+
+Where tokenization and prompt building happen: in the HTTP thread, inside build_us of the request line (decision.fill_task(...) -> server-decision.cpp:1190-1252, prompt
+render and common_tokenize), not in a slot and not in parse_us. parse_us is JSON parsing and state preparation only. build_us also contains the grouping of the tasks.
+post_tasks is after the build stamp, so its cost (queue push, notify) is in sched_ms.
+
+Slot lines (stderr of the server, written by the asynchronous log thread, prefix M.SS.mmm.uuu = time since process start, a different clock):
+slot get_availabl ... selected slot by LRU|LCP similarity ... t_last = <ggml_time_us>, slot launch_slot_ ... processing task, is_child = 0|1, slot release ... stop processing: n_tokens = N.
+The LRU line carries t_last = the absolute CLOCK_MONOTONIC microseconds of that slot's last release, which gives an exact anchor from log-prefix time to the steady clock
+(Slot-line clock anchor line of the output). Because the log is written by a separate thread, a release line can land just after the request line. Slot lines are assigned to a request by
+file position (the lines between the previous request line and its own); a release line in front of the first get_availabl/launch_slot_ line of a request is moved to the previous request.
+
+6. Matching and robustness
+--------------------------
+
+* Time matching (mode time): a server request line belongs to a client request when its end lies in [t_send, t_recv] and its start is not before t_send. If >= 95 % of the client
+  requests find exactly one server line, the clocks agree; http_in_ms (client send -> handler entry: connection, docker proxy [INFERENCE], HTTP read) and http_out_ms (request line -> body read by the client) are then
+  available and must be >= 0 (table "Clock check").
+* Lost lines: if fewer than 95 % of the client requests but >= 95 % of the server lines match (log cut short, lines lost), the mode stays time, the unmatched client requests are listed and not analysed.
+* Clock mismatch (mode order): otherwise the n-th request line is taken as the n-th client request, the median interval-midpoint offset (client - server) is printed, http_in_ms and http_out_ms are empty and
+  the stack uses http_total_ms = wall - server total_us instead of the two. A warning is printed if the counts differ.
+* All other DMK_TIMING and slot lines are attached to a request by time (between the request's start and end) and sorted by t. Lines outside every request (start-up warm-up, other endpoints) are counted as orphans.
+* Lines with missing fields (a truncated line) are skipped and counted ("unusable"); unrelated text between lines is ignored; a request line without ubatch lines gets the flag no_ubatch.
+* Flags per request (column flags of requests.tsv): no_ubatch, no_sync, pass_without_sync, sync_passes_mismatch (passes= of the sync line against the ubatches found),
+  decode_ubatches_mismatch, span_mismatch, neg_gap (a stamp order that the semantics above do not allow: the meaning of a stamp is not as documented), no_sync_tail, stamp_order,
+  no_slot_lines, slot_task_count, input_tokens_mismatch (sum of the release n_tokens against the client input_tokens), anchor_implausible. valid = none of the first group of flags
+  (no_ubatch no_sync neg_gap sync_passes_mismatch pass_without_sync stamp_order decode_ubatches_mismatch no_sync_tail) and |residual| <= 0.05 ms. All tables use valid requests only; the
+  line "Requests analysed" gives the count and the flag counts.
+
+7. The stacked decomposition (columns of requests.tsv, tables 2 and 3)
+----------------------------------------------------------------------
+
+All in ms. The 13 columns add up to wall_ms; residual_ms = wall - sum (must be about 0). Time order:
+
+| column | from -> to | log fields |
+|---|---|---|
+| http_in_ms | client send -> handler entry | request.t - total_us - client t_send |
+| parse_ms | handler entry -> parsed | request.parse_us |
+| build_ms | parsed -> tasks built (prompt render, tokenize, grouping) | request.build_us |
+| sched_ms | tasks built -> start of the first llama_decode (post_tasks, wake-up of the main loop, get_available_slot, launch_slot, batch build in update_slots) | first decode.t - total_us - end of build |
+| first_setup_ms | first decode start -> first ubatch start (batch alloc, init_batch, output reserve) | first ubatch.t - total_us - first decode start |
+| prepare_ms | sum over all ubatches of memory apply + graph build + alloc + set inputs | apply_us + build_us + alloc_us + inputs_us |
+| submit_ms | sum of the host time of the compute call of all ubatches | submit_us |
+| between_ms | host time between two passes, GPU waits excluded (end of ubatch i -> start of ubatch i+1: decode tail, post_decode, send_decision, loop of update_slots, next decode setup) | stamps of the ubatch/decode/sync lines |
+| post_submit_ms | end of the last ubatch -> start of the last blocking sync (decode tail, logits read call) | stamps |
+| gpu_wait_ms | host blocked for the GPU, all syncs | sum sync.wait_us |
+| tail_server_ms | end of the last sync -> wait_for_all returned (send_decision, slot release, queue, wake-up of the HTTP thread) | request.t - format_us - last sync.t |
+| format_ms | format_answer (softmax over the answer tokens, JSON) | request.format_us |
+| http_out_ms | request line -> response body read by the client (res->ok JSON dump, HTTP write, loopback, docker proxy [INFERENCE], client read) | client t_recv - request.t |
+
+Detail columns: apply_ms graph_build_ms alloc_ms inputs_ms (split of prepare_ms); between_within_decode_ms between_decode_post_ms between_presync_ms between_loop_ms between_decode_pre_ms
+(split of between_ms by the pair of marks that bound the gap); unsplit_ms (the whole span between build and wait end when there are no ubatch lines);
+sched_wake_est_ms / sched_launch_est_ms [estimate, needs the slot-line anchor]: post_tasks -> launch_slot_ line (queue wake-up, slot selection) and launch_slot_ -> first decode start (batch build).
+Other columns: server_total_ms, http_total_ms, n_questions n_groups n_decodes n_ubatches n_syncs, tokens_evaluated (sum of n_tokens of the ubatches), passes_obs (see below), ubatches_per_decode,
+reuse_flags (one 0/1 per ubatch: graph reused), cuda_modes, cuda_host_ms, span_ms, floors (floor_weights_ms floor_int8_ms floor_max_ms floor_roofline_ms, sums over the passes, from census_lib.pass_costs
+at the nominal 448 GB/s, so slightly optimistic), exposed_min_ms exposed_max_ms submit_first_ms submit_later_ms (view d), slots (parent slot and child slots in task order), slot_select
+(LRU/LCP), f_sim_best, release_tokens, census_expected, census_match, census_ref_delta_tokens, valid, flags.
+
+passes_obs: the passes as strings, like the census: P<n> = n tokens without output (prefix pass), F<n> = a 1-question pass with output, S<seqs>x<tokens> = suffix pass with seqs sequences of
+tokens tokens each. It is compared with census-cases.tsv (variant ref) for the case and the observed slots; sizes of P/F may differ by up to 6 tokens (the Ref value is 9-14 tokens, the census uses the median 13), S sizes must match.
+
+passes.tsv: one row per ubatch (idx kind case phase pass decode group n_tokens n_seqs n_seq_tokens n_outputs n_nodes reuse apply_ms graph_build_ms alloc_ms inputs_ms submit_ms total_ms cuda_mode cuda_host_ms
+start_after_request_start_ms gap_before_ms sync_between_ms + the sync of its group on the last pass of the group (sync_passes sync_wait_ms sync_span_ms sync_since_last_submit_ms) + the floors of the pass and of
+the group). group = index of the sync that covers the pass (-1 = none).
+
+8. Views and definitions
+------------------------
+
+* View a, short-1q waterfall (waterfall-short1q*.tsv): weight floor of one pass with output (census-passes.tsv, check03) -> HTTP/client -> parse + build + tokenize -> scheduling (sched + first_setup) ->
+  host graph build + submit (prepare, submit, between, post-submit) -> tail (tail_server + format) -> GPU wait beyond the floor (gpu_wait - floor; negative when part of the GPU time runs under the host submit)
+  -> wall. a3 compares with the int8 floor, the roofline floor and the earlier 36.7 ms (wall - 36.7, span / floor, wall / floor).
+* View b, warm path (warm-path.tsv, warm-path-work.tsv): pair2 - pair1 of every component, mean over the pairs of a case, with the standard error of the wall difference (differences below 2 se are noise);
+  b2: did the server do less work the second time (tokens evaluated, ubatches, decodes, graph reuse, slot choice, passes) against census-cases.tsv.
+* View c, instrumentation (instrumentation.tsv): wall mean/p50 of p3-dec-timing against p3-dec-ref per type and phase, difference in ms and %, unpaired verdict (|d| < 2 se) and a paired difference by
+  request index (same Ref and case in both runs, the paired standard error is much smaller). The two builds differ by DMK_TIMING and by the extra host code of the ablate build,
+  which this table cannot separate.
+* View d, fractions of the wall time (fractions.tsv): gpu_wait, host_prepare_submit (prepare + submit), between, post_submit, client_http, parse_build, scheduling, tail; they add up to 100.
+  "Not overlapped": the log has no GPU timeline, so how much of the host time runs while the GPU is idle can only be bounded. Inside the span of a sync group (start of its first pass -> end of the sync) the host is
+  busy for span - wait. Lower bound = the prepare phase of the first pass of the group (nothing is queued on the GPU yet: certain). Upper bound = min(span - wait, span - max(wait, sum of the census floors of the group))
+  (the GPU needs at least its floor, so it can idle at most the rest), never below the lower bound. The real value lies between not_overlapped_min_pct and not_overlapped_max_pct. For a GPU-bound pass the upper bound is
+  close to all host time in the span, so it is a weak bound: the nsys run (package 2) gives the exact overlap. Also given: submit_first_pass_pct / submit_later_passes_pct, an accounting split by pass order (the submit of
+  the first pass of a sync group has no earlier GPU work to hide under; a later pass can hide under the GPU run of the earlier one), not a measurement.
+* View e, host-bound? (hostbound.tsv): sum of submit_ms against gpu_span_ms (sum over sync groups of sync end - start of the first pass: an upper bound of the GPU busy time; gpu_wait is a lower bound),
+  against the census floors, submit_per_pass_ms, and a hint [INFERENCE rule]: submit >= 0.9 span -> host-bound; wait >= 0.5 span -> GPU-bound; else mixed. Reference: the nsys traces showed about 1,300 launches in 6-8 ms
+  of CPU and 12 ms of GPU for a 4-token pass.
+* Tables 1-3 (summary-wall.tsv, stack.tsv, components.tsv): wall time per type and phase; the stack; mean/p50/p95/share of every component (table 3 is only in the TSV and in summary.txt, it is long).
+
+9. Caveats
+----------
+
+* The prefix pass has no sync. A pass without outputs (the shared prefix of a 2q/3q request) is never read, so no sync line follows it; the next sync covers it. gpu_wait is therefore the wait of a group of
+  passes, not of one pass (sync.passes says how many, passes.tsv shows it on the last pass of the group). The GPU time of a single pass cannot be separated in the log.
+* Submit is partly overlapped with the GPU. submit_us is the host time of the compute call; the GPU starts running the first kernels while the host still launches the rest. gpu_wait (host blocked) is a lower bound of the
+  GPU time of the group, span an upper bound. See view d for "not overlapped".
+* Slot lines are on another clock (log prefix, since process start) and written asynchronously. The anchor from t_last fixes the offset; with no LRU line in the log (fewer than 5, or MAD > 2 ms) the
+  scheduling split sched_wake_est_ms / sched_launch_est_ms stays empty; everything else does not need it.
+* The sync can fall inside a later decode. The analysis handles a sync line in any position (it walks all stamps of the request in time order); a sync that never comes before the request line gives no_sync_tail.
+* Floors: the census floors use the nominal 448 GB/s; the measured DRAM read is 422 GB/s, so real floors are about 6 % higher. pass_costs is called with the observed n_tokens/n_seqs/n_seq_tokens/n_outputs.
+* DMK_TIMING cost [INFERENCE]: about 10 fprintf lines of 150-250 bytes per request on stderr, a few us each; plus the extra host code of the ablate build. View c measures it as p3-dec-timing - p3-dec-ref.
+* Docker proxy: the server is published as -p 127.0.0.1:18080:8080, so each request passes the docker userland proxy [INFERENCE]; it is inside http_in_ms and http_out_ms and cannot be separated.
+* Warm path: with identical bodies, pair2 may skip the shared prefix (tokens evaluated < census) and may reuse the graph (reuse=1); whether it does is exactly what view b2 shows. Unknown until the run.
+
+10. Tests (synthetic data only)
+-------------------------------
+
+python3 harness/profile/decomp/analyze_decomp.py --self-test generates synthetic* folders with make_synthetic.py in a temporary folder and checks 36 conditions; last run: 36 PASS, 0 FAIL (with --test-dir DIR the log is DIR/self-test.log).
+make_synthetic.py writes the real DMK_TIMING and slot-line print formats, the real client plan (decomp_client.plan_all, 348 requests), the real pass structure and slot placements from census_lib.simulate_request
+and census-cases.tsv, durations invented (GPU time per pass = census floor x 1.7-2.6 + 0.4 ms, host work per pass 1-8 ms, HTTP 0.1-0.25 ms), and stores the truth of every component in _truth.
+
+| test | data | result |
+|---|---|---|
+| 1. clocks agree | 348 requests, all four types, anomalies: dropped sync line, truncated ubatch line, request line without pass lines, release line after the request line, unrelated text lines, a server-only request (curl), start-up warm-up lines, one reconnect | mode time; all 13 components, wall and the scheduling split recovered within 12 us (worst 0.0000 ms) for the 345 undamaged requests; slot placement, pass structure, census comparison, LRU/LCP recovered for all; the three damaged requests flagged no_sync, sync_passes_mismatch, no_ubatch and excluded; the release after the request line assigned correctly; orphans not attributed; short2q pair2 evaluates fewer tokens than pair1 (171 vs 252) and the other types the same; the built-in instrumentation difference (0.12 ms) recovered within 0.005 ms (the check allows 0.25 ms); residual < 0.0001 ms |
+| 2. server stamps shifted by +123.456789 s | the same plan without anomalies | clock mismatch detected, order matching, offset -123456.8 ms, http_in/out empty, http_total and the server components recovered within 12 us, residual about 0 |
+| 3. log without DMK_TIMING lines | 3 requests per type | AnalysisError "no DMK_TIMING lines ... First lines of the log:" |
+| 4. log cut after 80 % (last line cut in the middle) | test 1 data | mode time, lost lines reported (49 client requests without a server line), 299 requests analysed and recovered within 12 us, no false clock mismatch |
+
+What these tests do not show: that the real log has these formats (only the source was read), that the real stamps have the meaning in section 5 (the check neg_gap / the clock-check table will say), real timing statistics.
+
+11. Expected file sizes
+-----------------------
+
+p3-dec-timing.client.json and p3-dec-ref.client.json: about 120 KB each (synthetic: 125 KB without _truth). p3-dec-timing.server.log: 0.7-1.5 MB [INFERENCE; the synthetic log of 349 requests is 0.68 MB, the real one has the model load
+output and the slot lines too]. Analysis output: requests.tsv about 150 KB (348 rows, 64 columns), passes.tsv about 200 KB (about 1,100 rows, 33 columns), summary.txt 30-45 KB, the other TSVs a few KB each.
+
+12. What to look at first
+-------------------------
+
+1. The head of summary.txt: the clock-check table (both intervals >= 0, mode time), the "Requests analysed" line (how many valid, which flags), the residual (about 0), the slot-line anchor.
+2. Table 2 (stack) for short1q unique: which columns are large. Then view a1 (waterfall against the 7.44 ms floor and the 36.7 ms).
+3. View c verdicts (does DMK_TIMING change the wall time?) before trusting the stack of the timing run.
+4. View e hint and view d for the share of host time; then view b2 (did pair2 do less work?) and view b1.
+5. If many requests carry flags: look at flags and the first server log lines; --tol-us loosens the stamp tolerance.
