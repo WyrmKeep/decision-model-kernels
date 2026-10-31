@@ -1,0 +1,24 @@
+# Change 0007 (uploads of the scheduler): A/B measurement. L = build:lead-30489 (dmk/stack, commit 6b8b65e66), I = build:0007-input-copies (dmk/0007-input-copies, commit c3ec5653b).
+# The prediction entry docs/notebook/2026-10-31-0007-input-copies-prediction.md was committed before this file ran.
+# 4 blocks of the private benchmark, 4 blocks of llama bench, then a short Nsight Systems run of each build for the mechanism check (2 warm-up + 10 requests of type short2q).
+# make_schedule.py --prefix c0007-bench --blocks 4 --seed 70071 --arm L=build:lead-30489 --arm I=build:0007-input-copies --kind bench
+bench c0007-bench-b1-I build:0007-input-copies --write-reference c0007-bench-b1-I
+bench c0007-bench-b1-L build:lead-30489 --write-reference c0007-bench-b1-L
+bench c0007-bench-b2-I build:0007-input-copies --write-reference c0007-bench-b2-I
+bench c0007-bench-b2-L build:lead-30489 --write-reference c0007-bench-b2-L
+bench c0007-bench-b3-L build:lead-30489 --write-reference c0007-bench-b3-L
+bench c0007-bench-b3-I build:0007-input-copies --write-reference c0007-bench-b3-I
+bench c0007-bench-b4-L build:lead-30489 --write-reference c0007-bench-b4-L
+bench c0007-bench-b4-I build:0007-input-copies --write-reference c0007-bench-b4-I
+# make_schedule.py --prefix c0007-llb --blocks 4 --seed 70072 --arm L=build:lead-30489 --arm I=build:0007-input-copies --kind tool
+tool c0007-llb-b1-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0007-llb-b1-I build:0007-input-copies bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0007-llb-b2-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0007-llb-b2-I build:0007-input-copies bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0007-llb-b3-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0007-llb-b3-I build:0007-input-copies bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0007-llb-b4-I build:0007-input-copies bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool c0007-llb-b4-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+# mechanism check: Nsight Systems, same flags as phase 3 (no CPU sampling). @REMOTE_DIR@ is the work folder of the GPU host.
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/c0007-nsys-L" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client c0007-nsys-L build:lead-30489 /extra/prof/nsys_client.py --kind short2q --n 10 --out /runs/{name}.client.json
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/c0007-nsys-I" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client c0007-nsys-I build:0007-input-copies /extra/prof/nsys_client.py --kind short2q --n 10 --out /runs/{name}.client.json
