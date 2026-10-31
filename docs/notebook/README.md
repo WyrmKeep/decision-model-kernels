@@ -30,7 +30,9 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Where the time of a request goes](2026-10-31-phase3-where-the-time-goes.md) | Results | Complete. It has no prediction entry. The numbers are the measurement of phase 3. |
 | 2026-10-31 | [Phase 3: caps of the parts of the GPU work (result)](2026-10-31-phase3-ablation-caps.md) | Results | Complete. It has no prediction entry. A cap is the largest time that a part can remove. It is not a prediction. The table `DMK_OPS` has no rows. |
 | 2026-10-31 | [Lead 30489: GLU in the quantization of the activation (result)](2026-10-31-lead-30489.md) | Results | Complete. The notebook has no prediction entry for it. It is a lead. The project does not use it in production. |
-| 2026-10-31 | [Phase 4: ranked list of targets](2026-10-31-phase4-ranked-targets.md) | Prediction | Written before a change to the code of a target. The owner selects the next step. |
+| 2026-10-31 | [Phase 4: ranked list of targets](2026-10-31-phase4-ranked-targets.md) | Prediction | Written before a change to the code of a target. The owner approved phase 5 after it. |
+| 2026-10-31 | [Change 0007: uploads of the scheduler (prediction)](2026-10-31-0007-input-copies-prediction.md) | Prediction | Committed at 05:32 UTC, before the first run of the speed test at 05:53 UTC. |
+| 2026-10-31 | [Change 0007: uploads of the scheduler (result)](2026-10-31-0007-input-copies-result.md) | Results | Complete. `medium_ms`, `long_ms` and `llama bench` agree with the prediction. `lat_ms` and `short_ms` do not, because their intervals include 0. The sync calls are before the first kernel of a pass, not in the pass. |
 
 Source: the files in this folder.
 

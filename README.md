@@ -20,7 +20,7 @@ Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked lis
 - A request uses 2.13 to 2.45 times its roofline floor.
 - The GPU runs a kernel for 90 % to 94 % of the time of a request. The host is not the limit.
 - The ranked list has 15 targets. The first change is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
-- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and target `E`.
+- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004`, change 0001 (target `E`) and change 0007 (target `P`).
 
 ## How we got here
 
@@ -167,7 +167,9 @@ The folder `data/` has these data sets.
 | [`2026-10-31-profiles`](data/2026-10-31-profiles/README.md) | The decomposition of the request time, the profiles, and two lead tests |
 | [`2026-10-31-ablation`](data/2026-10-31-ablation/README.md) | The caps of the parts of the GPU work |
 | [`2026-10-31-lead-30489`](data/2026-10-31-lead-30489/README.md) | The test of pull request #30489 against build `D` |
+| [`2026-10-31-0001-correctness`](data/2026-10-31-0001-correctness/README.md) | The tests of correctness of change 0001 |
 | [`2026-10-31-phase4-model`](data/2026-10-31-phase4-model/README.md) | The time model of phase 4 |
+| [`2026-10-31-0007-input-copies`](data/2026-10-31-0007-input-copies/README.md) | The test of change 0007 |
 
 ## Condition of each change
 
@@ -181,9 +183,9 @@ A change gets its number when it gets its document. The table shows the changes 
 | `A` | Output head for the answer tokens only | `exact` | In work. |
 | `B` | Attention mask on the GPU | `exact` | In work. |
 | `C` | Concat folded into `ssm_conv` | `exact` | In work. |
-| `P` | A smaller number of stream synchronizations in a pass | `exact` | In work. |
+| `P` | Change [0007](docs/changes/0007-input-copies.md): the scheduler skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower, `long_ms` is 1.3 % lower, and `lat_ms` is 0.9 % lower (the interval includes 0). Not in production. |
 | `G` | MMQ as a pipeline with `cp.async` tile loads | `exact` | After `H`. Not started. |
-| `J` | Ragged batching for the suffixes of the questions | `re-associated` | Not started. |
+| `J` | Ragged batching for the suffixes of the questions | `re-associated` | In work. |
 
 The targets `F`, `L`, `K` and `O` come after these changes, if the rule to stop does not stop the project. The phase 4 entry does not recommend `N` and `M`.
 
