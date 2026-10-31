@@ -300,7 +300,7 @@ sanitizer_phase start && san_start_ok=1
 # ---- soak
 docker rm -f dmx-server dmx-bench >/dev/null 2>&1
 touch "$out/.running"
-docker events --since "$(date +%s)" --filter container=dmx-server --filter type=container \
+docker events --since "$(date +%s.%N)" --filter container=dmx-server --filter type=container \
 	--filter event=die --filter event=kill --filter event=oom --filter event=restart --filter event=stop \
 	--format '{{.Time}} {{.Action}}' >"$out/$name.events.log" 2>/dev/null &
 events_pid=$!

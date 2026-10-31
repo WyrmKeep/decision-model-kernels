@@ -544,8 +544,7 @@ The script writes one line for each condition. The last line is `RESULT: PASS` o
 | Condition | The condition is true if |
 |---|---|
 | `a` | Each run of `bench.py` has all guards true. |
-| `b` | The answers of each run are the same as the answers of the first run, bit for bit. |
-| `b2` | The flag `--reference` is in the command, and the answers of the first run are the same as the answers in each file of the path. |
+| `b` | The answers of each run are the same, bit for bit, as the answers in one set of the group of correct sets. The group has the different sets in the files of `--reference`. Without `--reference`, the group has only the set of the first run. |
 | `c` | `dmesg` has no line with `Xid` or `NVRM` after the start time of the test. |
 | `d` | `RestartCount` of the server container is 0, the container did not stop, and `docker events` shows no `die`, `kill`, `oom`, `restart` or `stop`. |
 | `e` | The log of the server and the results of the runs have no HTTP 5xx line, no CUDA error line, and no line with `Aborted`, `GGML_ASSERT` or `SIGSEGV`. |
@@ -556,10 +555,12 @@ The script writes one line for each condition. The last line is `RESULT: PASS` o
 
 | Flag | Default | Meaning |
 |---|---|---|
-| `--reference` | None | A path of answer files. It can have `*`. Put the marks `'` around it. You can use the flag more than one time. |
+| `--reference` | None | A path of answer files of a build that is correct. It can have `*`. Put the marks `'` around it. You can use the flag more than one time. |
 | `--slowdown-pct` | `2` | The largest increase of `lat_ms`, in %. |
 | `--mem-mib` | `64` | The largest change of `memory.used`, in MiB. |
 | `--window` | `10` | The number of runs at the start and at the end for condition `g`. If there are less than 20 runs, each group has `runs // 2` runs. |
+
+One server can give more than one set of answers for the same requests. The state of the server after the requests before changes the numbers by a small quantity. Test runs of two builds gave the same 3 sets, and the largest change of a probability was 0.02. No top selection changed. Use the files of all correct sets for `--reference`. Condition `b` is then not true only if the server gives a new set.
 
 The script reads the regular expressions for condition `e` from `<name>.error-patterns`. It also writes lines with `info` for the space of Docker, and for the clocks, the power and the temperature of the GPU.
 

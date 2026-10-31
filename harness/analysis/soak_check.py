@@ -5,8 +5,8 @@ Usage: soak_check.py RUN_FOLDER [--reference GLOB ...] [--slowdown-pct 2] [--mem
 
 Criteria:
   (a) each pass has all guards true
-  (b) the answers of each pass are bit-identical to the answers of the first pass
-      (b2: also to each file of --reference, if you give it)
+  (b) the answers of each pass are bit-identical to one known answer set. The known sets are
+      the distinct sets in the --reference files. Without --reference, only the set of pass 1 is known.
   (c) no Xid line and no NVRM line in dmesg after the start
   (d) no restart of the server container, and the server never exited
   (e) no HTTP 5xx line, CUDA error line or abort line in the log of the server or in a pass
@@ -19,6 +19,7 @@ The exit code is 0 only if each criterion passes. It uses the Python standard li
 import argparse
 import glob
 import gzip
+import hashlib
 import json
 import os
 import re
@@ -74,7 +75,8 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("folder")
     ap.add_argument("--reference", action="append", default=[], metavar="GLOB",
-                    help="answer files that pass 1 must equal (b2); the option can repeat")
+                    help="answer files of a good build; each distinct answer set in them is known (b). "
+                         "The option can repeat")
     ap.add_argument("--slowdown-pct", type=float, default=2.0)
     ap.add_argument("--mem-mib", type=float, default=64.0)
     ap.add_argument("--window", type=int, default=10, help="number of passes at the start and at the end")
@@ -123,40 +125,68 @@ def main():
     report("a", bool(passes) and not bad,
            f"guards: {len(passes) - len(bad)} of {len(passes)} passes have all guards true", bad[:8])
 
-    # (b) answers equal to pass 1
+    # (b) the answers of each pass equal one known answer set, bit for bit
+    def sig(a):
+        return hashlib.sha256(json.dumps(a, sort_keys=True).encode()).hexdigest()[:8]
+
+    def nearest(a, allowed):
+        best = None
+        for s, x in allowed.items():
+            try:
+                c = compare(x, a)
+            except (KeyError, TypeError):
+                continue
+            if best is None or c["max_abs_dp"] < best[0]:
+                best = (c["max_abs_dp"], s, c["top_flips"])
+        if best is None:
+            return "the sets of cases or questions are different"
+        return f"nearest known set {best[1]}: max_abs_dp={best[0]:.6g}, top flips={best[2] or 'none'}"
+
     refs = {}
     for n, _, pname in passes:
         r = read_json(os.path.join(folder, f"{pname}.reference.json"))
         if r is not None:
             refs[n] = r["answers"]
-    bad = []
-    if not passes or passes[0][0] not in refs:
-        bad.append("pass 1 has no answer file")
-    else:
-        first = refs[passes[0][0]]
-        for n, _, _ in passes[1:]:
-            if n not in refs:
-                bad.append(f"pass {n}: no answer file")
-            elif refs[n] != first:
-                bad.append(f"pass {n}: {differ(first, refs[n])}")
-    decisions = sum(len(q) for q in refs[passes[0][0]].values()) if refs and passes[0][0] in refs else 0
-    report("b", bool(passes) and not bad,
-           f"answers: {len(refs)} of {len(passes)} passes compared with pass 1 ({decisions} decisions), "
-           f"{len(bad)} differ", bad[:8])
+    bad, allowed = [], {}
     if args.reference:
         files = sorted(f for g in args.reference for f in glob.glob(g))
-        bad = []
         if not files:
             bad.append("the pattern gives no file")
-        elif not passes or passes[0][0] not in refs:
-            bad.append("pass 1 has no answer file")
         for f in files:
             r = read_json(f)
-            if r is None:
+            if r is None or "answers" not in r:
                 bad.append(f"{os.path.basename(f)}: not readable")
-            elif refs and refs.get(passes[0][0]) != r["answers"]:
-                bad.append(f"{os.path.basename(f)}: {differ(refs[passes[0][0]], r['answers'])}")
-        report("b2", not bad, f"answers of pass 1 against {len(files)} reference files: {len(bad)} differ", bad[:8])
+            else:
+                allowed.setdefault(sig(r["answers"]), r["answers"])
+        source = f"{len(files)} reference files"
+    else:
+        if passes and passes[0][0] in refs:
+            allowed[sig(refs[passes[0][0]])] = refs[passes[0][0]]
+        source = "pass 1"
+    if not allowed:
+        bad.append("there is no known answer set")
+    seen = {}
+    for n, _, _ in passes:
+        if n not in refs:
+            bad.append(f"pass {n}: no answer file")
+            continue
+        s = sig(refs[n])
+        seen.setdefault(s, []).append(n)
+        if allowed and s not in allowed:
+            bad.append(f"pass {n}: answer set {s} is not known; {nearest(refs[n], allowed)}")
+    decisions = sum(len(q) for q in next(iter(refs.values())).values()) if refs else 0
+    equal = sum(len(v) for s, v in seen.items() if s in allowed)
+    report("b", bool(passes) and not bad,
+           f"answers: {equal} of {len(passes)} passes equal one of {len(allowed)} known answer sets "
+           f"from {source} ({decisions} decisions)",
+           bad[:8] + [f"answer set {s}: {len(v)} passes, {'known' if s in allowed else 'NEW'}"
+                      for s, v in sorted(seen.items(), key=lambda kv: -len(kv[1]))])
+    if len(allowed) > 1:
+        try:
+            spread = max(compare(allowed[x], allowed[y])["max_abs_dp"] for x in allowed for y in allowed if x < y)
+            info(f"the {len(allowed)} known answer sets differ from each other by max_abs_dp up to {spread:.4g}")
+        except (KeyError, TypeError):
+            pass
 
     # (c) Xid and NVRM lines
     lines = open(path(".dmesg.log"), errors="replace").read().splitlines() if os.path.exists(path(".dmesg.log")) else []
@@ -218,9 +248,9 @@ def main():
               and re.match(r"^=+ ERROR SUMMARY: 0 errors$", summary) is not None)
         report("f", ok, f"memcheck {label}: {summary}; server exit {res.get('server_exit')}, "
                f"client exit {res.get('client_rc')}, {ok_requests} of {len(ans)} requests ok")
-        if ans and 1 in refs:
-            same = all(v.get("answers") == refs[1].get(v["id"]) for v in ans.values() if v.get("ok"))
-            info(f"memcheck {label}: the answers {'equal' if same else 'do not equal'} the answers of pass 1")
+        if ans and allowed:
+            n_eq = sum(1 for v in ans.values() if v.get("ok") and any(a.get(v["id"]) == v.get("answers") for a in allowed.values()))
+            info(f"memcheck {label}: {n_eq} of {len(ans)} answers equal the answers of a known set")
 
     # (g) latency
     lat = [d["seq"]["lat_ms"] for n, rc, _ in passes if rc == 0 and (d := data.get(n)) and d.get("seq", {}).get("lat_ms")]
