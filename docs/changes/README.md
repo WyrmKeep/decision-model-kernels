@@ -9,6 +9,7 @@ This folder has one document for each change to llama.cpp.
 | [`0004`](0004-gpu-mask.md) | The attention mask on the GPU | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. Not in production. |
 | [`0005`](0005-concat-conv.md) | One CUDA kernel replaces `concat`, the copy of the conv state, `ssm_conv` and `SILU` | `exact` | In the branch `dmk/stack`. `lat_ms` is 3.02 % lower. Not in production. |
 | [`0007`](0007-input-copies.md) | The scheduler of ggml skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower and `long_ms` is 1.3 % lower. Not in production. |
+| [`0008`](0008-ragged-suffix.md) | Ragged batching of the question suffixes: one pass for the suffixes of different lengths | `re-associated` | We do not use it. One limit of the decision is not true in the second test. The branch `dmk/0008-ragged-suffix` keeps the change. |
 
 Source: the change documents in this folder.
 

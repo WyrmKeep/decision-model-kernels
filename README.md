@@ -174,6 +174,8 @@ The folder `data/` has these data sets.
 | [`2026-10-31-0004-gpu-mask`](data/2026-10-31-0004-gpu-mask/README.md) | The test of change 0004 |
 | [`2026-10-31-0006-mmq-tiles`](data/2026-10-31-0006-mmq-tiles/README.md) | The sweep of the MMQ tiles (target `H`) and the ceiling of target `G` |
 | [`2026-10-31-0005-concat-conv`](data/2026-10-31-0005-concat-conv/README.md) | The test of change 0005 |
+| [`2026-10-31-0008-ragged-suffix`](data/2026-10-31-0008-ragged-suffix/README.md) | The first test of change 0008 |
+| [`2026-10-31-0008-ragged-suffix-retest`](data/2026-10-31-0008-ragged-suffix-retest/README.md) | The second test of change 0008, on the branch `dmk/stack` |
 
 ## Condition of each change
 
@@ -189,7 +191,7 @@ A change gets its number when it gets its document. The table shows the changes 
 | `C` | Change [0005](docs/changes/0005-concat-conv.md): concat folded into `ssm_conv` | `exact` | In the branch `dmk/stack`. `lat_ms` is 3.02 % lower, `medium_ms` is 3.21 % lower and `long_ms` is 3.15 % lower. Not in production. |
 | `P` | Change [0007](docs/changes/0007-input-copies.md): the scheduler skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower, `long_ms` is 1.3 % lower, and `lat_ms` is 0.9 % lower (the interval includes 0). Not in production. |
 | `G` | MMQ as a pipeline for the tile loads | `exact` | In work, as change 0009. The ceiling that we measured is 12.4 % of `lat_ms`. |
-| `J` | Ragged batching for the suffixes of the questions | `re-associated` | In work. |
+| `J` | Change [0008](docs/changes/0008-ragged-suffix.md): ragged batching for the suffixes of the questions | `re-associated` | We do not use it. The second test gives -2.46 % for `lat_ms`, but one limit of the decision is not true: for 3 of 40 pairs of an input and a value, the error is more than 3 times the error of the equal split. We declared the limits before the test. |
 
 The targets `F`, `L`, `K` and `O` come after these changes, if the rule to stop does not stop the project. The phase 4 entry does not recommend `N` and `M`.
 
