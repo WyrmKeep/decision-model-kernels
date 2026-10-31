@@ -1,0 +1,59 @@
+# phase 3, package 2: Nsight Systems traces of the whole production server, one capture per request type, plus the same requests without a profiler (harness/profile/nsys/NOTES.txt).
+# Purpose: (a) a kernel / pass / gap census of the build-D server in a fresh capture with request boundaries from a client log, not inferred from kernel order (the old
+# captures had none); (b) the host-side gap decomposition between passes (CUDA API calls, OS runtime calls); (c) what nsys itself costs: wall time of the same requests with and without it.
+# Build D = build:b12004-sm86, production flags (the harness default DMK_SERVER_ARGS, warm-up on), production server stopped, nothing else on the GPU, nothing in parallel.
+# Client: harness/profile/extra/prof/nsys_client.py, sequential, one keep-alive connection, a unique Ref line per request (so no cached prompt), 2 warm-up + 10 timed requests per type
+# (--kind all48: 2 warm-up + the 48 cases of cases.json once). Timed requests cycle over the cases of the type, starting at the representative case (check03, triage09, medium01-memory, long00-storage).
+# The control run (--kind replay) runs the five sequences back to back on one server without nsys, with the same cases, order and Refs, so every profiled request has a partner request.
+#   1 p3-nsys-short1q   short1q: 12 requests, one pass each
+#   2 p3-nsys-short2q   short2q: 12 requests, three passes each
+#   3 p3-nsys-medium3q  medium3q: 12 requests, four passes each
+#   4 p3-nsys-ctl       control: the 4 sequences + all48 without nsys (placed in the middle so GPU temperature and clock drift hit the profiled runs on both sides of it)
+#   5 p3-nsys-long3q    long3q: 12 requests, five passes each
+#   6 p3-nsys-all48     all 48 cases once
+# nsys flags: --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none. No CPU sampling and no context-switch trace (they need perf events, i.e. SYS_ADMIN, and the question is
+# the CUDA side); OS runtime calls (osrt) are traced to split the host gap between passes into waiting and working. nsys is the container entrypoint (PID 1) and the llama-server its child.
+# The capture starts with the process: it contains model load (weight copies), the server's own warm-up decode, the idle time before the client connects, the requests and the idle time
+# before the stop. nsys_census.py analyze cuts the request windows from the client log: client stamps (CLOCK_MONOTONIC) minus the capture's systemClockNs (TARGET_INFO_SESSION_START_TIME),
+# a pass belongs to a request if its first kernel starts between the request's send and recv; only passes that start with the host-to-device input copy burst and rms_norm<1024> are
+# analysed (everything before the first such pass is dropped; startup passes between the first valid pass and the first request are counted as passes outside any request, not analysed).
+# GPU-minute estimate (sequential; server start and stop included). Table 1, seconds per run:
+#   run               | server start under nsys (s) | client container start (s) | requests (s) | stop + report write (s) | log copy (s) | total (s)
+#   p3-nsys-short1q   |  10 | 2 |  0.6 | 30 | 5 |  47.6
+#   p3-nsys-short2q   |  10 | 2 |  1.4 | 30 | 5 |  48.4
+#   p3-nsys-medium3q  |  10 | 2 |  4.8 | 30 | 5 |  51.8
+#   p3-nsys-ctl       |   6 | 2 | 27.0 |  3 | 5 |  43.0   (no nsys: normal start, normal stop)
+#   p3-nsys-long3q    |  10 | 2 |  9.7 | 30 | 5 |  56.7
+#   p3-nsys-all48     |  10 | 2 | 12.4 | 30 | 5 |  59.4
+#   sum               |  56 |12 | 55.9 |123 |30 | 306.9 s = 5.1 min
+# Source of the numbers: request seconds = requests x mean latency of the unprofiled server (notes of the shape census, harness/profile/census: short1q 36.7 ms, short2q about 95 ms, medium3q 360.7 ms, long3q 787.1 ms; one pass over
+# the 48 cases 11.5 s) x an assumed nsys inflation: 1.25 (short), 1.10 (medium, interpolated), 1.03 (long), 1.07 (all48, time-weighted mix); 3 % for long and 25 % for short are the figures of the earlier kernel review,
+# not verified here. Examples: short1q 12 x 36.7 ms x 1.25 = 0.55 s; long3q 12 x 787.1 ms x 1.03 = 9.7 s; all48 (11.5 s + 2 warm-up requests 0.13 s) x 1.07 = 12.4 s; control
+# 12 x (36.7 + 95 + 360.7 + 787.1) ms + 11.63 s = 15.35 s + 11.63 s = 27.0 s. Server start unprofiled: startup_s of the 12 runs in the data set data/2026-10-30-window1 = 3.6 to 9.6 s (median 4.0 s), 6 s used
+# for the control; 10 s under nsys is an assumption ([INFERENCE]: nsys launch, injection, traced weight copies). Client container start 2 s and log copy 5 s as in harness/profile/sched/1-decomp.txt
+# ([INFERENCE]). Stop + report write 30 s is an assumption ([INFERENCE]): report sizes below, nsys writes the .qdstrm to the container's /tmp and converts it to .nsys-rep on SIGTERM; a trivial
+# local run (nsys 2026.3.2.476, CPU only) did that in 1.6 s.
+# With a safety factor of 1.5 on everything: 460 s = 7.7 min, inside the 9 minute budget for this package. If the report write takes 90 s instead of 30 s the sum is 10.9 min; that is the
+# case to watch (the first run's server.log shows the time between 'docker stop' and the end of the log).
+# Report size [INFERENCE]: the old captures had 3.2 to 4.7 thousand events per pass (kernels + API calls + copies + syncs) at about 28 bytes per event in the .nsys-rep and about 210 bytes in
+# the .sqlite export. Per run: short1q about 40 thousand events (1.1 MB rep, 8 MB sqlite), short2q 117 k (3.3 / 25 MB), medium3q 211 k (5.9 / 44 MB), long3q 281 k (7.9 / 59 MB), all48 575 k
+# (16 / 120 MB), plus startup and model load (not observed) and the OS runtime calls (not observed; the old captures had none; up to about +10 MB per run). Total about 35 MB of reports + OSRT.
+# SIGTERM, --force-overwrite and DMK_STOP_TIMEOUT: run_client.sh ends a wrapped server with 'docker stop -t DMK_STOP_TIMEOUT', which sends SIGTERM to PID 1 = nsys; nsys stops the collection, ends
+# llama-server and writes the report (checked locally, harness/profile/nsys/test/sigterm_check.sh: SIGTERM to nsys, as a plain process and as PID 1 of a PID namespace, gives 'Generated: ...nsys-rep',
+# the profiled child is gone, exit status 143). If the report took longer than the timeout docker would send SIGKILL and the report would be lost, so the default of 600 s is cut to 180 s here:
+# six times the 30 s assumed in Table 1, and a hung stop costs at most 3 minutes. --force-overwrite=true lets a repeated run replace a leftover report instead of failing at start (run_client.sh
+# itself refuses a run name whose .client.out exists). The exit status 143 of the container is not the client's: run_client.sh exits with the client's status, run_schedule.sh counts that.
+# How to run: write the file with  bash harness/profile/make_sched.sh --remote-dir <work folder on the GPU host> --out <dir> 2-nsys.txt  (the nsys lines mount <work folder>/tools/nsys, the
+# target-linux-x64 folder of an nsys 2026.3 install, and so hold @REMOTE_DIR@ here), stop the production server and other users of the GPU, then
+#   DMK_ENV=<env file> DMK_EXTRA_DIR=harness/profile/extra bash harness/run_schedule.sh <dir>/2-nsys.txt <results dir>
+# Analysis (results land in <results dir>; set DMK_NSYS to the nsys command line tool of the same release, or put nsys on PATH):
+#   bash harness/profile/nsys/nsys_export.sh <results dir>
+#   python3 harness/profile/nsys/nsys_census.py analyze --results <results dir> --out <results dir>/analysis
+#   python3 harness/profile/nsys/nsys_census.py overhead --results <results dir> --ctl p3-nsys-ctl --passes <results dir>/analysis/passes.tsv --out <results dir>/analysis
+# or all analyses of the profiling window at once: bash harness/profile/analyze_all.sh <results root> <out root>
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/p3-nsys-short1q" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client p3-nsys-short1q build:b12004-sm86 /extra/prof/nsys_client.py --kind short1q --n 10 --out /runs/{name}.client.json
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/p3-nsys-short2q" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client p3-nsys-short2q build:b12004-sm86 /extra/prof/nsys_client.py --kind short2q --n 10 --out /runs/{name}.client.json
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/p3-nsys-medium3q" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client p3-nsys-medium3q build:b12004-sm86 /extra/prof/nsys_client.py --kind medium3q --n 10 --out /runs/{name}.client.json
+client p3-nsys-ctl build:b12004-sm86 /extra/prof/nsys_client.py --kind replay --n 10 --out /runs/{name}.client.json
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/p3-nsys-long3q" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client p3-nsys-long3q build:b12004-sm86 /extra/prof/nsys_client.py --kind long3q --n 10 --out /runs/{name}.client.json
+DMK_STOP_TIMEOUT=180 DMK_SERVER_WRAP="/opt/nsight-systems/target-linux-x64/nsys profile --trace=cuda,osrt,nvtx --cuda-graph-trace=node --sample=none --cpuctxsw=none --force-overwrite=true -o /runs/p3-nsys-all48" DMK_DOCKER_EXTRA="-v @REMOTE_DIR@/tools/nsys:/opt/nsight-systems/target-linux-x64:ro" client p3-nsys-all48 build:b12004-sm86 /extra/prof/nsys_client.py --kind all48 --n 10 --out /runs/{name}.client.json

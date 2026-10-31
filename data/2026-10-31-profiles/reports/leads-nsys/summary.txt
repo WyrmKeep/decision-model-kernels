@@ -1,0 +1,228 @@
+
+# nsys census: whole-server captures
+
+clock mapping: mono; pass-to-request assignment: window; warm-up requests excluded in kernels/classes/boundary statistics; all times in ms unless a header says otherwise.
+
+
+## 1. Capture inventory
+
+
+**Table 1: what each capture contains**
+
+| run | client requests (warm-up) | valid passes | passes analysed | passes outside any request | GPU kernels | CUDA API records | OSRT calls, decode thread | OSRT calls, all threads | capture length (s) | kernels before first pass | H2D copy groups that are no pass start | kernels cut off the end of a pass (gap > 50 ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| p3-lead-kvwin-nsys | 12 (2) | 56 | 54 | 2 | 67614 | 70605 | 7717 | 8454 | 14.089 | 0 | 0 | 0 |
+| p3-lead-kvwin-nokvu-nsys | 12 (2) | 56 | 54 | 2 | 68174 | 71859 | 7594 | 8326 | 13.851 | 0 | 0 | 0 |
+
+_Source: <run>.sqlite (CUPTI_ACTIVITY_KIND_KERNEL / _RUNTIME, OSRT_API, ANALYSIS_DETAILS) and <run>.client.json_
+
+
+## 2. Request windows on the nsys timeline (mapping check)
+
+
+**Table 2: first kernel after request send and recv after last kernel (both must be >= 0)**
+
+| run | request kind | requests | |epoch clock - mono clock| at send, median (ms) | same, max (ms) | first kernel - send, min (ms) | same, median (ms) | same, max (ms) | recv - last kernel end, min (ms) | same, median (ms) | same, max (ms) | requests with a negative value |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| p3-lead-kvwin-nsys | short1q | 1 | 0.001 | 0.001 | 22.551 | 22.551 | 22.551 | 0.934 | 0.934 | 0.934 | 0 |
+| p3-lead-kvwin-nsys | short2q | 1 | 0.001 | 0.001 | 12.577 | 12.577 | 12.577 | 1.157 | 1.157 | 1.157 | 0 |
+| p3-lead-kvwin-nsys | long3q | 10 | 0.001 | 0.001 | 34.940 | 42.537 | 57.560 | 0.744 | 1.087 | 3.529 | 0 |
+| p3-lead-kvwin-nokvu-nsys | short1q | 1 | 0.001 | 0.001 | 13.583 | 13.583 | 13.583 | 0.979 | 0.979 | 0.979 | 0 |
+| p3-lead-kvwin-nokvu-nsys | short2q | 1 | 0.001 | 0.001 | 11.171 | 11.171 | 11.171 | 1.012 | 1.012 | 1.012 | 0 |
+| p3-lead-kvwin-nokvu-nsys | long3q | 10 | 0.001 | 0.001 | 31.595 | 35.830 | 39.735 | 0.662 | 1.087 | 1.990 | 0 |
+
+_Source: client JSON stamps (t_send_mono_ns, t_recv_mono_ns, t_send_epoch_ns) minus TARGET_INFO_SESSION_START_TIME (systemClockNs / utcEpochNs); kernel times from CUPTI_ACTIVITY_KIND_KERNEL_
+
+
+**Table 3: passes per request, window assignment against order-based assignment**
+
+| run | assignment used | passes assigned by window | passes assigned by order | same request | different request | only by window | only by order | notes |
+|---|---|---|---|---|---|---|---|---|
+| p3-lead-kvwin-nsys | window | 54 | 54 | 54 | 0 | 0 | 0 | - |
+| p3-lead-kvwin-nokvu-nsys | window | 54 | 54 | 54 | 0 | 0 | 0 | - |
+
+_Source: segment_all(): valid pass anchors; assign_windows(): first kernel inside [send, recv]; assign_order(): backward parse with 1/3/4/5 passes per request kind_
+
+
+## 3. Where the client wall time goes
+
+
+**Table 4: client wall time = send to first kernel + GPU busy + GPU idle inside passes + GPU idle between passes + last kernel to recv (mean per request)**
+
+| run | request kind | requests | passes per request | client wall (ms) | send to first kernel (ms) | GPU busy (ms) | idle inside passes (ms) | idle between passes (ms) | last kernel to recv (ms) | sum minus wall (ms) | GPU busy share of wall (%) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| p3-lead-kvwin-nsys | long3q | 10 | 5.000 | 813.571 | 42.529 | 751.250 | 5.868 | 12.624 | 1.300 | 0.000 | 92.340 |
+| p3-lead-kvwin-nokvu-nsys | long3q | 10 | 5.000 | 790.177 | 35.664 | 731.095 | 5.220 | 17.066 | 1.132 | 0.000 | 92.523 |
+
+_Source: requests.tsv; GPU busy = union of kernel intervals; idle between passes = kernel span - busy - idle inside passes_
+
+
+## 4. Host gap before a pass, by boundary type
+
+
+**Table 5: GPU idle time before a pass split into host-side parts (means over passes; the four parts add up to the gap)**
+
+| run | request kind | boundary (previous pass type -> this pass type) | passes | gap mean (ms) | gap p50 (ms) | GPU done to sync return (ms) | no CUDA call running (ms) | of which in OS wait calls (ms) | of which busy (ms) | CUDA calls: upload copies, syncs (ms) | first launch to first kernel (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| p3-lead-kvwin-nsys | long3q | prefix-large->prefix-small | 10 | 8.203 | 8.329 | 0.024 | 0.406 | 0.000 | 0.406 | 7.734 | 0.038 |
+| p3-lead-kvwin-nsys | long3q | prefix-small->suffix | 10 | 1.071 | 1.099 | 0.023 | 0.363 | 0.000 | 0.363 | 0.652 | 0.033 |
+| p3-lead-kvwin-nsys | long3q | request-start | 10 | 43.994 | 43.752 | 0.175 | 30.633 | 12.576 | 18.058 | 13.151 | 0.035 |
+| p3-lead-kvwin-nsys | long3q | suffix->suffix | 20 | 1.675 | 0.866 | 0.176 | 1.075 | 0.019 | 1.056 | 0.394 | 0.030 |
+| p3-lead-kvwin-nokvu-nsys | long3q | prefix-large->prefix-small | 10 | 7.160 | 7.176 | 0.023 | 0.402 | 0.000 | 0.402 | 6.697 | 0.037 |
+| p3-lead-kvwin-nokvu-nsys | long3q | prefix-small->suffix | 10 | 6.473 | 6.478 | 0.020 | 3.492 | 0.000 | 3.492 | 2.932 | 0.029 |
+| p3-lead-kvwin-nokvu-nsys | long3q | request-start | 10 | 36.928 | 36.905 | 0.172 | 25.901 | 11.225 | 14.676 | 10.823 | 0.032 |
+| p3-lead-kvwin-nokvu-nsys | long3q | suffix->suffix | 20 | 1.716 | 0.824 | 0.173 | 1.147 | 0.046 | 1.102 | 0.368 | 0.027 |
+
+_Source: passes.tsv columns host_gap_*; decode-thread CUPTI_ACTIVITY_KIND_RUNTIME records between the previous pass's last kernel end and this pass's first kernel start; OSRT_API for the wait split_
+
+
+**Table 6: OS runtime calls with the largest total time, all threads**
+
+| run | call | calls | total time (ms) | longest call (ms) |
+|---|---|---|---|---|
+| p3-lead-kvwin-nsys | pthread_cond_wait | 204 | 156399.366 | 12747.868 |
+| p3-lead-kvwin-nsys | poll | 338 | 25958.089 | 102.835 |
+| p3-lead-kvwin-nsys | pthread_cond_clockwait | 44 | 22797.447 | 13285.258 |
+| p3-lead-kvwin-nsys | pthread_cond_timedwait | 26 | 13006.816 | 501.449 |
+| p3-lead-kvwin-nsys | accept4 | 12 | 12962.986 | 8532.272 |
+| p3-lead-kvwin-nsys | mmap | 28 | 729.332 | 655.817 |
+| p3-lead-kvwin-nsys | ioctl | 1154 | 612.229 | 178.209 |
+| p3-lead-kvwin-nsys | munmap | 22 | 358.725 | 292.944 |
+| p3-lead-kvwin-nokvu-nsys | pthread_cond_wait | 201 | 152770.965 | 12417.731 |
+| p3-lead-kvwin-nokvu-nsys | poll | 332 | 25371.208 | 124.032 |
+| p3-lead-kvwin-nokvu-nsys | pthread_cond_clockwait | 43 | 22282.117 | 12998.941 |
+| p3-lead-kvwin-nokvu-nsys | accept4 | 12 | 12651.196 | 8340.269 |
+| p3-lead-kvwin-nokvu-nsys | pthread_cond_timedwait | 25 | 12503.182 | 500.808 |
+| p3-lead-kvwin-nokvu-nsys | mmap | 28 | 796.397 | 738.070 |
+| p3-lead-kvwin-nokvu-nsys | ioctl | 1154 | 572.668 | 123.765 |
+| p3-lead-kvwin-nokvu-nsys | munmap | 22 | 350.021 | 276.960 |
+
+_Source: OSRT_API grouped by nameId_
+
+
+## 5. Kernel time per pass by class
+
+
+**Table 7: kernel milliseconds per pass by class (pooled over all runs; mean over passes)**
+
+| pass type | tokens in pass | passes | all kernels (ms) | MMQ (ms) | GDN (ms) | glu (ms) | FA (ms) | quantize (ms) | copy (ms) | rms_norm (ms) | ssm_conv (ms) | elementwise (ms) | MMVQ (ms) | other (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| prefix-large | 2048 | 20 | 410.799 | 262.702 | 32.017 | 24.838 | 13.280 | 23.007 | 16.517 | 16.584 | 10.766 | 9.905 | 0.000 | 1.183 |
+| prefix-small | 257-1024 | 4 | 213.642 | 136.474 | 14.818 | 11.357 | 14.455 | 10.793 | 7.748 | 7.707 | 5.268 | 4.462 | 0.000 | 0.561 |
+| prefix-small | 1025-2047 | 16 | 268.570 | 170.430 | 19.501 | 14.960 | 15.621 | 14.097 | 10.369 | 10.091 | 6.937 | 5.836 | 0.000 | 0.728 |
+| suffix | N<=8 | 12 | 14.010 | 0.000 | 0.396 | 0.211 | 0.527 | 0.444 | 1.296 | 0.343 | 0.087 | 0.229 | 10.448 | 0.030 |
+| suffix | 9-32 | 14 | 17.386 | 10.946 | 1.101 | 0.340 | 0.718 | 0.556 | 1.003 | 0.408 | 0.282 | 0.239 | 1.756 | 0.038 |
+| suffix | 33-64 | 8 | 21.012 | 12.571 | 1.781 | 0.543 | 0.971 | 0.679 | 1.091 | 0.587 | 0.381 | 0.602 | 1.757 | 0.048 |
+| suffix | 65-128 | 20 | 30.063 | 17.670 | 2.644 | 1.047 | 1.882 | 1.051 | 1.740 | 0.861 | 0.738 | 0.596 | 1.756 | 0.078 |
+| suffix | 129-256 | 6 | 45.816 | 28.179 | 4.366 | 1.635 | 2.399 | 1.536 | 2.675 | 1.184 | 1.194 | 0.787 | 1.756 | 0.105 |
+
+_Source: classes.tsv scope ALL; classes: MMQ includes the stream-k fix-up kernels_
+
+
+**Table 8: kernel launches per pass by class (pooled over all runs; mean over passes)**
+
+| pass type | tokens in pass | passes | all kernels (launches) | MMQ (launches) | GDN (launches) | glu (launches) | FA (launches) | quantize (launches) | copy (launches) | rms_norm (launches) | ssm_conv (launches) | elementwise (launches) | MMVQ (launches) | other (launches) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| prefix-large | 2048 | 20 | 1170.000 | 309.000 | 24.000 | 111.000 | 16.000 | 245.000 | 116.000 | 151.000 | 24.000 | 158.000 | 0.000 | 16.000 |
+| prefix-small | 257-1024 | 4 | 1177.000 | 372.000 | 24.000 | 111.000 | 8.000 | 245.000 | 116.000 | 151.000 | 24.000 | 110.000 | 0.000 | 16.000 |
+| prefix-small | 1025-2047 | 16 | 1159.375 | 346.375 | 24.000 | 111.000 | 16.000 | 245.000 | 116.000 | 151.000 | 24.000 | 110.000 | 0.000 | 16.000 |
+| suffix | N<=8 | 12 | 1071.000 | 0.000 | 24.000 | 111.000 | 18.000 | 248.000 | 118.000 | 153.000 | 24.000 | 111.000 | 248.000 | 16.000 |
+| suffix | 9-32 | 14 | 1252.000 | 428.000 | 24.000 | 111.000 | 16.000 | 248.000 | 118.000 | 153.000 | 24.000 | 111.000 | 3.000 | 16.000 |
+| suffix | 33-64 | 8 | 1300.000 | 428.000 | 24.000 | 111.000 | 16.000 | 248.000 | 118.000 | 153.000 | 24.000 | 159.000 | 3.000 | 16.000 |
+| suffix | 65-128 | 20 | 1288.400 | 428.000 | 24.000 | 111.000 | 18.800 | 248.000 | 118.000 | 153.000 | 24.000 | 144.600 | 3.000 | 16.000 |
+| suffix | 129-256 | 6 | 1304.000 | 428.000 | 24.000 | 111.000 | 20.000 | 248.000 | 118.000 | 153.000 | 24.000 | 159.000 | 3.000 | 16.000 |
+
+_Source: classes.tsv scope ALL_
+
+
+**Table 9: the eight labels with the largest kernel time in each pass group (pooled over all runs)**
+
+| pass type | tokens in pass | passes | class | label | launches per pass | kernel time per pass (ms) | share of GPU busy (%) |
+|---|---|---|---|---|---|---|---|
+| prefix-large | 2048 | 20 | MMQ | MMQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 107.527 | 26.175 |
+| prefix-large | 2048 | 20 | MMQ | MMQ ffn_down Q4_0 K=9216 | 31.000 | 53.972 | 13.138 |
+| prefix-large | 2048 | 20 | MMQ | MMQ attn_qkv Q8_0 K=2560 | 24.000 | 37.160 | 9.046 |
+| prefix-large | 2048 | 20 | GDN | gdn_single<16,128,1> | 24.000 | 32.017 | 7.794 |
+| prefix-large | 2048 | 20 | glu | unary_gated_op_kernel<silu,float> | 55.000 | 22.789 | 5.547 |
+| prefix-large | 2048 | 20 | MMQ | MMQ ssm_out Q8_0 K=4096 | 24.000 | 19.598 | 4.771 |
+| prefix-large | 2048 | 20 | MMQ | MMQ attn_gate(z) Q8_0 K=2560 | 24.000 | 19.319 | 4.703 |
+| prefix-large | 2048 | 20 | FA | flash_attn_ext_f16<256,256,16,4> | 8.000 | 13.053 | 3.177 |
+| prefix-small | 257-1024 | 4 | MMQ | MMQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 55.170 | 25.824 |
+| prefix-small | 257-1024 | 4 | MMQ | MMQ ffn_down Q4_0 K=9216 | 31.000 | 27.147 | 12.707 |
+| prefix-small | 257-1024 | 4 | MMQ | MMQ attn_qkv Q8_0 K=2560 | 24.000 | 19.472 | 9.114 |
+| prefix-small | 257-1024 | 4 | GDN | gdn_single<16,128,1> | 24.000 | 14.818 | 6.936 |
+| prefix-small | 257-1024 | 4 | FA | flash_attn_ext_f16<256,256,16,4> | 8.000 | 14.455 | 6.766 |
+| prefix-small | 257-1024 | 4 | MMQ | MMQ ssm_out Q8_0 K=4096 | 24.000 | 10.738 | 5.026 |
+| prefix-small | 257-1024 | 4 | glu | unary_gated_op_kernel<silu,float> | 55.000 | 10.390 | 4.863 |
+| prefix-small | 257-1024 | 4 | MMQ | MMQ attn_gate(z) Q8_0 K=2560 | 24.000 | 9.916 | 4.642 |
+| prefix-small | 1025-2047 | 16 | MMQ | MMQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 68.269 | 25.419 |
+| prefix-small | 1025-2047 | 16 | MMQ | MMQ ffn_down Q4_0 K=9216 | 31.000 | 34.537 | 12.859 |
+| prefix-small | 1025-2047 | 16 | MMQ | MMQ attn_qkv Q8_0 K=2560 | 24.000 | 24.523 | 9.131 |
+| prefix-small | 1025-2047 | 16 | GDN | gdn_single<16,128,1> | 24.000 | 19.501 | 7.261 |
+| prefix-small | 1025-2047 | 16 | FA | flash_attn_ext_f16<256,256,16,4> | 8.000 | 15.521 | 5.779 |
+| prefix-small | 1025-2047 | 16 | glu | unary_gated_op_kernel<silu,float> | 55.000 | 13.706 | 5.103 |
+| prefix-small | 1025-2047 | 16 | MMQ | MMQ ssm_out Q8_0 K=4096 | 24.000 | 13.102 | 4.878 |
+| prefix-small | 1025-2047 | 16 | MMQ | MMQ attn_gate(z) Q8_0 K=2560 | 24.000 | 12.909 | 4.807 |
+| suffix | N<=8 | 12 | MMVQ | MMVQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 3.134 | 22.368 |
+| suffix | N<=8 | 12 | MMVQ | MMVQ output_head Q8_0 K=2560 | 1.000 | 1.640 | 11.703 |
+| suffix | N<=8 | 12 | MMVQ | MMVQ attn_qkv Q8_0 K=2560 | 24.000 | 1.483 | 10.588 |
+| suffix | N<=8 | 12 | MMVQ | MMVQ ffn_down Q4_0 K=9216 | 31.000 | 1.347 | 9.616 |
+| suffix | N<=8 | 12 | MMVQ | MMVQ attn_gate(z) Q8_0 K=2560 | 24.000 | 0.841 | 6.001 |
+| suffix | N<=8 | 12 | MMVQ | MMVQ ssm_out Q8_0 K=4096 | 24.000 | 0.791 | 5.644 |
+| suffix | N<=8 | 12 | copy | concat_non_cont<unsigned int,0> | 24.000 | 0.768 | 5.484 |
+| suffix | N<=8 | 12 | MMVQ | MMVQ attn_q Q8_0 K=2560 | 8.000 | 0.492 | 3.508 |
+| suffix | 9-32 | 14 | MMQ | MMQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 3.457 | 19.884 |
+| suffix | 9-32 | 14 | MMQ | MMQ ffn_down Q4_0 K=9216 | 31.000 | 1.984 | 11.413 |
+| suffix | 9-32 | 14 | MMQ | MMQ attn_qkv Q8_0 K=2560 | 24.000 | 1.705 | 9.808 |
+| suffix | 9-32 | 14 | MMVQ | MMVQ output_head Q8_0 K=2560 | 1.000 | 1.638 | 9.421 |
+| suffix | 9-32 | 14 | GDN | gated_delta_net_cuda<128,false,false,4> | 24.000 | 1.101 | 6.335 |
+| suffix | 9-32 | 14 | MMQ | MMQ attn_gate(z) Q8_0 K=2560 | 24.000 | 1.060 | 6.097 |
+| suffix | 9-32 | 14 | MMQ | MMQ ssm_out Q8_0 K=4096 | 24.000 | 1.049 | 6.032 |
+| suffix | 9-32 | 14 | FA | flash_attn_ext_f16<256,256,16,4> | 8.000 | 0.636 | 3.659 |
+| suffix | 33-64 | 8 | MMQ | MMQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 4.170 | 19.847 |
+| suffix | 33-64 | 8 | MMQ | MMQ ffn_down Q4_0 K=9216 | 31.000 | 2.182 | 10.384 |
+| suffix | 33-64 | 8 | MMQ | MMQ attn_qkv Q8_0 K=2560 | 24.000 | 1.890 | 8.993 |
+| suffix | 33-64 | 8 | GDN | gated_delta_net_cuda<128,false,false,4> | 24.000 | 1.781 | 8.474 |
+| suffix | 33-64 | 8 | MMVQ | MMVQ output_head Q8_0 K=2560 | 1.000 | 1.640 | 7.804 |
+| suffix | 33-64 | 8 | MMQ | MMQ attn_gate(z) Q8_0 K=2560 | 24.000 | 1.178 | 5.606 |
+| suffix | 33-64 | 8 | MMQ | MMQ ssm_out Q8_0 K=4096 | 24.000 | 1.165 | 5.547 |
+| suffix | 33-64 | 8 | FA | flash_attn_ext_f16<256,256,16,4> | 8.000 | 0.880 | 4.186 |
+| suffix | 65-128 | 20 | MMQ | MMQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 5.950 | 19.791 |
+| suffix | 65-128 | 20 | MMQ | MMQ ffn_down Q4_0 K=9216 | 31.000 | 3.154 | 10.492 |
+| suffix | 65-128 | 20 | MMQ | MMQ attn_qkv Q8_0 K=2560 | 24.000 | 2.512 | 8.355 |
+| suffix | 65-128 | 20 | GDN | gated_delta_net_cuda<128,false,false,4> | 16.800 | 2.191 | 7.289 |
+| suffix | 65-128 | 20 | FA | flash_attn_ext_f16<256,256,16,4> | 8.000 | 1.722 | 5.728 |
+| suffix | 65-128 | 20 | MMVQ | MMVQ output_head Q8_0 K=2560 | 1.000 | 1.638 | 5.450 |
+| suffix | 65-128 | 20 | MMQ | MMQ attn_gate(z) Q8_0 K=2560 | 24.000 | 1.580 | 5.257 |
+| suffix | 65-128 | 20 | MMQ | MMQ ssm_out Q8_0 K=4096 | 24.000 | 1.551 | 5.160 |
+| suffix | 129-256 | 6 | MMQ | MMQ ffn_up\|ffn_gate Q4_0 K=2560 | 62.000 | 10.416 | 22.735 |
+| suffix | 129-256 | 6 | MMQ | MMQ ffn_down Q4_0 K=9216 | 31.000 | 5.230 | 11.416 |
+| suffix | 129-256 | 6 | GDN | gated_delta_net_cuda<128,false,false,4> | 24.000 | 4.366 | 9.529 |
+| suffix | 129-256 | 6 | MMQ | MMQ attn_qkv Q8_0 K=2560 | 24.000 | 4.146 | 9.050 |
+| suffix | 129-256 | 6 | MMQ | MMQ attn_gate(z) Q8_0 K=2560 | 24.000 | 2.350 | 5.129 |
+| suffix | 129-256 | 6 | FA | flash_attn_ext_f16<256,256,16,4> | 8.000 | 2.268 | 4.951 |
+| suffix | 129-256 | 6 | MMQ | MMQ ssm_out Q8_0 K=4096 | 24.000 | 2.140 | 4.670 |
+| suffix | 129-256 | 6 | copy | concat_non_cont<unsigned int,0> | 24.000 | 1.654 | 3.610 |
+
+_Source: classes.tsv scope ALL level label; MMQ/MMVQ labels are <class> <tensor op> <quant type> K=<columns>; fix-up time is inside the MMQ label_
+
+
+## 6. Validation of the derived structure
+
+
+**Table 10: tensor assignment of MMQ/MMVQ launches**
+
+| run | passes | passes with the 32-layer pattern (24 GDN + 8 attention) | MMQ + MMVQ launches | launches with a tensor | MMQ grid = ceil(M/128) * ceil(N/J) (ok / checked, launches without fix-up) | MMVQ grid = M or M/2 (ok / checked) | equal-shape pass pairs with identical kernel sequence |
+|---|---|---|---|---|---|---|---|
+| p3-lead-kvwin-nsys | 54 | 54 | 13329 | 13329 | 4931 / 4931 | 0 / 0 | 34 / 34 |
+| p3-lead-kvwin-nokvu-nsys | 54 | 54 | 13329 | 13329 | 4931 / 4931 | 0 / 0 | 34 / 34 |
+
+_Source: derive_ops(): launches are assigned by (quant type, K of the preceding quantize kernel) and position in the layer_
+
+
+## 7. Validation problems
+
+none
+
+
+

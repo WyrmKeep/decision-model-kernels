@@ -1,0 +1,177 @@
+Upstream leads #28495 (K/V window) and #30779 (child slot decode pass): test and analysis
+=========================================================================================
+
+Package 3 of the phase-3 profiling job. Status when this text was written: nothing in this directory had run on a GPU; the clients and the analysis were tested on synthetic data in the real log formats
+and the K/V part also on the three old Nsight Systems traces. The first real runs (schedule sched/3-leads.txt) were analysed with these scripts afterwards (harness/profile/README.md). Everything not observed is marked [INFERENCE].
+
+1. Files
+--------
+
+| File | Role |
+|---|---|
+| harness/profile/extra/prof/kvwin_client.py | client of the K/V test (runs in the harness client container, import common) |
+| harness/profile/sched/3-leads.txt | schedule: 4 runs, check_sched.py and dry_run.sh pass; GPU-minute estimate in its header |
+| analyze_kvwin.py | #28495: FA time and pass time against the K/V window (old traces, kvwin nsys runs, timing runs) |
+| analyze_childpass.py | #30779: passes and llama_decode calls per request against the census (any server log with DMK_TIMING lines) |
+| leadlib.py | shared helpers of both (not in the spec): server-log parser, pass-structure models, window functions |
+| make_synthetic.py | synthetic server logs, client JSONs, passes TSVs with planted answers |
+| COLUMNS.tsv | table, column, unit and meaning of every column of the TSV files that analyze_kvwin.py and analyze_childpass.py write |
+
+2. The four runs and what each one answers
+------------------------------------------
+
+Sequence of every run (kvwin_client.py, one keep-alive connection, sequential): 2 warm-up requests (check03, triage09; not compared), T1 = long00-storage on a nearly fresh pool, 6 other
+long cases (long01..long06), T2, T3, T4 = long00-storage again: 11 long requests. Every request has a unique Ref: <10 digits> first line. Digits only: llama-tokenize (CPU, mix8 model,
+a sparse copy of the model file) gives exactly 14 tokens for Ref: <10 digits>\n in 40 of 40 samples, while hex values vary between 9 and 14 tokens (ref-line-tokens.tsv of the census data set), so T1..T4 have identical prompts and token counts.
+
+| Run | Arm | Server flags | Question | Evidence |
+|---|---|---|---|---|
+| p3-lead-kvwin-timing | build:ablate-timing, DMK_TIMING=1 (DMK_DOCKER_EXTRA="-e DMK_TIMING=1") | production (--kv-unified) | does T2/T3/T4 take longer than T1 without a profiler? slot placement, pass structure, llama_decode calls | DMK_TIMING and slot lines of .server.log, client wall |
+| p3-lead-kvwin-nokvu-timing | same | --no-kv-unified (-c 16384 -np 3: 5,461 cells per slot) | does the upstream workaround make T2 as fast as T1? which pass structure and extra syncs does it bring? | same |
+| p3-lead-kvwin-nsys | build:b12004-sm86 under nsys | production | window seen (n_kv_padded), FA kernel time and GPU time of every pass of T1..T4 | passes.tsv of nsys_census.py analyze |
+| p3-lead-kvwin-nokvu-nsys (last line: drop it first) | same | --no-kv-unified | the same under the workaround: is the window then exact? where does the time go? | same |
+
+Window seen is only observable under nsys; the timing runs show the cost (pass time), the nsys runs show the cause (window, FA kernel time).
+#30779 needs no run of its own: the server logs of p3-dec-timing (package 1, 349 requests) and of the two timing runs here are the input of analyze_childpass.py.
+
+3. What "window seen" and "window needed" mean (source facts, llama.cpp b12004)
+-------------------------------------------------------------------------------
+
+* Window seen = n_kv of the pass as the kernel gets it. llama_kv_cache::get_n_kv (src/llama-kv-cache.cpp:1256-1270) returns max(256, PAD(cells.used_max_p1(), 256)) over the streams of the ubatch:
+  the highest used cell index of the stream plus one, padded to 256. With --kv-unified there is one stream shared by all slots, so the window is set by the highest cell of any sequence in the pool, also the
+  cells of idle or finished slots. In the traces it is n_kv_padded = KQ-mask host-to-device copy bytes / (2 x n_tokens) (harness/profile/census/trace_census.py), only derived when the bytes are an exact multiple.
+* Window needed = the request's own sequence padded to 256: pad256(max(start + n)) over its passes (census_lib.attn_cost). leadlib.pass_windows also gives needed_pool (own cells compacted at the
+  front of the pool) and eff_front (mean cells a query tile reads when the own cells are at the front, see below).
+* Why the stale cells widen the window [INFERENCE for the exact placement; the old traces show windows of 5,376-6,912 cells for sequences of 2,048-3,584 tokens and suffix windows smaller than prefix windows]:
+  find_slot (non-contiguous) takes the first free cells from v_heads; the previous request of a slot keeps its cells after release ("stop processing: n_tokens = N"); a child's old cells are removed only in
+  copy_prompt_to (tools/server/server-context.cpp:845-856: seq_rm(other.id, -1, -1) then seq_cp), after the parent has finished the prefix. So the parent's new prefix cells land behind the stale cells, and its own cells stay at
+  high indices afterwards.
+* What the FA kernel does with the window (ggml/src/ggml-cuda/fattn-common.cuh:1117): scan_mask = !use_sparse && mask && K->ne[1] % 256 == 0 && (Q->ne[1] >= 1024 || Q->ne[3] > 1). With --kv-unified
+  Q->ne[3] = 1, so passes with N < 1024 tokens read the whole window (observed: the 908-token pass of the old long trace has no flash_attn_mask_to_KV_max kernel, trace-notes of the census, line 88);
+  passes with N >= 1024 skip all-masked tail blocks (kb0_stop) but not interior blocks, which is exactly the stale-cell case of #28495.
+* --no-kv-unified: n_stream = 3, one stream per slot, n_ctx_slot = 5,461, used_max_p1 per stream: the window of a sequence is its own cells. The cost moves elsewhere: seq_cp of the shared prefix to a child
+  copies the whole stream buffer (about 179 MB per child over the 8 attention layers [INFERENCE: computed from the K/V sizes]) after llama_synchronize (llama_kv_cache::update), so expect an extra sync group per child
+  request and device-to-device copies; with n_stream > 1 the mask scan is on for every pass. Observe it in Table T1/T2 (sync groups) and in the nokvu nsys run.
+* Pass structure depends on the cache mode (from source, checked by the census and by analyze_childpass.py): src/llama-memory-hybrid.cpp:83-90 splits every batch with split_equal(n_ubatch, !unified).
+  With --kv-unified (production) sequential = false: every ubatch takes all sequences with unused tokens. With --no-kv-unified (n_stream > 1, unified = false) sequential = true: only sequences with consecutive ids.
+  The census default (census_lib.SPLIT_SEQUENTIAL = False, simulate_request(sequential=None)) is the unified split, so the reference prediction of both decisions of analyze_childpass.py is correct for production and for the
+  two --kv-unified timing runs; the two --no-kv-unified runs are expected to follow the sequential split. For 3-question requests the two never differ; for 2-question requests they differ for the placement (0,2) only:
+  sequential gives separate ubatches 120 + 51, unified gives 2 x 51 + 69. The 12 traced short requests are placements (1,0), (2,0), (2,1) and cannot discriminate. analyze_childpass.py tests both models for every request and reports
+  "census (unified split) exact" and "sequential-split model exact"; its Table 1b reads kv_unified = '...' from the load_model line of each log and counts the requests the expected model reproduces [INFERENCE for the --no-kv-unified expectation: source only, not yet observed].
+* Slot choice (get_available_slot): by LCP similarity if f_sim > 0.1, else least recently used. A long request with a new Ref shares only the header with the cached sequences (similarity < 0.1): LRU. Short prompts can hit
+  LCP similarity (0.19, a server log of the data set data/2026-10-30-window1). id_slot is not supported by /v1/systemone, so the placement of T2 is not controllable: it is read from the slot lines.
+
+The labels Z / Y / X1 of the spec are not defined in any census file. Pass structures are printed as census structure strings: P<n> prefix pass of n tokens, S<k>x<t> suffix pass of k sequences with t tokens each,
+F<n> whole prompt in one pass (example: P2048+P1173+S3x43+S2x4+S1x26).
+
+4. Commands
+-----------
+
+RUNS = directory with the run files copied from the GPU host (<run>.server.log, <run>.client.json, <run>.sqlite after nsys_export.sh of package 2), OUT = output directory.
+
+    cd <repository root>
+    python3 harness/profile/nsys/nsys_census.py analyze --results $RUNS --runs p3-lead-kvwin-nsys,p3-lead-kvwin-nokvu-nsys --out $OUT/nsys      # package 2: passes.tsv
+    python3 harness/profile/leads/analyze_kvwin.py --out $OUT/kvwin \
+      --nsys $OUT/nsys/passes.tsv --client $RUNS/p3-lead-kvwin-nsys.client.json --run p3-lead-kvwin-nsys \
+      --nsys-nokvu $OUT/nsys/passes.tsv,$RUNS/p3-lead-kvwin-nokvu-nsys.client.json,p3-lead-kvwin-nokvu-nsys \
+      --timing kvu=$RUNS/p3-lead-kvwin-timing.server.log,$RUNS/p3-lead-kvwin-timing.client.json \
+      --timing nokvu=$RUNS/p3-lead-kvwin-nokvu-timing.server.log,$RUNS/p3-lead-kvwin-nokvu-timing.client.json
+    python3 harness/profile/leads/analyze_childpass.py $RUNS/p3-dec-timing.server.log $RUNS/p3-lead-kvwin-timing.server.log $RUNS/p3-lead-kvwin-nokvu-timing.server.log \
+      --client $RUNS/p3-dec-timing.client.json $RUNS/p3-lead-kvwin-timing.client.json $RUNS/p3-lead-kvwin-nokvu-timing.client.json --out $OUT/childpass
+    # existing evidence only (no run needed):
+    python3 harness/profile/leads/analyze_kvwin.py --out OLD        # needs the census tables trace-passes.tsv and crosscheck-passes.tsv ($DMK_CENSUS_DATA)
+    # self tests (synthetic data in a temporary folder) and the test data generator:
+    python3 harness/profile/leads/analyze_kvwin.py --self-test ; python3 harness/profile/leads/analyze_childpass.py --self-test ; python3 harness/profile/leads/make_synthetic.py --out SYN
+
+analyze_kvwin.py writes report.txt (the stdout), kvwin-old-passes.tsv, kvwin-nsys-passes.tsv, kvwin-nsys-nokvu-passes.tsv (one row per pass with window seen, needed, FA, busy, fit prediction, gain) to --out;
+analyze_childpass.py writes childpass-requests.tsv. Any source can be left out (--no-old, no --nsys, ...); a nsys run with several runs in passes.tsv needs --run. The clients are matched to the server requests by time
+(the client and the server stamp CLOCK_MONOTONIC [INFERENCE, checked and printed by the clock check of analyze_childpass.py]), by order if the client has no stamps.
+
+5. How to read the decision lines
+---------------------------------
+
+Rule: an effect counts if it is larger than 2 x the run-to-run spread. Spread = relative standard deviation (stdev / mean) of repeated identical measurements, floor 2 %: from the repeated T phases of the run
+when they have equal windows, else from identical passes of the old traces (FA 4.5 %, GPU busy 4.4 %, 3 groups of the short trace).
+
+| Line | Effect measured | Spread from | Yes means |
+|---|---|---|---|
+| window effect on the FA kernel | nsys: mean over T2..Tn of (FA ms of the passes with the same index and N as in T1) / T1 - 1; old traces: largest FA ratio of passes of equal kind and N with different windows | T2..Tn repeats with equal windows, else old traces | the FA kernel time follows the window |
+| window effect on pass time | timing run: (sum of sync since_first_submit_us / serial roofline floor of the pass structure) of Tk over T1 - 1 (the floor ratio removes pass-structure differences of the slot placement); nsys run: GPU busy of the aligned passes; old traces: possible gain as share of GPU busy | as above | an exact window would shorten the pass time by more than noise |
+
+The last two lines of the report are the consolidated answer: the FA line from the nsys run (else old traces), the pass-time line from the kv-unified timing run (else nsys, else old traces); the source is printed. The
+per-source lines above them show disagreements. Typical readings: FA yes and pass time no = the kernel gets slower but the request does not measurably; both yes = the workaround is worth testing: compare
+[timing:nokvu] (no) and Table T2 (nokvu / kvu GPU-side time, sync groups, pass structure).
+The analyze_childpass.py decisions are counts, not timings (one request is evidence): "does any request type get more passes (ubatches) than the census predicts" compares DMK_TIMING ubatch lines per request with
+census_lib.simulate_request (default split = unified) for the observed slot placement (the count is the same for the sequential split; the sizes are not); "does #30779 add a decode call / change pass sizes" compares the decode lines with the fixed order (parent slot lowest id, all children in the parent's suffix batch).
+Which counter answers which question: ubatch line = model pass, decode line = llama_decode call = one update_slots() iteration; an "extra decode pass" in the PR text is an extra call, which need not add a ubatch.
+
+6. Existing evidence: the old traces (analyze_kvwin.py, no run needed; full output: report.txt)
+-----------------------------------------------------------------------------------------------
+
+Fit over the 61 passes of the three traces with N < 1024 (the kernel reads the whole window): FA ms (8 layers) = a + b x N x n_kv.
+
+| a (ms) | b (10^-6 ms per token x cell) | R^2 | rmse (ms) | passes | largest residual (ms) |
+|---|---|---|---|---|---|
+| 0.483 | 3.034 | 0.990 | 0.225 | 61 | +1.205 (long/3/4, N = 73, n_kv = 6,400) |
+
+Source: trace-passes.tsv (t_cat_flash_ms, n_kv_padded); analyze_kvwin.py Section 1. The N = 73 passes lie 50-60 % above the fit at equal window, so the global fit is conservative for them.
+
+Passes of N = 2,048 tokens (same shape, scan active, long trace):
+
+| Request / pass | Window seen (cells) | Window needed (cells) | FA (ms) | GPU busy (ms) | GPU busy minus FA (ms) |
+|---|---|---|---|---|---|
+| long/0/0 | 2,304 | 2,048 | 9.78 | 415.0 | 405.2 |
+| long/2/0 | 6,912 | 2,048 | 10.00 | 407.0 | 397.0 |
+| long/1/0 | 5,376 | 2,048 | 27.41 | 424.9 | 397.5 |
+| long/3/0 | 5,376 | 2,048 | 27.45 | 425.2 | 397.7 |
+
+Source: trace-passes.tsv, crosscheck-passes.tsv (n_kv_window_model). Same shape, FA +17.4 to +17.7 ms (+174 to +181 %) between the narrow and the wide pass; GPU busy minus FA is nearly constant (397-405 ms): the pass time follows the FA time
+(+10 to +18 ms, +2.4 to +4.5 % of the pass) [four points, different cases]. At equal N below 1,024 the FA time rises with the window too (suffix passes: N = 43: 0.45 ms at 1,280 cells -> 1.33 ms at 6,912 cells; N = 86: 1.13 ms at 2,816 -> 2.28 ms at 6,400).
+
+Possible gain if the window were exact (per request, summed over the passes; N < 1024: b x N x (seen - needed); N >= 1024: FA above the calibrated prediction at the front-of-pool window, a lower bound):
+
+| Request type | Requests | FA time per request (ms) | GPU busy per request (ms) | FA share of GPU busy (%) | Possible gain (ms) | Gain / GPU busy (%) |
+|---|---|---|---|---|---|---|
+| long | 4 | 40.44 | 743.3 | 5.4 | 16.37 | 2.2 |
+| medium | 4 | 9.97 | 339.3 | 2.9 | 4.12 | 1.2 |
+| short | 12 | 1.65 | 82.5 | 2.0 | 0.02 | 0.0 |
+
+Source: report.txt of analyze_kvwin.py on the old traces, Table A4.
+
+Decisions on the old traces: window effect on the FA kernel: yes (largest equal-kind-and-N FA increase +262 %, +181 % between the 2,048-token passes; threshold 9.0 %); window effect on pass time: no
+(possible gain 2.2 % of GPU busy for long requests, threshold 8.8 % = 2 x the 4.4 % spread of identical passes). The 4.4 % spread comes from the short trace (the first three requests are slower); no identical long passes
+exist in the old data, so the rule cannot resolve the 2 % long-request effect: the new runs decide it (T2/T1 of the same request, without a profiler).
+
+7. What was tested, and on what data
+------------------------------------
+
+| Test | Data | Result |
+|---|---|---|
+| analyze_childpass.py --self-test | synthetic logs syn-childpass-{census,seq,extra} (all slot placements of 1/2/3-question requests, planted structures; census = unified split, seq = sequential split with kv_unified = 'false' in the log, so the planted placement (0,2) discriminates the two models; the extra scenario plants one extra ubatch and decode call below the parent) | 46 checks PASS: slot placement, ubatch and decode counts, fixed-order counts, kv_unified and expected model read from the log, both decisions as planted |
+| analyze_kvwin.py --self-test | synthetic nsys passes TSV and timing logs syn-kvwin-{growth,strong,null,nokvu} with the planted law fa = 0.48 + 3.03e-6 x N x window (window growth +3,328 cells in T2..T4), the --no-kv-unified log with the extra sync | 43 checks PASS: a, b recovered within 3 %, FA/pass-time effects within 20 % / 1.5 points of the planted ones, decisions yes/yes (strong), yes/rule (growth: planted pass effect 5.2 %), no/no (null), sync groups of the nokvu log |
+| analyze_kvwin.py on the old traces | trace-passes.tsv, crosscheck-passes.tsv of the census data set | Section 6 |
+| analyze_childpass.py on the log of package 1's generator | the synthetic log of harness/profile/decomp/make_synthetic.py (p3-dec-timing.server.log, 349 requests: one cut ubatch line, one request without ubatches, one missing launch line) | runs to the end: cut lines skipped and counted, 17 requests excluded and listed, the extra server request left unmatched; 114 of the 332 analysed requests are reproduced by neither model (short2q slot lines (1,1), (0,0), ... and structures that are not census ones), a property of that generator, not a finding |
+| kvwin_client.py | a local stdlib fake of /v1/systemone: 12 requests, 12 distinct digit Refs, JSON fields the nsys_census.py load_client needs | OK; --plan prints the sequence without a server |
+| check_sched.py, dry_run.sh on 3-leads.txt | | 0 errors, 4 runs parsed |
+
+The synthetic logs reproduce the real DMK_TIMING and slot-line print formats (src/dmk-timing.h, a server log of the data set data/2026-10-30-window1). The planted laws are inputs of the tests, not findings.
+
+8. Risks
+--------
+
+* Slot LRU decides where the target lands. T1..T4 can sit in different slots and have different placements (3-question requests: 6 permutations), hence different suffix passes. The tables print the placement and the
+  structure per request; the timing decision divides by the roofline floor of the structure and the nsys comparison pairs only passes with equal index and N. A placement-matched comparison needs repeats (--repeat-target).
+* T2 may not sit behind stale cells. Whether the window grows depends on where find_slot puts the cells; the report shows the observed window (seen / needed per pass) instead of assuming it. If T2 shows seen close
+  to needed, the answer is no for this sequence, not for every sequence.
+* T1 is not perfectly fresh: the two warm-up requests leave about 400 cells (the planted +256 of the synthetic data), and first-use costs (lazy module loads) land in the T1 wall time but not in kernel durations
+  (column module_load_ms is printed).
+* No window in the timing runs. n_kv is not logged by DMK_TIMING; the timing runs show the cost, the nsys runs the cause. The two runs are separate server runs: the placements can differ between them.
+* Spread. With 3-4 target requests per run the spread is estimated from at most 2-3 repeats, else taken from the old traces (4.4-4.5 %). Effects of 2-4 % (the old-trace estimate for long requests) are at the edge of what one
+  run resolves; --repeat-target adds repeats at 0.8 s each.
+* nsys inflation: kernel times under nsys include profiler overhead [INFERENCE: about 3 % for long requests]; the ratios T2/T1 inside one run are not affected by a constant factor.
+* FA model: the N = 73 passes lie above the global fit; for N >= 1024 the prediction at the needed window uses the cells a query tile reads with the own cells at the front (eff_front) calibrated by the closest pass (c_scan),
+  a lower bound of the gain.
+* --no-kv-unified also changes the split mode and adds seq_cp syncs/copies: the nokvu time can differ from the kv-unified time for reasons other than the window. Table T2 shows pass structure and sync groups side by side;
+  the FA fit is not applied to the nokvu nsys run.
+* Ref: length is neutralised by digit-only Refs (14 tokens always); the client prints a warning if the input_tokens of T1..T4 differ.
+* Clock equality between the client and the server timestamps is an INFERENCE made before the first run; analyze_childpass.py prints the check (client send <= server start, server end <= client receive).

@@ -458,3 +458,46 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | weight-read floor | technical noun | The time that the GPU uses to read all weights of the model from the DRAM at the best DRAM read rate. No pass is faster than it. |
 | word | technical noun | One unit of text between two spaces. |
 | wrapper | technical noun | A program that starts a second program. It records or checks the work of the second program. |
+| aligned run | technical noun | A run of Nsight Compute in which the profiled launches are the launches of the list that the run must profile. |
+| census | technical noun | The work of each pass in numbers. The numbers come from the shapes of the model and the rules of the code. They are not time measurements. |
+| child slot | technical noun | The task slot of a child task. |
+| command buffer | technical noun | The memory of the CUDA driver that holds the launches before the GPU starts them. |
+| CUDA call | technical noun | One use of a function of the CUDA runtime, for example `cudaLaunchKernel` or `cudaMemcpyAsync`. |
+| decomposition | technical noun | The wall time of a request in steps. The sum of the steps is the wall time. |
+| floor | technical noun | The minimum time that a pass or a request can use. A limit of the GPU sets it, for example the DRAM rate. |
+| gap | technical noun | The idle time of the GPU before a pass or between two kernels. |
+| GPU busy time | technical noun | The time in which one kernel or more run on the GPU. |
+| GPU span | technical noun | The time from the start of the first pass of a request to the end of the last wait for the GPU. It is the maximum of the GPU time. |
+| idle time | technical noun | The time in which no kernel runs on the GPU. |
+| IMMA | technical name | The instruction of a tensor core that multiplies int8 tiles. It is the int8 case of the MMA instruction. |
+| int8 peak | technical noun | The largest number of int8 operations in one second that the tensor cores can do. The scripts of the project use 149.3 TOP/s. |
+| kernel class | technical noun | A group of kernels that do the same task, for example `MMQ`, `MMVQ`, or `GDN`. |
+| KV window | technical noun | The number of KV cells that the flash-attention kernel reads in one pass. |
+| launch queue | technical noun | The launches that the CPU sent and that the GPU did not start. |
+| lead | technical noun | A change from an issue or a pull request of llama.cpp that the project can try. The project tests each lead. |
+| misaligned run | technical noun | A run of Nsight Compute in which the profiled launches are not the launches of the list that the run must profile. |
+| opcode | technical noun | The name of one SASS instruction, for example `IMMA`, `LDS`, or `FFMA`. |
+| parent slot | technical noun | The task slot of a parent task. |
+| pipe | technical noun | A group of units of an SM that run one type of instruction. The IMMA pipe runs the IMMA instructions. |
+| rank | technical verb | To write the targets in a list. The target with the largest possible time decrease is first. |
+| request-start gap | technical noun | The gap before the first pass of a request. |
+| roofline floor | technical noun | The sum of the larger value of the DRAM time and the int8 time of each kernel of a pass. |
+| task slot | technical noun | The part of the server that holds the KV cache and the state of one task. The flag `-np` sets the number of task slots. |
+| stall | technical noun | A cycle in which a warp does not start an instruction. |
+| stall reason | technical noun | The cause of a stall. Nsight Compute gives the stalls of each stall reason, for example `wait` or `long_scoreboard`. |
+| submit | technical verb | To send the launches of one pass to the GPU. |
+| sync call | technical noun | A CUDA call that waits until the GPU stops its work. The CUDA function `cudaStreamSynchronize` makes a sync call. |
+| upload | technical noun | A copy of data from the memory of the CPU to the memory of the GPU. |
+| upload | technical verb | To write data from the memory of the CPU to the memory of the GPU. |
+| wall time | technical noun | The time from the start of a request at the client to the end of the response at the client. |
+| GPU wait | technical noun | The time in which the decode thread waits for the GPU to complete the work of a pass. |
+| PCIe | technical name | The link between the CPU and the GPU. The uploads use it. |
+| shifted run | technical noun | A run of Nsight Compute in which the profiled launches have the kernels of the list. They start a number of launches from the first launch of the list. |
+| suffix | technical noun | The tokens of a prompt after the shared prefix. The tokens of the question are the suffix. |
+| system wait | technical noun | The time in which the decode thread waits in a function of the system, for example `pthread_cond_wait`. |
+| capture | technical noun | The file that Nsight Systems writes for one run of the server. It has the times of the kernels, the copies, and the CUDA calls. |
+| fix-up kernel | technical noun | The kernel that follows an MMQ kernel with stream-k. It adds the results of different thread blocks for the same tile. |
+| GFLOP | technical name | The unit of 10^9 floating point operations. A multiply-add counts as 2 operations. |
+| matmul | technical noun | One GEMM of a weight matrix with the activations of the tokens of one pass. An MMQ kernel or an MMVQ kernel does it. |
+| slot assignment | technical noun | The list of the task slots that hold the questions of one request. Different lists can give different passes. |
+| fixed-order model | technical noun | A model of the passes of a request with more than one question. The parent task has the lowest task slot. All child tasks are in one batch. |

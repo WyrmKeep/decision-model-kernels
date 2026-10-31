@@ -1,0 +1,1118 @@
+scope	pass_type	n_class	request_kinds	n_passes	n_tokens_min	n_tokens_max	level	class	label	launches_per_pass_mean	launches_per_pass_p50	kernel_ms_per_pass_mean	kernel_ms_per_pass_p50	share_of_gpu_busy_pct	mean_us_per_launch	fixup_launches_per_pass_mean
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	total			1166	1166	415.868675	416.044301	100	356.662671	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	MMQ		309	309	262.819997	263.02817	63.197835	850.550153	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	GDN		24	24	32.047285	32.06028	7.706107	1335.303525	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	glu		111	111	24.826511	24.815935	5.969796	223.662265	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	FA		16	16	18.269238	18.025754	4.393031	1141.8274	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	quantize		245	245	23.020703	23.019151	5.53557	93.962053	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	copy		112	112	16.38042	16.390507	3.938844	146.253752	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	rms_norm		151	151	16.590948	16.593273	3.989468	109.873829	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	ssm_conv		24	24	10.764925	10.765114	2.58854	448.538546	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	elementwise		158	158	9.910742	9.909827	2.383142	62.726215	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	other		16	16	1.237905	1.238926	0.297667	77.369056	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	107.581157	107.666791	25.869022	1735.179958	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	53.996872	54.038398	12.984116	1741.834574	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	37.178303	37.203701	8.939914	1549.095979	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	GDN	gdn_single<16,128,1>	24	24	32.047285	32.06028	7.706107	1335.303525	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_gated_op_kernel<silu,float>	55	55	22.77354	22.768442	5.476137	414.064364	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	19.607116	19.61908	4.714737	816.963167	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	19.329619	19.338743	4.64801	805.400792	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	17.942026	17.697819	4.314349	2242.753262	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	concat_non_cont<unsigned int,0>	24	24	12.865902	12.879555	3.093742	536.079267	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	12.424572	12.442018	2.987619	1553.0715	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	quantize	quantize_mmq_q8_1<D4>	152	152	11.530681	11.528602	2.772674	75.859742	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	quantize	quantize_mmq_q8_1<DS4>	93	93	11.490022	11.48903	2.762897	123.548626	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	10.764925	10.765114	2.58854	448.538546	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	9.538419	9.537523	2.293613	110.911855	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	6.923815	6.924338	1.664904	109.901819	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	6.552968	6.556962	1.57573	819.121	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	4.03022	4.023572	0.969109	83.962921	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	3.967359	3.963145	0.953993	165.306617	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	3.717541	3.722631	0.893922	232.346306	16
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	3.026762	3.030297	0.727817	94.586313	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	2.431849	2.433752	0.584764	50.663513	48
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	1.962456	1.956059	0.471893	245.307038	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	1.669555	1.666542	0.401462	104.347162	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	other	rope_multi<true,false,float,float>	8	8	0.888815	0.889952	0.213725	111.101825	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	other	rope_multi<true,false,float,__half>	8	8	0.34909	0.349152	0.083942	43.636287	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	FA	flash_attn_mask_to_KV_max<16>	8	8	0.327212	0.330495	0.078682	40.901538	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	elementwise	scale_f32<float>	48	48	0.324338	0.324464	0.077991	6.75705	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	k_set_rows<float,long,__half>	8	8	0.294291	0.294319	0.070765	36.786325	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	k_get_rows_float_vec<float>	24	24	0.139987	0.140016	0.033661	5.832792	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	k_get_rows_float<float,float>	24	24	0.053478	0.05344	0.012859	2.228258	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.048445	0.048464	0.011649	2.018529	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.047984	0.048032	0.011538	1.999333	
+p3-lead-kvwin-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_op_kernel<softplus,float>	24	24	0.04207	0.042096	0.010116	1.752933	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	total			1173	1173	218.64161	218.64161	100	186.395234	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	MMQ		372	372	136.548192	136.548192	62.452976	367.065031	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	GDN		24	24	14.836705	14.836705	6.785856	618.196042	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	glu		111	111	11.34777	11.34777	5.190124	102.232167	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	FA		8	8	19.409097	19.409097	8.877128	2426.137062	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	quantize		245	245	10.795497	10.795497	4.937531	44.063255	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	copy		112	112	7.680449	7.680449	3.512803	68.575442	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	rms_norm		151	151	7.711951	7.711951	3.527211	51.072523	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	ssm_conv		24	24	5.258102	5.258102	2.404896	219.087604	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	elementwise		110	110	4.46559	4.46559	2.042425	40.596277	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	other		16	16	0.588255	0.588255	0.26905	36.765937	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	55.194225	55.194225	25.244154	890.229427	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	27.171419	27.171419	12.427378	876.497371	31
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	19.486889	19.486889	8.912708	811.953708	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	19.409097	19.409097	8.877128	2426.137062	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	GDN	gdn_single<16,128,1>	24	24	14.836705	14.836705	6.785856	618.196042	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	10.739531	10.739531	4.911934	447.480458	24
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_gated_op_kernel<silu,float>	55	55	10.380509	10.380509	4.747728	188.736518	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	9.924428	9.924428	4.53913	413.517812	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	6.498706	6.498706	2.97231	812.338313	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	concat_non_cont<unsigned int,0>	24	24	5.742005	5.742005	2.626218	239.250208	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	quantize	quantize_mmq_q8_1<D4>	152	152	5.472469	5.472469	2.502941	36.003089	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	quantize	quantize_mmq_q8_1<DS4>	93	93	5.323028	5.323028	2.434591	57.23686	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	5.258102	5.258102	2.404896	219.087604	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	4.420743	4.420743	2.021913	51.403983	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	3.582937	3.582937	1.638726	447.867125	8
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	3.235865	3.235865	1.479986	51.362937	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	2.085851	2.085851	0.954005	130.365719	16
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	1.886731	1.886731	0.862933	39.306896	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.864206	1.864206	0.852631	38.837625	48
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	1.828765	1.828765	0.836421	76.198542	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	1.446221	1.446221	0.661457	45.194406	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.897806	0.897806	0.410629	112.22575	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.76059	0.76059	0.347871	47.536875	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	other	rope_multi<true,false,float,float>	8	8	0.414671	0.414671	0.189658	51.833937	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	k_get_rows_float_vec<float>	24	24	0.279583	0.279583	0.127873	11.649312	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	other	rope_multi<true,false,float,__half>	8	8	0.173584	0.173584	0.079392	21.697938	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	k_set_rows<float,long,__half>	8	8	0.142672	0.142672	0.065254	17.834	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	k_get_rows_float<float,float>	24	24	0.069968	0.069968	0.032001	2.915333	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.044848	0.044848	0.020512	1.868667	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.03792	0.03792	0.017343	1.58	
+p3-lead-kvwin-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_op_kernel<softplus,float>	24	24	0.031536	0.031536	0.014424	1.314	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	total			1155.375	1181	272.520157	268.304259	100	235.871606	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	MMQ		346.375	372	170.454693	166.659718	62.547554	492.110266	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	GDN		24	24	19.519898	18.789617	7.162735	813.329073	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	glu		111	111	14.957922	14.317248	5.48874	134.756056	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	FA		16	16	19.575566	21.988273	7.183163	1223.472867	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	quantize		245	245	14.097618	13.524466	5.173055	57.541299	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	copy		112	112	10.285167	10.034665	3.774094	91.831846	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	rms_norm		151	151	10.095341	9.68118	3.704438	66.856565	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	ssm_conv		24	24	6.936701	6.641056	2.54539	289.029193	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	elementwise		110	110	5.83424	5.610691	2.140847	53.038547	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	other		16	16	0.763011	0.733326	0.279983	47.688156	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	68.261429	66.488084	25.048213	1100.990794	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	34.545941	33.683072	12.676472	1114.38521	19.375
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	24.531954	23.891256	9.001886	1022.164755	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	GDN	gdn_single<16,128,1>	24	24	19.519898	18.789617	7.162735	813.329073	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	19.444238	21.845388	7.134972	2430.529766	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_gated_op_kernel<silu,float>	55	55	13.702265	13.116113	5.027982	249.132098	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	13.10342	13.077424	4.808239	545.975849	15
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	12.914761	12.641777	4.739011	538.115031	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	8.174679	7.959756	2.99966	1021.834813	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	concat_non_cont<unsigned int,0>	24	24	7.88098	7.703358	2.891889	328.374161	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	quantize	quantize_mmq_q8_1<D4>	152	152	7.095953	6.805407	2.603827	46.683899	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	quantize	quantize_mmq_q8_1<DS4>	93	93	7.001666	6.719746	2.569229	75.286727	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	6.936701	6.641056	2.54539	289.029193	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	5.78868	5.565363	2.124129	67.310234	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	4.368326	4.358454	1.602937	546.040797	5
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	4.22809	4.056887	1.551478	67.112544	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	2.500467	2.491034	0.917535	156.27918	14
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	2.455212	2.357819	0.900928	51.150245	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	2.402402	2.299483	0.88155	100.100078	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	2.053716	2.050492	0.753601	42.785745	48
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	1.872016	1.806891	0.686927	58.500492	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	1.183805	1.132013	0.434392	147.975656	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	1.009637	0.968222	0.370482	63.102344	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	other	rope_multi<true,false,float,float>	8	8	0.541931	0.521406	0.198859	67.741375	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	k_get_rows_float_vec<float>	24	24	0.278479	0.278176	0.102187	11.603312	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	other	rope_multi<true,false,float,__half>	8	8	0.22108	0.212208	0.081124	27.634938	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	k_set_rows<float,long,__half>	8	8	0.183148	0.17632	0.067205	22.893453	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	FA	flash_attn_mask_to_KV_max<16>	8	8	0.131328	0.092704	0.04819	16.415969	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	k_get_rows_float<float,float>	24	24	0.070544	0.070576	0.025886	2.939333	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.04556	0.04552	0.016718	1.898333	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.03892	0.038799	0.014281	1.621656	
+p3-lead-kvwin-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_op_kernel<softplus,float>	24	24	0.032932	0.032736	0.012084	1.372161	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	total			1065	1065	14.025826	13.995408	100	13.16979	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	GDN		24	24	0.395684	0.396095	2.821114	16.486854	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	glu		111	111	0.211162	0.21112	1.505524	1.902362	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	FA		16	16	0.547941	0.590576	3.906655	34.246292	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	quantize		248	248	0.44561	0.445311	3.177065	1.796813	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	copy		114	114	1.284804	1.283631	9.160271	11.270208	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	rms_norm		153	153	0.342794	0.342527	2.444018	2.240481	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	ssm_conv		24	24	0.086309	0.086336	0.61536	3.596222	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	elementwise		111	111	0.231237	0.231104	1.648652	2.083216	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	MMVQ		248	248	10.449016	10.434745	74.498401	42.13313	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	class	other		16	16	0.031269	0.03128	0.222941	1.954333	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_up|ffn_gate Q4_0 K=2560	62	62	3.137705	3.132874	22.370909	50.608142	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.63829	1.639212	11.680523	1638.289833	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_qkv Q8_0 K=2560	24	24	1.483762	1.481998	10.578785	61.823417	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_down Q4_0 K=9216	31	31	1.345454	1.343293	9.592687	43.401731	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_gate(z) Q8_0 K=2560	24	24	0.840233	0.840398	5.990614	35.009715	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ssm_out Q8_0 K=4096	24	24	0.790777	0.78995	5.638003	32.949021	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	concat_non_cont<unsigned int,0>	24	24	0.762469	0.761487	5.436175	31.769521	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_q Q8_0 K=2560	8	8	0.491674	0.490463	3.505489	61.459229	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	quantize	quantize_q8_1	248	248	0.44561	0.445311	3.177065	1.796813	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	0.395684	0.396095	2.821114	16.486854	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	k_get_rows_float_vec<float>	24	24	0.349605	0.349567	2.492578	14.566861	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_output Q8_0 K=4096	8	8	0.277418	0.277487	1.977907	34.677229	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_ext_f16<256,256,8,4>	4	4	0.271664	0.186272	1.936881	67.915875	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_ext_f16<256,256,4,4>	4	4	0.247605	0.171568	1.765352	61.901292	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.191445	0.191456	1.364948	2.200519	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.170053	0.170239	1.212424	2.616192	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_k|attn_v Q8_0 K=2560	16	16	0.16402	0.164046	1.169415	10.25126	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.163504	0.16312	1.165733	3.406326	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.148592	0.148608	1.059416	2.70167	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.099461	0.099456	0.709129	3.108161	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	ssm_conv	ssm_conv_f32<true,128,4>	24	24	0.086309	0.086336	0.61536	3.596222	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.08064	0.080879	0.574937	80.639667	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.077435	0.077632	0.552086	1.613222	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.059851	0.059776	0.426716	2.493771	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	k_get_rows_float<float,float>	26	26	0.059547	0.059552	0.42455	2.290256	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039792	0.039823	0.283704	1.657993	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035541	0.035536	0.253398	35.541167	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.035456	0.035408	0.252791	2.216	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_op_kernel<softplus,float>	24	24	0.026192	0.026128	0.18674	1.091326	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.024965	0.02496	0.177994	1.040215	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_stream_k_fixup_uniform<256,8,4>	4	4	0.019056	0.018592	0.135864	4.764	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	other	rope_multi<true,false,float,float>	8	8	0.016581	0.016624	0.11822	2.072667	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	other	rope_multi<true,false,float,__half>	8	8	0.014688	0.01464	0.104721	1.836	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	k_set_rows<float,long,__half>	8	8	0.013723	0.013728	0.097839	1.715333	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.011413	0.011392	0.081374	1.426667	
+p3-lead-kvwin-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_stream_k_fixup_uniform<256,4,4>	4	4	0.009616	0.00952	0.068559	2.404	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	total			1248	1248	17.527283	17.593697	100	14.044297	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	MMQ		428	428	10.961262	10.947594	62.538283	25.610425	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	GDN		24	24	1.101379	1.102397	6.283795	45.890774	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	glu		111	111	0.341814	0.341823	1.950184	3.079408	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	FA		16	16	0.841228	0.908253	4.799535	52.576759	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	quantize		248	248	0.560442	0.559198	3.197543	2.259849	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	copy		114	114	0.995016	0.992702	5.676953	8.728207	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	rms_norm		153	153	0.409192	0.408479	2.334599	2.674457	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	ssm_conv		24	24	0.284127	0.283838	1.621057	11.838637	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	elementwise		111	111	0.238998	0.238399	1.363578	2.153136	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	MMVQ		3	3	1.754863	1.754845	10.012177	584.95419	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	class	other		16	16	0.038962	0.03888	0.222295	2.435143	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	3.461393	3.456536	19.7486	55.828919	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	1.988895	1.985341	11.347423	64.157903	31
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	1.704443	1.70406	9.724515	71.01847	24
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.637171	1.637372	9.340703	1637.171429	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	1.101379	1.102397	6.283795	45.890774	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.060611	1.060288	6.051199	44.192119	24
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.050819	1.050047	5.995332	43.784119	24
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	0.760227	0.82771	4.337394	95.028411	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.568474	0.569024	3.243366	71.05925	8
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	concat_non_cont<unsigned int,0>	24	24	0.527679	0.526782	3.010614	21.986619	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.455474	0.455327	2.598655	9.489033	48
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.350628	0.350271	2.000471	43.828518	8
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.330952	0.3296	1.888213	2.177319	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.320525	0.319872	1.828721	20.032821	16
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	k_get_rows_float_vec<float>	24	24	0.288082	0.288064	1.64362	12.003417	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	ssm_conv	ssm_conv_f32<true,128,4>	24	24	0.284127	0.283838	1.621057	11.838637	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.265458	0.265503	1.51454	4.826504	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.224585	0.224928	1.281344	2.414891	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.199451	0.198783	1.137944	2.292537	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.178884	0.17872	1.020604	2.752064	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.108503	0.108384	0.61905	3.39071	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.098592	0.098687	0.562505	4.107994	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.093334	0.09328	0.532509	1.944464	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.08219	0.082848	0.468924	82.189571	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.081001	0.080896	0.462142	10.125107	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	k_get_rows_float<float,float>	26	26	0.055419	0.055488	0.31619	2.131516	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039547	0.039616	0.225634	1.64781	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.038382	0.038464	0.218982	2.398848	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035502	0.035456	0.20255	35.501571	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_op_kernel<softplus,float>	24	24	0.027223	0.027168	0.155317	1.134286	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.026107	0.026048	0.148953	1.08781	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	other	rope_multi<true,false,float,float>	8	8	0.023031	0.023008	0.1314	2.878857	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.023026	0.023072	0.131374	2.878286	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	other	rope_multi<true,false,float,__half>	8	8	0.015931	0.015936	0.090895	1.991429	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	k_set_rows<float,long,__half>	8	8	0.015333	0.015296	0.087478	1.916571	
+p3-lead-kvwin-nsys	suffix	9-32	long3q:7	7	26	26	label	quantize	quantize_q8_1	3	3	0.004905	0.004896	0.027986	1.635048	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	total			1296	1296	21.250481	21.357537	100	16.396976	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	MMQ		428	428	12.606947	12.59272	59.325465	29.455483	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	GDN		24	24	1.779116	1.777453	8.372123	74.129854	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	glu		111	111	0.547048	0.546688	2.574284	4.928358	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	FA		16	16	1.170236	1.266701	5.506869	73.139766	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	quantize		248	248	0.680599	0.679871	3.202747	2.744352	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	copy		114	114	1.084717	1.084621	5.104435	9.515061	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	rms_norm		153	153	0.587592	0.587472	2.765074	3.840467	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	ssm_conv		24	24	0.38363	0.383134	1.805279	15.984604	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	elementwise		159	159	0.602183	0.601584	2.833741	3.787318	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	MMVQ		3	3	1.758348	1.7579	8.274393	586.116083	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	class	other		16	16	0.050064	0.050112	0.23559	3.129	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	4.183174	4.177976	19.685081	67.470556	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	2.185115	2.18113	10.282661	70.487581	31
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	1.895787	1.894956	8.921151	78.991146	24
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	1.779116	1.777453	8.372123	74.129854	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.641301	1.640925	7.723592	1641.3005	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.18351	1.183533	5.569332	49.312906	24
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.169373	1.167979	5.502806	48.723865	24
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	1.07946	1.176557	5.079698	134.932531	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.629223	0.629166	2.960982	78.652875	8
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.593214	0.592429	2.791533	12.35863	48
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	concat_non_cont<unsigned int,0>	24	24	0.569255	0.568143	2.678788	23.718969	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.460136	0.460128	2.165296	8.366105	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.391191	0.391278	1.840857	48.898875	8
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	0.38363	0.383134	1.805279	15.984604	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.382639	0.382031	1.800615	2.517363	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.376359	0.376254	1.771061	23.522437	16
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	elementwise	scale_f32<float>	48	48	0.319944	0.31976	1.505585	6.6655	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	k_get_rows_float_vec<float>	24	24	0.297774	0.297615	1.40126	12.407271	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.292984	0.292928	1.378717	3.150366	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.263912	0.263536	1.241911	4.060185	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.242856	0.243007	1.142824	2.791443	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.139511	0.139711	0.656509	4.359727	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.136752	0.136608	0.643524	2.849	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.131432	0.131311	0.618487	5.476312	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.090776	0.090912	0.427172	11.347	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.081448	0.081472	0.383276	81.448	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	k_get_rows_float<float,float>	26	26	0.060384	0.060416	0.284154	2.322462	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.055496	0.055504	0.261152	3.4685	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039384	0.039392	0.185332	1.641	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.0356	0.035616	0.167524	35.59975	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	other	rope_multi<true,false,float,float>	8	8	0.0322	0.03224	0.151526	4.025	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.032168	0.032032	0.151375	4.021	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_op_kernel<softplus,float>	24	24	0.027904	0.02784	0.13131	1.162667	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.02684	0.026848	0.126303	1.118333	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	other	rope_multi<true,false,float,__half>	8	8	0.017864	0.01784	0.084064	2.233	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	k_set_rows<float,long,__half>	8	8	0.017792	0.01776	0.083725	2.224	
+p3-lead-kvwin-nsys	suffix	33-64	long3q:4	4	43	43	label	quantize	quantize_q8_1	3	3	0.004976	0.00496	0.023416	1.658667	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	total			1281.6	1296	30.502586	31.651553	100	23.800395	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	MMQ		428	428	17.70777	18.246612	58.05334	41.373295	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	GDN		24	24	2.651596	3.029052	8.693021	110.483179	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	glu		111	111	1.055194	1.063918	3.45936	9.506256	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	FA		16	16	2.26801	2.282345	7.435469	141.75065	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	quantize		248	248	1.056395	1.062206	3.463296	4.259657	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	copy		114	114	1.724688	1.893898	5.654237	15.128846	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	rms_norm		153	153	0.865262	0.904751	2.836684	5.655308	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	ssm_conv		24	24	0.739525	0.762655	2.424466	30.813529	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	elementwise		144.6	159	0.596914	0.692478	1.956928	4.128035	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	MMVQ		3	3	1.756316	1.755372	5.757925	585.438733	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	class	other		16	16	0.080915	0.082944	0.265273	5.057194	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	5.963669	6.153701	19.551355	96.188211	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	3.162443	3.276253	10.367785	102.014277	31
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	2.516176	2.591206	8.249057	104.84065	24
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	GDN	gated_delta_net_cuda<128,false,false,4>	16.8	24	2.19817	3.029052	7.206504	130.843452	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	2.114411	2.169353	6.931906	264.301325	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.639305	1.637548	5.374315	1639.3052	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.581536	1.631534	5.184926	65.89735	24
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.55573	1.60374	5.100323	64.8221	24
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.040588	1.046152	3.411476	21.678927	48
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	concat_non_cont<unsigned int,0>	24	24	0.978578	1.108191	3.208179	40.774067	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.941921	0.950974	3.088004	17.125838	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.837626	0.861981	2.746083	104.703287	8
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	0.739525	0.762655	2.424466	30.813529	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.549948	0.550655	1.802954	3.618076	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.526585	0.544224	1.72636	32.911537	16
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.523417	0.537712	1.715974	65.427075	8
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.501513	0.506544	1.644165	5.392612	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	GDN	gdn_single<16,128,1>	7.2	0	0.453426	0	1.486518	62.975875	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	k_get_rows_float_vec<float>	24	24	0.411171	0.412464	1.347986	17.132113	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.344773	0.348271	1.130309	3.962913	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.339126	0.360367	1.111793	5.217315	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.241651	0.255968	0.79223	7.551584	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.232108	0.24736	0.760946	4.83559	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	elementwise	scale_f32<float>	33.6	48	0.213033	0.303872	0.698411	6.340277	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.212908	0.214815	0.698001	8.871183	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.08152	0.081536	0.267256	81.5199	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.08112	0.082336	0.265944	5.069994	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	5.6	8	0.078547	0.105184	0.25751	14.026268	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	FA	flash_attn_stream_k_fixup_general<256,16,4>	2.4	0	0.075053	0	0.246054	31.271958	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	k_get_rows_float<float,float>	26	26	0.068659	0.06592	0.225093	2.640735	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.060064	0.059088	0.196914	7.507988	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	other	rope_multi<true,false,float,float>	8	8	0.052921	0.05456	0.173498	6.615188	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039107	0.0392	0.128209	1.629463	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035491	0.03544	0.116354	35.4911	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	other	rope_multi<true,false,float,__half>	8	8	0.027994	0.028256	0.091775	3.4992	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_op_kernel<softplus,float>	24	24	0.027203	0.027104	0.089183	1.133463	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.026006	0.025952	0.085259	1.083596	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	k_set_rows<float,long,__half>	8	8	0.02463	0.02512	0.080749	3.0788	
+p3-lead-kvwin-nsys	suffix	65-128	long3q:10	10	73	94	label	quantize	quantize_q8_1	3	3	0.004934	0.004912	0.016177	1.6448	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	total			1296	1296	46.498528	46.99199	100	35.878494	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	MMQ		428	428	28.292997	28.282853	60.847081	66.105133	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	GDN		24	24	4.386146	4.383675	9.432871	182.756083	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	glu		111	111	1.63991	1.640862	3.526801	14.773967	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	FA		16	16	2.924591	3.343673	6.289641	182.786917	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	quantize		248	248	1.543849	1.543103	3.32021	6.225198	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	copy		114	114	2.662363	2.663193	5.725693	23.354061	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	rms_norm		153	153	1.191519	1.190591	2.562487	7.787704	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	ssm_conv		24	24	1.19925	1.198846	2.579113	49.968736	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	elementwise		159	159	0.790142	0.7903	1.699284	4.969447	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	MMVQ		3	3	1.757319	1.756221	3.7793	585.773	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	class	other		16	16	0.110443	0.110688	0.237519	6.902667	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	10.461173	10.454986	22.497858	168.728591	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	5.251894	5.250933	11.294753	169.415925	31
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	4.386146	4.383675	9.432871	182.756083	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	4.159438	4.161241	8.94531	173.309903	24
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	2.801146	3.219162	6.024161	350.143292	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	2.360518	2.359643	5.076544	98.354931	24
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	2.14792	2.146619	4.619328	89.496653	24
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	concat_non_cont<unsigned int,0>	24	24	1.651164	1.651675	3.551003	68.798514	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.639847	1.639229	3.526665	1639.847333	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_gated_op_kernel<silu,float>	55	55	1.454119	1.454878	3.127236	26.438521	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	1.385885	1.384862	2.980492	173.235625	8
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	1.19925	1.198846	2.579113	49.968736	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.158973	1.159742	2.492495	24.145278	48
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.79251	0.792575	1.704377	5.213884	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.746389	0.746176	1.605189	8.025692	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.720436	0.720576	1.549374	90.054542	8
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.64676	0.646046	1.390926	40.422521	16
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	k_get_rows_float_vec<float>	24	24	0.540745	0.541504	1.16293	22.531056	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.455253	0.45456	0.979069	7.003887	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.454964	0.454911	0.978447	5.229467	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.358325	0.358688	0.770617	11.197667	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.317781	0.317792	0.683422	6.620444	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.299178	0.299104	0.643415	12.465764	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	elementwise	scale_f32<float>	48	48	0.295541	0.295488	0.635592	6.157104	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.131317	0.13152	0.282411	16.414625	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.123444	0.124416	0.26548	15.430542	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.119306	0.119392	0.256581	7.456646	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.081973	0.081984	0.176292	81.973	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	k_get_rows_float<float,float>	26	26	0.081269	0.081216	0.174778	3.125744	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	other	rope_multi<true,false,float,float>	8	8	0.075861	0.07632	0.163148	9.482667	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039637	0.039648	0.085244	1.651556	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035499	0.035488	0.076344	35.498667	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	other	rope_multi<true,false,float,__half>	8	8	0.034581	0.034368	0.074371	4.322667	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	k_set_rows<float,long,__half>	8	8	0.030859	0.030912	0.066365	3.857333	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_op_kernel<softplus,float>	24	24	0.027872	0.027872	0.059942	1.161333	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.026603	0.026624	0.057212	1.108444	
+p3-lead-kvwin-nsys	suffix	129-256	long3q:3	3	129	129	label	quantize	quantize_q8_1	3	3	0.004949	0.004928	0.010644	1.649778	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	total			1174	1174	405.729253	406.141714	100	345.595616	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	MMQ		309	309	262.584495	262.873594	64.719143	849.788011	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	GDN		24	24	31.987626	32.019123	7.883983	1332.81775	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	glu		111	111	24.849913	24.847771	6.124753	223.873095	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	FA		16	16	8.290004	8.287824	2.043236	518.125275	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	quantize		245	245	22.992303	22.991286	5.666908	93.846134	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	copy		120	120	16.654098	16.675652	4.104732	138.784152	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	rms_norm		151	151	16.576749	16.575687	4.085668	109.779795	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	ssm_conv		24	24	10.767449	10.766604	2.653851	448.643725	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	elementwise		158	158	9.898933	9.897579	2.439788	62.651477	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	class	other		16	16	1.12768	1.128445	0.277939	70.480031	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	107.471901	107.565579	26.488576	1733.41776	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	53.947629	54.025576	13.29646	1740.246103	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	37.14167	37.189325	9.154299	1547.5696	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	GDN	gdn_single<16,128,1>	24	24	31.987626	32.019123	7.883983	1332.81775	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_gated_op_kernel<silu,float>	55	55	22.803575	22.802625	5.620392	414.610453	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	19.588516	19.598986	4.827977	816.188179	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	19.307928	19.330842	4.758821	804.496992	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	concat_non_cont<unsigned int,0>	24	24	12.847708	12.864906	3.166572	535.32115	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	12.420557	12.441751	3.061292	1552.569612	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	quantize	quantize_mmq_q8_1<D4>	152	152	11.529304	11.529117	2.841625	75.850687	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	quantize	quantize_mmq_q8_1<DS4>	93	93	11.462999	11.462733	2.825283	123.258048	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	10.767449	10.766604	2.653851	448.643725	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	9.526339	9.525372	2.347955	110.771379	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	8.163038	8.160672	2.011942	1020.379788	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	6.919587	6.924963	1.705469	109.834713	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	6.550938	6.558756	1.614608	818.867275	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	4.028057	4.024026	0.992794	83.917852	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	3.959831	3.956218	0.975979	164.99295	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	3.7184	3.722009	0.916473	232.399981	16
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	3.024964	3.028106	0.745562	94.530137	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	2.436956	2.43702	0.600636	50.769912	48
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	1.957904	1.955772	0.482564	244.73795	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	1.669274	1.666861	0.411426	104.329656	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	other	rope_multi<true,false,float,float>	16	16	1.12768	1.128445	0.277939	70.480031	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	k_set_rows<float,long,__half>	16	16	0.589938	0.589791	0.145402	36.871156	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	elementwise	scale_f32<float>	48	48	0.324515	0.32432	0.079983	6.760727	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	k_get_rows_float_vec<float>	24	24	0.138573	0.13912	0.034154	5.773863	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	FA	flash_attn_mask_to_KV_max<16>	8	8	0.126966	0.127007	0.031293	15.870762	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	copy	k_get_rows_float<float,float>	24	24	0.052915	0.052879	0.013042	2.204792	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.04808	0.048096	0.01185	2.003329	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.046848	0.046864	0.011547	1.951992	
+p3-lead-kvwin-nokvu-nsys	prefix-large	2048	long3q:10	10	2048	2048	label	glu	unary_op_kernel<softplus,float>	24	24	0.041587	0.041504	0.01025	1.7328	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	total			1181	1181	208.641567	208.641567	100	176.665171	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	MMQ		372	372	136.39932	136.39932	65.37495	366.664839	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	GDN		24	24	14.799239	14.799239	7.09314	616.634958	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	glu		111	111	11.365966	11.365966	5.447604	102.39609	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	FA		8	8	9.499983	9.499983	4.553255	1187.497937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	quantize		245	245	10.79043	10.79043	5.171755	44.042573	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	copy		120	120	7.815538	7.815538	3.745916	65.129487	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	rms_norm		151	151	7.701188	7.701188	3.691109	51.001248	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	ssm_conv		24	24	5.277029	5.277029	2.529232	219.876188	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	elementwise		110	110	4.458794	4.458794	2.137059	40.534486	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	class	other		16	16	0.534079	0.534079	0.255979	33.379937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	55.146609	55.146609	26.431267	889.461444	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	27.123138	27.123138	12.999873	874.939935	31
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	19.456656	19.456656	9.325398	810.693979	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	GDN	gdn_single<16,128,1>	24	24	14.799239	14.799239	7.09314	616.634958	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	10.736829	10.736829	5.146064	447.367896	24
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_gated_op_kernel<silu,float>	55	55	10.399551	10.399551	4.98441	189.082745	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	9.908207	9.908207	4.748913	412.841979	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	9.499983	9.499983	4.553255	1187.497937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	6.498581	6.498581	3.114711	812.322625	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	concat_non_cont<unsigned int,0>	24	24	5.727816	5.727816	2.74529	238.658979	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	quantize	quantize_mmq_q8_1<D4>	152	152	5.466214	5.466214	2.619907	35.961937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	quantize	quantize_mmq_q8_1<DS4>	93	93	5.324216	5.324216	2.551848	57.249634	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	5.277029	5.277029	2.529232	219.876188	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	4.413994	4.413994	2.115587	51.325506	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	3.579097	3.579097	1.715429	447.387125	8
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	3.236667	3.236667	1.551305	51.375659	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	2.088989	2.088989	1.001233	130.561812	16
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	1.885118	1.885118	0.90352	39.273292	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.861213	1.861213	0.892062	38.775271	48
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	1.818397	1.818397	0.871541	75.766542	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	1.452365	1.452365	0.696105	45.386391	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.897151	0.897151	0.429997	112.143937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.761007	0.761007	0.364744	47.562937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	other	rope_multi<true,false,float,float>	16	16	0.534079	0.534079	0.255979	33.379937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	k_set_rows<float,long,__half>	16	16	0.284079	0.284079	0.136156	17.754937	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	k_get_rows_float_vec<float>	24	24	0.280015	0.280015	0.134209	11.667312	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	copy	k_get_rows_float<float,float>	24	24	0.071264	0.071264	0.034156	2.969333	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.0448	0.0448	0.021472	1.866667	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.037872	0.037872	0.018152	1.578	
+p3-lead-kvwin-nokvu-nsys	prefix-small	257-1024	long3q:2	2	909	948	label	glu	unary_op_kernel<softplus,float>	24	24	0.031392	0.031392	0.015046	1.307979	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	total			1163.375	1189	264.62032	257.290355	100	227.459177	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	MMQ		346.375	372	170.404692	166.738407	64.395921	491.965911	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	GDN		24	24	19.481656	18.767384	7.362117	811.735688	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	glu		111	111	14.961901	14.317634	5.654101	134.791896	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	FA		16	16	11.667211	11.151817	4.409038	729.200687	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	quantize		245	245	14.096171	13.521151	5.326942	57.535392	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	copy		120	120	10.452887	10.188989	3.950145	87.107391	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	rms_norm		151	151	10.087039	9.68273	3.811891	66.80158	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	ssm_conv		24	24	6.937686	6.656275	2.621751	289.070255	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	elementwise		110	110	5.838618	5.617719	2.206413	53.078347	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	class	other		16	16	0.692459	0.666911	0.26168	43.278711	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	68.275946	66.557174	25.801475	1101.224935	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	34.527332	33.710584	13.047876	1113.784887	19.375
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	24.513853	23.885211	9.263783	1021.410557	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	GDN	gdn_single<16,128,1>	24	24	19.481656	18.767384	7.362117	811.735688	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_gated_op_kernel<silu,float>	55	55	13.709471	13.118484	5.180808	249.263111	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	13.100424	13.097976	4.950649	545.851005	15
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	12.902981	12.634614	4.876036	537.624224	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	11.597807	11.086345	4.38281	1449.725875	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	8.170864	7.963854	3.087769	1021.358047	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	concat_non_cont<unsigned int,0>	24	24	7.864272	7.678898	2.971908	327.677984	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	quantize	quantize_mmq_q8_1<D4>	152	152	7.097256	6.815542	2.682052	46.69247	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	quantize	quantize_mmq_q8_1<DS4>	93	93	6.998916	6.711238	2.64489	75.257157	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	6.937686	6.656275	2.621751	289.070255	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	5.793066	5.572424	2.189199	67.361234	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	4.366024	4.36092	1.64992	545.753	5
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	4.220273	4.048502	1.594841	66.988452	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	2.497579	2.485482	0.943835	156.098664	14
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	2.45716	2.358859	0.928561	51.190836	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	2.398775	2.299759	0.906497	99.948974	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	2.049689	2.04374	0.774577	42.701852	48
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	1.87312	1.808844	0.707852	58.535016	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	1.180542	1.128159	0.446127	147.567703	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	1.010831	0.972863	0.381993	63.176914	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	other	rope_multi<true,false,float,float>	16	16	0.692459	0.666911	0.26168	43.278711	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	k_set_rows<float,long,__half>	16	16	0.366308	0.352719	0.138428	22.894219	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	k_get_rows_float_vec<float>	24	24	0.278819	0.278926	0.105366	11.617474	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	copy	k_get_rows_float<float,float>	24	24	0.070368	0.0704	0.026592	2.931995	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	FA	flash_attn_mask_to_KV_max<16>	8	8	0.069404	0.06552	0.026228	8.6755	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.045552	0.045504	0.017214	1.898	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.038936	0.038895	0.014714	1.622328	
+p3-lead-kvwin-nokvu-nsys	prefix-small	1025-2047	long3q:8	8	1147	1421	label	glu	unary_op_kernel<softplus,float>	24	24	0.032952	0.032816	0.012453	1.372995	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	total			1077	1077	13.994285	13.992202	100	12.993765	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	GDN		24	24	0.395898	0.394655	2.828998	16.49575	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	glu		111	111	0.210917	0.210736	1.507168	1.900156	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	FA		20	20	0.505386	0.488015	3.611373	25.269292	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	quantize		248	248	0.442959	0.442272	3.165286	1.786126	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	copy		122	122	1.306777	1.307278	9.33793	10.711283	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	rms_norm		153	153	0.342213	0.3416	2.445373	2.236683	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	ssm_conv		24	24	0.08793	0.088095	0.628329	3.663757	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	elementwise		111	111	0.227205	0.226976	1.623558	2.046895	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	MMVQ		248	248	10.446078	10.434208	74.645311	42.121281	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	class	other		16	16	0.028923	0.028912	0.206675	1.807667	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_up|ffn_gate Q4_0 K=2560	62	62	3.12976	3.120764	22.364554	50.479992	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.640925	1.638332	11.725679	1640.925	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_qkv Q8_0 K=2560	24	24	1.482894	1.481135	10.596425	61.78725	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_down Q4_0 K=9216	31	31	1.349021	1.346189	9.6398	43.516812	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_gate(z) Q8_0 K=2560	24	24	0.84122	0.841422	6.011168	35.050833	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ssm_out Q8_0 K=4096	24	24	0.790767	0.789103	5.650639	32.948604	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	concat_non_cont<unsigned int,0>	24	24	0.774281	0.774191	5.532838	32.261715	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_q Q8_0 K=2560	8	8	0.49138	0.490431	3.511294	61.422562	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_ext_f16<256,256,4,4>	8	8	0.464479	0.446895	3.319063	58.059896	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	quantize	quantize_q8_1	248	248	0.442959	0.442272	3.165286	1.786126	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	0.395898	0.394655	2.828998	16.49575	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	k_get_rows_float_vec<float>	24	24	0.348746	0.349519	2.492061	14.53109	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_output Q8_0 K=4096	8	8	0.275493	0.275104	1.968612	34.436646	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.187595	0.187408	1.340509	2.156261	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.169888	0.16992	1.213979	2.613656	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ attn_k|attn_v Q8_0 K=2560	16	16	0.164261	0.164384	1.173772	10.266312	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.163931	0.163919	1.17141	3.415219	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.148773	0.148832	1.063101	2.70497	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.099056	0.098832	0.707831	3.095495	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	ssm_conv	ssm_conv_f32<true,128,4>	24	24	0.08793	0.088095	0.628329	3.663757	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.080832	0.08128	0.577605	80.831667	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.077376	0.077456	0.55291	1.611997	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.059637	0.059584	0.426153	2.484875	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	k_get_rows_float<float,float>	26	26	0.059243	0.059296	0.423335	2.278564	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039611	0.0396	0.283049	1.650444	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035595	0.035616	0.254351	35.594667	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.035312	0.03536	0.252332	2.207	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	other	rope_multi<true,false,float,float>	16	16	0.028923	0.028912	0.206675	1.807667	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_op_kernel<softplus,float>	24	24	0.026037	0.026032	0.186057	1.084889	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_stream_k_fixup_general<256,4,4>	4	4	0.025765	0.025472	0.184113	6.441333	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	copy	k_set_rows<float,long,__half>	16	16	0.025451	0.025504	0.181865	1.590667	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.024715	0.024656	0.176605	1.029778	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.011392	0.011392	0.081405	1.424	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_stream_k_fixup_uniform<256,4,4>	4	4	0.009637	0.009472	0.068866	2.409333	
+p3-lead-kvwin-nokvu-nsys	suffix	N<=8	long3q:6	6	4	8	label	FA	flash_attn_mask_to_KV_max<4>	4	4	0.005504	0.005488	0.03933	1.376	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	total			1256	1256	17.245377	17.237113	100	13.730396	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	MMQ		428	428	10.929836	10.919974	63.378354	25.537	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	GDN		24	24	1.101411	1.100765	6.386703	45.892125	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	glu		111	111	0.337376	0.337984	1.956326	3.039422	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	FA		16	16	0.594618	0.594911	3.447987	37.163643	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	quantize		248	248	0.552552	0.551743	3.20406	2.228033	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	copy		122	122	1.010517	1.007518	5.85964	8.282926	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	rms_norm		153	153	0.406399	0.405919	2.356568	2.656203	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	ssm_conv		24	24	0.280498	0.280064	1.62651	11.687411	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	elementwise		111	111	0.238875	0.23856	1.385152	2.152024	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	MMVQ		3	3	1.756957	1.754876	10.187987	585.652238	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	class	other		16	16	0.036338	0.03632	0.210713	2.271143	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	3.452724	3.451384	20.021159	55.689101	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	1.979682	1.979264	11.479492	63.8607	31
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	1.706107	1.70675	9.893128	71.087804	24
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.638849	1.636636	9.503123	1638.849429	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	1.101411	1.100765	6.386703	45.892125	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.059318	1.058814	6.142621	44.138256	24
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.046786	1.045885	6.069954	43.616101	24
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.56835	0.568415	3.295668	71.043804	8
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	concat_non_cont<unsigned int,0>	24	24	0.53045	0.5296	3.075894	22.102065	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	0.512095	0.512575	2.969463	64.011893	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.448411	0.447296	2.600182	9.341899	48
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.348438	0.348704	2.020474	43.554804	8
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.324941	0.324896	1.884222	2.137771	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.320018	0.319392	1.855675	20.001134	16
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	k_get_rows_float_vec<float>	24	24	0.289074	0.288927	1.676238	12.044732	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	ssm_conv	ssm_conv_f32<true,128,4>	24	24	0.280498	0.280064	1.62651	11.687411	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.261957	0.26224	1.518996	4.762847	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.22272	0.222208	1.291474	2.394834	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.19946	0.199168	1.156599	2.292642	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.177879	0.177632	1.031457	2.736593	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.107561	0.10752	0.623708	3.361272	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.099698	0.09968	0.578114	4.154083	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.089865	0.090048	0.521095	1.872185	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.082679	0.082879	0.479425	82.678714	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.082523	0.082495	0.478523	10.315393	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	k_get_rows_float<float,float>	26	26	0.05451	0.05424	0.316083	2.096527	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039415	0.039392	0.228553	1.642286	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.038958	0.038944	0.225902	2.434848	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	other	rope_multi<true,false,float,float>	16	16	0.036338	0.03632	0.210713	2.271143	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035429	0.03536	0.205438	35.428571	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	copy	k_set_rows<float,long,__half>	16	16	0.028923	0.028928	0.167717	1.807714	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_op_kernel<softplus,float>	24	24	0.027003	0.027007	0.156583	1.125137	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.025883	0.025888	0.150089	1.078476	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.022533	0.022528	0.130659	2.816571	
+p3-lead-kvwin-nokvu-nsys	suffix	9-32	long3q:7	7	26	26	label	quantize	quantize_q8_1	3	3	0.004891	0.004896	0.028364	1.630476	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	total			1304	1304	20.77368	20.770827	100	15.930736	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	MMQ		428	428	12.535363	12.527745	60.342525	29.288232	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	GDN		24	24	1.78201	1.782952	8.57821	74.250417	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	glu		111	111	0.539816	0.539952	2.598555	4.863203	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	FA		16	16	0.771893	0.773084	3.715727	48.243328	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	quantize		248	248	0.678351	0.677343	3.265436	2.735287	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	copy		122	122	1.096974	1.096639	5.280594	8.991588	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	rms_norm		153	153	0.585902	0.585711	2.820405	3.829425	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	ssm_conv		24	24	0.379231	0.379599	1.825537	15.801302	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	elementwise		159	159	0.60116	0.600848	2.893852	3.780877	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	MMVQ		3	3	1.756597	1.756925	8.455875	585.532167	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	class	other		16	16	0.046384	0.046416	0.223283	2.899	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	4.15757	4.155452	20.01364	67.057573	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	2.178517	2.176254	10.486908	70.274734	31
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	1.883317	1.882926	9.065879	78.471531	24
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	1.78201	1.782952	8.57821	74.250417	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.638453	1.638429	7.887156	1638.4525	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.172277	1.17278	5.643087	48.844865	24
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.161566	1.161901	5.591525	48.398562	24
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	0.67975	0.681773	3.272167	84.968688	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.626543	0.626432	3.016042	78.317875	8
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.591271	0.590208	2.846253	12.318156	48
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	concat_non_cont<unsigned int,0>	24	24	0.566583	0.566399	2.727408	23.607625	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.453408	0.453472	2.182607	8.243777	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.391712	0.392128	1.885617	48.964	8
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.380839	0.379903	1.833279	2.505523	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	0.379231	0.379599	1.825537	15.801302	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.372592	0.372592	1.793575	23.286969	16
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	elementwise	scale_f32<float>	48	48	0.319936	0.319968	1.540101	6.665328	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	k_get_rows_float_vec<float>	24	24	0.297439	0.297439	1.431808	12.393302	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.292552	0.292704	1.408281	3.145718	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.264271	0.264192	1.272145	4.065712	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.242176	0.242128	1.165782	2.783629	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.138359	0.138143	0.666033	4.323734	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.13512	0.134976	0.650438	2.815	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.130575	0.130607	0.62856	5.440625	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.092144	0.09216	0.44356	11.517969	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.08256	0.082672	0.397426	82.56	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	k_get_rows_float<float,float>	26	26	0.060616	0.060784	0.291792	2.331385	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.055936	0.055935	0.269263	3.495984	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	other	rope_multi<true,false,float,float>	16	16	0.046384	0.046416	0.223283	2.899	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039048	0.038928	0.187969	1.627	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035584	0.035504	0.171294	35.584	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	copy	k_set_rows<float,long,__half>	16	16	0.033976	0.033968	0.163553	2.1235	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.032112	0.032096	0.15458	4.014	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_op_kernel<softplus,float>	24	24	0.027656	0.027648	0.133129	1.152323	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.02664	0.026608	0.128239	1.11	
+p3-lead-kvwin-nokvu-nsys	suffix	33-64	long3q:4	4	43	43	label	quantize	quantize_q8_1	3	3	0.00496	0.004976	0.023876	1.653333	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	total			1295.2	1312	29.623478	30.944195	100	22.871741	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	MMQ		428	428	17.632684	18.163412	59.522668	41.197861	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	GDN		24	24	2.63738	3.01441	8.903008	109.890854	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	glu		111	111	1.039237	1.045199	3.508152	9.362492	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	FA		21.6	24	1.496544	1.327565	5.051885	69.284444	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	quantize		248	248	1.045154	1.046717	3.528126	4.214329	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	copy		122	122	1.754947	1.916285	5.924176	14.384811	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	rms_norm		153	153	0.857189	0.896702	2.893613	5.602541	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	ssm_conv		24	24	0.737173	0.757902	2.488476	30.715546	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	elementwise		144.6	159	0.594121	0.690928	2.005574	4.108719	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	MMVQ		3	3	1.754909	1.753724	5.924047	584.969633	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	class	other		16	16	0.074141	0.076032	0.250277	4.633794	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	5.935999	6.119732	20.038156	95.741915	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	3.146132	3.257402	10.6204	101.488129	31
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	2.507563	2.58054	8.464784	104.481808	24
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	GDN	gated_delta_net_cuda<128,false,false,4>	16.8	24	2.184124	3.01441	7.372949	130.007381	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.637655	1.636413	5.528232	1637.6547	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.57904	1.627565	5.330368	65.793346	24
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.546887	1.589133	5.221827	64.453617	24
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	1.329815	1.199597	4.489057	166.226863	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.037262	1.045007	3.501487	21.609627	48
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	concat_non_cont<unsigned int,0>	24	24	0.988801	1.117502	3.337898	41.200058	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.927368	0.934926	3.130516	16.861233	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.833441	0.857134	2.813448	104.180138	8
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	0.737173	0.757902	2.488476	30.715546	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.541074	0.542639	1.826505	3.5597	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.525183	0.541632	1.772862	32.823963	16
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.521177	0.535424	1.759337	65.147087	8
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.49917	0.499118	1.68505	5.367423	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	GDN	gdn_single<16,128,1>	7.2	0	0.453257	0	1.530058	62.952292	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	k_get_rows_float_vec<float>	24	24	0.410745	0.411952	1.386552	17.114367	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.342672	0.346608	1.156757	3.938756	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.337116	0.357664	1.138003	5.186403	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.240598	0.256176	0.812186	7.518678	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.228307	0.245167	0.770695	4.756392	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	elementwise	scale_f32<float>	33.6	48	0.212566	0.302751	0.717559	6.326366	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.211862	0.212047	0.715182	8.827579	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	5.6	8	0.082697	0.113102	0.279161	14.767375	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.081766	0.08136	0.276018	81.7662	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.079904	0.08104	0.269732	4.993994	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	FA	flash_attn_stream_k_fixup_general<256,16,4>	2.4	0	0.075078	0	0.253442	31.282625	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	other	rope_multi<true,false,float,float>	16	16	0.074141	0.076032	0.250277	4.633794	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	k_get_rows_float<float,float>	26	26	0.068323	0.06472	0.230638	2.627808	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.059082	0.056688	0.199442	7.3852	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	copy	k_set_rows<float,long,__half>	16	16	0.04648	0.047152	0.156903	2.905	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.038883	0.0388	0.131258	1.620129	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035488	0.035504	0.119797	35.488	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_op_kernel<softplus,float>	24	24	0.026915	0.0268	0.090858	1.121467	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.025872	0.02576	0.087336	1.078	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	FA	flash_attn_mask_to_KV_max<16>	5.6	8	0.008953	0.012688	0.030224	1.598839	
+p3-lead-kvwin-nokvu-nsys	suffix	65-128	long3q:10	10	73	94	label	quantize	quantize_q8_1	3	3	0.004909	0.004896	0.016571	1.636267	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	total			1312	1312	45.1343	45.062674	100	34.401143	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	MMQ		428	428	28.064218	28.095476	62.179358	65.570602	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	GDN		24	24	4.34572	4.350843	9.628421	181.071681	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	glu		111	111	1.630599	1.629853	3.612772	14.690084	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	FA		24	24	1.873405	1.881661	4.150734	78.058528	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	quantize		248	248	1.528915	1.529215	3.387478	6.164978	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	copy		122	122	2.687411	2.692765	5.954254	22.027956	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	rms_norm		153	153	1.177363	1.179226	2.608576	7.695181	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	ssm_conv		24	24	1.188072	1.188347	2.632303	49.502986	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	elementwise		159	159	0.784585	0.785023	1.738335	4.934499	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	MMVQ		3	3	1.755421	1.754589	3.889328	585.140333	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	class	other		16	16	0.098592	0.098816	0.218441	6.161979	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	10.371277	10.387597	22.978704	167.278661	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	5.20907	5.213468	11.541267	168.034516	31
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	4.34572	4.350843	9.628421	181.071681	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	4.133378	4.134647	9.157954	172.224097	24
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	2.339409	2.340156	5.183218	97.475389	24
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	2.131444	2.134464	4.722448	88.810153	24
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	1.735272	1.743357	3.844685	216.908958	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	concat_non_cont<unsigned int,0>	24	24	1.657022	1.660544	3.671315	69.042597	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.638258	1.638237	3.629741	1638.258333	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_gated_op_kernel<silu,float>	55	55	1.444243	1.444191	3.199878	26.258958	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	1.379378	1.380252	3.056164	172.422292	8
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	1.188072	1.188347	2.632303	49.502986	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.143709	1.146526	2.534014	23.827278	48
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.78049	0.780479	1.729261	5.1348	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.743454	0.743807	1.647205	7.994133	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.712744	0.712286	1.579163	89.093042	8
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.643807	0.644383	1.426426	40.237958	16
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	k_get_rows_float_vec<float>	24	24	0.537621	0.537632	1.191158	22.400875	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.45233	0.453086	1.002186	6.958918	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.451114	0.450719	0.999493	5.185218	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.355626	0.356063	0.787929	11.113323	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.30913	0.308638	0.684911	6.440201	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.296725	0.296032	0.657426	12.363528	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	elementwise	scale_f32<float>	48	48	0.294261	0.294623	0.651967	6.130431	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.132587	0.13264	0.29376	16.573333	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.12512	0.125152	0.277216	15.639958	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.119179	0.119232	0.264053	7.448667	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	other	rope_multi<true,false,float,float>	16	16	0.098592	0.098816	0.218441	6.161979	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.081675	0.081344	0.180959	81.674667	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	k_get_rows_float<float,float>	26	26	0.080362	0.080128	0.178052	3.090859	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	copy	k_set_rows<float,long,__half>	16	16	0.056779	0.0568	0.125799	3.548667	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039211	0.039296	0.086876	1.633778	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035488	0.03552	0.078628	35.488	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_op_kernel<softplus,float>	24	24	0.027434	0.027456	0.060784	1.143097	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.026336	0.026272	0.05835	1.097319	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	FA	flash_attn_mask_to_KV_max<16>	8	8	0.013013	0.01296	0.028832	1.626667	
+p3-lead-kvwin-nokvu-nsys	suffix	129-256	long3q:3	3	129	129	label	quantize	quantize_q8_1	3	3	0.004971	0.00496	0.011013	1.656889	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	total			1170	1170	410.798964	406.739617	100	351.110226	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	MMQ		309	309	262.702246	262.944755	63.949101	850.169082	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	GDN		24	24	32.017455	32.0386	7.793947	1334.060637	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	glu		111	111	24.838212	24.830248	6.046318	223.76768	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	FA		16	16	13.279621	8.963984	3.232633	829.976337	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	quantize		245	245	23.006503	23.001656	5.600429	93.904094	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	copy		116	116	16.517259	16.492738	4.020765	142.390166	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	rms_norm		151	151	16.583849	16.583714	4.036974	109.826812	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	ssm_conv		24	24	10.766187	10.766604	2.620792	448.591135	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	elementwise		158	158	9.904838	9.906764	2.411116	62.688846	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	class	other		16	16	1.182793	1.180654	0.287925	73.924544	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	107.526529	107.62251	26.174976	1734.298859	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	53.97225	54.03301	13.138361	1741.040339	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	37.159987	37.193321	9.045784	1548.33279	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	GDN	gdn_single<16,128,1>	24	24	32.017455	32.0386	7.793947	1334.060637	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	glu	unary_gated_op_kernel<silu,float>	55	55	22.788557	22.779972	5.547375	414.337408	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	19.597816	19.609657	4.770659	816.575673	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	19.318773	19.335189	4.702732	804.948892	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	13.052532	8.829296	3.177353	1631.566525	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	copy	concat_non_cont<unsigned int,0>	24	24	12.856805	12.875639	3.129707	535.700208	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	12.422564	12.441751	3.024001	1552.820556	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	quantize	quantize_mmq_q8_1<D4>	152	152	11.529993	11.529117	2.806724	75.855214	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	quantize	quantize_mmq_q8_1<DS4>	93	93	11.47651	11.473709	2.793705	123.403337	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	10.766187	10.766604	2.620792	448.591135	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	9.532379	9.53435	2.320449	110.841617	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	6.921701	6.924338	1.684936	109.868266	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	6.551953	6.558162	1.594929	818.994138	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	4.029139	4.023993	0.980805	83.940386	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	3.963595	3.962267	0.96485	165.149783	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	3.71797	3.722472	0.905058	232.373144	16
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	3.025863	3.028857	0.73658	94.558225	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	2.434402	2.435739	0.592602	50.716712	48
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	1.96018	1.955788	0.477163	245.022494	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	1.669415	1.666813	0.406382	104.338409	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	other	rope_multi<true,false,float,float>	12	12	1.008248	1.00659	0.245436	84.020629	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	copy	k_set_rows<float,long,__half>	12	12	0.442115	0.441824	0.107623	36.842879	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	elementwise	scale_f32<float>	48	48	0.324427	0.324448	0.078975	6.758889	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	FA	flash_attn_mask_to_KV_max<16>	8	8	0.227089	0.130384	0.05528	28.38615	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	other	rope_multi<true,false,float,__half>	4	4	0.174545	0.173487	0.042489	43.636287	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	copy	k_get_rows_float_vec<float>	24	24	0.13928	0.139504	0.033905	5.803327	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	copy	k_get_rows_float<float,float>	24	24	0.053197	0.053232	0.01295	2.216525	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.048032	0.048064	0.011692	2.001331	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.047646	0.047664	0.011598	1.98526	
+ALL	prefix-large	2048	long3q:20	20	2048	2048	label	glu	unary_op_kernel<softplus,float>	24	24	0.041829	0.041968	0.010182	1.742867	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	total			1177	1177	213.641588	213.307861	100	181.513669	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	MMQ		372	372	136.473756	136.445157	63.87977	366.864935	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	GDN		24	24	14.817972	14.817413	6.935902	617.4155	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	glu		111	111	11.356868	11.34777	5.315851	102.314128	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	FA		8	8	14.45454	14.087893	6.765789	1806.8175	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	quantize		245	245	10.792964	10.79043	5.051902	44.052914	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	copy		116	116	7.747994	7.75165	3.626632	66.793052	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	rms_norm		151	151	7.70657	7.707489	3.607242	51.036886	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	ssm_conv		24	24	5.267565	5.269718	2.465609	219.481896	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	elementwise		110	110	4.462192	4.461098	2.088635	40.565382	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	class	other		16	16	0.561167	0.561711	0.262667	35.072937	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	55.170417	55.176233	25.823819	889.845435	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	27.147278	27.146927	12.706926	875.718653	31
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	19.471772	19.4707	9.114224	811.323844	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	GDN	gdn_single<16,128,1>	24	24	14.817972	14.817413	6.935902	617.4155	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	14.45454	14.087893	6.765789	1806.8175	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	10.73818	10.736829	5.026259	447.424177	24
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	glu	unary_gated_op_kernel<silu,float>	55	55	10.39003	10.380509	4.863299	188.909632	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	9.916317	9.919965	4.641567	413.179896	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	6.498644	6.498706	3.041844	812.330469	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	copy	concat_non_cont<unsigned int,0>	24	24	5.73491	5.728471	2.68436	238.954594	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	quantize	quantize_mmq_q8_1<D4>	152	152	5.469342	5.466214	2.560055	35.982513	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	quantize	quantize_mmq_q8_1<DS4>	93	93	5.323622	5.324216	2.491847	57.243247	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	5.267565	5.269718	2.465609	219.481896	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	4.417368	4.416298	2.067654	51.364744	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	3.581017	3.579097	1.67618	447.627125	8
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	3.236266	3.236667	1.514811	51.369298	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	2.08742	2.088989	0.977066	130.463766	16
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	1.885925	1.88662	0.882752	39.290094	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.86271	1.864206	0.871885	38.806448	48
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	1.823581	1.825789	0.85357	75.982542	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	1.449293	1.447389	0.678376	45.290398	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.897479	0.897151	0.420086	112.184844	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.760798	0.760863	0.35611	47.549906	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	other	rope_multi<true,false,float,float>	12	12	0.474375	0.472639	0.222043	39.531271	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	copy	k_get_rows_float_vec<float>	24	24	0.279799	0.279583	0.130967	11.658312	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	copy	k_set_rows<float,long,__half>	12	12	0.213375	0.212191	0.099875	17.781292	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	other	rope_multi<true,false,float,__half>	4	4	0.086792	0.085599	0.040625	21.697938	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	copy	k_get_rows_float<float,float>	24	24	0.070616	0.070656	0.033053	2.942333	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.044824	0.044848	0.020981	1.867667	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.037896	0.03792	0.017738	1.579	
+ALL	prefix-small	257-1024	long3q:4	4	909	948	label	glu	unary_op_kernel<softplus,float>	24	24	0.031464	0.031392	0.014727	1.31099	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	total			1159.375	1181	268.570239	259.542353	100	231.65088	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	MMQ		346.375	372	170.429693	166.738407	63.458145	492.038088	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	GDN		24	24	19.500777	18.768524	7.26096	812.53238	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	glu		111	111	14.959911	14.317248	5.570204	134.773976	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	FA		16	16	15.621388	12.621498	5.8165	976.336777	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	quantize		245	245	14.096895	13.5216	5.248867	57.538346	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	copy		116	116	10.369027	10.15402	3.860825	89.388162	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	rms_norm		151	151	10.09119	9.681355	3.757375	66.829073	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	ssm_conv		24	24	6.937193	6.647344	2.583009	289.049724	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	elementwise		110	110	5.836429	5.614779	2.173148	53.058447	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	class	other		16	16	0.727735	0.73064	0.270966	45.483434	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	68.268688	66.532156	25.419305	1101.107865	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	34.536637	33.707687	12.859443	1114.085048	19.375
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	24.522904	23.885211	9.130909	1021.787656	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	GDN	gdn_single<16,128,1>	24	24	19.500777	18.768524	7.26096	812.53238	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	15.521023	12.545994	5.77913	1940.12782	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	glu	unary_gated_op_kernel<silu,float>	55	55	13.705868	13.116677	5.103271	249.197605	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	13.101922	13.083924	4.878397	545.913427	15
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	12.908871	12.637875	4.806516	537.869628	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	8.172771	7.963183	3.043067	1021.59643	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	copy	concat_non_cont<unsigned int,0>	24	24	7.872626	7.696206	2.93131	328.026073	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	quantize	quantize_mmq_q8_1<D4>	152	152	7.096604	6.808644	2.642364	46.688185	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	quantize	quantize_mmq_q8_1<DS4>	93	93	7.000291	6.715713	2.606503	75.271942	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	6.937193	6.647344	2.583009	289.049724	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	86	86	5.790873	5.569387	2.156186	67.335734	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	4.367175	4.360823	1.626083	545.896898	5
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	63	63	4.224181	4.053717	1.57284	67.050498	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	2.499023	2.488011	0.930491	156.188922	14
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	2.456186	2.358859	0.914541	51.17054	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	2.400589	2.299483	0.89384	100.024526	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	2.051702	2.044331	0.763935	42.743798	48
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	1.872568	1.807691	0.697236	58.517754	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	1.182173	1.129676	0.440173	147.77168	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	1.010234	0.972062	0.376153	63.139629	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	other	rope_multi<true,false,float,float>	12	12	0.617195	0.634224	0.229808	51.432932	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	copy	k_get_rows_float_vec<float>	24	24	0.278649	0.278591	0.103753	11.610393	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	copy	k_set_rows<float,long,__half>	12	12	0.274728	0.276175	0.102293	22.893964	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	other	rope_multi<true,false,float,__half>	4	4	0.11054	0.10408	0.041159	27.634938	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	FA	flash_attn_mask_to_KV_max<16>	8	8	0.100366	0.075504	0.03737	12.545734	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	copy	k_get_rows_float<float,float>	24	24	0.070456	0.070448	0.026234	2.935664	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.045556	0.045504	0.016962	1.898167	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.038928	0.038848	0.014494	1.621992	
+ALL	prefix-small	1025-2047	long3q:16	16	1147	1421	label	glu	unary_op_kernel<softplus,float>	24	24	0.032942	0.032784	0.012266	1.372578	
+ALL	suffix	N<=8	long3q:12	12	4	8	total			1071	1069	14.010056	13.995408	100	13.081285	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	GDN		24	24	0.395791	0.394655	2.825051	16.491302	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	glu		111	111	0.21104	0.21112	1.506345	1.901259	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	FA		18	16	0.526663	0.590576	3.75918	29.259069	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	quantize		248	248	0.444284	0.444767	3.171182	1.791469	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	copy		118	118	1.29579	1.294078	9.249	10.981272	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	rms_norm		153	153	0.342503	0.342048	2.444695	2.238582	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	ssm_conv		24	24	0.08712	0.087632	0.621837	3.62999	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	elementwise		111	111	0.229221	0.228832	1.636119	2.065056	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	MMVQ		248	248	10.447547	10.434745	74.571773	42.127206	
+ALL	suffix	N<=8	long3q:12	12	4	8	class	other		16	16	0.030096	0.030176	0.214817	1.881	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ ffn_up|ffn_gate Q4_0 K=2560	62	62	3.133732	3.131723	22.367735	50.544067	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.639607	1.63886	11.703076	1639.607417	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ attn_qkv Q8_0 K=2560	24	24	1.483328	1.481774	10.587595	61.805333	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ ffn_down Q4_0 K=9216	31	31	1.347237	1.343341	9.616217	43.459272	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ attn_gate(z) Q8_0 K=2560	24	24	0.840727	0.840398	6.00088	35.030274	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ ssm_out Q8_0 K=4096	24	24	0.790771	0.789551	5.644314	32.948813	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	copy	concat_non_cont<unsigned int,0>	24	24	0.768375	0.765999	5.484452	32.015618	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ attn_q Q8_0 K=2560	8	8	0.491527	0.490431	3.508388	61.440896	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	quantize	quantize_q8_1	248	248	0.444284	0.444767	3.171182	1.791469	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	0.395791	0.394655	2.825051	16.491302	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	FA	flash_attn_ext_f16<256,256,4,4>	6	8	0.356042	0.334576	2.541333	59.340361	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	copy	k_get_rows_float_vec<float>	24	24	0.349175	0.349519	2.49232	14.548976	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ attn_output Q8_0 K=4096	8	8	0.276456	0.275104	1.973265	34.556937	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.18952	0.189168	1.352742	2.17839	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.16997	0.170112	1.213201	2.614924	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ attn_k|attn_v Q8_0 K=2560	16	16	0.164141	0.164224	1.171591	10.258786	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.163717	0.163199	1.168568	3.410773	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.148683	0.148608	1.061256	2.70332	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	FA	flash_attn_ext_f16<256,256,8,4>	2	0	0.135832	0	0.96953	67.915875	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.099258	0.099216	0.70848	3.101828	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	ssm_conv	ssm_conv_f32<true,128,4>	24	24	0.08712	0.087632	0.621837	3.62999	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.080736	0.081136	0.576269	80.735667	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.077405	0.077632	0.552498	1.612609	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.059744	0.059584	0.426435	2.489323	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	copy	k_get_rows_float<float,float>	26	26	0.059395	0.059552	0.423943	2.28441	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039701	0.039664	0.283377	1.654219	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035568	0.035552	0.253874	35.567917	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.035384	0.035376	0.252561	2.2115	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	glu	unary_op_kernel<softplus,float>	24	24	0.026115	0.026064	0.186399	1.088108	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.02484	0.024848	0.177301	1.034997	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	other	rope_multi<true,false,float,float>	12	12	0.022752	0.022528	0.162398	1.896	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	copy	k_set_rows<float,long,__half>	12	12	0.019587	0.019424	0.139804	1.632222	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	FA	flash_attn_stream_k_fixup_general<256,4,4>	2	0	0.012883	0	0.091953	6.441333	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.011403	0.011392	0.081389	1.425333	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	FA	flash_attn_stream_k_fixup_uniform<256,4,4>	4	4	0.009627	0.009472	0.068713	2.406667	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	FA	flash_attn_stream_k_fixup_uniform<256,8,4>	2	0	0.009528	0	0.068008	4.764	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	other	rope_multi<true,false,float,__half>	4	4	0.007344	0.007184	0.052419	1.836	
+ALL	suffix	N<=8	long3q:12	12	4	8	label	FA	flash_attn_mask_to_KV_max<4>	2	0	0.002752	0	0.019643	1.376	
+ALL	suffix	9-32	long3q:14	14	26	26	total			1252	1252	17.38633	17.310929	100	13.886845	
+ALL	suffix	9-32	long3q:14	14	26	26	class	MMQ		428	428	10.945549	10.935337	62.954913	25.573712	
+ALL	suffix	9-32	long3q:14	14	26	26	class	GDN		24	24	1.101395	1.101951	6.334832	45.891449	
+ALL	suffix	9-32	long3q:14	14	26	26	class	glu		111	111	0.339595	0.339664	1.95323	3.059415	
+ALL	suffix	9-32	long3q:14	14	26	26	class	FA		16	16	0.717923	0.620815	4.12924	44.870201	
+ALL	suffix	9-32	long3q:14	14	26	26	class	quantize		248	248	0.556497	0.557264	3.200775	2.243941	
+ALL	suffix	9-32	long3q:14	14	26	26	class	copy		118	118	1.002766	1.004798	5.767556	8.498019	
+ALL	suffix	9-32	long3q:14	14	26	26	class	rms_norm		153	153	0.407795	0.408176	2.345495	2.66533	
+ALL	suffix	9-32	long3q:14	14	26	26	class	ssm_conv		24	24	0.282313	0.282784	1.623762	11.763024	
+ALL	suffix	9-32	long3q:14	14	26	26	class	elementwise		111	111	0.238936	0.23848	1.374278	2.15258	
+ALL	suffix	9-32	long3q:14	14	26	26	class	MMVQ		3	3	1.75591	1.75486	10.099369	585.303214	
+ALL	suffix	9-32	long3q:14	14	26	26	class	other		16	16	0.03765	0.037728	0.216551	2.353143	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	3.457059	3.453069	19.883775	55.75901	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	1.984288	1.983564	11.412922	64.009302	31
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	1.705275	1.705116	9.808138	71.053137	24
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.63801	1.637004	9.421255	1638.010429	
+ALL	suffix	9-32	long3q:14	14	26	26	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	1.101395	1.101951	6.334832	45.891449	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.059964	1.059727	6.09654	44.165188	24
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.048803	1.048574	6.032341	43.70011	24
+ALL	suffix	9-32	long3q:14	14	26	26	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	0.636161	0.539791	3.658974	79.520152	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.568412	0.568477	3.269305	71.051527	8
+ALL	suffix	9-32	long3q:14	14	26	26	label	copy	concat_non_cont<unsigned int,0>	24	24	0.529064	0.527728	3.04299	22.044342	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.451942	0.452736	2.599412	9.415466	48
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.349533	0.349376	2.010391	43.691661	8
+ALL	suffix	9-32	long3q:14	14	26	26	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.327947	0.328431	1.886234	2.157545	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.320272	0.319744	1.842089	20.016978	16
+ALL	suffix	9-32	long3q:14	14	26	26	label	copy	k_get_rows_float_vec<float>	24	24	0.288578	0.288335	1.659797	12.024074	
+ALL	suffix	9-32	long3q:14	14	26	26	label	ssm_conv	ssm_conv_f32<true,128,4>	24	24	0.282313	0.282784	1.623762	11.763024	
+ALL	suffix	9-32	long3q:14	14	26	26	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.263707	0.26384	1.51675	4.794675	
+ALL	suffix	9-32	long3q:14	14	26	26	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.223652	0.223472	1.286368	2.404863	
+ALL	suffix	9-32	long3q:14	14	26	26	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.199455	0.19904	1.147196	2.292589	
+ALL	suffix	9-32	long3q:14	14	26	26	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.178381	0.177791	1.025986	2.744329	
+ALL	suffix	9-32	long3q:14	14	26	26	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.108032	0.107936	0.62136	3.375991	
+ALL	suffix	9-32	long3q:14	14	26	26	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.099145	0.099168	0.570246	4.131039	
+ALL	suffix	9-32	long3q:14	14	26	26	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.0916	0.090831	0.526848	1.908324	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.082434	0.082864	0.474132	82.434143	
+ALL	suffix	9-32	long3q:14	14	26	26	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.081762	0.08152	0.470266	10.22025	
+ALL	suffix	9-32	long3q:14	14	26	26	label	copy	k_get_rows_float<float,float>	26	26	0.054965	0.055104	0.316137	2.114022	
+ALL	suffix	9-32	long3q:14	14	26	26	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039481	0.039504	0.227082	1.645048	
+ALL	suffix	9-32	long3q:14	14	26	26	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.03867	0.038656	0.222414	2.416848	
+ALL	suffix	9-32	long3q:14	14	26	26	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035465	0.035456	0.203983	35.465071	
+ALL	suffix	9-32	long3q:14	14	26	26	label	other	rope_multi<true,false,float,float>	12	12	0.029685	0.02968	0.170735	2.473714	
+ALL	suffix	9-32	long3q:14	14	26	26	label	glu	unary_op_kernel<softplus,float>	24	24	0.027113	0.027088	0.155945	1.129711	
+ALL	suffix	9-32	long3q:14	14	26	26	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.025995	0.025984	0.149516	1.083143	
+ALL	suffix	9-32	long3q:14	14	26	26	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.022779	0.022768	0.131019	2.847429	
+ALL	suffix	9-32	long3q:14	14	26	26	label	copy	k_set_rows<float,long,__half>	12	12	0.022128	0.022224	0.127272	1.844	
+ALL	suffix	9-32	long3q:14	14	26	26	label	other	rope_multi<true,false,float,__half>	4	4	0.007966	0.007872	0.045816	1.991429	
+ALL	suffix	9-32	long3q:14	14	26	26	label	quantize	quantize_q8_1	3	3	0.004898	0.004896	0.028173	1.632762	
+ALL	suffix	33-64	long3q:8	8	43	43	total			1300	1300	21.012081	20.865235	100	16.163139	
+ALL	suffix	33-64	long3q:8	8	43	43	class	MMQ		428	428	12.571155	12.579851	59.828225	29.371857	
+ALL	suffix	33-64	long3q:8	8	43	43	class	GDN		24	24	1.780563	1.778638	8.473998	74.190135	
+ALL	suffix	33-64	long3q:8	8	43	43	class	glu		111	111	0.543432	0.543759	2.586282	4.89578	
+ALL	suffix	33-64	long3q:8	8	43	43	class	FA		16	16	0.971065	0.810667	4.621459	60.691547	
+ALL	suffix	33-64	long3q:8	8	43	43	class	quantize		248	248	0.679475	0.678895	3.233736	2.73982	
+ALL	suffix	33-64	long3q:8	8	43	43	class	copy		118	118	1.090845	1.090076	5.191515	9.244452	
+ALL	suffix	33-64	long3q:8	8	43	43	class	rms_norm		153	153	0.586747	0.586863	2.792426	3.834946	
+ALL	suffix	33-64	long3q:8	8	43	43	class	ssm_conv		24	24	0.381431	0.381488	1.815293	15.892953	
+ALL	suffix	33-64	long3q:8	8	43	43	class	elementwise		159	159	0.601672	0.601519	2.863455	3.784097	
+ALL	suffix	33-64	long3q:8	8	43	43	class	MMVQ		3	3	1.757472	1.75734	8.364104	585.824125	
+ALL	suffix	33-64	long3q:8	8	43	43	class	other		16	16	0.048224	0.048176	0.229506	3.014	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	4.170372	4.175308	19.847497	67.264065	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	2.181816	2.18113	10.383626	70.381157	31
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	1.889552	1.889532	8.992694	78.731339	24
+ALL	suffix	33-64	long3q:8	8	43	43	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	1.780563	1.778638	8.473998	74.190135	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.639876	1.639085	7.804446	1639.8765	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.177893	1.179199	5.605791	49.078885	24
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.165469	1.163614	5.546662	48.561214	24
+ALL	suffix	33-64	long3q:8	8	43	43	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	0.879605	0.718587	4.186186	109.950609	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.627883	0.627167	2.9882	78.485375	8
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	0.592243	0.591983	2.818583	12.338393	48
+ALL	suffix	33-64	long3q:8	8	43	43	label	copy	concat_non_cont<unsigned int,0>	24	24	0.567919	0.567823	2.702822	23.663297	
+ALL	suffix	33-64	long3q:8	8	43	43	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.456772	0.456975	2.173853	8.304941	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.391452	0.391854	1.862983	48.931438	8
+ALL	suffix	33-64	long3q:8	8	43	43	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.381739	0.381344	1.816761	2.511443	
+ALL	suffix	33-64	long3q:8	8	43	43	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	0.381431	0.381488	1.815293	15.892953	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.374475	0.375408	1.78219	23.404703	16
+ALL	suffix	33-64	long3q:8	8	43	43	label	elementwise	scale_f32<float>	48	48	0.31994	0.319968	1.522647	6.665414	
+ALL	suffix	33-64	long3q:8	8	43	43	label	copy	k_get_rows_float_vec<float>	24	24	0.297607	0.297615	1.416361	12.400286	
+ALL	suffix	33-64	long3q:8	8	43	43	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.292768	0.292848	1.393331	3.148042	
+ALL	suffix	33-64	long3q:8	8	43	43	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.264092	0.26368	1.256856	4.062948	
+ALL	suffix	33-64	long3q:8	8	43	43	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.242516	0.242704	1.154172	2.787536	
+ALL	suffix	33-64	long3q:8	8	43	43	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.138935	0.138846	0.661217	4.34173	
+ALL	suffix	33-64	long3q:8	8	43	43	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.135936	0.136352	0.646942	2.832	
+ALL	suffix	33-64	long3q:8	8	43	43	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.131003	0.131103	0.623466	5.458469	
+ALL	suffix	33-64	long3q:8	8	43	43	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.09146	0.091408	0.435273	11.432484	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.082004	0.081568	0.390271	82.004	
+ALL	suffix	33-64	long3q:8	8	43	43	label	copy	k_get_rows_float<float,float>	26	26	0.0605	0.06048	0.28793	2.326923	
+ALL	suffix	33-64	long3q:8	8	43	43	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.055716	0.055744	0.265161	3.482242	
+ALL	suffix	33-64	long3q:8	8	43	43	label	other	rope_multi<true,false,float,float>	12	12	0.039292	0.039152	0.186997	3.274333	
+ALL	suffix	33-64	long3q:8	8	43	43	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039216	0.039232	0.186635	1.634	
+ALL	suffix	33-64	long3q:8	8	43	43	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035592	0.035568	0.169388	35.591875	
+ALL	suffix	33-64	long3q:8	8	43	43	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.03214	0.032064	0.15296	4.0175	
+ALL	suffix	33-64	long3q:8	8	43	43	label	glu	unary_op_kernel<softplus,float>	24	24	0.02778	0.027776	0.132209	1.157495	
+ALL	suffix	33-64	long3q:8	8	43	43	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.02674	0.026752	0.12726	1.114167	
+ALL	suffix	33-64	long3q:8	8	43	43	label	copy	k_set_rows<float,long,__half>	12	12	0.025884	0.025968	0.123186	2.157	
+ALL	suffix	33-64	long3q:8	8	43	43	label	other	rope_multi<true,false,float,__half>	4	4	0.008932	0.008816	0.042509	2.233	
+ALL	suffix	33-64	long3q:8	8	43	43	label	quantize	quantize_q8_1	3	3	0.004968	0.00496	0.023644	1.656	
+ALL	suffix	65-128	long3q:20	20	73	94	total			1288.4	1296	30.063032	30.998604	100	23.333617	
+ALL	suffix	65-128	long3q:20	20	73	94	class	MMQ		428	428	17.670227	18.202011	58.777262	41.285578	
+ALL	suffix	65-128	long3q:20	20	73	94	class	GDN		24	24	2.644488	3.021724	8.796479	110.187017	
+ALL	suffix	65-128	long3q:20	20	73	94	class	glu		111	111	1.047216	1.063438	3.483399	9.434374	
+ALL	suffix	65-128	long3q:20	20	73	94	class	FA		18.8	16	1.882277	1.897053	6.261102	100.121128	
+ALL	suffix	65-128	long3q:20	20	73	94	class	quantize		248	248	1.050774	1.058542	3.495237	4.236993	
+ALL	suffix	65-128	long3q:20	20	73	94	class	copy		118	118	1.739818	1.909134	5.787233	14.744218	
+ALL	suffix	65-128	long3q:20	20	73	94	class	rms_norm		153	153	0.861225	0.902351	2.864732	5.628925	
+ALL	suffix	65-128	long3q:20	20	73	94	class	ssm_conv		24	24	0.738349	0.761134	2.456003	30.764537	
+ALL	suffix	65-128	long3q:20	20	73	94	class	elementwise		144.6	159	0.595517	0.691679	1.980896	4.118377	
+ALL	suffix	65-128	long3q:20	20	73	94	class	MMVQ		3	3	1.755613	1.753932	5.839772	585.204183	
+ALL	suffix	65-128	long3q:20	20	73	94	class	other		16	16	0.077528	0.078095	0.257884	4.845494	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	5.949834	6.128965	19.791197	95.965063	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	3.154287	3.265836	10.492246	101.751203	31
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	2.511869	2.585323	8.355343	104.661229	24
+ALL	suffix	65-128	long3q:20	20	73	94	label	GDN	gated_delta_net_cuda<128,false,false,4>	16.8	24	2.191147	3.021724	7.28851	130.425417	
+ALL	suffix	65-128	long3q:20	20	73	94	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	1.722113	1.64675	5.72834	215.264094	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.63848	1.636765	5.450149	1638.47995	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	1.580288	1.629756	5.256583	65.845348	24
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	1.551309	1.594477	5.160187	64.637858	24
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.038925	1.045422	3.455823	21.644277	48
+ALL	suffix	65-128	long3q:20	20	73	94	label	copy	concat_non_cont<unsigned int,0>	24	24	0.983689	1.11427	3.27209	40.987063	
+ALL	suffix	65-128	long3q:20	20	73	94	label	glu	unary_gated_op_kernel<silu,float>	55	55	0.934644	0.950654	3.108949	16.993535	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	0.835534	0.858782	2.779273	104.441713	8
+ALL	suffix	65-128	long3q:20	20	73	94	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	0.738349	0.761134	2.456003	30.764537	
+ALL	suffix	65-128	long3q:20	20	73	94	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.545511	0.548863	1.814557	3.588888	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.525884	0.543295	1.749271	32.86775	16
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.522297	0.537135	1.737339	65.287081	8
+ALL	suffix	65-128	long3q:20	20	73	94	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.500342	0.504591	1.664308	5.380017	
+ALL	suffix	65-128	long3q:20	20	73	94	label	GDN	gdn_single<16,128,1>	7.2	0	0.453341	0	1.50797	62.964083	
+ALL	suffix	65-128	long3q:20	20	73	94	label	copy	k_get_rows_float_vec<float>	24	24	0.410958	0.412464	1.366987	17.12324	
+ALL	suffix	65-128	long3q:20	20	73	94	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.343723	0.347328	1.14334	3.950834	
+ALL	suffix	65-128	long3q:20	20	73	94	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.338121	0.358319	1.124706	5.201859	
+ALL	suffix	65-128	long3q:20	20	73	94	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.241124	0.255968	0.802062	7.535131	
+ALL	suffix	65-128	long3q:20	20	73	94	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.230208	0.247168	0.76575	4.795991	
+ALL	suffix	65-128	long3q:20	20	73	94	label	elementwise	scale_f32<float>	33.6	48	0.2128	0.303231	0.707845	6.333321	
+ALL	suffix	65-128	long3q:20	20	73	94	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.212385	0.214288	0.706466	8.849381	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.081643	0.08136	0.271573	81.64305	
+ALL	suffix	65-128	long3q:20	20	73	94	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	5.6	8	0.080622	0.112784	0.268177	14.396821	
+ALL	suffix	65-128	long3q:20	20	73	94	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.080512	0.08192	0.26781	5.031994	
+ALL	suffix	65-128	long3q:20	20	73	94	label	FA	flash_attn_stream_k_fixup_general<256,16,4>	2.4	0	0.075065	0	0.249694	31.277292	
+ALL	suffix	65-128	long3q:20	20	73	94	label	copy	k_get_rows_float<float,float>	26	26	0.068491	0.065472	0.227825	2.634271	
+ALL	suffix	65-128	long3q:20	20	73	94	label	other	rope_multi<true,false,float,float>	12	12	0.063531	0.062288	0.211326	5.294258	
+ALL	suffix	65-128	long3q:20	20	73	94	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.059573	0.058832	0.198159	7.446594	
+ALL	suffix	65-128	long3q:20	20	73	94	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.038995	0.038992	0.129711	1.624796	
+ALL	suffix	65-128	long3q:20	20	73	94	label	copy	k_set_rows<float,long,__half>	12	12	0.035555	0.03488	0.118269	2.962933	
+ALL	suffix	65-128	long3q:20	20	73	94	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.03549	0.035456	0.11805	35.48955	
+ALL	suffix	65-128	long3q:20	20	73	94	label	glu	unary_op_kernel<softplus,float>	24	24	0.027059	0.026992	0.090008	1.127465	
+ALL	suffix	65-128	long3q:20	20	73	94	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.025939	0.025872	0.086283	1.080798	
+ALL	suffix	65-128	long3q:20	20	73	94	label	other	rope_multi<true,false,float,__half>	4	4	0.013997	0.013376	0.046558	3.4992	
+ALL	suffix	65-128	long3q:20	20	73	94	label	quantize	quantize_q8_1	3	3	0.004922	0.004896	0.016371	1.640533	
+ALL	suffix	65-128	long3q:20	20	73	94	label	FA	flash_attn_mask_to_KV_max<16>	2.8	0	0.004477	0	0.014891	1.598839	
+ALL	suffix	129-256	long3q:6	6	129	129	total			1304	1304	45.816414	45.352469	100	35.135287	
+ALL	suffix	129-256	long3q:6	6	129	129	class	MMQ		428	428	28.178607	28.216791	61.503302	65.837868	
+ALL	suffix	129-256	long3q:6	6	129	129	class	GDN		24	24	4.365933	4.373159	9.52919	181.913882	
+ALL	suffix	129-256	long3q:6	6	129	129	class	glu		111	111	1.635255	1.635867	3.569146	14.732026	
+ALL	suffix	129-256	long3q:6	6	129	129	class	FA		20	20	2.398998	1.933005	5.23611	119.949883	
+ALL	suffix	129-256	long3q:6	6	129	129	class	quantize		248	248	1.536382	1.536045	3.353344	6.195088	
+ALL	suffix	129-256	long3q:6	6	129	129	class	copy		118	118	2.674887	2.670301	5.838272	22.668532	
+ALL	suffix	129-256	long3q:6	6	129	129	class	rms_norm		153	153	1.184441	1.185519	2.585189	7.741442	
+ALL	suffix	129-256	long3q:6	6	129	129	class	ssm_conv		24	24	1.193661	1.194157	2.605312	49.735861	
+ALL	suffix	129-256	long3q:6	6	129	129	class	elementwise		159	159	0.787364	0.788159	1.718519	4.951973	
+ALL	suffix	129-256	long3q:6	6	129	129	class	MMVQ		3	3	1.75637	1.755981	3.833495	585.456667	
+ALL	suffix	129-256	long3q:6	6	129	129	class	other		16	16	0.104517	0.104464	0.228122	6.532323	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ ffn_up|ffn_gate Q4_0 K=2560	62	62	10.416225	10.433995	22.734701	168.003626	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ ffn_down Q4_0 K=9216	31	31	5.230482	5.238598	11.416175	168.72522	31
+ALL	suffix	129-256	long3q:6	6	129	129	label	GDN	gated_delta_net_cuda<128,false,false,4>	24	24	4.365933	4.373159	9.52919	181.913882	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ attn_qkv Q8_0 K=2560	24	24	4.146408	4.148569	9.050049	172.767	24
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ attn_gate(z) Q8_0 K=2560	24	24	2.349964	2.352092	5.129087	97.91516	24
+ALL	suffix	129-256	long3q:6	6	129	129	label	FA	flash_attn_ext_f16<256,256,16,4>	8	8	2.268209	1.794733	4.950647	283.526125	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ ssm_out Q8_0 K=4096	24	24	2.139682	2.14222	4.67012	89.153403	24
+ALL	suffix	129-256	long3q:6	6	129	129	label	copy	concat_non_cont<unsigned int,0>	24	24	1.654093	1.651852	3.610264	68.920556	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMVQ	MMVQ output_head Q8_0 K=2560	1	1	1.639053	1.638989	3.577436	1639.052833	
+ALL	suffix	129-256	long3q:6	6	129	129	label	glu	unary_gated_op_kernel<silu,float>	55	55	1.449181	1.449899	3.163016	26.348739	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ attn_q Q8_0 K=2560	8	8	1.382632	1.384748	3.017765	172.828958	8
+ALL	suffix	129-256	long3q:6	6	129	129	label	ssm_conv	ssm_conv_long_token_f32<true,128,4,32>	24	24	1.193661	1.194157	2.605312	49.735861	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ ssm_beta|ssm_alpha Q8_0 K=2560	48	48	1.151341	1.152445	2.512945	23.986278	48
+ALL	suffix	129-256	long3q:6	6	129	129	label	quantize	quantize_mmq_q8_1<D4>	152	152	0.7865	0.785869	1.716634	5.174342	
+ALL	suffix	129-256	long3q:6	6	129	129	label	quantize	quantize_mmq_q8_1<DS4>	93	93	0.744922	0.744911	1.625884	8.009912	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ attn_output Q8_0 K=4096	8	8	0.71659	0.717982	1.564047	89.573792	8
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMQ	MMQ attn_k|attn_v Q8_0 K=2560	16	16	0.645284	0.645791	1.408412	40.33024	16
+ALL	suffix	129-256	long3q:6	6	129	129	label	copy	k_get_rows_float_vec<float>	24	24	0.539183	0.538542	1.176834	22.465965	
+ALL	suffix	129-256	long3q:6	6	129	129	label	rms_norm	rms_norm_f32<1024,1,true,true,false,false>	65	65	0.453791	0.454431	0.990455	6.981403	
+ALL	suffix	129-256	long3q:6	6	129	129	label	elementwise	k_bin_bcast<add,float,float,float,const float *>	87	87	0.453039	0.453631	0.988813	5.207343	
+ALL	suffix	129-256	long3q:6	6	129	129	label	copy	cpy_scalar<cpy_1_scalar<float,float>>	32	32	0.356976	0.357184	0.779144	11.155495	
+ALL	suffix	129-256	long3q:6	6	129	129	label	rms_norm	rms_norm_f32<32,1,true,false,false,true>	48	48	0.313455	0.313696	0.684155	6.530323	
+ALL	suffix	129-256	long3q:6	6	129	129	label	rms_norm	rms_norm_f32<32,1,true,true,false,false>	24	24	0.297951	0.298399	0.650316	12.414646	
+ALL	suffix	129-256	long3q:6	6	129	129	label	elementwise	scale_f32<float>	48	48	0.294901	0.29512	0.643658	6.143767	
+ALL	suffix	129-256	long3q:6	6	129	129	label	glu	unary_gated_op_kernel<sigmoid,float>	8	8	0.131952	0.13192	0.288001	16.493979	
+ALL	suffix	129-256	long3q:6	6	129	129	label	FA	flash_attn_stream_k_fixup_uniform<256,16,4>	8	8	0.124282	0.124703	0.271261	15.53525	
+ALL	suffix	129-256	long3q:6	6	129	129	label	rms_norm	rms_norm_f32<128,1,true,true,false,false>	16	16	0.119242	0.119312	0.260262	7.452656	
+ALL	suffix	129-256	long3q:6	6	129	129	label	other	rope_multi<true,false,float,float>	12	12	0.087226	0.087231	0.190383	7.268875	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMVQ	MMVQ ffn_gate+up(fused) Q4_0 K=2560 fused	1	1	0.081824	0.081664	0.178591	81.823833	
+ALL	suffix	129-256	long3q:6	6	129	129	label	copy	k_get_rows_float<float,float>	26	26	0.080816	0.08104	0.176391	3.108301	
+ALL	suffix	129-256	long3q:6	6	129	129	label	copy	k_set_rows<float,long,__half>	12	12	0.043819	0.043776	0.09564	3.651556	
+ALL	suffix	129-256	long3q:6	6	129	129	label	elementwise	k_bin_bcast<mul,float,float,float,const float *>	24	24	0.039424	0.039472	0.086048	1.642667	
+ALL	suffix	129-256	long3q:6	6	129	129	label	MMVQ	MMVQ ffn_down Q4_0 K=9216 fused	1	1	0.035493	0.035504	0.077469	35.493333	
+ALL	suffix	129-256	long3q:6	6	129	129	label	glu	unary_op_kernel<softplus,float>	24	24	0.027653	0.027728	0.060356	1.152215	
+ALL	suffix	129-256	long3q:6	6	129	129	label	glu	unary_op_kernel<sigmoid,float>	24	24	0.026469	0.02656	0.057772	1.102882	
+ALL	suffix	129-256	long3q:6	6	129	129	label	other	rope_multi<true,false,float,__half>	4	4	0.017291	0.017104	0.037739	4.322667	
+ALL	suffix	129-256	long3q:6	6	129	129	label	FA	flash_attn_mask_to_KV_max<16>	4	4	0.006507	0.006464	0.014202	1.626667	
+ALL	suffix	129-256	long3q:6	6	129	129	label	quantize	quantize_q8_1	3	3	0.00496	0.004944	0.010826	1.653333	

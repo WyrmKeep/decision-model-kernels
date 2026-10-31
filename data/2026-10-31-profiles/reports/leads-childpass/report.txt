@@ -1,0 +1,80 @@
+# Lead #30779: child slot decode passes (372 requests, 3 log(s))
+
+Clock check (context file INFERENCE: client and server use the same CLOCK_MONOTONIC): client send <= server request start and server request end <= client receive in 372 of 372 requests; client send -> server start median 0.14 ms, server end -> client receive median 0.32 ms.
+
+Slot selection of the parent task: {'LRU': 151, 'LCP': 221}. Requests without slot lines: 0.
+
+**Table 1: observed ubatches (model passes) against the census prediction for the observed slot placement**
+
+| request type | requests | census (unified split) exact (ubatch tokens, seqs, outputs) | sequential-split model exact | either model exact | neither | ubatches observed, mean | ubatches census, mean | requests with MORE ubatches than census | requests with FEWER |
+|---|---|---|---|---|---|---|---|---|---|
+| short1q | 89 | 89 | 89 | 89 | 0 | 1.00 | 1.00 | 0 | 0 |
+| short2q | 105 | 105 | 54 | 105 | 0 | 3.00 | 3.00 | 0 | 0 |
+| medium3q | 79 | 79 | 79 | 79 | 0 | 4.00 | 4.00 | 0 | 0 |
+| long3q | 99 | 99 | 99 | 99 | 0 | 5.00 | 5.00 | 0 | 0 |
+
+Source: DMK_TIMING ubatch lines (n_tokens, n_seqs, n_outputs) per request; census = census_lib.simulate_request with its default split (split_equal sequential = false, the split of --kv-unified: llama-memory-hybrid.cpp:83-90), sequential-split = the same flow with sequential = true (leadlib.simulate mode seq; the split of --no-kv-unified); placement from the slot lines (parent is_child = 0, children in task order); shared prefix = tokens of the ubatches without an output; suffix lengths from the case plan (census table cases-plan.tsv, ref variant) of the client JSON case, else every distinct plan tuple.
+
+**Table 1b: split model expected for the cache mode of each log, and how many requests it reproduces**
+
+| run | kv_unified in the log | expected split model | requests | reproduced by the expected model | reproduced by the unified split | reproduced by the sequential split |
+|---|---|---|---|---|---|---|
+| p3-dec-timing | true | unified | 348 | 348 | 348 | 297 |
+| p3-lead-kvwin-nokvu-timing | false | seq | 12 | 12 | 12 | 12 |
+| p3-lead-kvwin-timing | true | unified | 12 | 12 | 12 | 12 |
+
+Source: the `load_model: initializing ... kv_unified = '...'` line of each server log; expected = unified split for kv_unified = true, sequential split for false (src/llama-memory-hybrid.cpp:83-90: split_equal(n_ubatch, !unified); --no-kv-unified gives n_stream > 1, unified = false, sequential = true) [INFERENCE from source]; a log without the line is taken as unified.
+
+The two split models disagree in 51 requests: short2q: 51 unified-only / 0 sequential-only. Placements: (0, 2)
+
+**Table 2: llama_decode calls (DMK_TIMING decode lines) per request: observed, census model, fixed server (parents visited before children)**
+
+| request type | requests | decode calls observed, min-max | observed, mean | census, mean | fixed server, mean | requests observed = census | requests observed = fixed | requests with MORE decodes than fixed | requests whose (tokens, ubatches) per decode match the model |
+|---|---|---|---|---|---|---|---|---|---|
+| short1q | 89 | 1-1 | 1.00 | 1.00 | 1.00 | 89 | 89 | 0 | 89 |
+| short2q | 105 | 2-2 | 2.00 | 2.00 | 2.00 | 105 | 105 | 0 | 105 |
+| medium3q | 79 | 2-3 | 2.67 | 2.67 | 2.00 | 79 | 26 | 53 | 79 |
+| long3q | 99 | 3-4 | 3.67 | 3.67 | 3.00 | 99 | 33 | 66 | 99 |
+
+Source: decode lines per request; census prediction = number of update_slots iterations of simulate_request; fixed = simulate_request with the parent slot forced to the lowest id (all children in the parent's suffix batch).
+
+**Table 3: requests with a child slot id below the parent's (#30779 situation) and without**
+
+| request type | child below parent | requests | request total_us, mean (ms) | sd (ms) | request wait_us, mean (ms) | client wall, mean (ms) | floor max(weight, int8) of the observed passes, mean (ms) | serial roofline floor, mean (ms) | decode calls, mean | pass structures (census labels, count) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| short1q | no | 89 | 47.44 | 4.34 | 46.83 | 48.27 | 7.7 | 19.1 | 1.00 | F159 x15; F160 x14; F161 x11; F165 x10 |
+| short2q | no | 105 | 87.57 | 4.47 | 86.28 | 88.04 | 20.7 | 39.1 | 2.00 | P87+S2x51+S1x69 x17; P88+S2x51+S1x69 x16; P86+S2x51+S1x69 x15; P77+S2x51+S1x69 x9 |
+| medium3q | yes | 53 | 364.29 | 8.96 | 360.17 | 364.76 | 84.9 | 170.0 | 3.00 | P1288+S1x43+S2x47+S1x26 x9; P1290+S2x43+S1x4+S1x73 x6; P1288+S2x43+S1x4+S1x73 x5; P1289+S1x43+S2x47+S1x26 x5 |
+| medium3q | no | 26 | 370.39 | 11.86 | 366.32 | 370.87 | 84.5 | 170.9 | 2.00 | P1289+S3x43+S2x4+S1x26 x8; P1287+S3x43+S2x4+S1x26 x3; P1288+S3x43+S2x4+S1x26 x3; P1337+S3x43+S2x4+S1x26 x2 |
+| long3q | yes | 66 | 800.74 | 25.89 | 792.12 | 801.33 | 178.4 | 382.7 | 4.00 | P2048+P1173+S2x43+S1x4+S1x73 x7; P2048+P1174+S1x43+S2x47+S1x26 x7; P2048+P1172+S2x43+S1x4+S1x73 x6; P2048+P1171+S1x43+S2x47+S1x26 x5 |
+| long3q | no | 33 | 815.88 | 28.92 | 807.29 | 816.40 | 180.0 | 388.1 | 3.00 | P2048+P1172+S3x43+S2x4+S1x26 x6; P2048+P1173+S3x43+S2x4+S1x26 x6; P2048+P1174+S3x43+S2x4+S1x26 x5; P2048+P1378+S3x43+S2x4+S1x26 x4 |
+
+Source: request lines (total_us, wait_us), client JSON wall_ms when given, census pass_costs floors of the matching structure; placement and structure differ between the groups, so the difference of the means mixes the extra decode call with the different pass sizes: compare with the difference of the floors (same table).
+
+**Table 4: cost of the #30779 situation per request type (difference with - without)**
+
+| request type | requests with | requests without | request total_us difference (ms) | standard error of the difference (ms) | serial roofline floor difference (ms) | total_us difference minus floor difference (ms) |
+|---|---|---|---|---|---|---|
+| medium3q | 53 | 26 | -6.10 | 2.63 | -0.88 | -5.22 |
+| long3q | 66 | 33 | -15.14 | 5.96 | -5.41 | -9.73 |
+
+Source: Table 3 means; a value of the last column inside 2 standard errors of zero means the structure difference explains the wall difference.
+
+**Table 5: fixed ordering (parent slot forced to the lowest id) against the observed placement, placements with a child below the parent**
+
+| request type | slots (Q0, Q1, ...) | requests | observed passes | ubatches | decodes | fixed passes | ubatches | decodes | floor max(weight, int8) observed (ms) | floor fixed (ms) | serial roofline observed (ms) | serial roofline fixed (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| medium3q | (1, 2, 0) | 26 | P1308+S2x43+S1x4+S1x73 | 4 | 3 | P1308+S3x43+S2x4+S1x26 | 4 | 2 | 85.2 | 85.2 | 170.8 | 172.4 |
+| medium3q | (2, 0, 1) | 26 | P1290+S1x43+S2x47+S1x26 | 4 | 3 | P1290+S3x43+S2x4+S1x26 | 4 | 2 | 84.5 | 84.5 | 169.0 | 170.7 |
+| medium3q | (2, 1, 0) | 1 | P1337+S1x43+S2x47+S1x26 | 4 | 3 | P1337+S3x43+S2x4+S1x26 | 4 | 2 | 86.9 | 86.9 | 174.5 | 176.2 |
+| long3q | (1, 2, 0) | 32 | P2048+P1145+S2x43+S1x4+S1x73 | 5 | 4 | P2048+P1145+S3x43+S2x4+S1x26 | 5 | 3 | 177.5 | 177.5 | 380.7 | 382.3 |
+| long3q | (2, 0, 1) | 32 | P2048+P906+S1x43+S2x47+S1x26 | 5 | 4 | P2048+P906+S3x43+S2x4+S1x26 | 5 | 3 | 179.3 | 179.3 | 384.6 | 386.4 |
+| long3q | (2, 1, 0) | 2 | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 4 | P2048+P1174+S3x43+S2x4+S1x26 | 5 | 3 | 178.0 | 178.0 | 381.7 | 383.4 |
+
+Source: census_lib.simulate_request / pass_costs; P = prefix pass, S<n>x<t> = n sequences of t tokens, F = whole prompt in one pass.
+
+## Decisions
+
+Threshold: the counts are deterministic structure counts (no timing), so one request is evidence; the census matched 20 of 20 traced requests. 'More passes' = observed ubatches > census prediction (default split = unified) for the observed slot placement.
+does any request type get more passes (ubatches) than the census predicts: no  (0 of 372 requests have more ubatches than predicted; types: -; census (unified split) exact in 372, sequential-split model exact in 321, neither in 0 requests; the model expected for each log's cache mode: 372 of 372 requests)
+does #30779 add a decode call / change pass sizes: yes  (119 requests have a child slot below the parent; 119 of them issue more llama_decode calls than the fixed order (by type: {'medium3q': 53, 'long3q': 66}), 119 have different ubatch sizes than the fixed order (by type: {'medium3q': 53, 'long3q': 66}); ubatch COUNT differs from the fixed order in 0 of them)

@@ -1,0 +1,351 @@
+# Speed of light per kernel class
+
+Reports: p3-ncu-smoke-a.ncu-repz, p3-ncu-smoke-b.ncu-repz, p3-ncu-core-long-p0.ncu-repz, p3-ncu-core-long-p1.ncu-repz, p3-ncu-core-long-p2.ncu-repz, p3-ncu-core-mv.ncu-repz, p3-ncu-core-short-p0.ncu-repz, p3-ncu-core-short-p1.ncu-repz, p3-ncu-extra-long-att.ncu-repz, p3-ncu-extra-long-ew.ncu-repz, p3-ncu-extra-long-full.ncu-repz, p3-ncu-extra-long-p4.ncu-repz, p3-ncu-extra-med-p0.ncu-repz
+
+Limits of the RTX 3060 Ti used for the floors (card measurements quoted in the task context, not re-measured here):
+
+| limit | value |
+|---|---|
+| DRAM read bandwidth, GB/s | 422.0 |
+| int8 tensor (mma.sync, dense), TOP/s | 149.3 |
+| fp16 tensor with fp32 accumulate, TFLOP/s | 38.0 |
+| fp32 CUDA cores, TFLOP/s | 18.1 (census_lib.FP32_TFLOPS) |
+| launch floor, us | 1.0 (shortest kernel of the 13 nsys-traced passes: 0.992 us) |
+
+Source: ncu_cfg.py.
+
+Time at the limit = max(model bytes / DRAM bandwidth, useful int8 ops / int8 peak, fp16 flops / fp16 peak, fp32 flops / fp32 peak, launch floor). Model bytes = all tensors of the kernel from/to DRAM (weights + q8_1 input + f32 output for a matmul): cold-cache numbers, which is what `--cache-control all` measures. The binding limit is the one with the largest time; kernels without a byte model use the measured DRAM bytes. 'Gap' = measured - time at the limit; 'per pass' multiplies it with the launches of the class in one pass (census). A kernel that cannot reach its floor for structural reasons (e.g. gdn_single: 32 CTAs, serial chunk loop) still shows the gap; read the stall columns.
+
+## Alignment of the windows
+
+| run | planned launches | profiled launches | launches matching the plan | shift, launches | status |
+|---|---|---|---|---|---|
+| p3-ncu-smoke-a | 6 | 6 | 2 | 0 | MISALIGNED (best 2 of 6 launches match, at shift +0); classes are named from the kernel names only |
+| p3-ncu-smoke-b | 6 | 6 | 6 | 0 | ALIGNED |
+| p3-ncu-core-long-p0 | 13 | 13 | 1 | 1 | MISALIGNED (best 1 of 13 launches match, at shift +1); classes are named from the kernel names only |
+| p3-ncu-core-long-p1 | 12 | 12 | 12 | 0 | ALIGNED |
+| p3-ncu-core-long-p2 | 17 | 17 | 16 | -16 | SHIFTED by -16 launches of the filter stream; correct with plan_ncu.py --shift L0=16 (skip 825 -> 841) |
+| p3-ncu-core-mv | 11 | 11 | 0 | 0 | MISALIGNED (best 0 of 11 launches match, at shift +0); classes are named from the kernel names only |
+| p3-ncu-core-short-p0 | 14 | 14 | 14 | 0 | ALIGNED |
+| p3-ncu-core-short-p1 | 14 | 14 | 14 | 0 | ALIGNED |
+| p3-ncu-extra-long-att | 13 | 13 | 1 | 3 | MISALIGNED (best 1 of 13 launches match, at shift +3); classes are named from the kernel names only |
+| p3-ncu-extra-long-ew | 9 | 9 | 0 | 0 | MISALIGNED (best 0 of 9 launches match, at shift +0); classes are named from the kernel names only |
+| p3-ncu-extra-long-full | 8 | 8 | 8 | 0 | ALIGNED |
+| p3-ncu-extra-long-p4 | 14 | 14 | 14 | 0 | ALIGNED |
+| p3-ncu-extra-med-p0 | 10 | 10 | 10 | 0 | ALIGNED |
+
+Source: analyze_ncu.py align(): observed launch i vs the planned filter stream at index skip + shift + i (function; grid/block and MMQ type/J where the plan is certain).
+
+## Planned vs hit classes
+
+| run | class | planned launches | profiled launches | ok |
+|---|---|---|---|---|
+| p3-ncu-smoke-a | rms_norm_f32 grid=(158,1,1) N=158 | 1 | 0 | DIFFERS |
+| p3-ncu-smoke-a | scale_f32 grid=(96,1,1) N=158 | 1 | 0 | DIFFERS |
+| p3-ncu-smoke-a | k_get_rows_float grid=(1,96,1) N=158 | 1 | 0 | DIFFERS |
+| p3-ncu-smoke-a | quantize_mmq_q8_1 grid=(158,5,1) N=158 | 1 | 0 | DIFFERS |
+| p3-ncu-smoke-a | mmq attn_qkv Q8_0 J=80 N=158 | 1 | 0 | DIFFERS |
+| p3-ncu-smoke-a | mmq-fixup attn_qkv Q8_0 J=80 N=158 | 1 | 0 | DIFFERS |
+| p3-ncu-smoke-a | rms_norm_f32 grid=(2,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-smoke-a | scale_f32 grid=(96,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-smoke-a | k_get_rows_float grid=(1,96,1) | 0 | 1 | DIFFERS |
+| p3-ncu-smoke-a | quantize_q8_1 grid=(10,2,1) | 0 | 1 | DIFFERS |
+| p3-ncu-smoke-a | mul_mat_vec_q grid=(4096,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-smoke-a | concat_non_cont grid=(8192,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-smoke-b | quantize_q8_1 grid=(10,1,1) N=158 | 2 | 2 | ok |
+| p3-ncu-smoke-b | mmvq ffn_up+gate+swiglu (fused) Q4_0 n=1 | 1 | 1 | ok |
+| p3-ncu-smoke-b | quantize_q8_1 grid=(36,1,1) N=158 | 1 | 1 | ok |
+| p3-ncu-smoke-b | mmvq ffn_down+add (fused) Q4_0 n=1 | 1 | 1 | ok |
+| p3-ncu-smoke-b | mmvq output_head(token_embd) Q8_0 n=1 | 1 | 1 | ok |
+| p3-ncu-core-long-p0 | mmq attn_qkv Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | concat_non_cont grid=(8192,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | ssm_conv_long_token_f32 grid=(1,64,64) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq ssm_beta Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq-fixup ssm_beta Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq ssm_alpha Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq-fixup ssm_alpha Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | gdn_single grid=(32,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq attn_gate(z) Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq ssm_out Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq ffn_up Q4_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq ffn_gate Q4_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | mmq ffn_down Q4_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p0 | concat_non_cont grid=(8192,1,1) | 0 | 5 | DIFFERS |
+| p3-ncu-core-long-p0 | ssm_conv_f32 grid=(1,64,1) | 0 | 4 | DIFFERS |
+| p3-ncu-core-long-p0 | gated_delta_net_cuda grid=(32,1,8) | 0 | 4 | DIFFERS |
+| p3-ncu-core-long-p1 | mmq attn_qkv Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq ssm_beta Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq-fixup ssm_beta Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq ssm_alpha Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq-fixup ssm_alpha Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq attn_gate(z) Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq ssm_out Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq-fixup ssm_out Q8_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq ffn_up Q4_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq ffn_gate Q4_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq ffn_down Q4_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p1 | mmq-fixup ffn_down Q4_0 J=128 N=1173 | 1 | 1 | ok |
+| p3-ncu-core-long-p2 | mmq attn_qkv Q8_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup attn_qkv Q8_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | concat_non_cont grid=(8192,3,1) N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | ssm_conv_long_token_f32 grid=(3,64,2) N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq ssm_beta Q8_0 J=128 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup ssm_beta Q8_0 J=128 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq ssm_alpha Q8_0 J=128 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup ssm_alpha Q8_0 J=128 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | gated_delta_net_cuda grid=(32,3,8) N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq attn_gate(z) Q8_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup attn_gate(z) Q8_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq ssm_out Q8_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup ssm_out Q8_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq ffn_up Q4_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq ffn_gate Q4_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq ffn_down Q4_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup ffn_down Q4_0 J=80 N=129 | 1 | 0 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup Q8_0 J=128 chk=1 grid=(38,4,1) | 0 | 1 | DIFFERS |
+| p3-ncu-core-long-p2 | gdn_single grid=(32,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq Q8_0 J=128 chk=0 grid=(320,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq Q8_0 J=128 chk=0 grid=(38,1,1) | 0 | 4 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup Q8_0 J=128 chk=0 grid=(38,4,1) | 0 | 4 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq Q4_0 J=128 chk=0 grid=(720,1,1) | 0 | 3 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq Q4_0 J=128 chk=0 grid=(38,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq-fixup Q4_0 J=128 chk=0 grid=(38,4,1) | 0 | 1 | DIFFERS |
+| p3-ncu-core-long-p2 | mmq Q8_0 J=128 chk=0 grid=(640,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-core-mv | mmvq ffn_up+gate+swiglu (fused) Q4_0 n=1 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq ffn_down+add (fused) Q4_0 n=1 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq output_head(token_embd) Q8_0 n=1 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq attn_qkv Q8_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq ssm_beta Q8_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq ssm_alpha Q8_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq attn_gate(z) Q8_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq ssm_out Q8_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq ffn_up Q4_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq ffn_gate Q4_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mmvq ffn_down Q4_0 n=8 | 1 | 0 | DIFFERS |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(4096,1,1) | 0 | 2 | DIFFERS |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(16,1,1) | 0 | 4 | DIFFERS |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(2048,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(1280,1,1) | 0 | 2 | DIFFERS |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(4608,1,1) | 0 | 2 | DIFFERS |
+| p3-ncu-core-short-p0 | mmq attn_qkv Q8_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq-fixup attn_qkv Q8_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq ssm_beta Q8_0 J=128 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq-fixup ssm_beta Q8_0 J=128 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq ssm_alpha Q8_0 J=128 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq-fixup ssm_alpha Q8_0 J=128 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq attn_gate(z) Q8_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq-fixup attn_gate(z) Q8_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq ssm_out Q8_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq-fixup ssm_out Q8_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq ffn_up Q4_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq ffn_gate Q4_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq ffn_down Q4_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p0 | mmq-fixup ffn_down Q4_0 J=96 N=86 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq attn_qkv Q8_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq-fixup attn_qkv Q8_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq ssm_beta Q8_0 J=128 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq-fixup ssm_beta Q8_0 J=128 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq ssm_alpha Q8_0 J=128 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq-fixup ssm_alpha Q8_0 J=128 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq attn_gate(z) Q8_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq-fixup attn_gate(z) Q8_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq ssm_out Q8_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq-fixup ssm_out Q8_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq ffn_up Q4_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq ffn_gate Q4_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq ffn_down Q4_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-core-short-p1 | mmq-fixup ffn_down Q4_0 J=112 N=102 | 1 | 1 | ok |
+| p3-ncu-extra-long-att | mmq attn_q(+gate) Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | rope_multi grid=(32768,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq attn_k Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq-fixup attn_k Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq attn_v Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq-fixup attn_v Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | rope_multi grid=(8192,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | flash_attn_ext_f16 grid=(512,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | cpy_scalar grid=(131072,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq attn_output Q8_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq ffn_up Q4_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq ffn_gate Q4_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | mmq ffn_down Q4_0 J=128 N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-att | flash_attn_ext_f16 grid=(16,1,1) | 0 | 2 | DIFFERS |
+| p3-ncu-extra-long-att | cpy_scalar grid=(128,1,1) | 0 | 2 | DIFFERS |
+| p3-ncu-extra-long-att | cpy_scalar grid=(384,1,1) | 0 | 6 | DIFFERS |
+| p3-ncu-extra-long-att | rope_multi grid=(32,1,1) | 0 | 2 | DIFFERS |
+| p3-ncu-extra-long-att | rope_multi grid=(8,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(2048,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-ew | quantize_mmq_q8_1 grid=(2048,5,1) N=2048 | 4 | 0 | DIFFERS |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(16,2048,1) N=2048 | 2 | 0 | DIFFERS |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(32,2048,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-ew | unary_gated_op_kernel grid=(32768,1,1) N=2048 | 1 | 0 | DIFFERS |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(2,1,1) | 0 | 3 | DIFFERS |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(16,2,1) | 0 | 3 | DIFFERS |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(32,2,1) | 0 | 1 | DIFFERS |
+| p3-ncu-extra-long-ew | unary_gated_op_kernel grid=(32,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-extra-long-ew | unary_gated_op_kernel grid=(72,1,1) | 0 | 1 | DIFFERS |
+| p3-ncu-extra-long-full | mmq attn_qkv Q8_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-full | mmq ssm_beta Q8_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-full | mmq-fixup ssm_beta Q8_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-full | mmq ssm_alpha Q8_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-full | mmq-fixup ssm_alpha Q8_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-full | mmq attn_gate(z) Q8_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-full | mmq ssm_out Q8_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-full | mmq ffn_up Q4_0 J=128 N=2048 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq attn_qkv Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq-fixup attn_qkv Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq ssm_beta Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq-fixup ssm_beta Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq ssm_alpha Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq-fixup ssm_alpha Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq attn_gate(z) Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq-fixup attn_gate(z) Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq ssm_out Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq-fixup ssm_out Q8_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq ffn_up Q4_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq ffn_gate Q4_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq ffn_down Q4_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-long-p4 | mmq-fixup ffn_down Q4_0 J=32 N=26 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq attn_qkv Q8_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq ssm_beta Q8_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq-fixup ssm_beta Q8_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq ssm_alpha Q8_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq-fixup ssm_alpha Q8_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq attn_gate(z) Q8_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq ssm_out Q8_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq ffn_up Q4_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq ffn_gate Q4_0 J=128 N=1288 | 1 | 1 | ok |
+| p3-ncu-extra-med-p0 | mmq ffn_down Q4_0 J=128 N=1288 | 1 | 1 | ok |
+
+Source: plan/<run>.json (expected) vs the report (class of a launch = plan class when the launch matches its planned kernel, else the kernel name and grid).
+
+## Speed of light per class
+
+| run | class | launches per pass | measured duration, us | nsys duration of the traced pass, us | bound | time at the limit, us | % of limit (floor / measured) | gap per launch, us | gap, ms per pass | share of the pass, % | DRAM, % of 422 GB/s | useful int8, % of 149.3 TOP/s | IMMA pipe active, % | top 3 stall reasons, % of the summed stall ratios (selected / not_selected excluded) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| p3-ncu-smoke-a | rms_norm_f32 grid=(2,1,1) | n/a | 3 | n/a | launch | 1 | 33.6 | 2 | n/a | n/a | 2.85 | n/a | 0 | barrier 27%; long_scoreboard 25%; short_scoreboard 15% |
+| p3-ncu-smoke-a | scale_f32 grid=(96,1,1) | n/a | 2.2 | n/a | launch | 1 | 45.29 | 1.2 | n/a | n/a | 11.24 | n/a | 0 | imc_miss 42%; long_scoreboard 35%; wait 8% |
+| p3-ncu-smoke-a | k_get_rows_float grid=(1,96,1) | n/a | 2.6 | n/a | launch | 1 | 38.11 | 1.6 | n/a | n/a | 9.93 | n/a | 0 | long_scoreboard 40%; imc_miss 29%; wait 11% |
+| p3-ncu-smoke-a | quantize_q8_1 grid=(10,2,1) | n/a | 2.1 | n/a | launch | 1 | 46.64 | 1.1 | n/a | n/a | 2.84 | n/a | 0 | imc_miss 43%; long_scoreboard 30%; wait 10% |
+| p3-ncu-smoke-a | mul_mat_vec_q grid=(4096,1,1) | n/a | 58.9 | n/a | DRAM | 55.8 | 94.72 | 3.1 | n/a | n/a | 94.72 | n/a | 0 | long_scoreboard 74%; barrier 17%; wait 3% |
+| p3-ncu-smoke-a | concat_non_cont grid=(8192,1,1) | n/a | 19 | n/a | launch | 1 | 5.26 | 18 | n/a | n/a | 3.08 | n/a | 0 | long_scoreboard 41%; wait 22%; short_scoreboard 14% |
+| p3-ncu-smoke-b | quantize_q8_1 grid=(10,1,1) N=158 | 2 | 2.1 | 1.6 | launch | 1 | 48.08 | 1.1 | 0 | 0.01 | 2.93 | n/a | 0 | imc_miss 42%; long_scoreboard 29%; wait 10% |
+| p3-ncu-smoke-b | mmvq ffn_up+gate+swiglu (fused) Q4_0 n=1 | 1 | 59.1 | 84.6 | DRAM | 63.1 | 106.78 | -4 | -0 | 0.16 | 94.55 | n/a | 0 | long_scoreboard 74%; barrier 17%; wait 3% |
+| p3-ncu-smoke-b | quantize_q8_1 grid=(36,1,1) N=158 | 1 | 2.1 | 2.2 | launch | 1 | 48.08 | 1.1 | 0 | 0.01 | 2.86 | n/a | 0 | imc_miss 40%; long_scoreboard 30%; wait 10% |
+| p3-ncu-smoke-b | mmvq ffn_down+add (fused) Q4_0 n=1 | 1 | 3.6 | 36.2 | DRAM | 31.5 | 886.73 | -27.9 | -0.03 | 0.01 | 6.86 | n/a | 0 | long_scoreboard 46%; imc_miss 27%; barrier 13% |
+| p3-ncu-smoke-b | mmvq output_head(token_embd) Q8_0 n=1 | 1 | 3.5 | 1678.6 | DRAM | 1602.9 | 46380.4 | -1599.5 | -1.6 | 0.01 | 6.99 | n/a | 0 | long_scoreboard 47%; imc_miss 27%; barrier 11% |
+| p3-ncu-core-long-p0 | concat_non_cont grid=(8192,1,1) | n/a | 18.3 | n/a | launch | 1.2 | 6.36 | 17.2 | n/a | n/a | 4.68 | n/a | 0 | long_scoreboard 41%; wait 23%; short_scoreboard 14% |
+| p3-ncu-core-long-p0 | ssm_conv_f32 grid=(1,64,1) | n/a | 2.8 | n/a | launch | 1 | 36.02 | 1.8 | n/a | n/a | 26.76 | n/a | 0 | long_scoreboard 52%; imc_miss 32%; wait 8% |
+| p3-ncu-core-long-p0 | gated_delta_net_cuda grid=(32,1,8) | n/a | 12.8 | n/a | DRAM | 9.3 | 73.02 | 3.4 | n/a | n/a | 73.02 | n/a | 0 | long_scoreboard 34%; lg_throttle 30%; mio_throttle 9% |
+| p3-ncu-core-long-p1 | mmq attn_qkv Q8_0 J=128 N=1173 | 24 | 939.4 | 978.2 | INT8 | 329.5 | 35.08 | 609.8 | 14.64 | 8.79 | 31.03 | 35.08 | 37.92 | math_pipe_throttle 27%; mio_throttle 16%; long_scoreboard 16% |
+| p3-ncu-core-long-p1 | mmq ssm_beta Q8_0 J=128 N=1173 | 24 | 30.6 | 30.6 | DRAM | 8.6 | 27.98 | 22.1 | 0.53 | 0.29 | 44.87 | 4.2 | 22.27 | no_instruction 30%; long_scoreboard 14%; math_pipe_throttle 14% |
+| p3-ncu-core-long-p1 | mmq-fixup ssm_beta Q8_0 J=128 N=1173 | 24 | 18.2 | 14.5 | DRAM | 6.7 | 36.69 | 11.5 | 0.28 | 0.17 | 36.69 | n/a | 0 | long_scoreboard 59%; imc_miss 19%; wait 11% |
+| p3-ncu-core-long-p1 | mmq ssm_alpha Q8_0 J=128 N=1173 | 24 | 30.7 | 24.6 | DRAM | 8.6 | 27.95 | 22.1 | 0.53 | 0.29 | 44.9 | 4.2 | 22.82 | no_instruction 29%; long_scoreboard 14%; math_pipe_throttle 14% |
+| p3-ncu-core-long-p1 | mmq-fixup ssm_alpha Q8_0 J=128 N=1173 | 24 | 18 | 14.5 | DRAM | 6.6 | 36.8 | 11.4 | 0.27 | 0.17 | 36.8 | n/a | 0 | long_scoreboard 58%; imc_miss 21%; wait 11% |
+| p3-ncu-core-long-p1 | mmq attn_gate(z) Q8_0 J=128 N=1173 | 24 | 498.1 | 521.5 | INT8 | 164.8 | 33.08 | 333.3 | 8 | 4.66 | 30.37 | 33.08 | 37.81 | math_pipe_throttle 27%; long_scoreboard 16%; mio_throttle 16% |
+| p3-ncu-core-long-p1 | mmq ssm_out Q8_0 J=128 N=1173 | 24 | 506.4 | 517.3 | INT8 | 164.8 | 32.53 | 341.7 | 8.2 | 4.74 | 85.18 | 32.53 | 35.13 | math_pipe_throttle 23%; long_scoreboard 20%; lg_throttle 17% |
+| p3-ncu-core-long-p1 | mmq-fixup ssm_out Q8_0 J=128 N=1173 | 24 | 21.6 | 17.6 | DRAM | 14.8 | 68.4 | 6.8 | 0.16 | 0.2 | 68.4 | n/a | 0 | long_scoreboard 89%; wait 4%; imc_miss 3% |
+| p3-ncu-core-long-p1 | mmq ffn_up Q4_0 J=128 N=1173 | 31 | 1017.4 | 1058.8 | INT8 | 370.7 | 36.44 | 646.7 | 20.05 | 12.29 | 28.84 | 36.44 | 39.38 | math_pipe_throttle 29%; wait 19%; mio_throttle 16% |
+| p3-ncu-core-long-p1 | mmq ffn_gate Q4_0 J=128 N=1173 | 31 | 1013.5 | 1060.2 | INT8 | 370.7 | 36.58 | 642.8 | 19.93 | 12.24 | 28.93 | 36.58 | 39.36 | math_pipe_throttle 29%; wait 19%; mio_throttle 16% |
+| p3-ncu-core-long-p1 | mmq ffn_down Q4_0 J=128 N=1173 | 31 | 1019.2 | 1056.8 | INT8 | 370.7 | 36.37 | 648.5 | 20.1 | 12.31 | 78.34 | 36.37 | 39.26 | math_pipe_throttle 29%; wait 18%; long_scoreboard 17% |
+| p3-ncu-core-long-p1 | mmq-fixup ffn_down Q4_0 J=128 N=1173 | 31 | 22.5 | 18.1 | DRAM | 15.5 | 68.84 | 7 | 0.22 | 0.27 | 68.84 | n/a | 0 | long_scoreboard 90%; wait 4%; imc_miss 3% |
+| p3-ncu-core-long-p2 | mmq-fixup Q8_0 J=128 chk=1 grid=(38,4,1) | n/a | 18 | n/a | DRAM | 6.7 | 37.14 | 11.3 | n/a | n/a | 37.14 | n/a | 0 | long_scoreboard 59%; imc_miss 19%; wait 11% |
+| p3-ncu-core-long-p2 | gdn_single grid=(32,1,1) | n/a | 740.3 | n/a | DRAM | 147.4 | 19.91 | 592.9 | n/a | n/a | 19.91 | n/a | 0 | math_pipe_throttle 36%; wait 26%; barrier 12% |
+| p3-ncu-core-long-p2 | mmq Q8_0 J=128 chk=0 grid=(320,1,1) | n/a | 496.9 | n/a | DRAM | 151 | 30.39 | 345.9 | n/a | n/a | 30.39 | n/a | 37.75 | math_pipe_throttle 27%; long_scoreboard 16%; mio_throttle 15% |
+| p3-ncu-core-long-p2 | mmq Q8_0 J=128 chk=0 grid=(38,1,1) | n/a | 321.3 | n/a | DRAM | 249.7 | 77.71 | 71.6 | n/a | n/a | 67.99 | n/a | 35.6 | math_pipe_throttle 24%; long_scoreboard 18%; lg_throttle 15% |
+| p3-ncu-core-long-p2 | mmq-fixup Q8_0 J=128 chk=0 grid=(38,4,1) | n/a | 21.9 | n/a | DRAM | 15 | 68.43 | 6.9 | n/a | n/a | 68.39 | n/a | 0 | long_scoreboard 89%; wait 4%; imc_miss 4% |
+| p3-ncu-core-long-p2 | mmq Q4_0 J=128 chk=0 grid=(720,1,1) | n/a | 1012.2 | n/a | DRAM | 293.3 | 28.98 | 718.9 | n/a | n/a | 28.98 | n/a | 39.3 | math_pipe_throttle 29%; wait 19%; mio_throttle 16% |
+| p3-ncu-core-long-p2 | mmq Q4_0 J=128 chk=0 grid=(38,1,1) | n/a | 1021 | n/a | DRAM | 808.1 | 79.15 | 212.9 | n/a | n/a | 79.15 | n/a | 39.25 | math_pipe_throttle 29%; wait 18%; long_scoreboard 16% |
+| p3-ncu-core-long-p2 | mmq-fixup Q4_0 J=128 chk=0 grid=(38,4,1) | n/a | 22.2 | n/a | DRAM | 15.5 | 69.75 | 6.7 | n/a | n/a | 69.75 | n/a | 0 | long_scoreboard 89%; wait 4%; imc_miss 4% |
+| p3-ncu-core-long-p2 | mmq Q8_0 J=128 chk=0 grid=(640,1,1) | n/a | 940.9 | n/a | DRAM | 291.1 | 30.94 | 649.8 | n/a | n/a | 30.94 | n/a | 38 | math_pipe_throttle 27%; long_scoreboard 16%; mio_throttle 16% |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(4096,1,1) | n/a | 59.1 | n/a | DRAM | 55.8 | 94.48 | 3.3 | n/a | n/a | 94.48 | n/a | 0 | long_scoreboard 74%; barrier 17%; wait 3% |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(16,1,1) | n/a | 3.6 | n/a | launch | 1 | 27.96 | 2.6 | n/a | n/a | 6.76 | n/a | 0 | long_scoreboard 48%; imc_miss 26%; barrier 11% |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(2048,1,1) | n/a | 32.5 | n/a | DRAM | 29.3 | 90.26 | 3.2 | n/a | n/a | 90.26 | n/a | 0 | long_scoreboard 71%; barrier 17%; wait 3% |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(1280,1,1) | n/a | 35.3 | n/a | DRAM | 31.9 | 90.4 | 3.4 | n/a | n/a | 90.33 | n/a | 0 | long_scoreboard 74%; lg_throttle 9%; barrier 8% |
+| p3-ncu-core-mv | mul_mat_vec_q grid=(4608,1,1) | n/a | 37.9 | n/a | DRAM | 34.5 | 91.02 | 3.4 | n/a | n/a | 91.02 | n/a | 0 | long_scoreboard 46%; barrier 35%; wait 6% |
+| p3-ncu-core-short-p0 | mmq attn_qkv Q8_0 J=96 N=86 | 24 | 93.8 | 104.8 | DRAM | 60.1 | 64.02 | 33.8 | 0.81 | 7.91 | 69.39 | 25.75 | 29.95 | long_scoreboard 22%; lg_throttle 19%; math_pipe_throttle 19% |
+| p3-ncu-core-short-p0 | mmq-fixup attn_qkv Q8_0 J=96 N=86 | 24 | 16.3 | 13.5 | DRAM | 10.4 | 64.04 | 5.9 | 0.14 | 1.37 | 64.04 | n/a | 0 | long_scoreboard 86%; imc_miss 5%; wait 5% |
+| p3-ncu-core-short-p0 | mmq ssm_beta Q8_0 J=128 N=86 | 24 | 18 | 18.8 | launch | 1 | 5.56 | 17 | 0.41 | 1.52 | 10.9 | 0.52 | 13.23 | no_instruction 58%; wait 9%; imc_miss 8% |
+| p3-ncu-core-short-p0 | mmq-fixup ssm_beta Q8_0 J=128 N=86 | 24 | 15 | 9.4 | DRAM | 1.5 | 10.23 | 13.5 | 0.32 | 1.27 | 10.23 | n/a | 0 | long_scoreboard 38%; imc_miss 30%; wait 20% |
+| p3-ncu-core-short-p0 | mmq ssm_alpha Q8_0 J=128 N=86 | 24 | 18 | 9.7 | launch | 1 | 5.57 | 17 | 0.41 | 1.51 | 11.21 | 0.53 | 13.28 | no_instruction 59%; wait 8%; imc_miss 8% |
+| p3-ncu-core-short-p0 | mmq-fixup ssm_alpha Q8_0 J=128 N=86 | 24 | 14.6 | 9.4 | DRAM | 1.5 | 10.49 | 13.1 | 0.31 | 1.23 | 10.49 | n/a | 0 | imc_miss 35%; long_scoreboard 35%; wait 18% |
+| p3-ncu-core-short-p0 | mmq attn_gate(z) Q8_0 J=96 N=86 | 24 | 55.4 | 60.3 | DRAM | 30.3 | 54.78 | 25 | 0.6 | 4.67 | 62.45 | 21.82 | 27.43 | long_scoreboard 24%; lg_throttle 21%; math_pipe_throttle 17% |
+| p3-ncu-core-short-p0 | mmq-fixup attn_gate(z) Q8_0 J=96 N=86 | 24 | 16.4 | 13.5 | DRAM | 10 | 60.99 | 6.4 | 0.15 | 1.38 | 60.99 | n/a | 0 | long_scoreboard 86%; imc_miss 5%; wait 5% |
+| p3-ncu-core-short-p0 | mmq ssm_out Q8_0 J=96 N=86 | 24 | 56.6 | 59.8 | DRAM | 29.4 | 52.01 | 27.1 | 0.65 | 4.77 | 60.54 | 21.35 | 26.63 | long_scoreboard 26%; lg_throttle 23%; math_pipe_throttle 17% |
+| p3-ncu-core-short-p0 | mmq-fixup ssm_out Q8_0 J=96 N=86 | 24 | 14.9 | 12.4 | DRAM | 7.9 | 53.02 | 7 | 0.17 | 1.26 | 53.02 | n/a | 0 | long_scoreboard 81%; imc_miss 8%; wait 7% |
+| p3-ncu-core-short-p0 | mmq ffn_up Q4_0 J=96 N=86 | 31 | 98.8 | 110.8 | DRAM | 39.5 | 40.03 | 59.2 | 1.84 | 10.76 | 40.63 | 27.51 | 33.03 | math_pipe_throttle 25%; long_scoreboard 23%; wait 17% |
+| p3-ncu-core-short-p0 | mmq ffn_gate Q4_0 J=96 N=86 | 31 | 98.7 | 110.3 | DRAM | 39.5 | 40.07 | 59.1 | 1.83 | 10.75 | 40.57 | 27.54 | 33.13 | math_pipe_throttle 25%; long_scoreboard 22%; wait 17% |
+| p3-ncu-core-short-p0 | mmq ffn_down Q4_0 J=96 N=86 | 31 | 92.9 | 104.4 | DRAM | 35.6 | 38.37 | 57.2 | 1.77 | 10.12 | 47.31 | 29.26 | 33.57 | math_pipe_throttle 25%; long_scoreboard 20%; wait 17% |
+| p3-ncu-core-short-p0 | mmq-fixup ffn_down Q4_0 J=96 N=86 | 31 | 15 | 12.8 | DRAM | 8.4 | 55.65 | 6.7 | 0.21 | 1.64 | 55.65 | n/a | 0 | long_scoreboard 81%; imc_miss 8%; wait 7% |
+| p3-ncu-core-short-p1 | mmq attn_qkv Q8_0 J=112 N=102 | 24 | 102.4 | 94.3 | DRAM | 61.4 | 59.98 | 41 | 0.98 | 7.62 | 66.15 | 27.98 | 32.07 | math_pipe_throttle 20%; long_scoreboard 20%; lg_throttle 19% |
+| p3-ncu-core-short-p1 | mmq-fixup attn_qkv Q8_0 J=112 N=102 | 24 | 19.2 | 14 | DRAM | 12.4 | 64.38 | 6.8 | 0.16 | 1.43 | 64.38 | n/a | 0 | long_scoreboard 88%; imc_miss 5%; wait 4% |
+| p3-ncu-core-short-p1 | mmq ssm_beta Q8_0 J=128 N=102 | 24 | 17.6 | 17.5 | launch | 1 | 5.69 | 16.6 | 0.4 | 1.31 | 12.51 | 0.64 | 13.48 | no_instruction 58%; wait 9%; math_pipe_throttle 7% |
+| p3-ncu-core-short-p1 | mmq-fixup ssm_beta Q8_0 J=128 N=102 | 24 | 15.7 | 8.7 | DRAM | 1.5 | 9.79 | 14.1 | 0.34 | 1.17 | 9.79 | n/a | 0 | imc_miss 35%; long_scoreboard 33%; wait 17% |
+| p3-ncu-core-short-p1 | mmq ssm_alpha Q8_0 J=128 N=102 | 24 | 17.6 | 8.5 | launch | 1 | 5.68 | 16.6 | 0.4 | 1.31 | 12.57 | 0.64 | 13.17 | no_instruction 59%; wait 9%; imc_miss 7% |
+| p3-ncu-core-short-p1 | mmq-fixup ssm_alpha Q8_0 J=128 N=102 | 24 | 15.6 | 9 | DRAM | 1.5 | 9.91 | 14 | 0.34 | 1.16 | 9.91 | n/a | 0 | imc_miss 34%; long_scoreboard 33%; wait 16% |
+| p3-ncu-core-short-p1 | mmq attn_gate(z) Q8_0 J=112 N=102 | 24 | 60.7 | 54.9 | DRAM | 31.1 | 51.16 | 29.6 | 0.71 | 4.52 | 59.7 | 23.6 | 29.63 | lg_throttle 21%; long_scoreboard 20%; math_pipe_throttle 18% |
+| p3-ncu-core-short-p1 | mmq-fixup attn_gate(z) Q8_0 J=112 N=102 | 24 | 18.6 | 13.7 | DRAM | 11.8 | 63.26 | 6.8 | 0.16 | 1.38 | 63.26 | n/a | 0 | long_scoreboard 87%; imc_miss 5%; wait 5% |
+| p3-ncu-core-short-p1 | mmq ssm_out Q8_0 J=112 N=102 | 24 | 59.8 | 56 | DRAM | 30 | 50.17 | 29.8 | 0.71 | 4.45 | 60.02 | 23.97 | 29.86 | lg_throttle 21%; long_scoreboard 18%; math_pipe_throttle 18% |
+| p3-ncu-core-short-p1 | mmq-fixup ssm_out Q8_0 J=112 N=102 | 24 | 17.6 | 12.4 | DRAM | 9.6 | 54.59 | 8 | 0.19 | 1.31 | 54.59 | n/a | 0 | long_scoreboard 82%; imc_miss 8%; wait 6% |
+| p3-ncu-core-short-p1 | mmq ffn_up Q4_0 J=112 N=102 | 31 | 110.5 | 100 | DRAM | 41.1 | 37.15 | 69.4 | 2.15 | 10.62 | 37.82 | 29.17 | 34.68 | math_pipe_throttle 26%; long_scoreboard 20%; wait 16% |
+| p3-ncu-core-short-p1 | mmq ffn_gate Q4_0 J=112 N=102 | 31 | 109.6 | 99.6 | DRAM | 41.1 | 37.47 | 68.5 | 2.12 | 10.53 | 38 | 29.42 | 34.59 | math_pipe_throttle 25%; long_scoreboard 21%; wait 16% |
+| p3-ncu-core-short-p1 | mmq ffn_down Q4_0 J=112 N=102 | 31 | 105 | 94 | DRAM | 36.4 | 34.7 | 68.6 | 2.13 | 10.09 | 46.29 | 30.7 | 35.09 | math_pipe_throttle 23%; long_scoreboard 19%; wait 16% |
+| p3-ncu-core-short-p1 | mmq-fixup ffn_down Q4_0 J=112 N=102 | 31 | 17.9 | 12.5 | DRAM | 10 | 55.83 | 7.9 | 0.25 | 1.72 | 55.83 | n/a | 0 | long_scoreboard 83%; imc_miss 7%; wait 6% |
+| p3-ncu-extra-long-att | flash_attn_ext_f16 grid=(16,1,1) | n/a | 11.2 | n/a | DRAM | 3.1 | 27.72 | 8.1 | n/a | n/a | 27.73 | n/a | 0 | no_instruction 44%; long_scoreboard 13%; imc_miss 13% |
+| p3-ncu-extra-long-att | cpy_scalar grid=(128,1,1) | n/a | 2.7 | n/a | launch | 1 | 37.43 | 1.7 | n/a | n/a | 3.75 | n/a | 0 | imc_miss 32%; wait 29%; long_scoreboard 18% |
+| p3-ncu-extra-long-att | cpy_scalar grid=(384,1,1) | n/a | 3.2 | n/a | launch | 1 | 31.04 | 2.2 | n/a | n/a | 13.34 | n/a | 0 | wait 27%; long_scoreboard 23%; imc_miss 22% |
+| p3-ncu-extra-long-att | rope_multi grid=(32,1,1) | n/a | 2.3 | n/a | launch | 1 | 44.01 | 1.3 | n/a | n/a | 1.58 | n/a | 0 | imc_miss 61%; no_instruction 17%; wait 12% |
+| p3-ncu-extra-long-att | rope_multi grid=(8,1,1) | n/a | 2.4 | n/a | launch | 1 | 41.67 | 1.4 | n/a | n/a | 1.77 | n/a | 0 | imc_miss 45%; long_scoreboard 31%; wait 11% |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(2,1,1) | n/a | 3.3 | n/a | launch | 1 | 30.74 | 2.3 | n/a | n/a | 2.81 | n/a | 0 | barrier 27%; long_scoreboard 24%; short_scoreboard 14% |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(16,2,1) | n/a | 2.1 | n/a | launch | 1 | 47.59 | 1.1 | n/a | n/a | 2.37 | n/a | 0 | imc_miss 46%; long_scoreboard 29%; wait 9% |
+| p3-ncu-extra-long-ew | rms_norm_f32 grid=(32,2,1) | n/a | 2.4 | n/a | launch | 1 | 42.23 | 1.4 | n/a | n/a | 4.01 | n/a | 0 | long_scoreboard 48%; imc_miss 25%; wait 10% |
+| p3-ncu-extra-long-ew | unary_gated_op_kernel grid=(32,1,1) | n/a | 2.1 | n/a | launch | 1 | 47.35 | 1.1 | n/a | n/a | 8.37 | n/a | 0 | imc_miss 43%; long_scoreboard 35%; wait 10% |
+| p3-ncu-extra-long-ew | unary_gated_op_kernel grid=(72,1,1) | n/a | 2.3 | n/a | launch | 1 | 42.81 | 1.3 | n/a | n/a | 17.2 | n/a | 0 | long_scoreboard 39%; imc_miss 38%; wait 9% |
+| p3-ncu-extra-long-full | mmq attn_qkv Q8_0 J=128 N=2048 | 24 | 1495.2 | 1720.4 | INT8 | 575.3 | 38.48 | 919.9 | 22.08 | 8.65 | 40.68 | 38.48 | 38.29 | math_pipe_throttle 27%; mio_throttle 16%; wait 15% |
+| p3-ncu-extra-long-full | mmq ssm_beta Q8_0 J=128 N=2048 | 24 | 36.9 | 40.7 | DRAM | 14.8 | 40.09 | 22.1 | 0.53 | 0.21 | 54.47 | 6.09 | 27.85 | no_instruction 20%; math_pipe_throttle 18%; long_scoreboard 15% |
+| p3-ncu-extra-long-full | mmq-fixup ssm_beta Q8_0 J=128 N=2048 | 24 | 18.8 | 15.3 | DRAM | 7.2 | 38.58 | 11.5 | 0.28 | 0.11 | 38.58 | n/a | 0 | long_scoreboard 70%; imc_miss 14%; wait 9% |
+| p3-ncu-extra-long-full | mmq ssm_alpha Q8_0 J=128 N=2048 | 24 | 36.6 | 39.9 | DRAM | 14.8 | 40.48 | 21.8 | 0.52 | 0.21 | 54.78 | 6.14 | 27.72 | no_instruction 19%; math_pipe_throttle 18%; long_scoreboard 15% |
+| p3-ncu-extra-long-full | mmq-fixup ssm_alpha Q8_0 J=128 N=2048 | 24 | 18.8 | 15 | DRAM | 7.2 | 38.44 | 11.6 | 0.28 | 0.11 | 38.44 | n/a | 0 | long_scoreboard 71%; imc_miss 14%; wait 9% |
+| p3-ncu-extra-long-full | mmq attn_gate(z) Q8_0 J=128 N=2048 | 24 | 776.3 | 892.8 | INT8 | 287.7 | 37.06 | 488.6 | 11.73 | 4.49 | 40.28 | 37.06 | 38.17 | math_pipe_throttle 27%; mio_throttle 16%; long_scoreboard 16% |
+| p3-ncu-extra-long-full | mmq ssm_out Q8_0 J=128 N=2048 | 24 | 787.4 | 909.4 | INT8 | 287.7 | 36.53 | 499.8 | 11.99 | 4.55 | 36.53 | 36.53 | 38.54 | math_pipe_throttle 27%; wait 15%; mio_throttle 15% |
+| p3-ncu-extra-long-full | mmq ffn_up Q4_0 J=128 N=2048 | 31 | 1649.5 | 1924.3 | INT8 | 647.3 | 39.24 | 1002.3 | 31.07 | 12.32 | 39.64 | 39.24 | 39.22 | math_pipe_throttle 29%; wait 19%; mio_throttle 16% |
+| p3-ncu-extra-long-p4 | mmq attn_qkv Q8_0 J=32 N=26 | 24 | 68.4 | 65.2 | DRAM | 55 | 80.43 | 13.4 | 0.32 | 9.57 | 84.94 | 10.68 | 14.19 | long_scoreboard 32%; lg_throttle 28%; mio_throttle 11% |
+| p3-ncu-extra-long-p4 | mmq-fixup attn_qkv Q8_0 J=32 N=26 | 24 | 6.9 | 5 | DRAM | 3 | 43.2 | 3.9 | 0.09 | 0.96 | 43.2 | n/a | 0 | long_scoreboard 72%; imc_miss 12%; wait 9% |
+| p3-ncu-extra-long-p4 | mmq ssm_beta Q8_0 J=32 N=26 | 24 | 5.6 | 4.9 | launch | 1 | 17.76 | 4.6 | 0.11 | 0.79 | 11.86 | 0.51 | 11.91 | imc_miss 27%; wait 16%; lg_throttle 11% |
+| p3-ncu-extra-long-p4 | mmq-fixup ssm_beta Q8_0 J=32 N=26 | 24 | 8.2 | 4.8 | launch | 1 | 12.21 | 7.2 | 0.17 | 1.15 | 4.75 | n/a | 0 | imc_miss 35%; long_scoreboard 27%; wait 20% |
+| p3-ncu-extra-long-p4 | mmq ssm_alpha Q8_0 J=32 N=26 | 24 | 5.8 | 4.4 | launch | 1 | 17.36 | 4.8 | 0.11 | 0.81 | 11.72 | 0.5 | 11.8 | imc_miss 27%; wait 16%; lg_throttle 11% |
+| p3-ncu-extra-long-p4 | mmq-fixup ssm_alpha Q8_0 J=32 N=26 | 24 | 8.3 | 4.8 | launch | 1 | 12.07 | 7.3 | 0.17 | 1.16 | 4.74 | n/a | 0 | imc_miss 36%; long_scoreboard 28%; wait 21% |
+| p3-ncu-extra-long-p4 | mmq attn_gate(z) Q8_0 J=32 N=26 | 24 | 40.1 | 38.8 | DRAM | 27.6 | 68.86 | 12.5 | 0.3 | 5.61 | 76.51 | 9.12 | 12.86 | long_scoreboard 34%; lg_throttle 27%; mio_throttle 10% |
+| p3-ncu-extra-long-p4 | mmq-fixup attn_gate(z) Q8_0 J=32 N=26 | 24 | 7.2 | 4.9 | DRAM | 2.8 | 38.45 | 4.4 | 0.11 | 1 | 38.45 | n/a | 0 | long_scoreboard 72%; imc_miss 12%; wait 10% |
+| p3-ncu-extra-long-p4 | mmq ssm_out Q8_0 J=32 N=26 | 24 | 40.9 | 40 | DRAM | 27.3 | 66.85 | 13.5 | 0.33 | 5.72 | 74.46 | 8.94 | 12.62 | long_scoreboard 37%; lg_throttle 29%; mio_throttle 9% |
+| p3-ncu-extra-long-p4 | mmq-fixup ssm_out Q8_0 J=32 N=26 | 24 | 6.9 | 4.9 | DRAM | 2.3 | 32.91 | 4.6 | 0.11 | 0.96 | 32.91 | n/a | 0 | long_scoreboard 63%; imc_miss 16%; wait 12% |
+| p3-ncu-extra-long-p4 | mmq ffn_up Q4_0 J=32 N=26 | 31 | 57.3 | 56.6 | DRAM | 33.9 | 59.14 | 23.4 | 0.73 | 10.36 | 63.85 | 14.34 | 19.93 | mio_throttle 34%; lg_throttle 18%; wait 10% |
+| p3-ncu-extra-long-p4 | mmq ffn_gate Q4_0 J=32 N=26 | 31 | 56.6 | 55 | DRAM | 33.9 | 59.88 | 22.7 | 0.7 | 10.23 | 65.02 | 14.52 | 19.88 | mio_throttle 34%; lg_throttle 19%; wait 10% |
+| p3-ncu-extra-long-p4 | mmq ffn_down Q4_0 J=32 N=26 | 31 | 64.3 | 58 | DRAM | 32.7 | 50.87 | 31.6 | 0.98 | 11.63 | 56.65 | 12.78 | 16.58 | lg_throttle 35%; long_scoreboard 17%; wait 14% |
+| p3-ncu-extra-long-p4 | mmq-fixup ffn_down Q4_0 J=32 N=26 | 31 | 6.8 | 4.9 | DRAM | 2.3 | 33.73 | 4.5 | 0.14 | 1.24 | 33.73 | n/a | 0 | long_scoreboard 61%; imc_miss 19%; wait 12% |
+| p3-ncu-extra-med-p0 | mmq attn_qkv Q8_0 J=128 N=1288 | 24 | 1041.6 | 1046 | INT8 | 361.8 | 34.74 | 679.8 | 16.32 | 9.19 | 32.2 | 34.74 | 38.38 | math_pipe_throttle 27%; mio_throttle 16%; wait 15% |
+| p3-ncu-extra-med-p0 | mmq ssm_beta Q8_0 J=128 N=1288 | 24 | 30.5 | 29.6 | DRAM | 9.4 | 30.75 | 21.1 | 0.51 | 0.27 | 47.65 | 4.63 | 23.87 | no_instruction 28%; math_pipe_throttle 15%; long_scoreboard 14% |
+| p3-ncu-extra-med-p0 | mmq-fixup ssm_beta Q8_0 J=128 N=1288 | 24 | 18.2 | 14 | DRAM | 6.8 | 37.12 | 11.5 | 0.28 | 0.16 | 37.12 | n/a | 0 | long_scoreboard 62%; imc_miss 19%; wait 11% |
+| p3-ncu-extra-med-p0 | mmq ssm_alpha Q8_0 J=128 N=1288 | 24 | 30.4 | 22.9 | DRAM | 9.4 | 30.85 | 21 | 0.51 | 0.27 | 47.92 | 4.64 | 24.12 | no_instruction 28%; math_pipe_throttle 15%; long_scoreboard 14% |
+| p3-ncu-extra-med-p0 | mmq-fixup ssm_alpha Q8_0 J=128 N=1288 | 24 | 18.2 | 13.5 | DRAM | 6.7 | 36.96 | 11.5 | 0.28 | 0.16 | 36.96 | n/a | 0 | long_scoreboard 60%; imc_miss 19%; wait 10% |
+| p3-ncu-extra-med-p0 | mmq attn_gate(z) Q8_0 J=128 N=1288 | 24 | 553.1 | 553.9 | INT8 | 180.9 | 32.71 | 372.1 | 8.93 | 4.88 | 31.4 | 32.71 | 38.04 | math_pipe_throttle 27%; mio_throttle 16%; long_scoreboard 16% |
+| p3-ncu-extra-med-p0 | mmq ssm_out Q8_0 J=128 N=1288 | 24 | 528.1 | 529.1 | INT8 | 180.9 | 34.26 | 347.2 | 8.33 | 4.66 | 28.17 | 34.26 | 38.53 | math_pipe_throttle 27%; long_scoreboard 15%; wait 15% |
+| p3-ncu-extra-med-p0 | mmq ffn_up Q4_0 J=128 N=1288 | 31 | 1126 | 1119.5 | INT8 | 407.1 | 36.15 | 718.9 | 22.29 | 12.83 | 30 | 36.15 | 39.5 | math_pipe_throttle 30%; wait 19%; mio_throttle 16% |
+| p3-ncu-extra-med-p0 | mmq ffn_gate Q4_0 J=128 N=1288 | 31 | 1119.8 | 1119 | INT8 | 407.1 | 36.35 | 712.8 | 22.1 | 12.76 | 30.15 | 36.35 | 39.56 | math_pipe_throttle 30%; wait 19%; mio_throttle 16% |
+| p3-ncu-extra-med-p0 | mmq ffn_down Q4_0 J=128 N=1288 | 31 | 1121.9 | 1107.8 | INT8 | 407.1 | 36.29 | 714.8 | 22.16 | 12.78 | 23.24 | 36.29 | 40.81 | math_pipe_throttle 30%; wait 19%; mio_throttle 14% |
+
+Source: analyze_ncu.py from the ncu raw page (duration, DRAM bytes, pipe utilisation, stall ratios) and plan/<run>.json (launches per pass, model bytes and ops from census_lib). `ncu / nsys` differences come from the replay (caches flushed, clocks not locked).
+
+## Coverage of the passes by the profiled classes
+
+| case | pass | N, tokens | GPU time of the traced pass (nsys), ms | profiled classes, ms per pass (launches x measured) | coverage of the pass, % | gap to the limits of these classes, ms per pass | gap, % of the pass |
+|---|---|---|---|---|---|---|---|
+| check03 | P0 | 158 | 37.45 | 0.07 | 0.19 | -1.63 | -4.35 |
+| long00-storage | P1 | 1173 | 256.62 | 144.77 | 56.41 | 92.91 | 36.2 |
+| triage09 | P0 | 86 | 28.45 | 17.12 | 60.17 | 9.63 | 33.84 |
+| triage09 | P1 | 102 | 32.24 | 18.91 | 58.63 | 11.05 | 34.27 |
+| long00-storage | P0 | 2048 | 414.97 | 127.22 | 30.66 | 78.48 | 18.91 |
+| long00-storage | P4 | 26 | 17.15 | 10.49 | 61.18 | 4.38 | 25.53 |
+| medium01-memory | P0 | 1288 | 272.13 | 157.68 | 57.95 | 101.68 | 37.37 |
+
+Source: sum over the classes of this table (each class once per case); pass GPU time = sum of the nsys kernel durations of the traced pass that models it (plan/<run>.json passes).
+

@@ -1,0 +1,236 @@
+table	column	unit	meaning
+requests.tsv	idx	None	index of the request in the client sequence (0-based; the idx of the client JSON)
+requests.tsv	kind	None	request type: short1q, short2q, medium3q or long3q
+requests.tsv	case	None	benchmark case id
+requests.tsv	phase	None	client phase: warmup, unique, cycle, pair1 or pair2
+requests.tsv	pair	None	pair number (1-based) of a pair1/pair2 request; empty in the other phases
+requests.tsv	wall_ms	ms	client wall time: just before the request is written to the socket until the response body is read
+requests.tsv	input_tokens	count	input_tokens of the response usage field (prompt tokens counted by the server)
+requests.tsv	server_total_ms	ms	total_us of the server request line: handler entry to end of handler
+requests.tsv	http_total_ms	ms	wall_ms minus server_total_ms = http_in_ms + http_out_ms; the only HTTP figure when the clocks do not agree
+requests.tsv	http_in_ms	ms	client send stamp to server handler entry (request line t minus total_us); empty when the clocks do not agree
+requests.tsv	parse_ms	ms	handler entry to parsed request: JSON parse, questions, state, prepare_state (request.parse_us)
+requests.tsv	build_ms	ms	prompt render, tokenize and task grouping in the HTTP thread (request.build_us)
+requests.tsv	sched_ms	ms	end of build to start of the first llama_decode: post_tasks, queue wake-up, slot selection and launch, batch build
+requests.tsv	first_setup_ms	ms	start of the first llama_decode to start of the first ubatch: batch alloc, memory init_batch, output reserve
+requests.tsv	prepare_ms	ms	host graph preparation of all passes: memory apply + graph build + alloc + set inputs (sum of the ubatch lines)
+requests.tsv	submit_ms	ms	host time of the compute submit (op dispatch and CUDA launches) of all passes, not the GPU run (sum of ubatch submit_us)
+requests.tsv	between_ms	ms	host time between two passes without the GPU waits: end of ubatch i to start of ubatch i+1
+requests.tsv	post_submit_ms	ms	end of the last ubatch to start of the last blocking sync: decode tail, post_decode, logits read call
+requests.tsv	gpu_wait_ms	ms	host blocked for the GPU, all syncs (sum of sync wait_us)
+requests.tsv	tail_server_ms	ms	end of the last sync to wait_for_all returned: send_decision, slot release, queue, wake-up of the HTTP thread
+requests.tsv	format_ms	ms	answer formatting: softmax over the answer tokens and JSON (request.format_us)
+requests.tsv	http_out_ms	ms	server request line to response body read by the client: JSON dump, HTTP write, loopback, client read; empty when the clocks do not agree
+requests.tsv	residual_ms	ms	wall_ms minus the sum of the 13 stack columns (minus unsplit_ms); about 0
+requests.tsv	unsplit_ms	ms	span from end of build to end of wait when the request has no ubatch lines (not split into sched/prepare/submit/...); 0 otherwise
+requests.tsv	apply_ms	ms	part of prepare_ms: memory context apply (sum over the passes)
+requests.tsv	graph_build_ms	ms	part of prepare_ms: ggml graph build, 0 when the graph was reused (sum over the passes)
+requests.tsv	alloc_ms	ms	part of prepare_ms: scheduler alloc, 0 when the graph was reused (sum over the passes)
+requests.tsv	inputs_ms	ms	part of prepare_ms: set_inputs (sum over the passes)
+requests.tsv	between_within_decode_ms	ms	part of between_ms: ubatch end to next ubatch start inside one llama_decode
+requests.tsv	between_decode_post_ms	ms	part of between_ms: last ubatch end to end of its llama_decode (decode tail)
+requests.tsv	between_presync_ms	ms	part of between_ms: end of a llama_decode to start of the sync that follows it
+requests.tsv	between_loop_ms	ms	part of between_ms: end of a llama_decode or sync to start of the next llama_decode or sync (update_slots loop, post_decode, send_decision)
+requests.tsv	between_decode_pre_ms	ms	part of between_ms: start of a llama_decode to start of its first ubatch (batch alloc, init_batch)
+requests.tsv	sched_wake_est_ms	ms	ESTIMATE, part of sched_ms: end of build to the launch_slot line (queue wake-up, slot selection); needs the slot-line clock anchor, else empty
+requests.tsv	sched_launch_est_ms	ms	ESTIMATE, part of sched_ms: launch_slot line to start of the first llama_decode (batch build); needs the slot-line clock anchor, else empty
+requests.tsv	n_questions	count	questions of the request (request line n_questions)
+requests.tsv	n_groups	count	grouped parent tasks of the request (request line n_groups); children are not counted
+requests.tsv	n_decodes	count	llama_decode calls (decode lines) of the request
+requests.tsv	n_ubatches	count	model passes (ubatch lines) of the request
+requests.tsv	n_syncs	count	synchronize() calls with pending passes (sync lines) of the request
+requests.tsv	tokens_evaluated	count	sum of n_tokens over the ubatches of the request
+requests.tsv	passes_obs	None	observed passes joined by +: P<n> = n tokens without output (prefix pass), F<n> = pass of a one-question request, S<seqs>x<tokens> = suffix pass of seqs sequences of tokens each
+requests.tsv	ubatches_per_decode	None	ubatches of every llama_decode call, comma separated
+requests.tsv	reuse_flags	None	one character per ubatch: 1 = compute graph reused, 0 = built
+requests.tsv	cuda_modes	None	CUDA graph mode of the ubatches (cuda_compute lines): direct, graph_capture or graph_replay; comma separated
+requests.tsv	cuda_host_ms	ms	host time of the backend graph compute (cuda_compute lines), sum over the passes
+requests.tsv	span_ms	ms	sum over the sync groups of (sync end minus start of the first pass of the group); upper bound of the GPU busy time; empty without a sync
+requests.tsv	floor_weights_ms	ms	census weight-read floor of the observed passes, sum (nominal 448 GB/s, from census_lib.pass_costs)
+requests.tsv	floor_int8_ms	ms	census int8 compute floor of the observed passes, sum
+requests.tsv	floor_max_ms	ms	census pass floor max(weights, int8) of the observed passes, sum
+requests.tsv	floor_roofline_ms	ms	census serial roofline floor of the observed passes, sum
+requests.tsv	exposed_min_ms	ms	lower bound of the host time inside the GPU spans that runs with an idle GPU: prepare of the first pass of every sync group
+requests.tsv	exposed_max_ms	ms	upper bound of the same host time: per sync group min(span - wait, span - max(wait, census floors of the group)), at least exposed_min_ms; summed
+requests.tsv	submit_first_ms	ms	submit time of the first pass of every sync group, sum (nothing earlier on the GPU to hide under)
+requests.tsv	submit_later_ms	ms	submit time of the later passes of the sync groups, sum (can hide under the GPU run of an earlier pass)
+requests.tsv	slots	None	slot ids of the launched tasks in task order (parent first), comma separated
+requests.tsv	slot_select	None	how the parent slot was chosen (slot line): LRU, LCP or id
+requests.tsv	f_sim_best	ratio	similarity of the best slot when the parent was chosen by LCP; empty otherwise
+requests.tsv	release_tokens	count	n_tokens of the slot release line of every launched task, comma separated; ? = no release line
+requests.tsv	census_expected	None	passes string that census-cases.tsv (variant ref) predicts for the case and the observed slots; | separates alternatives
+requests.tsv	census_match	None	1 when passes_obs equals a census prediction (suffix passes equal, P/F sizes within 6 tokens), 0 when not, empty when not compared
+requests.tsv	census_ref_delta_tokens	count	observed minus census token count of the first P/F pass that differs (the Ref value is 9-14 tokens, the census uses 13); empty when not matched
+requests.tsv	valid	None	1 when the request enters the tables: none of the flags no_ubatch, no_sync, neg_gap, sync_passes_mismatch, pass_without_sync, stamp_order, decode_ubatches_mismatch, no_sync_tail, and |residual_ms| <= 0.05
+requests.tsv	flags	None	analysis flags of the request joined by ;: see NOTES.txt section 6; empty when none
+passes.tsv	idx	None	request index (idx of requests.tsv)
+passes.tsv	kind	None	request type of the request
+passes.tsv	case	None	benchmark case id
+passes.tsv	phase	None	client phase of the request
+passes.tsv	pass	None	index of the pass (ubatch) in the request, 0-based
+passes.tsv	decode	None	index of the llama_decode call that holds the pass; -1 when none
+passes.tsv	group	None	index of the sync that covers the pass; -1 when none
+passes.tsv	n_tokens	count	tokens of the pass
+passes.tsv	n_seqs	count	sequences of the pass
+passes.tsv	n_seq_tokens	count	tokens per sequence of the pass
+passes.tsv	n_outputs	count	outputs (logit rows) of the pass; 0 for a prefix pass
+passes.tsv	n_nodes	count	nodes of the compute graph
+passes.tsv	reuse	None	1 when the compute graph was reused, else 0
+passes.tsv	apply_ms	ms	part of the prepare time of this pass: memory context apply of this pass
+passes.tsv	graph_build_ms	ms	part of the prepare time of this pass: ggml graph build, 0 when the graph was reused of this pass
+passes.tsv	alloc_ms	ms	part of the prepare time of this pass: scheduler alloc, 0 when the graph was reused of this pass
+passes.tsv	inputs_ms	ms	part of the prepare time of this pass: set_inputs of this pass
+passes.tsv	submit_ms	ms	host time of the compute submit of this pass (ubatch submit_us)
+passes.tsv	total_ms	ms	total_us of the ubatch line: host time of the pass = apply + build + alloc + inputs + submit
+passes.tsv	cuda_mode	None	CUDA graph mode of the pass (cuda_compute line): direct, graph_capture or graph_replay
+passes.tsv	cuda_host_ms	ms	host time of the backend graph compute of this pass (cuda_compute line host_us)
+passes.tsv	start_after_request_start_ms	ms	start of the pass minus the handler entry of the request
+passes.tsv	gap_before_ms	ms	start of the pass minus the end of the previous pass (or end of build for the first), minus sync_between_ms
+passes.tsv	sync_between_ms	ms	GPU wait of the syncs that fall between the previous pass and this one
+passes.tsv	sync_passes	count	passes covered by the sync that ends the group; set only on the last pass of a sync group
+passes.tsv	sync_wait_ms	ms	wait_us of that sync (host blocked for the GPU); last pass of a sync group only
+passes.tsv	sync_span_ms	ms	sync end minus start of the first pass of the group; last pass of a sync group only
+passes.tsv	sync_since_last_submit_ms	ms	since_last_submit_us of the sync line as the server prints it; last pass of a sync group only
+passes.tsv	floor_weights_ms	ms	census weight-read floor of the pass
+passes.tsv	floor_int8_ms	ms	census int8 compute floor of the pass
+passes.tsv	floor_max_ms	ms	census pass floor max(weights, int8) of the pass
+passes.tsv	floor_roofline_ms	ms	census serial roofline floor of the pass
+passes.tsv	floor_group_ms	ms	sum of floor_max_ms of all passes of the sync group; last pass of a sync group only
+clock-check.tsv	interval	None	client send to server request start (http_in_ms), or server request end to client receive (http_out_ms)
+clock-check.tsv	n	count	requests matched by time
+clock-check.tsv	mean_ms	ms	mean of the interval
+clock-check.tsv	p50_ms	ms	median of the interval
+clock-check.tsv	min_ms	ms	smallest value of the interval
+clock-check.tsv	max_ms	ms	largest value of the interval
+clock-check.tsv	n_negative	count	requests whose interval is below minus the stamp tolerance (3 us); must be 0 when the clocks agree
+summary-wall.tsv	kind	None	request type
+summary-wall.tsv	phase	None	client phase (warmup rows are listed here only)
+summary-wall.tsv	n	count	client requests of the group
+summary-wall.tsv	mean_ms	ms	mean client wall time
+summary-wall.tsv	p50_ms	ms	median client wall time
+summary-wall.tsv	p95_ms	ms	95th percentile of the client wall time
+summary-wall.tsv	min_ms	ms	smallest client wall time
+summary-wall.tsv	max_ms	ms	largest client wall time
+summary-wall.tsv	server_total_mean_ms	ms	mean server_total_ms of the matched requests of the group
+stack.tsv	kind	None	request type
+stack.tsv	phase	None	client phase (unique, cycle, pair1, pair2)
+stack.tsv	n	count	valid requests of the group
+stack.tsv	http_in_ms	ms	mean over the valid requests: client send stamp to server handler entry (request line t minus total_us); empty when the clocks do not agree
+stack.tsv	parse_ms	ms	mean over the valid requests: handler entry to parsed request: JSON parse, questions, state, prepare_state (request.parse_us)
+stack.tsv	build_ms	ms	mean over the valid requests: prompt render, tokenize and task grouping in the HTTP thread (request.build_us)
+stack.tsv	sched_ms	ms	mean over the valid requests: end of build to start of the first llama_decode: post_tasks, queue wake-up, slot selection and launch, batch build
+stack.tsv	first_setup_ms	ms	mean over the valid requests: start of the first llama_decode to start of the first ubatch: batch alloc, memory init_batch, output reserve
+stack.tsv	prepare_ms	ms	mean over the valid requests: host graph preparation of all passes: memory apply + graph build + alloc + set inputs (sum of the ubatch lines)
+stack.tsv	submit_ms	ms	mean over the valid requests: host time of the compute submit (op dispatch and CUDA launches) of all passes, not the GPU run (sum of ubatch submit_us)
+stack.tsv	between_ms	ms	mean over the valid requests: host time between two passes without the GPU waits: end of ubatch i to start of ubatch i+1
+stack.tsv	post_submit_ms	ms	mean over the valid requests: end of the last ubatch to start of the last blocking sync: decode tail, post_decode, logits read call
+stack.tsv	gpu_wait_ms	ms	mean over the valid requests: host blocked for the GPU, all syncs (sum of sync wait_us)
+stack.tsv	tail_server_ms	ms	mean over the valid requests: end of the last sync to wait_for_all returned: send_decision, slot release, queue, wake-up of the HTTP thread
+stack.tsv	format_ms	ms	mean over the valid requests: answer formatting: softmax over the answer tokens and JSON (request.format_us)
+stack.tsv	http_out_ms	ms	mean over the valid requests: server request line to response body read by the client: JSON dump, HTTP write, loopback, client read; empty when the clocks do not agree
+stack.tsv	wall_ms	ms	mean client wall time of the valid requests (the 13 stack columns add up to it)
+stack.tsv	residual_mean_ms	ms	mean of residual_ms
+stack.tsv	residual_absmax_ms	ms	largest |residual_ms| of the group
+components.tsv	kind	None	request type
+components.tsv	phase	None	client phase (unique, cycle, pair1, pair2)
+components.tsv	component	None	name of a stack column of requests.tsv, or wall_ms or residual_ms
+components.tsv	n	count	valid requests of the group
+components.tsv	mean_ms	ms	mean of the component
+components.tsv	p50_ms	ms	median of the component
+components.tsv	p95_ms	ms	95th percentile of the component
+components.tsv	mean_share_pct	pct	100 x mean of the component / mean wall_ms of the group
+waterfall-short1q.tsv	step	None	waterfall step: weight floor of one pass with output; the five stack groups (HTTP, parse + build, scheduling, host graph build + submit, tail); GPU wait beyond the floor; wall; residual
+waterfall-short1q.tsv	mean_ms	ms	mean over the valid short1q unique requests of the step (the floor row: the census weight floor)
+waterfall-short1q.tsv	p50_ms	ms	median of the step (p50 of a sum is taken per request, so the column does not add up)
+waterfall-short1q.tsv	cumulative_mean_ms	ms	weight floor plus the steps above; the wall row equals the client wall mean; empty for the residual row
+waterfall-short1q.tsv	share_of_wall_pct	pct	100 x mean_ms / mean wall time
+waterfall-short1q-detail.tsv	column	None	stack or detail column of requests.tsv (or http_total_ms)
+waterfall-short1q-detail.tsv	what	None	description of the column
+waterfall-short1q-detail.tsv	mean_ms	ms	mean over the valid short1q unique requests
+waterfall-short1q-detail.tsv	p50_ms	ms	median
+waterfall-short1q-detail.tsv	p95_ms	ms	95th percentile
+waterfall-short1q-detail.tsv	share_of_wall_pct	pct	100 x mean / mean wall time
+waterfall-short1q-ref.tsv	quantity	None	reference number: census floors, the earlier 36.7 ms measurement, wall and GPU span of this run and their differences and ratios
+waterfall-short1q-ref.tsv	ms (or ratio)	ms	value in ms; the last two rows (span / weight floor, wall / weight floor) are ratios without unit
+warm-path.tsv	kind	None	request type
+warm-path.tsv	case	None	benchmark case id
+warm-path.tsv	n_pairs	count	complete valid pairs of the case
+warm-path.tsv	wall1_mean_ms	ms	mean wall time of the first request of the pairs
+warm-path.tsv	wall2_mean_ms	ms	mean wall time of the second request of the pairs
+warm-path.tsv	d_wall_ms	ms	mean of (pair2 minus pair1) wall time; negative = the second request is faster
+warm-path.tsv	d_wall_se_ms	ms	standard error of d_wall_ms (differences below 2 x this are noise)
+warm-path.tsv	d_http_in_ms	ms	mean of (pair2 minus pair1) of http_in_ms
+warm-path.tsv	d_parse_ms	ms	mean of (pair2 minus pair1) of parse_ms
+warm-path.tsv	d_build_ms	ms	mean of (pair2 minus pair1) of build_ms
+warm-path.tsv	d_sched_ms	ms	mean of (pair2 minus pair1) of sched_ms
+warm-path.tsv	d_first_setup_ms	ms	mean of (pair2 minus pair1) of first_setup_ms
+warm-path.tsv	d_prepare_ms	ms	mean of (pair2 minus pair1) of prepare_ms
+warm-path.tsv	d_submit_ms	ms	mean of (pair2 minus pair1) of submit_ms
+warm-path.tsv	d_between_ms	ms	mean of (pair2 minus pair1) of between_ms
+warm-path.tsv	d_post_submit_ms	ms	mean of (pair2 minus pair1) of post_submit_ms
+warm-path.tsv	d_gpu_wait_ms	ms	mean of (pair2 minus pair1) of gpu_wait_ms
+warm-path.tsv	d_tail_server_ms	ms	mean of (pair2 minus pair1) of tail_server_ms
+warm-path.tsv	d_format_ms	ms	mean of (pair2 minus pair1) of format_ms
+warm-path.tsv	d_http_out_ms	ms	mean of (pair2 minus pair1) of http_out_ms
+warm-path-work.tsv	kind	None	request type
+warm-path-work.tsv	case	None	benchmark case id
+warm-path-work.tsv	phase	None	pair1 or pair2
+warm-path-work.tsv	n	count	requests of the group
+warm-path-work.tsv	tokens_evaluated_mean	count	mean tokens_evaluated
+warm-path-work.tsv	ubatches_mean	count	mean n_ubatches
+warm-path-work.tsv	decodes_mean	count	mean n_decodes
+warm-path-work.tsv	graph_reuse_mean	count	mean number of ubatches that reused the compute graph
+warm-path-work.tsv	census_tokens_evaluated	count	tokens of a full evaluation of the prompt: tokens_evaluated of census-cases.tsv, variant ref
+warm-path-work.tsv	n_census_match	count	requests with census_match = 1
+warm-path-work.tsv	slot_select	None	slot selection counts, e.g. LRU:5,LCP:3
+warm-path-work.tsv	passes_most_common	None	most common passes_obs string of the group
+instrumentation.tsv	kind	None	request type
+instrumentation.tsv	phase	None	client phase, or 'all timed' for the four timed phases together
+instrumentation.tsv	n_timing	count	requests of the timing run
+instrumentation.tsv	n_ref	count	requests of the reference run
+instrumentation.tsv	mean_timing_ms	ms	mean client wall time of the timing run
+instrumentation.tsv	mean_ref_ms	ms	mean client wall time of the reference run
+instrumentation.tsv	d_mean_ms	ms	timing minus reference, mean
+instrumentation.tsv	d_mean_pct	pct	100 x d_mean_ms / mean_ref_ms
+instrumentation.tsv	p50_timing_ms	ms	median wall time of the timing run
+instrumentation.tsv	p50_ref_ms	ms	median wall time of the reference run
+instrumentation.tsv	d_p50_ms	ms	timing minus reference, median
+instrumentation.tsv	d_p50_pct	pct	100 x d_p50_ms / p50_ref_ms
+instrumentation.tsv	se_d_mean_ms	ms	sqrt(se_timing^2 + se_ref^2), standard error of d_mean_ms
+instrumentation.tsv	verdict_unpaired_2se	None	within noise when |d_mean_ms| < 2 x se_d_mean_ms, else DIFFERENT
+instrumentation.tsv	n_paired	count	requests with the same idx, case and Ref in both runs
+instrumentation.tsv	paired_d_mean_ms	ms	mean of the paired wall time difference (timing minus reference)
+instrumentation.tsv	paired_se_ms	ms	standard error of the paired difference
+instrumentation.tsv	verdict_paired_2se	None	within noise when |paired_d_mean_ms| < 2 x paired_se_ms, else DIFFERENT
+fractions.tsv	kind	None	request type
+fractions.tsv	phase	None	client phase (unique, cycle, pair1, pair2)
+fractions.tsv	n	count	valid requests of the group
+fractions.tsv	wall_ms	ms	mean client wall time
+fractions.tsv	gpu_wait_pct	pct	100 x gpu_wait_ms / wall_ms
+fractions.tsv	host_prepare_submit_pct	pct	100 x (prepare_ms + submit_ms) / wall_ms
+fractions.tsv	not_overlapped_min_pct	pct	lower bound of the part of host_prepare_submit that runs with an idle GPU (part of the host time in the GPU spans, not an extra share)
+fractions.tsv	not_overlapped_max_pct	pct	upper bound of the same part
+fractions.tsv	between_passes_pct	pct	100 x between_ms / wall_ms
+fractions.tsv	post_submit_pct	pct	100 x post_submit_ms / wall_ms
+fractions.tsv	client_http_pct	pct	100 x (http_in_ms + http_out_ms) / wall_ms (http_total_ms when the clocks do not agree)
+fractions.tsv	parse_build_pct	pct	100 x (parse_ms + build_ms) / wall_ms
+fractions.tsv	scheduling_pct	pct	100 x (sched_ms + first_setup_ms) / wall_ms
+fractions.tsv	tail_pct	pct	100 x (tail_server_ms + format_ms) / wall_ms
+fractions.tsv	submit_first_pass_pct	pct	100 x submit_first_ms / wall_ms; with submit_later_passes_pct the submit part of host_prepare_submit_pct (accounting split by pass order, not a measurement)
+fractions.tsv	submit_later_passes_pct	pct	100 x submit_later_ms / wall_ms
+fractions.tsv	sum_pct	pct	gpu_wait + host_prepare_submit + between + post_submit + client_http + parse_build + scheduling + tail; 100 minus the residual
+hostbound.tsv	kind	None	request type
+hostbound.tsv	phase	None	client phase (unique or cycle)
+hostbound.tsv	n	count	valid requests of the group with a sync
+hostbound.tsv	ubatches	count	mean passes per request
+hostbound.tsv	prepare_ms	ms	mean prepare_ms
+hostbound.tsv	submit_ms	ms	mean submit_ms
+hostbound.tsv	gpu_wait_ms	ms	mean gpu_wait_ms; lower bound of the GPU time
+hostbound.tsv	gpu_span_ms	ms	mean span_ms; upper bound of the GPU busy time
+hostbound.tsv	floor_max_ms	ms	mean census pass floor max(weights, int8), summed over the passes
+hostbound.tsv	floor_roofline_ms	ms	mean census serial roofline floor
+hostbound.tsv	submit_over_span	ratio	submit_ms / gpu_span_ms
+hostbound.tsv	wait_over_span	ratio	gpu_wait_ms / gpu_span_ms
+hostbound.tsv	span_over_floor	ratio	gpu_span_ms / floor_max_ms
+hostbound.tsv	submit_per_pass_ms	ms	submit_ms / ubatches
+hostbound.tsv	hint	None	rule of thumb [INFERENCE]: submit >= 0.9 span = host-bound; wait >= 0.5 span = GPU-bound; else mixed

@@ -1,0 +1,247 @@
+nsys traces of the whole server and their analysis (package 2 of the profiling phase)
+=====================================================================================
+
+What it answers: the kernel, pass and gap census of the build-D server (b12004-sm86, production flags) from a fresh Nsight Systems
+capture in which every request has a client-side send and receive time, so no request boundary has to be guessed from kernel order
+(the earlier captures behind the shape census had none). It also splits the idle time between passes into host-side parts, gives the
+per-class kernel time of every pass type, and measures what nsys itself costs by running the same requests without it.
+
+Everything below that was not observed is marked [INFERENCE]. The tests below use data derived from the three earlier captures and a
+CPU-only nsys; the real whole-server captures of the profiling window (data set data/2026-10-31-profiles, folder raw/2-nsys) were analysed
+with this code afterwards, see "Real captures".
+
+Files (paths from the repository root)
+--------------------------------------
+
+  harness/profile/extra/prof/nsys_client.py   the client (stdlib only, imports common): sequential, one keep-alive connection, unique Ref
+                                              per request; kinds short1q short2q medium3q long3q all48 replay
+  harness/profile/sched/2-nsys.txt            the schedule: 5 nsys runs + 1 control run, GPU-minute table and reasoning in the header;
+                                              it holds @REMOTE_DIR@ (see Run)
+  harness/profile/nsys/nsys_export.sh         .nsys-rep -> .sqlite (CPU only)
+  harness/profile/nsys/nsys_census.py         sub-commands legacy, analyze, overhead
+  harness/profile/nsys/COLUMNS.tsv            every column of every table written by nsys_census.py: table, column, unit, meaning
+  harness/profile/nsys/test/                  run_tests.sh and its parts
+  harness/profile/analyze_all.sh              runs the analyses of all packages over one results root
+
+Run
+---
+
+Write the schedule with the work folder of the GPU host in it, stop the production server and everything else that uses the GPU, run:
+
+  bash harness/profile/make_sched.sh --remote-dir <work folder on the GPU host> --out <dir> 2-nsys.txt
+  DMK_ENV=<env file> DMK_EXTRA_DIR=harness/profile/extra bash harness/run_schedule.sh <dir>/2-nsys.txt <results dir>
+
+The nsys lines mount <work folder>/tools/nsys (the target-linux-x64 folder of an nsys 2026.3 install, libcupti included) at
+/opt/nsight-systems/target-linux-x64 in the container; nsys is the container entrypoint and the llama-server its child. The results land
+in <results dir>: per run <run>.nsys-rep, <run>.client.json, <run>.client.out, <run>.server.log and the usual harness files.
+run_client.sh refuses a run name whose .client.out already exists.
+
+Analysis (CPU only, any host with python3 and an nsys command line tool of the same release; about 1 min for the five captures [INFERENCE]):
+
+  bash harness/profile/nsys/nsys_export.sh <results dir>
+  python3 harness/profile/nsys/nsys_census.py analyze  --results <results dir> --out <results dir>/analysis
+  python3 harness/profile/nsys/nsys_census.py overhead --results <results dir> --ctl p3-nsys-ctl \
+          --passes <results dir>/analysis/passes.tsv --out <results dir>/analysis
+  # optional: compare with the decomposition client of package 1 (same cases, no profiler): add  --dec <decomp results>/p3-dec-ref.client.json
+  # cross-check of the window assignment by request order, and the epoch clock instead of the monotonic one:
+  python3 harness/profile/nsys/nsys_census.py analyze  --results <results dir> --out <results dir>/analysis-order --assign order
+  python3 harness/profile/nsys/nsys_census.py analyze  --results <results dir> --out <results dir>/analysis-epoch --clock epoch
+  # the three earlier captures, unchanged logic (regression test of the refactoring); --old-exports DIR adds a cross-check against other exports
+  python3 harness/profile/nsys/nsys_census.py legacy --in <folder with long.sqlite medium.sqlite short.sqlite> --out <dir>
+
+or everything at once: bash harness/profile/analyze_all.sh [--census DIR] [--no-mmq-launches] <results root> <out root>
+
+nsys_export.sh [--force] RESULTS_DIR [RUN...] takes the nsys command line tool from $DMK_NSYS, else from PATH, else it unpacks the .deb
+named by $DMK_NSYS_DEB into a temporary folder (removed at the end). It skips a .sqlite that is newer than its .nsys-rep and prints the
+table row counts. The nsys used for the tests is 2026.3.2.476; the tree on the GPU host (libcupti 13.4) is of the same 2026.3 family, and the
+reports of the real captures below exported with the 2026.3.2.476 tool (META_DATA_EXPORT of p3-nsys-short2q.sqlite). If `nsys export` reports a
+version mismatch with another host tree, export with the newest nsys available (DMK_NSYS=<path> bash harness/profile/nsys/nsys_export.sh ...).
+
+Exit status of analyze: 0 unless the capture cannot be read; validation problems are listed in summary.txt ("Validation problems") and make
+the exit status 1 only with --strict. `analyze --no-mmq-launches` does not write mmq-launches.tsv (about 8 MB for the five captures); all
+other files and the checks in summary.txt are unchanged by it.
+
+What a capture contains and how the request windows are cut
+-----------------------------------------------------------
+
+nsys starts with the server process (DMK_SERVER_WRAP; no --delay, no --duration), so a capture holds: model load (weight copies), the
+server's own warm-up decode, idle time until the client connects, the 2 warm-up + 10 timed requests, idle time, and the stop.
+
+1. Passes are found with the legacy anchor rule, restricted to valid anchors: a group of host-to-device input copies whose next kernel is
+   rms_norm_f32<1024> with grid.x == tokens and whose first copy is grid.x * 10240 bytes. Everything before the first valid pass is dropped
+   (model load, startup noise); a gap of more than 50 ms inside the kernels of one pass is activity that is not part of it and is cut
+   there (stray_kernels_cut in summary.txt); API and copy records after the last kernel of the last pass are cut after 5 ms.
+2. Windows. The client stamps t_send_mono_ns / t_recv_mono_ns (CLOCK_MONOTONIC) are mapped onto the nsys timeline with
+   t_nsys = CLOCK_MONOTONIC_ns - TARGET_INFO_SESSION_START_TIME.systemClockNs; --clock epoch uses t_send_epoch_ns - utcEpochNs.
+   Both are checked with a CPU-only nsys run (test/clock_check.py): residuals of 6-25 us at two instants 0.78 s apart (CLOCK_MONOTONIC_RAW
+   is 1.34 s off, i.e. it is not the nsys clock). Client and server run in different containers on one host, so they share CLOCK_MONOTONIC
+   [INFERENCE: no time namespace is configured by the harness; the real captures below agree with it]. A pass belongs to a request if its
+   first kernel starts between the request's send and recv. The requests.tsv columns send_to_first_kernel_ms and last_kernel_to_recv_ms
+   must be >= 0 (Table 2 in summary.txt); a negative value means the mapping is wrong.
+3. Order cross-check. --assign order assigns passes to requests only by the order of the passes and the expected number of passes per
+   request kind (short1q 1, short2q 3, medium3q 4, long3q 5; the shape census) and parses each request backwards from its last pass.
+   Table 3 of summary.txt compares both assignments (same / conflicting / only one of them); with a correct mapping they agree on every
+   pass. If they do not, `analyze --assign order` gives the tables that do not depend on the clocks, and Table 2 of that run then shows the
+   clock offset as negative or implausibly large first-kernel / receive distances.
+4. Passes outside any request (the server's startup warm-up, any request the client did not log) are counted (Table 1 of summary.txt, with
+   the token counts of the first few) and are not validation problems; they are not written to passes.tsv. Warm-up requests
+   (phase = warmup) stay in passes.tsv and requests.tsv but are excluded from kernels.tsv, classes.tsv and the boundary statistics unless
+   --include-warmup.
+
+Outputs of analyze (<out>/)
+---------------------------
+
+  passes.tsv              the 106 columns of the census table trace-passes.tsv (PASS_HEADER, same order, same units, same row_kind = pass /
+                          request / trace_total) followed by the 23 columns below: 129 columns
+  kernels.tsv             the 27 columns of trace-kernels.tsv; trace = run name
+  mmq-launches.tsv        the 45 columns of trace-mmq-launches.tsv + op, layer_idx, layer_type, M, K_quant, expected_grid_x, grid_matches
+                          (not written with --no-mmq-launches)
+  classes.tsv             per scope (each run and ALL), pass type and token class: launches and kernel milliseconds per pass by kernel
+                          class and by label
+  requests.tsv            one row per client request: wall time split into send-to-first-kernel, kernel span (GPU busy + idle inside + idle
+                          between), last-kernel-to-recv
+  osrt-request-start.tsv  OS runtime calls (all threads, at most 400) from 1 ms before the send of the first timed request of each segment
+                          to the start of its first kernel: what the server does between arrival and the first launch (only with an OSRT_API table)
+  summary.txt             Tables 1-10 and the list of validation problems (also printed to stdout); Markdown table syntax, plain file
+
+The columns of every table, with unit and meaning, are in COLUMNS.tsv next to this file.
+
+New columns of passes.tsv (appended after PASS_HEADER):
+
+  run, segment, client_idx, kind, case   run name, client segment (short1q ... all48), request index in the client JSON, request kind, case id
+  phase                                  warmup / timed (the phase names of the client JSON)
+  pass_type                              prefix-large (no output head, 2048 tokens), prefix-small (no output head, < 2048), suffix (output
+                                         head), single (the only pass of a request); request rows: request; total row: trace_total
+  n_class                                token class: N<=8, 9-32, 33-64, 65-128, 129-256, 257-1024, 1025-2047, 2048
+  boundary                               what precedes the pass: first (first pass of the capture), request-start, or
+                                         <previous pass type>-><this pass type>
+  pass_idx_global                        index of the pass among all valid passes of the capture (startup before the first valid pass is
+                                         dropped; passes outside requests are counted but not written)
+  host_gap_drain_ms                      from the end of the previous pass's last kernel until the CUDA call that was already running
+                                         (stream sync, logits copy) returns
+  host_gap_cpu_ms                        no CUDA API call in flight: server host code (sampling, HTTP, batching)
+  host_gap_cuda_api_ms                   other CUDA API calls before the first launch of this pass (input upload copies, syncs)
+  host_gap_first_launch_ms               from the first cudaLaunchKernel of the pass to the start of its first kernel
+  host_gap_cpu_os_wait_ms, host_gap_cpu_busy_ms
+                                         host_gap_cpu_ms split into time inside wait-class OS calls (futex, pthread_cond*, poll, epoll,
+                                         select, recv, nanosleep ...) and the rest; empty without an OSRT_API table
+  host_gap_n_osrt_calls, host_gap_osrt_top
+                                         number of OS calls in the CPU part and the three with the longest total time
+  client_wall_ms                         request wall time on the client (request rows)
+  send_to_first_cuda_api_ms, send_to_first_kernel_ms
+                                         request send to the first CUDA API call / first kernel of the request
+  last_kernel_to_recv_ms                 end of the last kernel to the client's receive
+  window_assignment                      window or order
+
+The four host-gap parts add up exactly to pre_gap_ms (idle time between the end of the previous pass and the start of this one); the test
+checks it on all passes. n_sync_calls, cpu_api_time_ms, cpu_sync_api_ms of the first pass, its request and the total row differ from the
+legacy census because the legacy code attributed API records before the first pass to pass 0 and the whole-server code drops them (54 cells
+in the test, listed by the test).
+
+Limit of the host split. The capture has no CPU sampling and no context-switch trace (--sample=none --cpuctxsw=none), so host_gap_cpu_ms
+cannot be split into functions or into running and descheduled time; only into OS-call waits and the rest (host_gap_cpu_busy_ms, which
+includes preemption).
+
+mmq-launches.tsv lists the ordered MMQ/MMVQ launches of the first pass of each distinct (run, pass kind, tokens). op is derived from the
+layer structure (32 layers = 24 GDN + 8 attention) and the tile-exact grid check (expected_grid_x, grid_matches). Labels that cannot be told
+apart by shape stay combined: ssm_beta|ssm_alpha, attn_k|attn_v, ffn_up|ffn_gate; the fused MMVQ gate+up launch is ffn_gate+up(fused) (M = 9216).
+
+Outputs of overhead (<out>/)
+----------------------------
+
+  overhead.tsv, overhead.txt Table 1   per run and request kind (and ALL over the runs): pairs of the same Ref in the profiled run and the
+                                       control, means, medians, mean of the paired differences, sd, 95 % half-width (1.96 sd / sqrt(pairs),
+                                       normal approximation)
+  overhead-pairs.tsv                   the pairs
+  overhead-vs-dec.tsv                  with --dec: nsys runs against the decomposition client, per case means
+  overhead-where.tsv                   with --passes: nsys wall = send-to-first-kernel + GPU busy + idle inside passes + idle between passes
+                                       + last-kernel-to-recv, with the mean difference per CUDA API call and per launch as upper bounds
+                                       under the hypothesis that the whole difference is per-call cost
+
+The control run (--kind replay) executes the same five sequences with the same cases, order and Refs on a server without nsys. One caveat
+[INFERENCE]: the control's requests come after more earlier requests than the corresponding profiled ones (one server, five sequences), so a
+cache or clock-state effect that depends on the position is possible; the pairing by Ref removes the case-mix effect only.
+
+Tests (CPU only; bash harness/profile/nsys/test/run_tests.sh, about 33 s)
+-------------------------------------------------------------------------
+
+Environment: DMK_LEGACY_TRACES = folder with the three earlier captures long, medium, short as .sqlite (or as .nsys-rep when nsys is
+available to export them); DMK_CENSUS_DATA = census data set (default: data/2026-10-30-shape-census); DMK_NSYS = nsys command line tool
+(else nsys on PATH); DMK_BENCH_DIR = folder with cases.json (default: bench/); DMK_TEST_OUT = keep logs and small reference outputs there.
+A step that needs a missing item prints SKIP and does not count as a failure; the last line says ALL TESTS PASSED, SOME TESTS FAILED, or
+NO FAILURE; steps skipped: <list>. All files are written to temporary folders (TMPDIR is honored), never into the repository.
+
+  1 legacy mode reproduces the census     the three earlier captures (<name>.sqlite): trace-kernels.tsv, trace-passes.tsv and
+                                          trace-mmq-launches.tsv are byte-identical to the census tables (cmp); "VALIDATION PROBLEMS: none"
+  2 client                                test/fake_server.py (HTTP, llama.cpp-like answers): 90 checks: every kind, replay refs and cases
+                                          identical to the segments, JSON schema, unique Refs, exit code 2 on errors (the check of the request
+                                          kind against cases.json is skipped when the cases file has no kind field, as bench/cases.json)
+  3 analyze and overhead                  client JSONs and variants derived from the three earlier captures by test/make_synthetic.py (send =
+                                          first pass's first H2D call - 1 ms, recv = last kernel end + 0.5 ms; variants: shifted clock,
+                                          injected OSRT_API, strays, control with injected differences): 45 checks: pass / request / total
+                                          rows, kernels.tsv, mmq-launches.tsv equal the legacy census except the 54 explained cells; host-gap
+                                          parts add up; client wall = L0 + span + L1; tile-exact grid check 744/744 (short), 1112/1112
+                                          (medium), 1167/1167 (long) launches with the warm-up request left out; passes outside requests;
+                                          shifted clock fails the window assignment and --assign order reproduces the legacy rows; injected
+                                          OS waits recovered; strays cut; --clock epoch same assignment; injected control differences
+                                          (2.5 / 4.0 / 6.0 ms) recovered by overhead
+  4 clock mapping                         CPU-only nsys run (2026.3.2.476) of a python child sleeping 0.777 s: mono and epoch residuals
+                                          6-25 us; RAW 1.34 s off (SKIP without nsys)
+  5 SIGTERM                               nsys profile ... sleep 1234, SIGTERM to nsys as a plain process and as PID 1 of a PID namespace
+                                          (unshare -U -r --pid --fork --mount-proc): both: report written (268 kB / 55 kB), child gone, exit
+                                          status 143, 1.5-1.7 s (SKIP without nsys)
+
+Result of the last run of this port, all five steps with the three earlier captures and the 2026.3.2.476 nsys: ALL TESTS PASSED, 32 s,
+client 90 checks, synthetic 45 checks.
+
+Real captures
+-------------
+
+The six runs of the profiling window (p3-nsys-short1q, short2q, medium3q, long3q, all48 and the control p3-nsys-ctl) were analysed with
+nsys_census.py analyze and overhead (the control with --ctl p3-nsys-ctl, once with --dec of the decomposition reference run):
+  - Table 2 of summary.txt: first kernel - send is 2.996 ms at least, recv - last kernel end 0.507 ms at least over all request kinds,
+    no request with a negative value; the epoch clock and the monotonic clock agree to 0.001 ms at the median.
+  - Table 3: the window assignment and the order assignment agree on all 304 passes (148 + 60 + 48 + 12 + 36).
+  - "Validation problems": none.
+The two nsys runs of the kvwin lead (p3-lead-kvwin-nsys and p3-lead-kvwin-nokvu-nsys) are analysed the same way with
+`analyze --runs p3-lead-kvwin-nsys,p3-lead-kvwin-nokvu-nsys`.
+
+Estimates [INFERENCE]
+---------------------
+
+Schedule: about 5.1 min GPU time (7.7 min with a factor 1.5), derivation in the header of harness/profile/sched/2-nsys.txt. Report sizes
+(about 28 bytes per event in the .nsys-rep, 210 in the .sqlite):
+
+  run                events (thousand)   .nsys-rep (MB)   .sqlite (MB)
+  p3-nsys-short1q     40                  1.1              8
+  p3-nsys-short2q    117                  3.3             25
+  p3-nsys-medium3q   211                  5.9             44
+  p3-nsys-long3q     281                  7.9             59
+  p3-nsys-all48      575                 16              120
+
+Source: events per pass of the shape census (3.2-4.7 thousand) x passes per run; bytes per event from the earlier captures. Model load,
+warm-up and OS runtime calls are not included (up to about +10 MB per run). The five real captures of the window have .nsys-rep sizes of
+1.1, 2.6, 3.2, 3.8 and 9.1 MB for short1q, short2q, medium3q, long3q and all48 (.sqlite 8.0 MB for short2q).
+
+Risks
+-----
+
+1. Real capture. The first version was tested only with derived data; the real captures above import and analyse without validation problems.
+   The OSRT_API volume (server threads that poll) and the size of the model-load part depend on the host; if the sqlite export is slow or
+   large, export one run at a time (nsys_export.sh <results dir> p3-nsys-all48).
+2. Stop and report write. `docker stop -t 180` has to be enough for nsys to convert the capture; the assumed 30 s is not measured here (a
+   1.6 s trivial run is). If SIGKILL comes first the report of that run is lost and only the client JSON remains. The first run's server.log
+   shows when the server ended.
+3. Clock mapping. Verified for a local process and by Table 2 and 3 of the real captures; --assign order does not need the mapping.
+4. Inflation. The 3 % (long) and 25 % (short) nsys overheads of the earlier kernel review are not verified by this package's tests;
+   `overhead` measures them. With --cuda-graph-trace=node and OS runtime tracing the real figure can be higher [INFERENCE]; kernel
+   durations and gaps in the profiled capture are then not those of production, which is why the control run exists.
+5. Control position. One control run in the middle; temperature or clock drift between the profiled runs is not separated from the nsys
+   cost except through the pairing.
+6. Pass-count assumption. --assign order and the "passes per request" check use the census values (1 / 3 / 4 / 5). If the server's prompt
+   cache changes them (a repeated Ref line would), window assignment is the primary result and the order cross-check flags the difference.
+   The client makes every Ref unique, so repeated prefixes are not expected to be cached beyond the shared system prefix.
+7. Default server flags include warm-up. The capture shows the server's own warm-up pass(es); they are reported as passes outside requests.
+   The schedule does not pass --no-warmup.
+8. CPU time inside the server cannot be attributed below the OS-call level (no sampling, no context-switch trace; both need perf events /
+   SYS_ADMIN).

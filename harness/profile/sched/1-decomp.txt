@@ -1,0 +1,17 @@
+# phase 3, package 1: where does the request time go, without a profiler (harness/profile/decomp/NOTES.txt). One client sequence (harness/profile/extra/prof/decomp_client.py),
+# two runs of the production flags: with the DMK_TIMING lines (build ablate-timing, DMK_TIMING=1) and without (build b12004-sm86, the client wall times for comparison).
+# Sequence per run, 4 request types in this order, 348 requests: short1q (check03 + the other 11 one-question short cases): 3 warm-up + 30 unique + 24 cycle + 30 pair = 87;
+# short2q 103; medium3q 79; long3q 79. 'unique' = the representative case with a new Ref line each time; 'cycle' = all cases of the type twice, shuffled; 'pair' = the same body
+# twice in a row (warm path), 15 pairs. Sequential, one keep-alive connection.
+#   1 p3-dec-timing  production flags, build ablate-timing with DMK_TIMING=1: request, decode, ubatch, sync lines and the slot lines in p3-dec-timing.server.log
+#   2 p3-dec-ref     the same client on build b12004-sm86: no DMK_TIMING; p3-dec-timing minus p3-dec-ref = what the instrumentation costs (view c of analyze_decomp.py)
+# GPU-minute estimate per run (sequential; server start and stop included): requests = 87 x 0.037 + 103 x 0.095 + 79 x 0.361 + 79 x 0.787 s = 3.2 + 9.8 + 28.5 + 62.2 = 104 s
+# (mean latencies of the shape census, harness/profile/census: short1q 37 ms, short2q about 95 ms, medium3q 361 ms, long3q 787 ms); 3 x 1 s between the request types; server start 6 s
+# (startup_s of 12 runs in the data set data/2026-10-30-window1: 3.6-5.6 s, one 9.6 s); client container start 2 s; stop + log copy 5 s. About 120 s = 2.0 min per run, 4.0 min for both.
+# With a margin (requests +20 %, start 10 s): 145 s = 2.4 min per run, 4.8 min for both. DMK_TIMING cost and the 2 s + 5 s are [INFERENCE] until the first run.
+# How to run: copy the file with  bash harness/profile/make_sched.sh --out <dir> 1-decomp.txt  (the file needs no remote dir), stop other servers on the GPU, then
+#   DMK_ENV=<env file> DMK_EXTRA_DIR=harness/profile/extra bash harness/run_schedule.sh <dir>/1-decomp.txt <results dir>
+# Analysis:  python3 harness/profile/decomp/analyze_decomp.py <results dir> --run p3-dec-timing --ref p3-dec-ref
+# DMK_DOCKER_EXTRA="-e DMK_TIMING=1" on the next line replaces the env file of the build (builds/ablate-timing/dist/abl/timing.env), which holds only DMK_TIMING=1: the effect is the same.
+DMK_DOCKER_EXTRA="-e DMK_TIMING=1" client p3-dec-timing build:ablate-timing /extra/prof/decomp_client.py --out /runs/{name}.client.json
+client p3-dec-ref build:b12004-sm86 /extra/prof/decomp_client.py --out /runs/{name}.client.json

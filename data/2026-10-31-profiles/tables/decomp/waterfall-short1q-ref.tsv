@@ -1,0 +1,16 @@
+quantity	ms (or ratio)
+weight floor, pass with output (census-passes.tsv)	7.4440
+int8 compute floor	7.6440
+pass floor = max(weight, int8)	7.6440
+roofline floor (sum over kernels of max(bytes/BW, ops/peak))	19.0730
+earlier measurement 'a whole short prompt in one pass' (deep review, untraced)	36.7000
+this run: client wall, mean	46.8464
+this run: client wall, p50	46.4498
+this run: GPU span (start of the first pass -> end of the sync), mean; upper bound of the GPU time of the pass	45.4880
+this run: GPU wait (blocked at the sync), mean; lower bound of the GPU time	35.9343
+wall - weight floor	39.4024
+wall - 36.7 (this run against the earlier measurement)	10.1464
+span - weight floor (GPU-side excess incl. launch exposure)	38.0440
+wall - span (everything outside the GPU span: HTTP, parse, build, scheduling, tail)	1.3583
+span / weight floor	6.1107
+wall / weight floor	6.2932

@@ -1,0 +1,495 @@
+table	column	unit	meaning
+tensors.tsv	name	None	Name of the tensor in the GGUF file.
+tensors.tsv	layer	None	Number of the layer of a `blk.N` tensor. The value is -1 for a tensor that is not in a layer.
+tensors.tsv	role	None	The tensor name without the blk.N prefix.
+tensors.tsv	ne0_k_in	None	Shape of the tensor in `ggml`, dimension 0. For a weight matrix it is K, the input dimension.
+tensors.tsv	ne1_m_out	None	Shape of the tensor in `ggml`, dimension 1. For a weight matrix it is M, the number of output rows.
+tensors.tsv	ne2	None	Shape of the tensor in `ggml`, dimension 2. It is 1 if the tensor has no such dimension.
+tensors.tsv	ne3	None	Shape of the tensor in `ggml`, dimension 3. It is 1 if the tensor has no such dimension.
+tensors.tsv	ggml_type	None	Type of the tensor in `ggml`: `Q4_0`, `Q8_0` or `F32`.
+tensors.tsv	elements	None	Number of values of the tensor.
+tensors.tsv	bytes	B	Bytes of the tensor data in the file. A block of 32 Q4_0 values has 18 B. A block of 32 Q8_0 values has 34 B.
+tensors.tsv	data_offset_b	B	Position of the tensor data, from the start of the file.
+hparams.tsv	parameter	None	Name of the parameter. It is a GGUF key or a value that the script calculates.
+hparams.tsv	value	see the column unit	Value of the parameter. It is a number or a text.
+hparams.tsv	source	None	The GGUF key, or the rule that gives the value.
+hparams.tsv	unit	None	Unit of the value. The field is empty if the value has no unit.
+layers.tsv	layer	None	Number of the layer, 0 to 31.
+layers.tsv	kind	None	`recurrent` (Gated DeltaNet) or `attention`.
+layers.tsv	weight_bytes	B	Bytes of all tensors of the layer: q4_0_bytes + q8_0_bytes + f32_bytes.
+layers.tsv	q4_0_bytes	B	Bytes of the Q4_0 tensors of the layer.
+layers.tsv	q8_0_bytes	B	Bytes of the Q8_0 tensors of the layer.
+layers.tsv	f32_bytes	B	Bytes of the F32 tensors of the layer. They are the weights of the RMS norms and the small tensors of the recurrent layers.
+token-counts.tsv	variant	None	`raw` is the state of the case. `ref` has the line `Ref: <10 hex digits>` before the state. The benchmark sends `ref`.
+token-counts.tsv	case	None	Name of the case in `bench/cases.json`.
+token-counts.tsv	task	None	Task of the case: `check`, `commit`, `triage`, `style`, `syslog-medium` or `syslog-long`.
+token-counts.tsv	size	None	Type of the request: `short`, `medium` or `long`.
+token-counts.tsv	n_questions	None	Number of questions of the request.
+token-counts.tsv	question	None	Name of the question.
+token-counts.tsv	qtype	None	Type of the question: `choice`, `noul` or `score`.
+token-counts.tsv	n_options	None	Number of answers that the question has.
+token-counts.tsv	prompt_tokens	tokens	Tokens of the prompt that the server makes for this question.
+token-counts.tsv	shared_prefix_tokens	tokens	Tokens of the shared prefix of the request. The value is 0 for a request with one question.
+token-counts.tsv	suffix_tokens	tokens	prompt_tokens minus shared_prefix_tokens.
+cases-plan.tsv	variant	None	`raw` or `ref`. See `token-counts.tsv`.
+cases-plan.tsv	case	None	Name of the case in `bench/cases.json`.
+cases-plan.tsv	task	None	Task of the case.
+cases-plan.tsv	size	None	Type of the request: `short`, `medium` or `long`.
+cases-plan.tsv	n_questions	None	Number of questions of the request.
+cases-plan.tsv	sum_prompt_tokens	tokens	Sum of the prompt tokens of all questions. This is the value of usage.input_tokens of the server.
+cases-plan.tsv	shared_prefix_tokens	tokens	Tokens of the shared prefix of the request.
+cases-plan.tsv	suffix_tokens_per_question	tokens	The suffix tokens of each question. One space is between two values.
+cases-plan.tsv	n_distinct_suffix_lengths	None	Number of different values in suffix_tokens_per_question.
+cases-plan.tsv	min_prompt_tokens	tokens	Prompt tokens of the shortest question.
+ref-line-tokens.tsv	stat	None	`min`, `median`, `mean`, `max` or `samples` of the 100 random lines `Ref: <10 hex digits>`.
+ref-line-tokens.tsv	tokens	tokens	Tokens of one line. For the row samples the value is the number of lines.
+token-check.tsv	size	None	Type of the request: `short`, `medium` or `long`.
+token-check.tsv	n_cases	None	Number of cases of this type.
+token-check.tsv	mean_sum_prompt_tokens_raw_here	tokens	Mean of `sum_prompt_tokens` for `raw`, from `cases-plan.tsv`.
+token-check.tsv	mean_input_tokens_production_run	tokens	quality.input_tokens_mean of a benchmark run, as the server counts it.
+token-check.tsv	diff_tokens	tokens	The first value minus the second value. The value 0 shows that the two means are equal.
+trace-kernels.tsv	trace	None	Capture: long, medium or short.
+trace-kernels.tsv	kernel_short	None	Short name of the kernel with its template arguments, for example mul_mat_q<Q8_0,64,false>.
+trace-kernels.tsv	kernel_full	None	Full demangled name of the kernel.
+trace-kernels.tsv	category	None	Kernel group, for example `MMQ matmul (incl. stream-k fix-up)`. There are 11 groups.
+trace-kernels.tsv	grid_x	None	Grid size, dimension x.
+trace-kernels.tsv	grid_y	None	Grid size, dimension y.
+trace-kernels.tsv	grid_z	None	Grid size, dimension z.
+trace-kernels.tsv	block_x	None	Block size, dimension x.
+trace-kernels.tsv	block_y	None	Block size, dimension y.
+trace-kernels.tsv	block_z	None	Block size, dimension z.
+trace-kernels.tsv	smem_static_b	B	Static shared memory of the kernel.
+trace-kernels.tsv	smem_dynamic_b	B	Dynamic shared memory of the launch.
+trace-kernels.tsv	regs	registers per thread	Registers per thread.
+trace-kernels.tsv	n_launches	None	Number of launches with this name, grid, block, memory and registers in the capture.
+trace-kernels.tsv	total_us	us	Sum of the durations of these launches.
+trace-kernels.tsv	mean_us	us	Mean duration of one launch.
+trace-kernels.tsv	min_us	us	Shortest duration of one launch.
+trace-kernels.tsv	max_us	us	Longest duration of one launch.
+trace-kernels.tsv	share_pct_of_trace_kernel_time	%	total_us divided by the sum of all kernel durations of the capture.
+trace-kernels.tsv	n_passes_containing	None	Number of passes that contain the kernel.
+trace-kernels.tsv	launches_per_pass_median_all	None	Median number of launches per pass, over the passes that contain the kernel.
+trace-kernels.tsv	lpp_median_prefix_large	None	The same median over the prefix-large passes (no output head, 2048 tokens).
+trace-kernels.tsv	n_passes_prefix_large	None	Number of prefix-large passes that contain the kernel.
+trace-kernels.tsv	lpp_median_prefix_small	None	The same median over the prefix-small passes (no output head, fewer than 2048 tokens).
+trace-kernels.tsv	n_passes_prefix_small	None	Number of prefix-small passes that contain the kernel.
+trace-kernels.tsv	lpp_median_suffix	None	The same median over the suffix passes (with output head).
+trace-kernels.tsv	n_passes_suffix	None	Number of suffix passes that contain the kernel.
+trace-passes.tsv	row_kind	None	pass is one model pass. request is the sum over the passes of one request. trace_total is the sum over the capture.
+trace-passes.tsv	trace	None	Capture: long, medium or short.
+trace-passes.tsv	request_idx	None	Index of the request in the capture, from 0. The value is empty for the trace_total row.
+trace-passes.tsv	pass_idx_in_request	None	Index of the pass in its request, from 0. The value is empty for request and trace_total rows.
+trace-passes.tsv	pass_idx_in_trace	None	Index of the pass in the capture, from 0. trace-mmq-launches.tsv uses the same index. The value is empty for request and trace_total rows.
+trace-passes.tsv	case_id_inferred	None	Case of the request. It follows from the order of the client: the cases of the size class in the order of bench/cases.json, in a cycle.
+trace-passes.tsv	pass_kind	None	prefix-large (no output head, 2048 tokens), prefix-small (no output head, fewer tokens) or suffix (with output head). The value is trace_total for the trace row.
+trace-passes.tsv	pass_kind_evidence	None	The facts that decide pass_kind: output head kernel, device-to-host logits copy, host-to-device output ids.
+trace-passes.tsv	n_tokens	tokens	Tokens of the pass: grid.x of its first rms_norm kernel. The request and trace rows give the sum over their passes.
+trace-passes.tsv	n_kv_padded	cells	K/V window of the flash attention, padded to 256. The script derives it from the size of the attention mask copy: bytes divided by 2 and by n_tokens.
+trace-passes.tsv	n_outputs	None	Output rows of the pass: bytes of the device-to-host logits copy divided by 993280.
+trace-passes.tsv	n_passes	None	Number of passes of the row. Only the request and trace_total rows have it.
+trace-passes.tsv	start_ns	ns	Start of the first kernel of the row, as a timestamp of the capture.
+trace-passes.tsv	start_rel_ms	ms	Start of the first kernel of the row, from the start of the first kernel of the capture.
+trace-passes.tsv	wall_ms	ms	Time from the start of the first kernel to the end of the last kernel of the row.
+trace-passes.tsv	gpu_busy_ms	ms	Time in which at least one kernel runs: the union of the kernel intervals.
+trace-passes.tsv	kernel_time_sum_ms	ms	Sum of the kernel durations.
+trace-passes.tsv	gap_total_ms	ms	wall_ms minus gpu_busy_ms. A request or trace row includes the idle time between the passes.
+trace-passes.tsv	gap_total_excl_d2d_ms	ms	gap_total_ms minus the time of the device-to-device copies that lie between the kernels.
+trace-passes.tsv	gap_share_of_wall_pct	%	gap_total_ms divided by wall_ms.
+trace-passes.tsv	gap_n_over_5us	None	Number of gaps between two kernels of a pass that are longer than 5 us.
+trace-passes.tsv	gap_n_over_20us	None	Number of gaps between two kernels of a pass that are longer than 20 us.
+trace-passes.tsv	gap_median_us	us	Median gap between two consecutive kernels of a pass.
+trace-passes.tsv	gap_max_us	us	Longest gap between two consecutive kernels of a pass.
+trace-passes.tsv	gap_max_after_kernel	None	Short name of the kernel before the longest gap.
+trace-passes.tsv	gap_intra_pass_ms	ms	Sum of the gaps inside the passes.
+trace-passes.tsv	gap_inter_pass_ms	ms	Idle time between the passes. Only the request and trace_total rows have it.
+trace-passes.tsv	pre_gap_ms	ms	Time from the end of the previous pass to the start of this pass. The value is empty for the first pass.
+trace-passes.tsv	idle_before_request_ms	ms	pre_gap_ms of the first pass of a request. The value is empty for other passes and for the first request.
+trace-passes.tsv	gpu_busy_pct_of_span_incl_idle_before	%	Request rows only: gpu_busy_ms divided by the time from the end of the previous request to the end of this request.
+trace-passes.tsv	h2d_lead_ms	ms	Time from the end of the previous pass to the start of the first host-to-device copy of this pass.
+trace-passes.tsv	h2d_span_ms	ms	Time from the start of the first host-to-device copy of the pass to the end of the last one.
+trace-passes.tsv	h2d_tail_ms	ms	Time from the end of the last host-to-device copy to the start of the first kernel.
+trace-passes.tsv	gap_n_lt1us	None	Number of gaps between two kernels of a pass that are shorter than 1 us.
+trace-passes.tsv	gap_t_lt1us_ms	ms	Sum of the gaps that are shorter than 1 us.
+trace-passes.tsv	gap_n_1_5us	None	Number of gaps between two kernels of a pass that are from 1 us to 5 us.
+trace-passes.tsv	gap_t_1_5us_ms	ms	Sum of the gaps that are from 1 us to 5 us.
+trace-passes.tsv	gap_n_5_20us	None	Number of gaps between two kernels of a pass that are from 5 us to 20 us.
+trace-passes.tsv	gap_t_5_20us_ms	ms	Sum of the gaps that are from 5 us to 20 us.
+trace-passes.tsv	gap_n_20_100us	None	Number of gaps between two kernels of a pass that are from 20 us to 100 us.
+trace-passes.tsv	gap_t_20_100us_ms	ms	Sum of the gaps that are from 20 us to 100 us.
+trace-passes.tsv	gap_n_gt100us	None	Number of gaps between two kernels of a pass that are longer than 100 us.
+trace-passes.tsv	gap_t_gt100us_ms	ms	Sum of the gaps that are longer than 100 us.
+trace-passes.tsv	n_kernels	None	Number of kernels.
+trace-passes.tsv	n_mmq	None	Number of mul_mat_q kernels (main kernels of the MMQ path).
+trace-passes.tsv	n_mmq_fixup	None	Number of mul_mat_q_stream_k_fixup kernels.
+trace-passes.tsv	n_mmvq	None	Number of mul_mat_vec_q kernels (MMVQ path).
+trace-passes.tsv	n_quantize	None	Number of quantize_mmq_q8_1 and quantize_q8_1 kernels.
+trace-passes.tsv	n_flash_attn	None	Number of flash_attn_ext_f16 kernels.
+trace-passes.tsv	n_flash_aux	None	Number of other flash attention kernels: the mask kernel and the fix-up kernels.
+trace-passes.tsv	n_gdn	None	Number of Gated DeltaNet kernels.
+trace-passes.tsv	gdn_kernel	None	Short names of the Gated DeltaNet kernels of the row, separated by semicolons.
+trace-passes.tsv	conv_kernel	None	Short names of the convolution kernels of the row, separated by semicolons.
+trace-passes.tsv	n_scale_f32	None	Number of scale_f32 kernels.
+trace-passes.tsv	n_other	None	Number of kernels that are not in the groups of the columns n_mmq to n_gdn.
+trace-passes.tsv	n_cat_mmq	None	Number of kernels of the group: MMQ matmul with the stream-k fix-up.
+trace-passes.tsv	n_cat_gdn	None	Number of kernels of the group: Gated DeltaNet.
+trace-passes.tsv	n_cat_gated_act	None	Number of kernels of the group: gated activations (SwiGLU, sigmoid and softplus gates).
+trace-passes.tsv	n_cat_flash	None	Number of kernels of the group: flash attention.
+trace-passes.tsv	n_cat_quant	None	Number of kernels of the group: quantization to int8.
+trace-passes.tsv	n_cat_copy	None	Number of kernels of the group: copies, concatenation and row gathers.
+trace-passes.tsv	n_cat_rms_norm	None	Number of kernels of the group: RMS norm.
+trace-passes.tsv	n_cat_conv1d	None	Number of kernels of the group: 1D convolution.
+trace-passes.tsv	n_cat_elementwise	None	Number of kernels of the group: element-wise operations.
+trace-passes.tsv	n_cat_mmvq	None	Number of kernels of the group: MMVQ matmul.
+trace-passes.tsv	n_cat_other	None	Number of kernels of the group: all other kernels.
+trace-passes.tsv	t_cat_mmq_ms	ms	Sum of the kernel durations of the group: MMQ matmul with the stream-k fix-up.
+trace-passes.tsv	t_cat_gdn_ms	ms	Sum of the kernel durations of the group: Gated DeltaNet.
+trace-passes.tsv	t_cat_gated_act_ms	ms	Sum of the kernel durations of the group: gated activations (SwiGLU, sigmoid and softplus gates).
+trace-passes.tsv	t_cat_flash_ms	ms	Sum of the kernel durations of the group: flash attention.
+trace-passes.tsv	t_cat_quant_ms	ms	Sum of the kernel durations of the group: quantization to int8.
+trace-passes.tsv	t_cat_copy_ms	ms	Sum of the kernel durations of the group: copies, concatenation and row gathers.
+trace-passes.tsv	t_cat_rms_norm_ms	ms	Sum of the kernel durations of the group: RMS norm.
+trace-passes.tsv	t_cat_conv1d_ms	ms	Sum of the kernel durations of the group: 1D convolution.
+trace-passes.tsv	t_cat_elementwise_ms	ms	Sum of the kernel durations of the group: element-wise operations.
+trace-passes.tsv	t_cat_mmvq_ms	ms	Sum of the kernel durations of the group: MMVQ matmul.
+trace-passes.tsv	t_cat_other_ms	ms	Sum of the kernel durations of the group: all other kernels.
+trace-passes.tsv	n_cuda_graph_launches	None	Number of CUDA graph launches. The value is 0 in all rows.
+trace-passes.tsv	n_kernels_with_graph_node	None	Number of kernels that belong to a CUDA graph node. The value is 0 in all rows.
+trace-passes.tsv	n_cudaLaunchKernel_api_calls	None	Number of cudaLaunchKernel calls.
+trace-passes.tsv	n_memcpy	None	Number of copies on the GPU.
+trace-passes.tsv	n_memcpy_h2d	None	Number of host-to-device copies.
+trace-passes.tsv	n_memcpy_d2h	None	Number of device-to-host copies.
+trace-passes.tsv	n_memcpy_d2d	None	Number of device-to-device copies.
+trace-passes.tsv	memcpy_h2d_bytes	B	Bytes of the host-to-device copies.
+trace-passes.tsv	memcpy_d2h_bytes	B	Bytes of the device-to-host copies.
+trace-passes.tsv	memcpy_d2d_bytes	B	Bytes of the device-to-device copies.
+trace-passes.tsv	memcpy_h2d_gpu_ms	ms	Sum of the durations of the host-to-device copies.
+trace-passes.tsv	d2d_gpu_in_pass_ms	ms	Time of the device-to-device copies that lie inside the time of the kernels of the pass.
+trace-passes.tsv	n_sync_calls	None	Number of synchronization calls.
+trace-passes.tsv	cpu_api_time_ms	ms	Sum of the durations of all CUDA runtime calls on the host.
+trace-passes.tsv	cpu_launch_api_ms	ms	Sum of the durations of the cudaLaunchKernel calls.
+trace-passes.tsv	cpu_memcpy_api_ms	ms	Sum of the durations of the cudaMemcpy calls.
+trace-passes.tsv	cpu_sync_api_ms	ms	Sum of the durations of the synchronization calls.
+trace-passes.tsv	cpu_launch_span_ms	ms	Time from the start of the first cudaLaunchKernel call to the end of the last one.
+trace-passes.tsv	launch_api_median_us	us	Median duration of one cudaLaunchKernel call.
+trace-passes.tsv	n_launch_late	None	Number of kernels whose launch call returned after the previous kernel had ended.
+trace-passes.tsv	gap_launch_late_ms	ms	Sum of the gaps before these kernels.
+trace-passes.tsv	launch_queue_depth_median	None	Median number of kernels that the host had launched but the GPU had not started, when a kernel started.
+trace-passes.tsv	launch_queue_depth_max	None	The highest value of the same number.
+trace-passes.tsv	n_cmdbuf_full_events	None	Number of overhead records of the type command buffer full.
+trace-passes.tsv	cmdbuf_full_ms	ms	Sum of the durations of these records.
+trace-passes.tsv	n_module_load_events	None	Number of overhead records of the module loading (lazy loading of CUDA modules).
+trace-passes.tsv	module_load_ms	ms	Sum of the durations of these records.
+trace-passes.tsv	streams_used	None	Ids of the CUDA streams of the kernels, joined with +.
+trace-passes.tsv	streams_used_memcpy	None	Ids of the CUDA streams of the copies, joined with +.
+trace-mmq-launches.tsv	trace	None	Capture: long, medium or short.
+trace-mmq-launches.tsv	pass_idx_in_trace	None	Index of the pass in the capture. The table has the first pass of each (capture, pass kind, n_tokens).
+trace-mmq-launches.tsv	request_idx	None	Index of the request in the capture.
+trace-mmq-launches.tsv	pass_idx_in_request	None	Index of the pass in its request.
+trace-mmq-launches.tsv	pass_kind	None	prefix-large, prefix-small or suffix.
+trace-mmq-launches.tsv	n_tokens	tokens	Tokens of the pass.
+trace-mmq-launches.tsv	n_kv_padded	cells	K/V window of the pass, padded to 256.
+trace-mmq-launches.tsv	launch_kind	None	mmq (mul_mat_q) or mmvq (mul_mat_vec_q).
+trace-mmq-launches.tsv	order_in_pass	None	Index of the launch among the launches of the same kind in the pass.
+trace-mmq-launches.tsv	position_in_pass	None	Index of the kernel among all kernels of the pass.
+trace-mmq-launches.tsv	kernel_short	None	Short name of the kernel with its template arguments.
+trace-mmq-launches.tsv	quant_type	None	ggml type of the weights: Q4_0 or Q8_0.
+trace-mmq-launches.tsv	mmq_x	None	Tile width J of the MMQ kernel, in columns. The field is empty for MMVQ rows.
+trace-mmq-launches.tsv	need_check	None	true if the MMQ kernel is the fallback kernel for a row count that is not a multiple of 128. The field is empty for MMVQ rows.
+trace-mmq-launches.tsv	ncols_dst	None	Number of columns of the MMVQ kernel (tokens). The field is empty for MMQ rows.
+trace-mmq-launches.tsv	has_fusion	None	true if the kernel fuses the following operation (gate, up and SwiGLU, or down and add).
+trace-mmq-launches.tsv	small_k	None	true for the MMVQ kernel variant for a small K. The field is empty for MMQ rows.
+trace-mmq-launches.tsv	halve_iters	None	The template argument halve_iters of the MMVQ kernel. The field is empty for MMQ rows.
+trace-mmq-launches.tsv	grid_x	None	Grid size, dimension x.
+trace-mmq-launches.tsv	grid_y	None	Grid size, dimension y.
+trace-mmq-launches.tsv	grid_z	None	Grid size, dimension z.
+trace-mmq-launches.tsv	block_x	None	Block size, dimension x.
+trace-mmq-launches.tsv	block_y	None	Block size, dimension y.
+trace-mmq-launches.tsv	block_z	None	Block size, dimension z.
+trace-mmq-launches.tsv	smem_static_b	B	Static shared memory of the kernel.
+trace-mmq-launches.tsv	smem_dynamic_b	B	Dynamic shared memory of the launch.
+trace-mmq-launches.tsv	regs	registers per thread	Registers per thread.
+trace-mmq-launches.tsv	dur_us	us	Duration of the kernel.
+trace-mmq-launches.tsv	start_in_pass_us	us	Start of the kernel, from the start of the first kernel of the pass.
+trace-mmq-launches.tsv	prev_quant_kernel	None	Short name of the last quantize kernel before the launch.
+trace-mmq-launches.tsv	prev_quant_position	None	Index of that quantize kernel among the kernels of the pass.
+trace-mmq-launches.tsv	prev_quant_distance	None	position_in_pass minus prev_quant_position.
+trace-mmq-launches.tsv	prev_quant_grid_x	None	Grid size, dimension x, of that quantize kernel.
+trace-mmq-launches.tsv	prev_quant_grid_y	None	Grid size, dimension y, of that quantize kernel.
+trace-mmq-launches.tsv	prev_quant_grid_z	None	Grid size, dimension z, of that quantize kernel.
+trace-mmq-launches.tsv	prev_quant_n_rows	rows	Rows that the quantize kernel handles: grid.x for MMQ, grid.y for MMVQ.
+trace-mmq-launches.tsv	prev_quant_k_padded512	None	Padded K of the quantize kernel: grid.y times 512 for MMQ, grid.x times 256 for MMVQ.
+trace-mmq-launches.tsv	prev_quant_dur_us	us	Duration of the quantize kernel.
+trace-mmq-launches.tsv	prev_quant_reuse_index	None	Number of earlier matmul launches of the same kind that used the same quantize kernel.
+trace-mmq-launches.tsv	has_fixup	None	MMQ rows: 1 if a mul_mat_q_stream_k_fixup kernel follows the launch, else 0. The field is empty for MMVQ rows.
+trace-mmq-launches.tsv	fixup_dur_us	us	Duration of the fix-up kernel.
+trace-mmq-launches.tsv	fixup_short	None	Short name of the fix-up kernel.
+trace-mmq-launches.tsv	fixup_grid_x	None	Grid size, dimension x, of the fix-up kernel.
+trace-mmq-launches.tsv	fixup_grid_y	None	Grid size, dimension y, of the fix-up kernel.
+trace-mmq-launches.tsv	fixup_grid_z	None	Grid size, dimension z, of the fix-up kernel.
+census-cases.tsv	variant	None	raw or ref.
+census-cases.tsv	case	None	Id of the case.
+census-cases.tsv	task	None	Task of the case.
+census-cases.tsv	request_type	None	short-1q, short-2q, medium-3q or long-3q.
+census-cases.tsv	n_questions	None	Number of questions of the request.
+census-cases.tsv	sum_prompt_tokens	tokens	Sum of the prompt tokens of all questions.
+census-cases.tsv	shared_prefix_tokens	tokens	Tokens of the shared prefix.
+census-cases.tsv	suffix_tokens_per_question	tokens	Suffix tokens of each question, separated by spaces.
+census-cases.tsv	slots_Q0_Q1_Q2	None	Slots of the questions in this arrangement. The value - means one question.
+census-cases.tsv	structure	None	Number of sequences of each pass, for example P1 S3 S2 S1.
+census-cases.tsv	n_passes	None	Number of passes of the request.
+census-cases.tsv	passes	None	The passes. P<n> is a prefix pass of n tokens. F<n> is a single pass of n tokens. S<s>x<n> is a pass of s sequences with n tokens each.
+census-cases.tsv	tokens_evaluated	tokens	Sum of the tokens of the passes.
+census-cases.tsv	n_matmul_launches	None	Number of matmul launches of all passes.
+census-cases.tsv	n_mmq	None	Number of MMQ launches.
+census-cases.tsv	n_mmvq	None	Number of MMVQ launches.
+census-cases.tsv	matmul_gflop	GFLOP	Useful matmul work of all passes.
+census-cases.tsv	matmul_padded_gops	GOP	Matmul work of the padded tiles.
+census-cases.tsv	weight_gb_read	GB	Weight bytes that the passes read, including the output head.
+census-cases.tsv	head_gb_read	GB	Weight bytes of the output head that the passes read.
+census-cases.tsv	fa_gflop	GFLOP	Causal work of flash attention.
+census-cases.tsv	gdn_gflop	GFLOP	Work of the Gated DeltaNet op.
+census-cases.tsv	state_traffic_gb	GB	Traffic of the recurrent state, read and write.
+census-cases.tsv	other_activation_traffic_gb	GB	Traffic of the quantize kernels, the matmul outputs and the element-wise operations.
+census-cases.tsv	floor_weights_ms	ms	Sum over the passes of the weight bytes divided by 448 GB/s.
+census-cases.tsv	floor_int8_ms	ms	Sum over the passes of the useful int8 work divided by 144.8 TOPS.
+census-cases.tsv	floor_pass_max_ms	ms	Sum over the passes of the larger of the two floors.
+census-cases.tsv	floor_roofline_ms	ms	Sum over the passes of the serial roofline floor.
+census-cases.tsv	head_rows_computed	None	Output rows that the passes compute: one per question.
+census-cases.tsv	head_rows_needed	None	Answer options of all questions: the values that the API reads.
+census-head.tsv	request_type	None	short-1q, short-2q, medium-3q or long-3q.
+census-head.tsv	task	None	Task of the case that the census uses for the request type.
+census-head.tsv	rep_case	None	The case that the census uses for the request type.
+census-head.tsv	n_questions	None	Number of questions of the request.
+census-head.tsv	passes_with_head	None	Number of passes that have an output row and thus read the head weights.
+census-head.tsv	head_rows_computed_per_request	rows	Output rows times the 248320 rows of the vocabulary.
+census-head.tsv	head_rows_needed_per_request	rows	Answers of all questions.
+census-head.tsv	head_weight_mb_read_per_request	MB	Head weight bytes that the request reads.
+census-head.tsv	head_weight_mb_needed_per_request	MB	Head weight bytes of the rows that the API reads.
+census-head.tsv	head_flops_computed_gflop	GFLOP	Head work that the passes calculate.
+census-head.tsv	head_flops_needed_gflop	GFLOP	Head work of the rows that the API reads.
+census-head.tsv	head_time_at_448GBps_ms	ms	Head weight bytes read divided by 448 GB/s.
+census-passes.tsv	request_type	None	short-1q, short-2q, medium-3q or long-3q.
+census-passes.tsv	task	None	Task of the representative case.
+census-passes.tsv	rep_case	None	The representative case of the task.
+census-passes.tsv	slot_structure	None	Number of sequences of each pass of the request, for example P1 S3 S2 S1.
+census-passes.tsv	slots_Q0_Q1_Q2	None	Slots of the questions of the first arrangement with this structure.
+census-passes.tsv	pass_idx	None	Index of the pass in the request.
+census-passes.tsv	pass_kind	None	prefix, suffix or single.
+census-passes.tsv	n_seqs	None	Number of sequences in the pass.
+census-passes.tsv	tokens_per_seq	tokens	Tokens of the first sequence.
+census-passes.tsv	N_tokens	tokens	Tokens of the pass.
+census-passes.tsv	n_outputs	None	Output rows of the pass.
+census-passes.tsv	start_pos	tokens	Start position of the first sequence.
+census-passes.tsv	n_kv_window	cells	K/V window of the model: the highest position padded to 256.
+census-passes.tsv	fa_ncols1	None	Template argument ncols1 of the flash attention kernel.
+census-passes.tsv	n_matmul	None	Number of matmul launches.
+census-passes.tsv	n_mmq	None	Number of MMQ launches.
+census-passes.tsv	n_mmvq	None	Number of MMVQ launches.
+census-passes.tsv	n_mmq_fixup_pred	None	Number of predicted stream-k fix-up kernels.
+census-passes.tsv	gdn_kernel	None	Predicted Gated DeltaNet kernel.
+census-passes.tsv	matmul_gflop	GFLOP	Useful matmul work: 2 * M * N * K summed over the launches.
+census-passes.tsv	padded_gops	GOP	Matmul work of the padded tiles.
+census-passes.tsv	weight_mb	MB	Weight bytes that the pass reads, including the output head.
+census-passes.tsv	head_mb	MB	Weight bytes of the output head that the pass reads.
+census-passes.tsv	fa_gflop	GFLOP	Causal work of flash attention.
+census-passes.tsv	gdn_gflop	GFLOP	Work of the Gated DeltaNet op.
+census-passes.tsv	state_mb	MB	Traffic of the recurrent state, read and write.
+census-passes.tsv	kv_mb	MB	Traffic of the K/V cache.
+census-passes.tsv	side_activation_mb	MB	Estimated traffic of the element-wise operations.
+census-passes.tsv	quant_mb	MB	Traffic of the quantize kernels.
+census-passes.tsv	mmout_mb	MB	Traffic of the matmul output.
+census-passes.tsv	floor_weights_ms	ms	Weight bytes divided by 448 GB/s.
+census-passes.tsv	floor_int8_ms	ms	Useful int8 work divided by 144.8 TOPS.
+census-passes.tsv	floor_int8_padded_ms	ms	Padded int8 work divided by 144.8 TOPS.
+census-passes.tsv	floor_pass_max_ms	ms	The larger of floor_weights_ms and floor_int8_ms.
+census-passes.tsv	floor_roofline_ms	ms	Sum over the kernels of the larger of bytes / 448 GB/s and work / peak. All activation traffic comes from the DRAM.
+census-sequence.tsv	rep_case	None	The representative case.
+census-sequence.tsv	slots_Q0_Q1_Q2	None	Slot arrangement of the questions.
+census-sequence.tsv	pass_idx	None	Index of the pass in the request.
+census-sequence.tsv	N_tokens	tokens	Tokens of the pass.
+census-sequence.tsv	n_outputs	None	Output rows of the pass.
+census-sequence.tsv	order	None	Index of the matmul node in the order in which the model graph creates the nodes. This is not the order of the launches.
+census-sequence.tsv	layer	None	Layer index. The value is -1 for the output head.
+census-sequence.tsv	op	None	Name of the matmul.
+census-sequence.tsv	wtype	None	Type of the weights.
+census-sequence.tsv	M	None	Rows of the weight matrix.
+census-sequence.tsv	N	tokens	Columns of the activations.
+census-sequence.tsv	K	None	Columns of the weight matrix.
+census-sequence.tsv	path	None	MMQ or MMVQ.
+census-sequence.tsv	kernel_predicted	None	Name of the predicted kernel.
+census-sequence.tsv	mmq_J	None	Tile width J of the predicted MMQ kernel.
+census-sequence.tsv	grid_x_predicted	None	Predicted grid.x.
+census-sequence.tsv	block	None	Predicted block size.
+census-sequence.tsv	fixup_predicted	None	1 if a stream-k fix-up kernel is predicted.
+census-summary.tsv	group	None	Task, request type, or `all 48 cases`.
+census-summary.tsv	kind	None	task, request_type or benchmark.
+census-summary.tsv	variant	None	ref or raw.
+census-summary.tsv	slot_structure	None	A structure of the passes, or `all (uniform over slot arrangements)`.
+census-summary.tsv	n_cases	None	Number of cases in the group.
+census-summary.tsv	n_case_arrangements	None	Number of rows of census-cases.tsv in the group: cases times slot arrangements.
+census-summary.tsv	passes_example	None	The passes of one row of the group. See the column passes of census-cases.tsv.
+census-summary.tsv	n_passes_mean	None	Mean value over the rows of the group: number of passes.
+census-summary.tsv	n_passes_min	None	Lowest value over the rows of the group: number of passes.
+census-summary.tsv	n_passes_max	None	Highest value over the rows of the group: number of passes.
+census-summary.tsv	tokens_evaluated_mean	tokens	Mean value over the rows of the group: tokens that the passes evaluate.
+census-summary.tsv	tokens_evaluated_min	tokens	Lowest value over the rows of the group: tokens that the passes evaluate.
+census-summary.tsv	tokens_evaluated_max	tokens	Highest value over the rows of the group: tokens that the passes evaluate.
+census-summary.tsv	sum_prompt_tokens_mean	tokens	Mean value over the rows of the group: sum of the prompt tokens.
+census-summary.tsv	sum_prompt_tokens_min	tokens	Lowest value over the rows of the group: sum of the prompt tokens.
+census-summary.tsv	sum_prompt_tokens_max	tokens	Highest value over the rows of the group: sum of the prompt tokens.
+census-summary.tsv	n_matmul_launches_mean	None	Mean value over the rows of the group: number of matmul launches.
+census-summary.tsv	n_matmul_launches_min	None	Lowest value over the rows of the group: number of matmul launches.
+census-summary.tsv	n_matmul_launches_max	None	Highest value over the rows of the group: number of matmul launches.
+census-summary.tsv	n_mmq_mean	None	Mean value over the rows of the group: number of MMQ launches.
+census-summary.tsv	n_mmq_min	None	Lowest value over the rows of the group: number of MMQ launches.
+census-summary.tsv	n_mmq_max	None	Highest value over the rows of the group: number of MMQ launches.
+census-summary.tsv	n_mmvq_mean	None	Mean value over the rows of the group: number of MMVQ launches.
+census-summary.tsv	n_mmvq_min	None	Lowest value over the rows of the group: number of MMVQ launches.
+census-summary.tsv	n_mmvq_max	None	Highest value over the rows of the group: number of MMVQ launches.
+census-summary.tsv	matmul_gflop_mean	GFLOP	Mean value over the rows of the group: useful matmul work.
+census-summary.tsv	matmul_gflop_min	GFLOP	Lowest value over the rows of the group: useful matmul work.
+census-summary.tsv	matmul_gflop_max	GFLOP	Highest value over the rows of the group: useful matmul work.
+census-summary.tsv	weight_gb_read_mean	GB	Mean value over the rows of the group: weight bytes read.
+census-summary.tsv	weight_gb_read_min	GB	Lowest value over the rows of the group: weight bytes read.
+census-summary.tsv	weight_gb_read_max	GB	Highest value over the rows of the group: weight bytes read.
+census-summary.tsv	head_gb_read_mean	GB	Mean value over the rows of the group: weight bytes of the output head read.
+census-summary.tsv	head_gb_read_min	GB	Lowest value over the rows of the group: weight bytes of the output head read.
+census-summary.tsv	head_gb_read_max	GB	Highest value over the rows of the group: weight bytes of the output head read.
+census-summary.tsv	fa_gflop_mean	GFLOP	Mean value over the rows of the group: flash attention work.
+census-summary.tsv	fa_gflop_min	GFLOP	Lowest value over the rows of the group: flash attention work.
+census-summary.tsv	fa_gflop_max	GFLOP	Highest value over the rows of the group: flash attention work.
+census-summary.tsv	gdn_gflop_mean	GFLOP	Mean value over the rows of the group: Gated DeltaNet work.
+census-summary.tsv	gdn_gflop_min	GFLOP	Lowest value over the rows of the group: Gated DeltaNet work.
+census-summary.tsv	gdn_gflop_max	GFLOP	Highest value over the rows of the group: Gated DeltaNet work.
+census-summary.tsv	state_traffic_gb_mean	GB	Mean value over the rows of the group: recurrent-state traffic.
+census-summary.tsv	state_traffic_gb_min	GB	Lowest value over the rows of the group: recurrent-state traffic.
+census-summary.tsv	state_traffic_gb_max	GB	Highest value over the rows of the group: recurrent-state traffic.
+census-summary.tsv	other_activation_traffic_gb_mean	GB	Mean value over the rows of the group: other activation traffic.
+census-summary.tsv	other_activation_traffic_gb_min	GB	Lowest value over the rows of the group: other activation traffic.
+census-summary.tsv	other_activation_traffic_gb_max	GB	Highest value over the rows of the group: other activation traffic.
+census-summary.tsv	floor_weights_ms_mean	ms	Mean value over the rows of the group: weight floor.
+census-summary.tsv	floor_weights_ms_min	ms	Lowest value over the rows of the group: weight floor.
+census-summary.tsv	floor_weights_ms_max	ms	Highest value over the rows of the group: weight floor.
+census-summary.tsv	floor_int8_ms_mean	ms	Mean value over the rows of the group: int8 floor.
+census-summary.tsv	floor_int8_ms_min	ms	Lowest value over the rows of the group: int8 floor.
+census-summary.tsv	floor_int8_ms_max	ms	Highest value over the rows of the group: int8 floor.
+census-summary.tsv	floor_pass_max_ms_mean	ms	Mean value over the rows of the group: floor of the larger of weights and int8, per pass.
+census-summary.tsv	floor_pass_max_ms_min	ms	Lowest value over the rows of the group: floor of the larger of weights and int8, per pass.
+census-summary.tsv	floor_pass_max_ms_max	ms	Highest value over the rows of the group: floor of the larger of weights and int8, per pass.
+census-summary.tsv	floor_roofline_ms_mean	ms	Mean value over the rows of the group: serial roofline floor.
+census-summary.tsv	floor_roofline_ms_min	ms	Lowest value over the rows of the group: serial roofline floor.
+census-summary.tsv	floor_roofline_ms_max	ms	Highest value over the rows of the group: serial roofline floor.
+census.tsv	request_type	None	short-1q, short-2q, medium-3q or long-3q.
+census.tsv	task	None	Task of the representative case.
+census.tsv	rep_case	None	The representative case of the task: the case with the median sum_prompt_tokens (ref variant).
+census.tsv	slot_structure	None	Number of sequences of each pass of the request. P is a prefix pass, S is a suffix pass, F is a pass of a request with one question. Example: P1 S3 S2 S1.
+census.tsv	slots_Q0_Q1_Q2	None	Slots of the questions Q0, Q1 and Q2 of the first slot arrangement that gives this structure. The value - means one question.
+census.tsv	pass_idx	None	Index of the pass in the request, from 0.
+census.tsv	pass_kind	None	prefix, suffix or single (the whole prompt of a request with one question).
+census.tsv	n_seqs	None	Number of sequences in the pass.
+census.tsv	tokens_per_seq	tokens	Tokens of the first sequence of the pass.
+census.tsv	N_tokens	tokens	Tokens of the pass, all sequences.
+census.tsv	n_outputs	None	Output rows of the pass: the sequences that finish in the pass.
+census.tsv	op	None	Group of operations: a matmul of the model (with the layer count in n_layers), the Gated DeltaNet op, flash attention, or the element-wise traffic.
+census.tsv	n_layers	None	Number of layers that run the operation.
+census.tsv	M_out_rows	None	Rows of the weight matrix (output rows). For the Gated DeltaNet and flash attention rows: the number of heads.
+census.tsv	N_tokens_op	tokens	Columns of the activations, N.
+census.tsv	K	None	Columns of the weight matrix (input dimension). For the Gated DeltaNet and flash attention rows: the head dimension.
+census.tsv	wtype	None	Type of the weights: Q4_0 or Q8_0. The other rows have F32 state or F16 KV.
+census.tsv	path	None	CUDA path: MMQ, MMVQ, gated_delta_net, flash-attn mma or element-wise.
+census.tsv	kernel_predicted	None	Name of the kernel that the model predicts.
+census.tsv	mmq_J	None	Tile width J of the predicted MMQ kernel.
+census.tsv	mmq_tiles_m	None	Number of 128-row tiles in the M direction.
+census.tsv	mmq_tiles_n	None	Number of tiles of width J in the N direction.
+census.tsv	grid_x_predicted	None	Predicted grid.x of the kernel.
+census.tsv	fixup_predicted	None	1 if the model predicts a stream-k fix-up kernel after the main kernel.
+census.tsv	tile_eff_pct	%	Tile efficiency: tiles divided by 38 times the number of waves.
+census.tsv	flops_total_mflop	MFLOP	Useful work of all layers of the group: 2 * M * N * K.
+census.tsv	padded_ops_total_mop	MOP	Work of the padded tiles of all layers of the group.
+census.tsv	weight_bytes_total_mb	MB	Weight bytes that all layers of the group read.
+census.tsv	other_bytes_total_mb	MB	Other traffic of all layers of the group: activations, quantized input, output, state, K/V.
+crosscheck-kernels.tsv	trace	None	The capture: `long`, `medium` or `short`.
+crosscheck-kernels.tsv	kernel	None	Flash attention kernel template, or Gated DeltaNet kernel with its grid.
+crosscheck-kernels.tsv	observed_launches	None	Launches in the capture.
+crosscheck-kernels.tsv	predicted_launches	None	Launches that the model gives.
+crosscheck-keys.tsv	side	None	`predicted only` or `observed only`.
+crosscheck-keys.tsv	path	None	MMQ or MMVQ.
+crosscheck-keys.tsv	wtype	None	Type of the weights.
+crosscheck-keys.tsv	tile_J_or_ncols	None	Tile width `J` for MMQ, or number of columns for MMVQ.
+crosscheck-keys.tsv	need_check_or_fused	None	need_check for MMQ, or 1 if fused for MMVQ.
+crosscheck-keys.tsv	grid_x	None	grid.x of the launch.
+crosscheck-keys.tsv	fixup_or_small_k	None	Flag of the fix-up kernel for MMQ, or flag `small_k` for MMVQ.
+crosscheck-keys.tsv	n_launches_summed_over_passes	None	Number of launches of this key that only one side has, in all passes together. The table has no rows if the two sides agree.
+crosscheck-passes.tsv	trace	None	Capture: long, medium or short.
+crosscheck-passes.tsv	request_idx	None	Index of the request in the capture.
+crosscheck-passes.tsv	pass_idx_in_request	None	Index of the pass in the request.
+crosscheck-passes.tsv	pass_kind	None	prefix-large, prefix-small or suffix.
+crosscheck-passes.tsv	N_tokens	tokens	Tokens of the pass.
+crosscheck-passes.tsv	n_outputs	None	Output rows of the pass.
+crosscheck-passes.tsv	n_seqs_model	None	Sequences of the pass in the model arrangement that gives the observed passes.
+crosscheck-passes.tsv	n_kernels_observed	None	Kernels of the pass in the capture.
+crosscheck-passes.tsv	n_mmq_obs	None	Observed MMQ launches.
+crosscheck-passes.tsv	n_mmq_pred	None	Predicted MMQ launches.
+crosscheck-passes.tsv	n_mmq_fixup_obs	None	Observed stream-k fix-up kernels.
+crosscheck-passes.tsv	n_mmq_fixup_pred	None	Predicted stream-k fix-up kernels.
+crosscheck-passes.tsv	n_mmvq_obs	None	Observed MMVQ launches.
+crosscheck-passes.tsv	n_mmvq_pred	None	Predicted MMVQ launches.
+crosscheck-passes.tsv	n_quantize_obs	None	Observed quantize launches.
+crosscheck-passes.tsv	n_quantize_pred	None	Predicted quantize launches.
+crosscheck-passes.tsv	n_flash_obs	None	Observed flash attention launches.
+crosscheck-passes.tsv	n_flash_pred	None	Predicted flash attention launches.
+crosscheck-passes.tsv	n_gdn_obs	None	Observed Gated DeltaNet launches.
+crosscheck-passes.tsv	n_gdn_pred	None	Predicted Gated DeltaNet launches.
+crosscheck-passes.tsv	launch_keys_pred	None	Predicted matmul launches that have a launch listing. The field is empty for the passes without one.
+crosscheck-passes.tsv	launch_keys_obs	None	Observed matmul launches in the launch listing.
+crosscheck-passes.tsv	launch_keys_matching	None	Matmul launches with the same key (type, tile, need_check, grid.x, fix-up) in both sets.
+crosscheck-passes.tsv	n_kv_padded_obs	cells	Observed K/V window, padded to 256.
+crosscheck-passes.tsv	n_kv_window_model	cells	K/V window of the model.
+crosscheck-passes.tsv	kv_window_equal	None	yes if the two windows are equal.
+crosscheck-passes.tsv	model_floor_weights_ms	ms	Weight floor of the pass in the model.
+crosscheck-passes.tsv	model_floor_int8_ms	ms	Int8 floor of the pass in the model.
+crosscheck-passes.tsv	model_floor_pass_max_ms	ms	The larger of the two floors.
+crosscheck-passes.tsv	model_floor_roofline_ms	ms	Serial roofline floor of the pass.
+crosscheck-passes.tsv	observed_gpu_busy_ms	ms	gpu_busy_ms of the pass in the capture.
+crosscheck-passes.tsv	observed_wall_ms	ms	wall_ms of the pass in the capture.
+crosscheck-passes.tsv	observed_gap_total_ms	ms	gap_total_ms of the pass in the capture.
+crosscheck-passes.tsv	busy_over_pass_max_floor	None	observed_gpu_busy_ms divided by model_floor_pass_max_ms.
+crosscheck-passes.tsv	busy_over_roofline_floor	None	observed_gpu_busy_ms divided by model_floor_roofline_ms.
+crosscheck-passes.tsv	model_mmq_gflop	GFLOP	Useful work of the predicted MMQ launches.
+crosscheck-passes.tsv	model_mmq_weight_mb	MB	Weight bytes of the predicted MMQ launches.
+crosscheck-passes.tsv	model_mmvq_gflop	GFLOP	Useful work of the predicted MMVQ launches.
+crosscheck-passes.tsv	model_mmvq_weight_mb	MB	Weight bytes of the predicted MMVQ launches.
+crosscheck-passes.tsv	observed_mmq_kernel_ms	ms	Sum of the durations of the MMQ kernels and fix-up kernels in the capture.
+crosscheck-passes.tsv	observed_mmvq_kernel_ms	ms	Sum of the durations of the MMVQ kernels in the capture.
+crosscheck-passes.tsv	observed_quantize_kernel_ms	ms	Sum of the durations of the quantize kernels in the capture.
+crosscheck-passes.tsv	observed_flash_kernel_ms	ms	Sum of the durations of the flash attention kernels in the capture.
+crosscheck-passes.tsv	observed_gdn_kernel_ms	ms	Sum of the durations of the Gated DeltaNet kernels in the capture.
+crosscheck-requests.tsv	trace	None	Capture: long, medium or short.
+crosscheck-requests.tsv	request_idx	None	Index of the request in the capture.
+crosscheck-requests.tsv	case	None	Case of the request.
+crosscheck-requests.tsv	suffix_tokens_per_question_model	tokens	Suffix tokens of the questions in the plan.
+crosscheck-requests.tsv	shared_prefix_tokens_trace	tokens	Prefix tokens in the capture: the sum of the tokens of the prefix passes.
+crosscheck-requests.tsv	observed_passes (tokens/outputs)	None	The passes of the capture as tokens/outputs, separated by spaces.
+crosscheck-requests.tsv	n_passes_observed	None	Number of passes in the capture.
+crosscheck-requests.tsv	slot_arrangements_matching_Q0,Q1,Q2	None	Slot arrangements of the model that give the observed passes, separated by |. The value none means that no arrangement does.
+crosscheck-requests.tsv	matches	None	yes if at least one arrangement gives the observed passes.
+crosscheck-requests.tsv	n_passes_model_min	None	Fewest passes of the model over all arrangements.
+crosscheck-requests.tsv	n_passes_model_max	None	Most passes of the model over all arrangements.
+crosscheck-requests.tsv	tokens_observed	tokens	Tokens of the observed passes.
+crosscheck-requests.tsv	tokens_model_same	None	yes if the observed tokens equal the shared prefix plus the sum of the suffixes.
+crosscheck-summary.tsv	check	None	Name of the check.
+crosscheck-summary.tsv	passed	None	Number of items in which the capture and the model agree.
+crosscheck-summary.tsv	total	None	Number of items of the check.
+crosscheck-summary.tsv	all_passed	None	`yes` if `passed` and `total` are equal.
+request-floors.tsv	request_type	None	short-1q, short-2q, medium-3q or long-3q.
+request-floors.tsv	rep_case	None	The case that the profile runs use for the request type.
+request-floors.tsv	slot_structure	None	Number of sequences of each pass of the request.
+request-floors.tsv	pass_structure	None	The passes of the request, with a `+` between two passes. `P<n>` is a prefix pass of `n` tokens. `F<n>` is a pass with the full prompt of `n` tokens. `S<s>x<t>` is a pass of `s` sequences with `t` tokens each. It is the column `passes` of `census-cases.tsv`.
+request-floors.tsv	n_passes	None	Number of passes of the request.
+request-floors.tsv	tokens_evaluated	tokens	Sum of `N_tokens` for the passes.
+request-floors.tsv	weight_gb_read	GB	Weight bytes that the passes read, with the output head. 1 GB is 10^9 B.
+request-floors.tsv	floor_weights_ms	ms	Sum for the passes of the weight bytes divided by 448 GB/s.
+request-floors.tsv	floor_pass_max_ms	ms	Sum for the passes of the larger value of the weight floor and the int8 floor.
+request-floors.tsv	floor_roofline_ms	ms	Sum for the passes of the roofline floor.
+request-floors.tsv	n_mmq	None	Number of MMQ launches of all passes.
+request-floors.tsv	n_mmvq	None	Number of MMVQ launches of all passes.

@@ -1,0 +1,37 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+warn: LLAMA_ARG_PORT environment variable is set, but will be overwritten by command line argument --port
+==WARNING== Note: Running with unmodified GPU clocks. If not controlled otherwise, profiling results may be inconsistent.
+==PROF== Connected to process 51 (/opt/dmk/llama-server)
+0.00.472.103 I srv  llama_server: initializing ...
+0.00.472.116 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.472.256 I srv  init_listene: The UI is disabled
+0.00.472.258 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.472.343 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.474.019 I srv    load_model: loading model '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.02.946.733 I cmn          init: llama threadpool init, n_threads = 6
+0.02.952.045 I srv          init: decision model type: h2o-lightning
+0.03.166.560 I srv    load_model: initializing, n_slots = 3, n_ctx_slot = 16384, kv_unified = 'true'
+0.03.166.604 I srv    load_model: decision model: prompt cache disabled by default, use `--cache-ram N` to enable it
+0.03.170.381 I srv  server_run_i: model loaded
+0.03.170.389 I srv  server_on_li: listening on http://0.0.0.0:8080
+0.03.840.730 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.03.840.750 I slot launch_slot_: id  1 | task 1 | processing task, is_child = 1
+0.03.840.752 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+==PROF== Profiling "mul_mat_q": 0%
+==WARNING== Backing up device memory in system memory. Kernel replay might be slow. Consider using "--replay-mode application" to avoid memory save-and-restore.
+....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q_stream_k_fixup": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q_stream_k_fixup": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q_stream_k_fixup": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q_stream_k_fixup": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q_stream_k_fixup": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q": 0%....50%....100% - 19 passes
+==PROF== Profiling "mul_mat_q_stream_k_fixup": 0%....50%....100% - 19 passes
+==PROF== Trying to shutdown target application
+==PROF== Report: /runs/p3-ncu-core-short-p1.ncu-repz

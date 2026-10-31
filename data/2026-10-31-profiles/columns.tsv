@@ -1,0 +1,922 @@
+table	column	unit	meaning
+decomp/requests.tsv	idx	None	index of the request in the client sequence (0-based; the idx of the client JSON)
+decomp/requests.tsv	kind	None	request type: short1q, short2q, medium3q or long3q
+decomp/requests.tsv	case	None	benchmark case id
+decomp/requests.tsv	phase	None	client phase: warmup, unique, cycle, pair1 or pair2
+decomp/requests.tsv	pair	None	pair number (1-based) of a pair1/pair2 request; empty in the other phases
+decomp/requests.tsv	wall_ms	ms	client wall time: just before the request is written to the socket until the response body is read
+decomp/requests.tsv	input_tokens	count	input_tokens of the response usage field (prompt tokens counted by the server)
+decomp/requests.tsv	server_total_ms	ms	total_us of the server request line: handler entry to end of handler
+decomp/requests.tsv	http_total_ms	ms	wall_ms minus server_total_ms = http_in_ms + http_out_ms; the only HTTP figure when the clocks do not agree
+decomp/requests.tsv	http_in_ms	ms	client send stamp to server handler entry (request line t minus total_us); empty when the clocks do not agree
+decomp/requests.tsv	parse_ms	ms	handler entry to parsed request: JSON parse, questions, state, prepare_state (request.parse_us)
+decomp/requests.tsv	build_ms	ms	prompt render, tokenize and task grouping in the HTTP thread (request.build_us)
+decomp/requests.tsv	sched_ms	ms	end of build to start of the first llama_decode: post_tasks, queue wake-up, slot selection and launch, batch build
+decomp/requests.tsv	first_setup_ms	ms	start of the first llama_decode to start of the first ubatch: batch alloc, memory init_batch, output reserve
+decomp/requests.tsv	prepare_ms	ms	host graph preparation of all passes: memory apply + graph build + alloc + set inputs (sum of the ubatch lines)
+decomp/requests.tsv	submit_ms	ms	host time of the compute submit (op dispatch and CUDA launches) of all passes, not the GPU run (sum of ubatch submit_us)
+decomp/requests.tsv	between_ms	ms	host time between two passes without the GPU waits: end of ubatch i to start of ubatch i+1
+decomp/requests.tsv	post_submit_ms	ms	end of the last ubatch to start of the last blocking sync: decode tail, post_decode, logits read call
+decomp/requests.tsv	gpu_wait_ms	ms	host blocked for the GPU, all syncs (sum of sync wait_us)
+decomp/requests.tsv	tail_server_ms	ms	end of the last sync to wait_for_all returned: send_decision, slot release, queue, wake-up of the HTTP thread
+decomp/requests.tsv	format_ms	ms	answer formatting: softmax over the answer tokens and JSON (request.format_us)
+decomp/requests.tsv	http_out_ms	ms	server request line to response body read by the client: JSON dump, HTTP write, loopback, client read; empty when the clocks do not agree
+decomp/requests.tsv	residual_ms	ms	wall_ms minus the sum of the 13 stack columns (minus unsplit_ms); about 0
+decomp/requests.tsv	unsplit_ms	ms	span from end of build to end of wait when the request has no ubatch lines (not split into sched/prepare/submit/...); 0 otherwise
+decomp/requests.tsv	apply_ms	ms	part of prepare_ms: memory context apply (sum over the passes)
+decomp/requests.tsv	graph_build_ms	ms	part of prepare_ms: ggml graph build, 0 when the graph was reused (sum over the passes)
+decomp/requests.tsv	alloc_ms	ms	part of prepare_ms: scheduler alloc, 0 when the graph was reused (sum over the passes)
+decomp/requests.tsv	inputs_ms	ms	part of prepare_ms: set_inputs (sum over the passes)
+decomp/requests.tsv	between_within_decode_ms	ms	part of between_ms: ubatch end to next ubatch start inside one llama_decode
+decomp/requests.tsv	between_decode_post_ms	ms	part of between_ms: last ubatch end to end of its llama_decode (decode tail)
+decomp/requests.tsv	between_presync_ms	ms	part of between_ms: end of a llama_decode to start of the sync that follows it
+decomp/requests.tsv	between_loop_ms	ms	part of between_ms: end of a llama_decode or sync to start of the next llama_decode or sync (update_slots loop, post_decode, send_decision)
+decomp/requests.tsv	between_decode_pre_ms	ms	part of between_ms: start of a llama_decode to start of its first ubatch (batch alloc, init_batch)
+decomp/requests.tsv	sched_wake_est_ms	ms	ESTIMATE, part of sched_ms: end of build to the launch_slot line (queue wake-up, slot selection); needs the slot-line clock anchor, else empty
+decomp/requests.tsv	sched_launch_est_ms	ms	ESTIMATE, part of sched_ms: launch_slot line to start of the first llama_decode (batch build); needs the slot-line clock anchor, else empty
+decomp/requests.tsv	n_questions	count	questions of the request (request line n_questions)
+decomp/requests.tsv	n_groups	count	grouped parent tasks of the request (request line n_groups); children are not counted
+decomp/requests.tsv	n_decodes	count	llama_decode calls (decode lines) of the request
+decomp/requests.tsv	n_ubatches	count	model passes (ubatch lines) of the request
+decomp/requests.tsv	n_syncs	count	synchronize() calls with pending passes (sync lines) of the request
+decomp/requests.tsv	tokens_evaluated	count	sum of n_tokens over the ubatches of the request
+decomp/requests.tsv	passes_obs	None	observed passes joined by +: P<n> = n tokens without output (prefix pass), F<n> = pass of a one-question request, S<seqs>x<tokens> = suffix pass of seqs sequences of tokens each
+decomp/requests.tsv	ubatches_per_decode	None	ubatches of every llama_decode call, comma separated
+decomp/requests.tsv	reuse_flags	None	one character per ubatch: 1 = compute graph reused, 0 = built
+decomp/requests.tsv	cuda_modes	None	CUDA graph mode of the ubatches (cuda_compute lines): direct, graph_capture or graph_replay; comma separated
+decomp/requests.tsv	cuda_host_ms	ms	host time of the backend graph compute (cuda_compute lines), sum over the passes
+decomp/requests.tsv	span_ms	ms	sum over the sync groups of (sync end minus start of the first pass of the group); upper bound of the GPU busy time; empty without a sync
+decomp/requests.tsv	floor_weights_ms	ms	census weight-read floor of the observed passes, sum (nominal 448 GB/s, from census_lib.pass_costs)
+decomp/requests.tsv	floor_int8_ms	ms	census int8 compute floor of the observed passes, sum
+decomp/requests.tsv	floor_max_ms	ms	census pass floor max(weights, int8) of the observed passes, sum
+decomp/requests.tsv	floor_roofline_ms	ms	census serial roofline floor of the observed passes, sum
+decomp/requests.tsv	exposed_min_ms	ms	lower bound of the host time inside the GPU spans that runs with an idle GPU: prepare of the first pass of every sync group
+decomp/requests.tsv	exposed_max_ms	ms	upper bound of the same host time: per sync group min(span - wait, span - max(wait, census floors of the group)), at least exposed_min_ms; summed
+decomp/requests.tsv	submit_first_ms	ms	submit time of the first pass of every sync group, sum (nothing earlier on the GPU to hide under)
+decomp/requests.tsv	submit_later_ms	ms	submit time of the later passes of the sync groups, sum (can hide under the GPU run of an earlier pass)
+decomp/requests.tsv	slots	None	slot ids of the launched tasks in task order (parent first), comma separated
+decomp/requests.tsv	slot_select	None	how the parent slot was chosen (slot line): LRU, LCP or id
+decomp/requests.tsv	f_sim_best	ratio	similarity of the best slot when the parent was chosen by LCP; empty otherwise
+decomp/requests.tsv	release_tokens	count	n_tokens of the slot release line of every launched task, comma separated; ? = no release line
+decomp/requests.tsv	census_expected	None	passes string that census-cases.tsv (variant ref) predicts for the case and the observed slots; | separates alternatives
+decomp/requests.tsv	census_match	None	1 when passes_obs equals a census prediction (suffix passes equal, P/F sizes within 6 tokens), 0 when not, empty when not compared
+decomp/requests.tsv	census_ref_delta_tokens	count	observed minus census token count of the first P/F pass that differs (the Ref value is 9-14 tokens, the census uses 13); empty when not matched
+decomp/requests.tsv	valid	None	1 when the request enters the tables: none of the flags no_ubatch, no_sync, neg_gap, sync_passes_mismatch, pass_without_sync, stamp_order, decode_ubatches_mismatch, no_sync_tail, and |residual_ms| <= 0.05
+decomp/requests.tsv	flags	None	analysis flags of the request joined by ;: see NOTES.txt section 6; empty when none
+decomp/passes.tsv	idx	None	request index (idx of requests.tsv)
+decomp/passes.tsv	kind	None	request type of the request
+decomp/passes.tsv	case	None	benchmark case id
+decomp/passes.tsv	phase	None	client phase of the request
+decomp/passes.tsv	pass	None	index of the pass (ubatch) in the request, 0-based
+decomp/passes.tsv	decode	None	index of the llama_decode call that holds the pass; -1 when none
+decomp/passes.tsv	group	None	index of the sync that covers the pass; -1 when none
+decomp/passes.tsv	n_tokens	count	tokens of the pass
+decomp/passes.tsv	n_seqs	count	sequences of the pass
+decomp/passes.tsv	n_seq_tokens	count	tokens per sequence of the pass
+decomp/passes.tsv	n_outputs	count	outputs (logit rows) of the pass; 0 for a prefix pass
+decomp/passes.tsv	n_nodes	count	nodes of the compute graph
+decomp/passes.tsv	reuse	None	1 when the compute graph was reused, else 0
+decomp/passes.tsv	apply_ms	ms	part of the prepare time of this pass: memory context apply of this pass
+decomp/passes.tsv	graph_build_ms	ms	part of the prepare time of this pass: ggml graph build, 0 when the graph was reused of this pass
+decomp/passes.tsv	alloc_ms	ms	part of the prepare time of this pass: scheduler alloc, 0 when the graph was reused of this pass
+decomp/passes.tsv	inputs_ms	ms	part of the prepare time of this pass: set_inputs of this pass
+decomp/passes.tsv	submit_ms	ms	host time of the compute submit of this pass (ubatch submit_us)
+decomp/passes.tsv	total_ms	ms	total_us of the ubatch line: host time of the pass = apply + build + alloc + inputs + submit
+decomp/passes.tsv	cuda_mode	None	CUDA graph mode of the pass (cuda_compute line): direct, graph_capture or graph_replay
+decomp/passes.tsv	cuda_host_ms	ms	host time of the backend graph compute of this pass (cuda_compute line host_us)
+decomp/passes.tsv	start_after_request_start_ms	ms	start of the pass minus the handler entry of the request
+decomp/passes.tsv	gap_before_ms	ms	start of the pass minus the end of the previous pass (or end of build for the first), minus sync_between_ms
+decomp/passes.tsv	sync_between_ms	ms	GPU wait of the syncs that fall between the previous pass and this one
+decomp/passes.tsv	sync_passes	count	passes covered by the sync that ends the group; set only on the last pass of a sync group
+decomp/passes.tsv	sync_wait_ms	ms	wait_us of that sync (host blocked for the GPU); last pass of a sync group only
+decomp/passes.tsv	sync_span_ms	ms	sync end minus start of the first pass of the group; last pass of a sync group only
+decomp/passes.tsv	sync_since_last_submit_ms	ms	since_last_submit_us of the sync line as the server prints it; last pass of a sync group only
+decomp/passes.tsv	floor_weights_ms	ms	census weight-read floor of the pass
+decomp/passes.tsv	floor_int8_ms	ms	census int8 compute floor of the pass
+decomp/passes.tsv	floor_max_ms	ms	census pass floor max(weights, int8) of the pass
+decomp/passes.tsv	floor_roofline_ms	ms	census serial roofline floor of the pass
+decomp/passes.tsv	floor_group_ms	ms	sum of floor_max_ms of all passes of the sync group; last pass of a sync group only
+decomp/clock-check.tsv	interval	None	client send to server request start (http_in_ms), or server request end to client receive (http_out_ms)
+decomp/clock-check.tsv	n	count	requests matched by time
+decomp/clock-check.tsv	mean_ms	ms	mean of the interval
+decomp/clock-check.tsv	p50_ms	ms	median of the interval
+decomp/clock-check.tsv	min_ms	ms	smallest value of the interval
+decomp/clock-check.tsv	max_ms	ms	largest value of the interval
+decomp/clock-check.tsv	n_negative	count	requests whose interval is below minus the stamp tolerance (3 us); must be 0 when the clocks agree
+decomp/summary-wall.tsv	kind	None	request type
+decomp/summary-wall.tsv	phase	None	client phase (warmup rows are listed here only)
+decomp/summary-wall.tsv	n	count	client requests of the group
+decomp/summary-wall.tsv	mean_ms	ms	mean client wall time
+decomp/summary-wall.tsv	p50_ms	ms	median client wall time
+decomp/summary-wall.tsv	p95_ms	ms	95th percentile of the client wall time
+decomp/summary-wall.tsv	min_ms	ms	smallest client wall time
+decomp/summary-wall.tsv	max_ms	ms	largest client wall time
+decomp/summary-wall.tsv	server_total_mean_ms	ms	mean server_total_ms of the matched requests of the group
+decomp/stack.tsv	kind	None	request type
+decomp/stack.tsv	phase	None	client phase (unique, cycle, pair1, pair2)
+decomp/stack.tsv	n	count	valid requests of the group
+decomp/stack.tsv	http_in_ms	ms	mean over the valid requests: client send stamp to server handler entry (request line t minus total_us); empty when the clocks do not agree
+decomp/stack.tsv	parse_ms	ms	mean over the valid requests: handler entry to parsed request: JSON parse, questions, state, prepare_state (request.parse_us)
+decomp/stack.tsv	build_ms	ms	mean over the valid requests: prompt render, tokenize and task grouping in the HTTP thread (request.build_us)
+decomp/stack.tsv	sched_ms	ms	mean over the valid requests: end of build to start of the first llama_decode: post_tasks, queue wake-up, slot selection and launch, batch build
+decomp/stack.tsv	first_setup_ms	ms	mean over the valid requests: start of the first llama_decode to start of the first ubatch: batch alloc, memory init_batch, output reserve
+decomp/stack.tsv	prepare_ms	ms	mean over the valid requests: host graph preparation of all passes: memory apply + graph build + alloc + set inputs (sum of the ubatch lines)
+decomp/stack.tsv	submit_ms	ms	mean over the valid requests: host time of the compute submit (op dispatch and CUDA launches) of all passes, not the GPU run (sum of ubatch submit_us)
+decomp/stack.tsv	between_ms	ms	mean over the valid requests: host time between two passes without the GPU waits: end of ubatch i to start of ubatch i+1
+decomp/stack.tsv	post_submit_ms	ms	mean over the valid requests: end of the last ubatch to start of the last blocking sync: decode tail, post_decode, logits read call
+decomp/stack.tsv	gpu_wait_ms	ms	mean over the valid requests: host blocked for the GPU, all syncs (sum of sync wait_us)
+decomp/stack.tsv	tail_server_ms	ms	mean over the valid requests: end of the last sync to wait_for_all returned: send_decision, slot release, queue, wake-up of the HTTP thread
+decomp/stack.tsv	format_ms	ms	mean over the valid requests: answer formatting: softmax over the answer tokens and JSON (request.format_us)
+decomp/stack.tsv	http_out_ms	ms	mean over the valid requests: server request line to response body read by the client: JSON dump, HTTP write, loopback, client read; empty when the clocks do not agree
+decomp/stack.tsv	wall_ms	ms	mean client wall time of the valid requests (the 13 stack columns add up to it)
+decomp/stack.tsv	residual_mean_ms	ms	mean of residual_ms
+decomp/stack.tsv	residual_absmax_ms	ms	largest |residual_ms| of the group
+decomp/components.tsv	kind	None	request type
+decomp/components.tsv	phase	None	client phase (unique, cycle, pair1, pair2)
+decomp/components.tsv	component	None	name of a stack column of requests.tsv, or wall_ms or residual_ms
+decomp/components.tsv	n	count	valid requests of the group
+decomp/components.tsv	mean_ms	ms	mean of the component
+decomp/components.tsv	p50_ms	ms	median of the component
+decomp/components.tsv	p95_ms	ms	95th percentile of the component
+decomp/components.tsv	mean_share_pct	pct	100 x mean of the component / mean wall_ms of the group
+decomp/waterfall-short1q.tsv	step	None	waterfall step: weight floor of one pass with output; the five stack groups (HTTP, parse + build, scheduling, host graph build + submit, tail); GPU wait beyond the floor; wall; residual
+decomp/waterfall-short1q.tsv	mean_ms	ms	mean over the valid short1q unique requests of the step (the floor row: the census weight floor)
+decomp/waterfall-short1q.tsv	p50_ms	ms	median of the step (p50 of a sum is taken per request, so the column does not add up)
+decomp/waterfall-short1q.tsv	cumulative_mean_ms	ms	weight floor plus the steps above; the wall row equals the client wall mean; empty for the residual row
+decomp/waterfall-short1q.tsv	share_of_wall_pct	pct	100 x mean_ms / mean wall time
+decomp/waterfall-short1q-detail.tsv	column	None	stack or detail column of requests.tsv (or http_total_ms)
+decomp/waterfall-short1q-detail.tsv	what	None	description of the column
+decomp/waterfall-short1q-detail.tsv	mean_ms	ms	mean over the valid short1q unique requests
+decomp/waterfall-short1q-detail.tsv	p50_ms	ms	median
+decomp/waterfall-short1q-detail.tsv	p95_ms	ms	95th percentile
+decomp/waterfall-short1q-detail.tsv	share_of_wall_pct	pct	100 x mean / mean wall time
+decomp/waterfall-short1q-ref.tsv	quantity	None	reference number: census floors, the earlier 36.7 ms measurement, wall and GPU span of this run and their differences and ratios
+decomp/waterfall-short1q-ref.tsv	ms (or ratio)	ms	value in ms; the last two rows (span / weight floor, wall / weight floor) are ratios without unit
+decomp/warm-path.tsv	kind	None	request type
+decomp/warm-path.tsv	case	None	benchmark case id
+decomp/warm-path.tsv	n_pairs	count	complete valid pairs of the case
+decomp/warm-path.tsv	wall1_mean_ms	ms	mean wall time of the first request of the pairs
+decomp/warm-path.tsv	wall2_mean_ms	ms	mean wall time of the second request of the pairs
+decomp/warm-path.tsv	d_wall_ms	ms	mean of (pair2 minus pair1) wall time; negative = the second request is faster
+decomp/warm-path.tsv	d_wall_se_ms	ms	standard error of d_wall_ms (differences below 2 x this are noise)
+decomp/warm-path.tsv	d_http_in_ms	ms	mean of (pair2 minus pair1) of http_in_ms
+decomp/warm-path.tsv	d_parse_ms	ms	mean of (pair2 minus pair1) of parse_ms
+decomp/warm-path.tsv	d_build_ms	ms	mean of (pair2 minus pair1) of build_ms
+decomp/warm-path.tsv	d_sched_ms	ms	mean of (pair2 minus pair1) of sched_ms
+decomp/warm-path.tsv	d_first_setup_ms	ms	mean of (pair2 minus pair1) of first_setup_ms
+decomp/warm-path.tsv	d_prepare_ms	ms	mean of (pair2 minus pair1) of prepare_ms
+decomp/warm-path.tsv	d_submit_ms	ms	mean of (pair2 minus pair1) of submit_ms
+decomp/warm-path.tsv	d_between_ms	ms	mean of (pair2 minus pair1) of between_ms
+decomp/warm-path.tsv	d_post_submit_ms	ms	mean of (pair2 minus pair1) of post_submit_ms
+decomp/warm-path.tsv	d_gpu_wait_ms	ms	mean of (pair2 minus pair1) of gpu_wait_ms
+decomp/warm-path.tsv	d_tail_server_ms	ms	mean of (pair2 minus pair1) of tail_server_ms
+decomp/warm-path.tsv	d_format_ms	ms	mean of (pair2 minus pair1) of format_ms
+decomp/warm-path.tsv	d_http_out_ms	ms	mean of (pair2 minus pair1) of http_out_ms
+decomp/warm-path-work.tsv	kind	None	request type
+decomp/warm-path-work.tsv	case	None	benchmark case id
+decomp/warm-path-work.tsv	phase	None	pair1 or pair2
+decomp/warm-path-work.tsv	n	count	requests of the group
+decomp/warm-path-work.tsv	tokens_evaluated_mean	count	mean tokens_evaluated
+decomp/warm-path-work.tsv	ubatches_mean	count	mean n_ubatches
+decomp/warm-path-work.tsv	decodes_mean	count	mean n_decodes
+decomp/warm-path-work.tsv	graph_reuse_mean	count	mean number of ubatches that reused the compute graph
+decomp/warm-path-work.tsv	census_tokens_evaluated	count	tokens of a full evaluation of the prompt: tokens_evaluated of census-cases.tsv, variant ref
+decomp/warm-path-work.tsv	n_census_match	count	requests with census_match = 1
+decomp/warm-path-work.tsv	slot_select	None	slot selection counts, e.g. LRU:5,LCP:3
+decomp/warm-path-work.tsv	passes_most_common	None	most common passes_obs string of the group
+decomp/instrumentation.tsv	kind	None	request type
+decomp/instrumentation.tsv	phase	None	client phase, or 'all timed' for the four timed phases together
+decomp/instrumentation.tsv	n_timing	count	requests of the timing run
+decomp/instrumentation.tsv	n_ref	count	requests of the reference run
+decomp/instrumentation.tsv	mean_timing_ms	ms	mean client wall time of the timing run
+decomp/instrumentation.tsv	mean_ref_ms	ms	mean client wall time of the reference run
+decomp/instrumentation.tsv	d_mean_ms	ms	timing minus reference, mean
+decomp/instrumentation.tsv	d_mean_pct	pct	100 x d_mean_ms / mean_ref_ms
+decomp/instrumentation.tsv	p50_timing_ms	ms	median wall time of the timing run
+decomp/instrumentation.tsv	p50_ref_ms	ms	median wall time of the reference run
+decomp/instrumentation.tsv	d_p50_ms	ms	timing minus reference, median
+decomp/instrumentation.tsv	d_p50_pct	pct	100 x d_p50_ms / p50_ref_ms
+decomp/instrumentation.tsv	se_d_mean_ms	ms	sqrt(se_timing^2 + se_ref^2), standard error of d_mean_ms
+decomp/instrumentation.tsv	verdict_unpaired_2se	None	within noise when |d_mean_ms| < 2 x se_d_mean_ms, else DIFFERENT
+decomp/instrumentation.tsv	n_paired	count	requests with the same idx, case and Ref in both runs
+decomp/instrumentation.tsv	paired_d_mean_ms	ms	mean of the paired wall time difference (timing minus reference)
+decomp/instrumentation.tsv	paired_se_ms	ms	standard error of the paired difference
+decomp/instrumentation.tsv	verdict_paired_2se	None	within noise when |paired_d_mean_ms| < 2 x paired_se_ms, else DIFFERENT
+decomp/fractions.tsv	kind	None	request type
+decomp/fractions.tsv	phase	None	client phase (unique, cycle, pair1, pair2)
+decomp/fractions.tsv	n	count	valid requests of the group
+decomp/fractions.tsv	wall_ms	ms	mean client wall time
+decomp/fractions.tsv	gpu_wait_pct	pct	100 x gpu_wait_ms / wall_ms
+decomp/fractions.tsv	host_prepare_submit_pct	pct	100 x (prepare_ms + submit_ms) / wall_ms
+decomp/fractions.tsv	not_overlapped_min_pct	pct	lower bound of the part of host_prepare_submit that runs with an idle GPU (part of the host time in the GPU spans, not an extra share)
+decomp/fractions.tsv	not_overlapped_max_pct	pct	upper bound of the same part
+decomp/fractions.tsv	between_passes_pct	pct	100 x between_ms / wall_ms
+decomp/fractions.tsv	post_submit_pct	pct	100 x post_submit_ms / wall_ms
+decomp/fractions.tsv	client_http_pct	pct	100 x (http_in_ms + http_out_ms) / wall_ms (http_total_ms when the clocks do not agree)
+decomp/fractions.tsv	parse_build_pct	pct	100 x (parse_ms + build_ms) / wall_ms
+decomp/fractions.tsv	scheduling_pct	pct	100 x (sched_ms + first_setup_ms) / wall_ms
+decomp/fractions.tsv	tail_pct	pct	100 x (tail_server_ms + format_ms) / wall_ms
+decomp/fractions.tsv	submit_first_pass_pct	pct	100 x submit_first_ms / wall_ms; with submit_later_passes_pct the submit part of host_prepare_submit_pct (accounting split by pass order, not a measurement)
+decomp/fractions.tsv	submit_later_passes_pct	pct	100 x submit_later_ms / wall_ms
+decomp/fractions.tsv	sum_pct	pct	gpu_wait + host_prepare_submit + between + post_submit + client_http + parse_build + scheduling + tail; 100 minus the residual
+decomp/hostbound.tsv	kind	None	request type
+decomp/hostbound.tsv	phase	None	client phase (unique or cycle)
+decomp/hostbound.tsv	n	count	valid requests of the group with a sync
+decomp/hostbound.tsv	ubatches	count	mean passes per request
+decomp/hostbound.tsv	prepare_ms	ms	mean prepare_ms
+decomp/hostbound.tsv	submit_ms	ms	mean submit_ms
+decomp/hostbound.tsv	gpu_wait_ms	ms	mean gpu_wait_ms; lower bound of the GPU time
+decomp/hostbound.tsv	gpu_span_ms	ms	mean span_ms; upper bound of the GPU busy time
+decomp/hostbound.tsv	floor_max_ms	ms	mean census pass floor max(weights, int8), summed over the passes
+decomp/hostbound.tsv	floor_roofline_ms	ms	mean census serial roofline floor
+decomp/hostbound.tsv	submit_over_span	ratio	submit_ms / gpu_span_ms
+decomp/hostbound.tsv	wait_over_span	ratio	gpu_wait_ms / gpu_span_ms
+decomp/hostbound.tsv	span_over_floor	ratio	gpu_span_ms / floor_max_ms
+decomp/hostbound.tsv	submit_per_pass_ms	ms	submit_ms / ubatches
+decomp/hostbound.tsv	hint	None	rule of thumb [INFERENCE]: submit >= 0.9 span = host-bound; wait >= 0.5 span = GPU-bound; else mixed
+nsys/passes.tsv	row_kind	None	pass is one model pass. request is the sum over the passes of one request. trace_total is the sum over the capture.
+nsys/passes.tsv	trace	None	Run name of the capture, for example p3-nsys-short1q. Same value as run.
+nsys/passes.tsv	request_idx	None	Index of the request in the client JSON of the run, from 0 (same value as client_idx). The value is empty for the trace_total row.
+nsys/passes.tsv	pass_idx_in_request	None	Index of the pass in its request, from 0. The value is empty for request and trace_total rows.
+nsys/passes.tsv	pass_idx_in_trace	None	Index of the pass among all valid passes of the capture, from 0 (same value as pass_idx_global). Passes of the server start before the first request count too; mmq-launches.tsv uses the same index. The value is empty for request and trace_total rows.
+nsys/passes.tsv	case_id_inferred	None	Case of the request, taken from the client JSON (same value as case). The name is kept from the census table, where the case was inferred.
+nsys/passes.tsv	pass_kind	None	prefix-large (no output head, 2048 tokens), prefix-small (no output head, fewer tokens) or suffix (with output head) for a pass; request for a request row; trace_total for the total row.
+nsys/passes.tsv	pass_kind_evidence	None	The facts that decide pass_kind: output head kernel, device-to-host logits copy, host-to-device output ids. Request rows: the number of prefix and suffix passes; trace_total row: the number of requests.
+nsys/passes.tsv	n_tokens	tokens	Tokens of the pass: grid.x of its first rms_norm kernel. The request and trace rows give the sum over their passes.
+nsys/passes.tsv	n_kv_padded	cells	K/V window of the flash attention, padded to 256. The script derives it from the size of the attention mask copy: bytes divided by 2 and by n_tokens.
+nsys/passes.tsv	n_outputs	None	Output rows of the pass: bytes of the device-to-host logits copy divided by 993280.
+nsys/passes.tsv	n_passes	None	Number of passes of the row. Only the request and trace_total rows have it.
+nsys/passes.tsv	start_ns	ns	Start of the first kernel of the row, as a timestamp of the capture.
+nsys/passes.tsv	start_rel_ms	ms	Start of the first kernel of the row, from the start of the first kernel of the capture.
+nsys/passes.tsv	wall_ms	ms	Time from the start of the first kernel to the end of the last kernel of the row.
+nsys/passes.tsv	gpu_busy_ms	ms	Time in which at least one kernel runs: the union of the kernel intervals.
+nsys/passes.tsv	kernel_time_sum_ms	ms	Sum of the kernel durations.
+nsys/passes.tsv	gap_total_ms	ms	wall_ms minus gpu_busy_ms. A request or trace row includes the idle time between the passes.
+nsys/passes.tsv	gap_total_excl_d2d_ms	ms	gap_total_ms minus the time of the device-to-device copies that lie between the kernels.
+nsys/passes.tsv	gap_share_of_wall_pct	%	gap_total_ms divided by wall_ms.
+nsys/passes.tsv	gap_n_over_5us	None	Number of gaps between two kernels of a pass that are longer than 5 us.
+nsys/passes.tsv	gap_n_over_20us	None	Number of gaps between two kernels of a pass that are longer than 20 us.
+nsys/passes.tsv	gap_median_us	us	Median gap between two consecutive kernels of a pass.
+nsys/passes.tsv	gap_max_us	us	Longest gap between two consecutive kernels of a pass.
+nsys/passes.tsv	gap_max_after_kernel	None	Short name of the kernel before the longest gap.
+nsys/passes.tsv	gap_intra_pass_ms	ms	Sum of the gaps inside the passes.
+nsys/passes.tsv	gap_inter_pass_ms	ms	Idle time between the passes. Only the request and trace_total rows have it.
+nsys/passes.tsv	pre_gap_ms	ms	Time from the end of the previous pass to the start of this pass. The value is empty for the first pass.
+nsys/passes.tsv	idle_before_request_ms	ms	pre_gap_ms of the first pass of a request. The value is empty for other passes and for the first request.
+nsys/passes.tsv	gpu_busy_pct_of_span_incl_idle_before	%	Request rows only: gpu_busy_ms divided by the time from the end of the previous request to the end of this request.
+nsys/passes.tsv	h2d_lead_ms	ms	Time from the end of the previous pass to the start of the first host-to-device copy of this pass.
+nsys/passes.tsv	h2d_span_ms	ms	Time from the start of the first host-to-device copy of the pass to the end of the last one.
+nsys/passes.tsv	h2d_tail_ms	ms	Time from the end of the last host-to-device copy to the start of the first kernel.
+nsys/passes.tsv	gap_n_lt1us	None	Number of gaps between two kernels of a pass that are shorter than 1 us.
+nsys/passes.tsv	gap_t_lt1us_ms	ms	Sum of the gaps that are shorter than 1 us.
+nsys/passes.tsv	gap_n_1_5us	None	Number of gaps between two kernels of a pass that are from 1 us to 5 us.
+nsys/passes.tsv	gap_t_1_5us_ms	ms	Sum of the gaps that are from 1 us to 5 us.
+nsys/passes.tsv	gap_n_5_20us	None	Number of gaps between two kernels of a pass that are from 5 us to 20 us.
+nsys/passes.tsv	gap_t_5_20us_ms	ms	Sum of the gaps that are from 5 us to 20 us.
+nsys/passes.tsv	gap_n_20_100us	None	Number of gaps between two kernels of a pass that are from 20 us to 100 us.
+nsys/passes.tsv	gap_t_20_100us_ms	ms	Sum of the gaps that are from 20 us to 100 us.
+nsys/passes.tsv	gap_n_gt100us	None	Number of gaps between two kernels of a pass that are longer than 100 us.
+nsys/passes.tsv	gap_t_gt100us_ms	ms	Sum of the gaps that are longer than 100 us.
+nsys/passes.tsv	n_kernels	None	Number of kernels.
+nsys/passes.tsv	n_mmq	None	Number of mul_mat_q kernels (main kernels of the MMQ path).
+nsys/passes.tsv	n_mmq_fixup	None	Number of mul_mat_q_stream_k_fixup kernels.
+nsys/passes.tsv	n_mmvq	None	Number of mul_mat_vec_q kernels (MMVQ path).
+nsys/passes.tsv	n_quantize	None	Number of quantize_mmq_q8_1 and quantize_q8_1 kernels.
+nsys/passes.tsv	n_flash_attn	None	Number of flash_attn_ext_f16 kernels.
+nsys/passes.tsv	n_flash_aux	None	Number of other flash attention kernels: the mask kernel and the fix-up kernels.
+nsys/passes.tsv	n_gdn	None	Number of Gated DeltaNet kernels.
+nsys/passes.tsv	gdn_kernel	None	Short names of the Gated DeltaNet kernels of the row, separated by semicolons.
+nsys/passes.tsv	conv_kernel	None	Short names of the convolution kernels of the row, separated by semicolons.
+nsys/passes.tsv	n_scale_f32	None	Number of scale_f32 kernels.
+nsys/passes.tsv	n_other	None	Number of kernels that are not in the groups of the columns n_mmq to n_gdn.
+nsys/passes.tsv	n_cat_mmq	None	Number of kernels of the group: MMQ matmul with the stream-k fix-up.
+nsys/passes.tsv	n_cat_gdn	None	Number of kernels of the group: Gated DeltaNet.
+nsys/passes.tsv	n_cat_gated_act	None	Number of kernels of the group: gated activations (SwiGLU, sigmoid and softplus gates).
+nsys/passes.tsv	n_cat_flash	None	Number of kernels of the group: flash attention.
+nsys/passes.tsv	n_cat_quant	None	Number of kernels of the group: quantization to int8.
+nsys/passes.tsv	n_cat_copy	None	Number of kernels of the group: copies, concatenation and row gathers.
+nsys/passes.tsv	n_cat_rms_norm	None	Number of kernels of the group: RMS norm.
+nsys/passes.tsv	n_cat_conv1d	None	Number of kernels of the group: 1D convolution.
+nsys/passes.tsv	n_cat_elementwise	None	Number of kernels of the group: element-wise operations.
+nsys/passes.tsv	n_cat_mmvq	None	Number of kernels of the group: MMVQ matmul.
+nsys/passes.tsv	n_cat_other	None	Number of kernels of the group: all other kernels.
+nsys/passes.tsv	t_cat_mmq_ms	ms	Sum of the kernel durations of the group: MMQ matmul with the stream-k fix-up.
+nsys/passes.tsv	t_cat_gdn_ms	ms	Sum of the kernel durations of the group: Gated DeltaNet.
+nsys/passes.tsv	t_cat_gated_act_ms	ms	Sum of the kernel durations of the group: gated activations (SwiGLU, sigmoid and softplus gates).
+nsys/passes.tsv	t_cat_flash_ms	ms	Sum of the kernel durations of the group: flash attention.
+nsys/passes.tsv	t_cat_quant_ms	ms	Sum of the kernel durations of the group: quantization to int8.
+nsys/passes.tsv	t_cat_copy_ms	ms	Sum of the kernel durations of the group: copies, concatenation and row gathers.
+nsys/passes.tsv	t_cat_rms_norm_ms	ms	Sum of the kernel durations of the group: RMS norm.
+nsys/passes.tsv	t_cat_conv1d_ms	ms	Sum of the kernel durations of the group: 1D convolution.
+nsys/passes.tsv	t_cat_elementwise_ms	ms	Sum of the kernel durations of the group: element-wise operations.
+nsys/passes.tsv	t_cat_mmvq_ms	ms	Sum of the kernel durations of the group: MMVQ matmul.
+nsys/passes.tsv	t_cat_other_ms	ms	Sum of the kernel durations of the group: all other kernels.
+nsys/passes.tsv	n_cuda_graph_launches	None	Number of CUDA graph launches in the row.
+nsys/passes.tsv	n_kernels_with_graph_node	None	Number of kernels that belong to a CUDA graph node.
+nsys/passes.tsv	n_cudaLaunchKernel_api_calls	None	Number of cudaLaunchKernel calls.
+nsys/passes.tsv	n_memcpy	None	Number of copies on the GPU.
+nsys/passes.tsv	n_memcpy_h2d	None	Number of host-to-device copies.
+nsys/passes.tsv	n_memcpy_d2h	None	Number of device-to-host copies.
+nsys/passes.tsv	n_memcpy_d2d	None	Number of device-to-device copies.
+nsys/passes.tsv	memcpy_h2d_bytes	B	Bytes of the host-to-device copies.
+nsys/passes.tsv	memcpy_d2h_bytes	B	Bytes of the device-to-host copies.
+nsys/passes.tsv	memcpy_d2d_bytes	B	Bytes of the device-to-device copies.
+nsys/passes.tsv	memcpy_h2d_gpu_ms	ms	Sum of the durations of the host-to-device copies.
+nsys/passes.tsv	d2d_gpu_in_pass_ms	ms	Time of the device-to-device copies that lie inside the time of the kernels of the pass.
+nsys/passes.tsv	n_sync_calls	None	Number of synchronization calls.
+nsys/passes.tsv	cpu_api_time_ms	ms	Sum of the durations of all CUDA runtime calls on the host.
+nsys/passes.tsv	cpu_launch_api_ms	ms	Sum of the durations of the cudaLaunchKernel calls.
+nsys/passes.tsv	cpu_memcpy_api_ms	ms	Sum of the durations of the cudaMemcpy calls.
+nsys/passes.tsv	cpu_sync_api_ms	ms	Sum of the durations of the synchronization calls.
+nsys/passes.tsv	cpu_launch_span_ms	ms	Time from the start of the first cudaLaunchKernel call to the end of the last one.
+nsys/passes.tsv	launch_api_median_us	us	Median duration of one cudaLaunchKernel call.
+nsys/passes.tsv	n_launch_late	None	Number of kernels whose launch call returned after the previous kernel had ended.
+nsys/passes.tsv	gap_launch_late_ms	ms	Sum of the gaps before these kernels.
+nsys/passes.tsv	launch_queue_depth_median	None	Median number of kernels that the host had launched but the GPU had not started, when a kernel started.
+nsys/passes.tsv	launch_queue_depth_max	None	The highest value of the same number.
+nsys/passes.tsv	n_cmdbuf_full_events	None	Number of overhead records of the type command buffer full.
+nsys/passes.tsv	cmdbuf_full_ms	ms	Sum of the durations of these records.
+nsys/passes.tsv	n_module_load_events	None	Number of overhead records of the module loading (lazy loading of CUDA modules).
+nsys/passes.tsv	module_load_ms	ms	Sum of the durations of these records.
+nsys/passes.tsv	streams_used	None	Ids of the CUDA streams of the kernels, joined with +.
+nsys/passes.tsv	streams_used_memcpy	None	Ids of the CUDA streams of the copies, joined with +.
+nsys/passes.tsv	run	None	Run name of the capture, for example p3-nsys-short1q.
+nsys/passes.tsv	segment	None	Client segment of the request: short1q, short2q, medium3q, long3q or all48 (the segment of the run, not the kind of the request).
+nsys/passes.tsv	client_idx	None	Index of the request in the client JSON of the run, from 0. The value is empty for the trace_total row.
+nsys/passes.tsv	kind	None	Request kind of the case: short1q, short2q, medium3q or long3q. The trace_total row has all.
+nsys/passes.tsv	case	None	Case id of the request in cases.json. The value is empty for the trace_total row.
+nsys/passes.tsv	phase	None	warmup or timed: the phase of the request in the client JSON.
+nsys/passes.tsv	pass_type	None	prefix-large (no output head, 2048 tokens), prefix-small (no output head, fewer tokens), suffix (output head) or single (the only pass of a request). Request rows: request. Total row: trace_total.
+nsys/passes.tsv	n_class	None	Token class of the pass: N<=8, 9-32, 33-64, 65-128, 129-256, 257-1024, 1025-2047 or 2048. The value is empty for request and trace_total rows.
+nsys/passes.tsv	boundary	None	What precedes the pass: first (first pass of the capture), request-start, or <previous pass type>-><this pass type>. The value is empty for request and trace_total rows.
+nsys/passes.tsv	pass_idx_global	None	Index of the pass among all valid passes of the capture, from 0. Startup before the first valid pass is dropped; passes outside requests are counted but not written. The value is empty for request and trace_total rows.
+nsys/passes.tsv	host_gap_drain_ms	ms	Pass rows: time from the end of the last kernel of the previous pass until the CUDA call that was already running (stream synchronization, logits copy) returns.
+nsys/passes.tsv	host_gap_cpu_ms	ms	Pass rows: part of the idle time before the pass with no CUDA API call in flight: server host code (sampling, HTTP, batching).
+nsys/passes.tsv	host_gap_cuda_api_ms	ms	Pass rows: part of the idle time before the pass in other CUDA API calls before the first launch of the pass (input upload copies, synchronizations).
+nsys/passes.tsv	host_gap_first_launch_ms	ms	Pass rows: time from the first cudaLaunchKernel call of the pass to the start of its first kernel.
+nsys/passes.tsv	host_gap_cpu_os_wait_ms	ms	Pass rows: part of host_gap_cpu_ms inside wait-class OS calls (futex, pthread_cond*, poll, epoll, select, recv, nanosleep). The value is empty without an OSRT_API table.
+nsys/passes.tsv	host_gap_cpu_busy_ms	ms	Pass rows: host_gap_cpu_ms minus host_gap_cpu_os_wait_ms; it includes preemption. The value is empty without an OSRT_API table.
+nsys/passes.tsv	host_gap_n_osrt_calls	None	Pass rows: number of OS runtime calls in the CPU part of the gap. The value is empty without an OSRT_API table.
+nsys/passes.tsv	host_gap_osrt_top	None	Pass rows: the three OS runtime calls with the longest total time in the CPU part, as name:milliseconds joined with semicolons.
+nsys/passes.tsv	client_wall_ms	ms	Request rows: wall time of the request on the client, from send to receive.
+nsys/passes.tsv	send_to_first_cuda_api_ms	ms	Request rows: time from the send of the request to its first CUDA API call.
+nsys/passes.tsv	send_to_first_kernel_ms	ms	Request rows: time from the send of the request to the start of its first kernel.
+nsys/passes.tsv	last_kernel_to_recv_ms	ms	Request rows: time from the end of the last kernel of the request to the receive on the client.
+nsys/passes.tsv	window_assignment	None	window: passes were assigned to requests by the client time window; order: by the order of the passes and the expected number of passes per request kind (analyze --assign). Empty for the total row.
+nsys/kernels.tsv	trace	None	Run name of the capture, for example p3-nsys-short1q.
+nsys/kernels.tsv	kernel_short	None	Short name of the kernel with its template arguments, for example mul_mat_q<Q8_0,64,false>.
+nsys/kernels.tsv	kernel_full	None	Full demangled name of the kernel.
+nsys/kernels.tsv	category	None	Kernel group, for example `MMQ matmul (incl. stream-k fix-up)`. There are 11 groups.
+nsys/kernels.tsv	grid_x	None	Grid size, dimension x.
+nsys/kernels.tsv	grid_y	None	Grid size, dimension y.
+nsys/kernels.tsv	grid_z	None	Grid size, dimension z.
+nsys/kernels.tsv	block_x	None	Block size, dimension x.
+nsys/kernels.tsv	block_y	None	Block size, dimension y.
+nsys/kernels.tsv	block_z	None	Block size, dimension z.
+nsys/kernels.tsv	smem_static_b	B	Static shared memory of the kernel.
+nsys/kernels.tsv	smem_dynamic_b	B	Dynamic shared memory of the launch.
+nsys/kernels.tsv	regs	registers per thread	Registers per thread.
+nsys/kernels.tsv	n_launches	None	Number of launches with this name, grid, block, memory and registers in the capture.
+nsys/kernels.tsv	total_us	us	Sum of the durations of these launches.
+nsys/kernels.tsv	mean_us	us	Mean duration of one launch.
+nsys/kernels.tsv	min_us	us	Shortest duration of one launch.
+nsys/kernels.tsv	max_us	us	Longest duration of one launch.
+nsys/kernels.tsv	share_pct_of_trace_kernel_time	%	total_us divided by the sum of all kernel durations of the capture.
+nsys/kernels.tsv	n_passes_containing	None	Number of passes that contain the kernel.
+nsys/kernels.tsv	launches_per_pass_median_all	None	Median number of launches per pass, over the passes that contain the kernel.
+nsys/kernels.tsv	lpp_median_prefix_large	None	The same median over the prefix-large passes (no output head, 2048 tokens).
+nsys/kernels.tsv	n_passes_prefix_large	None	Number of prefix-large passes that contain the kernel.
+nsys/kernels.tsv	lpp_median_prefix_small	None	The same median over the prefix-small passes (no output head, fewer than 2048 tokens).
+nsys/kernels.tsv	n_passes_prefix_small	None	Number of prefix-small passes that contain the kernel.
+nsys/kernels.tsv	lpp_median_suffix	None	The same median over the suffix passes (with output head).
+nsys/kernels.tsv	n_passes_suffix	None	Number of suffix passes that contain the kernel.
+nsys/classes.tsv	scope	None	A run name, or ALL for all runs pooled.
+nsys/classes.tsv	pass_type	None	prefix-large, prefix-small, suffix or single (see passes.tsv).
+nsys/classes.tsv	n_class	None	Token class of the passes: N<=8, 9-32, 33-64, 65-128, 129-256, 257-1024, 1025-2047 or 2048.
+nsys/classes.tsv	request_kinds	None	Request kinds of the passes of the group as kind:count, joined with semicolons.
+nsys/classes.tsv	n_passes	None	Number of passes in the group (scope, pass_type, n_class).
+nsys/classes.tsv	n_tokens_min	tokens	Smallest token count of the passes of the group.
+nsys/classes.tsv	n_tokens_max	tokens	Largest token count of the passes of the group.
+nsys/classes.tsv	level	None	total (all kernels of the passes), class (one kernel class) or label (one label of a class, for example a matmul op with its type and K).
+nsys/classes.tsv	class	None	Kernel class: MMQ, MMVQ, GDN, FA, quantize, rms_norm, glu, copy, elementwise, ssm_conv or other. The value is empty at level total.
+nsys/classes.tsv	label	None	Label inside the class, for example MMQ ffn_down Q4_0 K=9216. The value is empty at levels total and class.
+nsys/classes.tsv	launches_per_pass_mean	None	Mean number of launches per pass of the group.
+nsys/classes.tsv	launches_per_pass_p50	None	Median number of launches per pass of the group.
+nsys/classes.tsv	kernel_ms_per_pass_mean	ms	Mean over the passes of the sum of the kernel durations.
+nsys/classes.tsv	kernel_ms_per_pass_p50	ms	Median over the passes of the sum of the kernel durations.
+nsys/classes.tsv	share_of_gpu_busy_pct	%	Sum of the kernel durations of the row divided by the GPU busy time of the passes of the group.
+nsys/classes.tsv	mean_us_per_launch	us	Mean duration of one launch of the row.
+nsys/classes.tsv	fixup_launches_per_pass_mean	None	Label rows: mean number of stream-k fix-up launches per pass that belong to the label. The value is empty where there is none.
+nsys/requests.tsv	run	None	Run name of the capture, for example p3-nsys-short1q.
+nsys/requests.tsv	segment	None	Client segment of the request.
+nsys/requests.tsv	client_idx	None	Index of the request in the client JSON, from 0.
+nsys/requests.tsv	kind	None	Request kind: short1q, short2q, medium3q or long3q.
+nsys/requests.tsv	case	None	Case id of the request.
+nsys/requests.tsv	phase	None	warmup or timed.
+nsys/requests.tsv	input_tokens	tokens	Input tokens of the request as logged by the client.
+nsys/requests.tsv	n_passes	None	Number of passes assigned to the request.
+nsys/requests.tsv	client_wall_ms	ms	Wall time of the request on the client, from send to receive.
+nsys/requests.tsv	send_to_first_cuda_api_ms	ms	Time from the send to the first CUDA API call of the request.
+nsys/requests.tsv	send_to_first_kernel_ms	ms	Time from the send to the start of the first kernel of the request. It must be >= 0.
+nsys/requests.tsv	kernel_span_ms	ms	Time from the start of the first kernel to the end of the last kernel of the request: gpu_busy_ms + gap_in_pass_ms + gap_between_passes_ms.
+nsys/requests.tsv	gpu_busy_ms	ms	Time in which at least one kernel of the request runs.
+nsys/requests.tsv	gap_in_pass_ms	ms	Idle time of the GPU inside the passes of the request.
+nsys/requests.tsv	gap_between_passes_ms	ms	Idle time of the GPU between the passes of the request.
+nsys/requests.tsv	last_kernel_to_recv_ms	ms	Time from the end of the last kernel to the receive on the client. It must be >= 0.
+nsys/requests.tsv	gpu_busy_pct_of_client_wall	%	gpu_busy_ms divided by client_wall_ms.
+nsys/requests.tsv	n_cuda_api_calls	None	Number of CUDA runtime calls of the request.
+nsys/requests.tsv	n_launch_calls	None	Number of cudaLaunchKernel calls of the request.
+nsys/requests.tsv	n_sync_calls	None	Number of synchronization calls of the request.
+nsys/requests.tsv	n_memcpy	None	Number of copies on the GPU of the request.
+nsys/requests.tsv	send_to_first_kernel_epoch_clock_ms	ms	send_to_first_kernel_ms with the epoch clock of the client (--clock epoch mapping) instead of CLOCK_MONOTONIC.
+nsys/requests.tsv	last_kernel_to_recv_epoch_clock_ms	ms	last_kernel_to_recv_ms with the epoch clock of the client.
+nsys/requests.tsv	epoch_minus_mono_send_ms	ms	Difference between the two mappings of the send time onto the nsys timeline (epoch minus monotonic). It is close to 0 when both clocks agree.
+nsys/osrt-request-start.tsv	run	None	Run name of the capture, for example p3-nsys-short1q.
+nsys/osrt-request-start.tsv	client_idx	None	Index of the first timed request of the segment in the client JSON.
+nsys/osrt-request-start.tsv	case	None	Case id of that request.
+nsys/osrt-request-start.tsv	thread	None	decode for the thread that launches the decode kernels, else t1, t2, ... in the order of appearance.
+nsys/osrt-request-start.tsv	call	None	Name of the OS runtime call (futex, pthread_cond_wait, poll, ...). Only calls of nesting level 0 are listed.
+nsys/osrt-request-start.tsv	start_rel_send_ms	ms	Start of the call relative to the send of the request. It is negative for a call that began before the send and was still running in the window.
+nsys/osrt-request-start.tsv	dur_ms	ms	Duration of the call.
+nsys/osrt-request-start.tsv	class	None	wait for a wait-class call (futex, pthread_cond*, poll, epoll, select, recv, nanosleep, ...), else other.
+nsys/overhead.tsv	run	None	Profiled run, or ALL for all profiled runs pooled.
+nsys/overhead.tsv	kind	None	Request kind: short1q, short2q, medium3q or long3q.
+nsys/overhead.tsv	n_pairs	None	Number of pairs: a request of the profiled run and the control request with the same Ref line (same case, same text).
+nsys/overhead.tsv	ctl_mean_ms	ms	Mean client wall time of the control requests of the pairs.
+nsys/overhead.tsv	nsys_mean_ms	ms	Mean client wall time of the profiled requests of the pairs.
+nsys/overhead.tsv	delta_mean_ms	ms	nsys_mean_ms minus ctl_mean_ms: the mean of the paired differences.
+nsys/overhead.tsv	delta_pct_of_ctl_mean	%	delta_mean_ms divided by ctl_mean_ms.
+nsys/overhead.tsv	ctl_p50_ms	ms	Median client wall time of the control requests of the pairs.
+nsys/overhead.tsv	nsys_p50_ms	ms	Median client wall time of the profiled requests of the pairs.
+nsys/overhead.tsv	delta_p50_of_pairs_ms	ms	Median of the paired differences.
+nsys/overhead.tsv	delta_sd_ms	ms	Standard deviation of the paired differences.
+nsys/overhead.tsv	delta_ci95_halfwidth_ms	ms	95 % half-width of the mean difference: 1.96 times delta_sd_ms divided by the square root of n_pairs (normal approximation).
+nsys/overhead-pairs.tsv	run	None	Profiled run.
+nsys/overhead-pairs.tsv	kind	None	Request kind.
+nsys/overhead-pairs.tsv	case	None	Case id.
+nsys/overhead-pairs.tsv	phase	None	warmup or timed (warm-up requests are left out unless --include-warmup).
+nsys/overhead-pairs.tsv	segment	None	Client segment of the profiled request.
+nsys/overhead-pairs.tsv	ref	None	Ref line of the request: the key of the pair.
+nsys/overhead-pairs.tsv	nsys_idx	None	Index of the request in the client JSON of the profiled run.
+nsys/overhead-pairs.tsv	ctl_idx	None	Index of the request in the client JSON of the control run.
+nsys/overhead-pairs.tsv	nsys	ms	Client wall time of the profiled request.
+nsys/overhead-pairs.tsv	ctl	ms	Client wall time of the control request.
+nsys/overhead-vs-dec.tsv	kind	None	Request kind.
+nsys/overhead-vs-dec.tsv	cases_in_both	None	Number of cases that are in the decomposition client JSON (phases unique and cycle) and in the profiled runs.
+nsys/overhead-vs-dec.tsv	dec_mean_ms	ms	Mean over those cases of the mean wall time in the decomposition client JSON.
+nsys/overhead-vs-dec.tsv	ctl_mean_ms	ms	The same for the control run.
+nsys/overhead-vs-dec.tsv	nsys_mean_ms	ms	The same for the profiled runs.
+nsys/overhead-vs-dec.tsv	nsys_minus_dec_ms	ms	nsys_mean_ms minus dec_mean_ms.
+nsys/overhead-vs-dec.tsv	nsys_minus_dec_pct	%	nsys_minus_dec_ms divided by dec_mean_ms.
+nsys/overhead-where.tsv	run	None	Profiled run.
+nsys/overhead-where.tsv	kind	None	Request kind.
+nsys/overhead-where.tsv	requests	None	Number of profiled requests (warm-up left out).
+nsys/overhead-where.tsv	ctl_wall_ms	ms	Mean client wall time of the control requests (ctl_mean_ms of overhead.tsv).
+nsys/overhead-where.tsv	nsys_wall_ms	ms	Mean client wall time of the profiled requests (client_wall_ms of the request rows of passes.tsv).
+nsys/overhead-where.tsv	delta_ms	ms	delta_mean_ms of overhead.tsv.
+nsys/overhead-where.tsv	send_to_first_kernel_ms	ms	Mean over the profiled requests.
+nsys/overhead-where.tsv	gpu_busy_ms	ms	Mean over the profiled requests.
+nsys/overhead-where.tsv	gap_in_pass_ms	ms	Mean over the profiled requests.
+nsys/overhead-where.tsv	gap_between_passes_ms	ms	Mean over the profiled requests.
+nsys/overhead-where.tsv	last_kernel_to_recv_ms	ms	Mean over the profiled requests. The five time columns add up to the wall time of the profiled requests.
+nsys/overhead-where.tsv	host_share_of_nsys_wall_pct	%	(send_to_first_kernel_ms + gap_between_passes_ms + last_kernel_to_recv_ms) divided by nsys_wall_ms.
+nsys/overhead-where.tsv	launches_per_request	None	Mean number of cudaLaunchKernel calls per request.
+nsys/overhead-where.tsv	cuda_api_calls_per_request	None	Mean number of launch, synchronization and copy calls per request.
+nsys/overhead-where.tsv	delta_us_per_cuda_api_call	us	delta_ms divided by cuda_api_calls_per_request: an upper bound of the cost of one call under the hypothesis that the whole difference is per-call cost.
+nsys/overhead-where.tsv	delta_us_per_launch	us	delta_ms divided by launches_per_request: an upper bound of the cost of one launch under the same hypothesis.
+nsys/overhead-where.tsv	delta_pct_of_host_time	%	delta_ms divided by the host-side time (send_to_first_kernel_ms + gap_between_passes_ms + last_kernel_to_recv_ms).
+ncu/kernels.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+ncu/kernels.tsv	id	None	Launch id of the profiled launch in the report (the ID column of ncu).
+ncu/kernels.tsv	window	None	Label of the planned window of the planned launch that this launch matches, for example 'MMQ layer 0, P0 N=86'. The value is empty for launches with align unplanned or no plan.
+ncu/kernels.tsv	class	None	Class of the launch. For a launch matched to the plan, the model class of the plan (op, weight type, J, N, for example 'mmq attn_qkv Q8_0 J=96 N=86'); otherwise named from the kernel name and grid only (for example 'mul_mat_vec_q grid=(4096,1,1)').
+ncu/kernels.tsv	align	None	ALIGNED, PARTIAL or SHIFTED (the alignment status of the run) if the launch is matched to a planned launch; unplanned if the run has a plan and this launch matches none of it (every launch of a MISALIGNED run); no plan if there is no plan/<run>.json.
+ncu/kernels.tsv	function	None	Function name of the kernel, without template arguments.
+ncu/kernels.tsv	grid	None	Grid size as XxYxZ.
+ncu/kernels.tsv	block	None	Block size as XxYxZ.
+ncu/kernels.tsv	duration_us	us	Duration of the kernel (gpu__time_duration.sum), measured by ncu under replay with flushed caches and unlocked clocks.
+ncu/kernels.tsv	nsys_proxy_us	us	Duration of the same kernel in the nsys trace of the model pass that the plan uses as its proxy. The value is empty where the plan has no such kernel.
+ncu/kernels.tsv	sm_clock_mhz	MHz	SM clock during the kernel (gpc__cycles_elapsed.avg.per_second).
+ncu/kernels.tsv	sm_cycles_k	thousand cycles	SM cycles of the kernel: SM clock times duration.
+ncu/kernels.tsv	dram_clock_mhz	MHz	DRAM clock (dram__cycles_elapsed.avg.per_second).
+ncu/kernels.tsv	dram_read_mb	MB	DRAM bytes read (dram__bytes_read.sum), 10^6 bytes.
+ncu/kernels.tsv	dram_write_mb	MB	DRAM bytes written (dram__bytes_write.sum), 10^6 bytes.
+ncu/kernels.tsv	dram_gb_s	GB/s	DRAM throughput: bytes read plus written divided by the duration.
+ncu/kernels.tsv	dram_pct_of_422	%	dram_gb_s divided by 422 GB/s, the best DRAM read rate of the card.
+ncu/kernels.tsv	ncu_dram_pct_peak	%	DRAM throughput as ncu reports it, in percent of the peak (gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed).
+ncu/kernels.tsv	l2_mb	MB	L2 traffic (lts__t_bytes.sum), 10^6 bytes.
+ncu/kernels.tsv	l2_hit_pct	%	L2 sector hit rate (lts__t_sector_hit_rate.pct).
+ncu/kernels.tsv	l1_hit_pct	%	L1 sector hit rate (l1tex__t_sector_hit_rate.pct).
+ncu/kernels.tsv	imma_pipe_pct	%	Tensor pipe active for IMMA (int8) instructions, in percent of the peak (sm__pipe_tensor_op_imma_cycles_active.avg.pct_of_peak_sustained_active).
+ncu/kernels.tsv	hmma_pipe_pct	%	Tensor pipe active for HMMA (fp16) instructions, in percent of the peak (sm__pipe_tensor_op_hmma_cycles_active.avg.pct_of_peak_sustained_active).
+ncu/kernels.tsv	imma_inst_pct	%	IMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_imma.avg.pct_of_peak_sustained_active).
+ncu/kernels.tsv	hmma_inst_pct	%	HMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_hmma.avg.pct_of_peak_sustained_active).
+ncu/kernels.tsv	imma_inst_m	million	IMMA instructions executed (sm__inst_executed_pipe_tensor_op_imma.sum).
+ncu/kernels.tsv	int8_gops	G ops	Executed int8 tensor operations (sm__ops_path_tensor_src_int8.sum), padding included.
+ncu/kernels.tsv	inst_m	million	Instructions executed (smsp__inst_executed.sum).
+ncu/kernels.tsv	issue_active_pct	%	Issue slots active, in percent of the peak (smsp__issue_active.avg.pct_of_peak_sustained_active).
+ncu/kernels.tsv	sm_throughput_pct	%	SM throughput, in percent of the peak (sm__throughput.avg.pct_of_peak_sustained_elapsed).
+ncu/kernels.tsv	warps_active_pct	%	Achieved warps per SM, in percent of the peak (sm__warps_active.avg.pct_of_peak_sustained_active).
+ncu/kernels.tsv	warps_max_pct	%	Theoretical warps per SM, in percent of the peak (sm__maximum_warps_per_active_cycle_pct).
+ncu/kernels.tsv	latency_cycles	cycles	Warp latency per issued instruction (smsp__average_warp_latency_per_inst_issued.ratio).
+ncu/kernels.tsv	regs	registers per thread	Registers per thread (launch__registers_per_thread).
+ncu/kernels.tsv	smem_static_b	B	Static shared memory per block (launch__shared_mem_per_block_static).
+ncu/kernels.tsv	smem_dyn_b	B	Dynamic shared memory per block (launch__shared_mem_per_block_dynamic).
+ncu/kernels.tsv	waves_per_sm	waves	Waves per SM (launch__waves_per_multiprocessor).
+ncu/kernels.tsv	occ_limit_regs	blocks per SM	Occupancy limit by registers (launch__occupancy_limit_registers).
+ncu/kernels.tsv	occ_limit_smem	blocks per SM	Occupancy limit by shared memory (launch__occupancy_limit_shared_mem).
+ncu/kernels.tsv	occ_limit_warps	blocks per SM	Occupancy limit by warps (launch__occupancy_limit_warps).
+ncu/kernels.tsv	occ_limit_blocks	blocks per SM	Occupancy limit by the block count of the SM (launch__occupancy_limit_blocks).
+ncu/kernels.tsv	passes	None	Replay passes that ncu needed for the launch (profiler__replayer_passes).
+ncu/kernels.tsv	stall_top3	None	The three largest stall reasons with their share in percent, for example 'long_scoreboard 22%; lg_throttle 19%; math_pipe_throttle 19%'.
+ncu/kernels.tsv	stall_long_scoreboard_pct	%	Share of the stall reason long_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_short_scoreboard_pct	%	Share of the stall reason short_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_barrier_pct	%	Share of the stall reason barrier among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_mio_throttle_pct	%	Share of the stall reason mio_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_math_pipe_throttle_pct	%	Share of the stall reason math_pipe_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_wait_pct	%	Share of the stall reason wait among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_wait_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_no_instruction_pct	%	Share of the stall reason no_instruction among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_lg_throttle_pct	%	Share of the stall reason lg_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio; selected and not_selected excluded).
+ncu/kernels.tsv	stall_dispatch_stall_pct	%	Share of the stall reason dispatch_stall among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_dispatch_stall_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+ncu/classes.tsv	class	None	Class of the launch. For a launch matched to the plan, the model class of the plan (op, weight type, J, N, for example 'mmq attn_qkv Q8_0 J=96 N=86'); otherwise named from the kernel name and grid only (for example 'mul_mat_vec_q grid=(4096,1,1)').
+ncu/classes.tsv	n	None	Number of launches of the class in the run.
+ncu/classes.tsv	window	None	Window label of the first launch of the class.
+ncu/classes.tsv	function	None	Function name of the first launch of the class.
+ncu/classes.tsv	grid	None	Grid size of the first launch of the class.
+ncu/classes.tsv	block	None	Block size of the first launch of the class.
+ncu/classes.tsv	align	None	align of the first launch of the class (see kernels.tsv).
+ncu/classes.tsv	duration_min_us	us	Shortest duration of a launch of the class.
+ncu/classes.tsv	duration_max_us	us	Longest duration of a launch of the class.
+ncu/classes.tsv	duration_us	us	Mean over the launches of the class. Duration of the kernel (gpu__time_duration.sum), measured by ncu under replay with flushed caches and unlocked clocks.
+ncu/classes.tsv	nsys_proxy_us	us	Mean over the launches of the class. Duration of the same kernel in the nsys trace of the model pass that the plan uses as its proxy. The value is empty where the plan has no such kernel.
+ncu/classes.tsv	sm_clock_mhz	MHz	Mean over the launches of the class. SM clock during the kernel (gpc__cycles_elapsed.avg.per_second).
+ncu/classes.tsv	sm_cycles_k	thousand cycles	Mean over the launches of the class. SM cycles of the kernel: SM clock times duration.
+ncu/classes.tsv	dram_clock_mhz	MHz	Mean over the launches of the class. DRAM clock (dram__cycles_elapsed.avg.per_second).
+ncu/classes.tsv	dram_read_mb	MB	Mean over the launches of the class. DRAM bytes read (dram__bytes_read.sum), 10^6 bytes.
+ncu/classes.tsv	dram_write_mb	MB	Mean over the launches of the class. DRAM bytes written (dram__bytes_write.sum), 10^6 bytes.
+ncu/classes.tsv	dram_gb_s	GB/s	Mean over the launches of the class. DRAM throughput: bytes read plus written divided by the duration.
+ncu/classes.tsv	dram_pct_of_422	%	Mean over the launches of the class. dram_gb_s divided by 422 GB/s, the best DRAM read rate of the card.
+ncu/classes.tsv	ncu_dram_pct_peak	%	Mean over the launches of the class. DRAM throughput as ncu reports it, in percent of the peak (gpu__dram_throughput.avg.pct_of_peak_sustained_elapsed).
+ncu/classes.tsv	l2_mb	MB	Mean over the launches of the class. L2 traffic (lts__t_bytes.sum), 10^6 bytes.
+ncu/classes.tsv	l2_hit_pct	%	Mean over the launches of the class. L2 sector hit rate (lts__t_sector_hit_rate.pct).
+ncu/classes.tsv	l1_hit_pct	%	Mean over the launches of the class. L1 sector hit rate (l1tex__t_sector_hit_rate.pct).
+ncu/classes.tsv	imma_pipe_pct	%	Mean over the launches of the class. Tensor pipe active for IMMA (int8) instructions, in percent of the peak (sm__pipe_tensor_op_imma_cycles_active.avg.pct_of_peak_sustained_active).
+ncu/classes.tsv	hmma_pipe_pct	%	Mean over the launches of the class. Tensor pipe active for HMMA (fp16) instructions, in percent of the peak (sm__pipe_tensor_op_hmma_cycles_active.avg.pct_of_peak_sustained_active).
+ncu/classes.tsv	imma_inst_pct	%	Mean over the launches of the class. IMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_imma.avg.pct_of_peak_sustained_active).
+ncu/classes.tsv	hmma_inst_pct	%	Mean over the launches of the class. HMMA instructions executed, in percent of the peak (sm__inst_executed_pipe_tensor_op_hmma.avg.pct_of_peak_sustained_active).
+ncu/classes.tsv	imma_inst_m	million	Mean over the launches of the class. IMMA instructions executed (sm__inst_executed_pipe_tensor_op_imma.sum).
+ncu/classes.tsv	int8_gops	G ops	Mean over the launches of the class. Executed int8 tensor operations (sm__ops_path_tensor_src_int8.sum), padding included.
+ncu/classes.tsv	inst_m	million	Mean over the launches of the class. Instructions executed (smsp__inst_executed.sum).
+ncu/classes.tsv	issue_active_pct	%	Mean over the launches of the class. Issue slots active, in percent of the peak (smsp__issue_active.avg.pct_of_peak_sustained_active).
+ncu/classes.tsv	sm_throughput_pct	%	Mean over the launches of the class. SM throughput, in percent of the peak (sm__throughput.avg.pct_of_peak_sustained_elapsed).
+ncu/classes.tsv	warps_active_pct	%	Mean over the launches of the class. Achieved warps per SM, in percent of the peak (sm__warps_active.avg.pct_of_peak_sustained_active).
+ncu/classes.tsv	warps_max_pct	%	Mean over the launches of the class. Theoretical warps per SM, in percent of the peak (sm__maximum_warps_per_active_cycle_pct).
+ncu/classes.tsv	latency_cycles	cycles	Mean over the launches of the class. Warp latency per issued instruction (smsp__average_warp_latency_per_inst_issued.ratio).
+ncu/classes.tsv	regs	registers per thread	Mean over the launches of the class. Registers per thread (launch__registers_per_thread).
+ncu/classes.tsv	smem_static_b	B	Mean over the launches of the class. Static shared memory per block (launch__shared_mem_per_block_static).
+ncu/classes.tsv	smem_dyn_b	B	Mean over the launches of the class. Dynamic shared memory per block (launch__shared_mem_per_block_dynamic).
+ncu/classes.tsv	waves_per_sm	waves	Mean over the launches of the class. Waves per SM (launch__waves_per_multiprocessor).
+ncu/classes.tsv	occ_limit_regs	blocks per SM	Mean over the launches of the class. Occupancy limit by registers (launch__occupancy_limit_registers).
+ncu/classes.tsv	occ_limit_smem	blocks per SM	Mean over the launches of the class. Occupancy limit by shared memory (launch__occupancy_limit_shared_mem).
+ncu/classes.tsv	occ_limit_warps	blocks per SM	Mean over the launches of the class. Occupancy limit by warps (launch__occupancy_limit_warps).
+ncu/classes.tsv	occ_limit_blocks	blocks per SM	Mean over the launches of the class. Occupancy limit by the block count of the SM (launch__occupancy_limit_blocks).
+ncu/classes.tsv	passes	None	Mean over the launches of the class. Replay passes that ncu needed for the launch (profiler__replayer_passes).
+ncu/classes.tsv	stall_long_scoreboard_pct	%	Mean over the launches of the class. Share of the stall reason long_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_long_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_short_scoreboard_pct	%	Mean over the launches of the class. Share of the stall reason short_scoreboard among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_short_scoreboard_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_barrier_pct	%	Mean over the launches of the class. Share of the stall reason barrier among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_barrier_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_mio_throttle_pct	%	Mean over the launches of the class. Share of the stall reason mio_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_mio_throttle_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_math_pipe_throttle_pct	%	Mean over the launches of the class. Share of the stall reason math_pipe_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_math_pipe_throttle_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_wait_pct	%	Mean over the launches of the class. Share of the stall reason wait among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_wait_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_no_instruction_pct	%	Mean over the launches of the class. Share of the stall reason no_instruction among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_no_instruction_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_lg_throttle_pct	%	Mean over the launches of the class. Share of the stall reason lg_throttle among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_lg_throttle_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_dispatch_stall_pct	%	Mean over the launches of the class. Share of the stall reason dispatch_stall among the summed stall ratios of the 17 reasons (smsp__average_warps_issue_stalled_dispatch_stall_per_issue_active.ratio; selected and not_selected excluded).
+ncu/classes.tsv	stall_top3	None	Mean over the launches of the class. The three largest stall reasons with their share in percent, for example 'long_scoreboard 22%; lg_throttle 19%; math_pipe_throttle 19%'.
+ncu/sol.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+ncu/sol.tsv	case	None	Case of the planned request of the run (plan/<run>.json). The value is empty for classes that have no plan record (launches with align unplanned).
+ncu/sol.tsv	class	None	Class of the launch. For a launch matched to the plan, the model class of the plan (op, weight type, J, N, for example 'mmq attn_qkv Q8_0 J=96 N=86'); otherwise named from the kernel name and grid only (for example 'mul_mat_vec_q grid=(4096,1,1)').
+ncu/sol.tsv	n	None	Number of launches of the class in the run.
+ncu/sol.tsv	pass_k	None	Index of the pass of the request that the class comes from, from 0 (P0, P1, ...), from the plan record of the first launch of the class. The value is empty without a plan record.
+ncu/sol.tsv	n_tokens	tokens	Tokens N of that pass (plan record). The value is empty without a plan record.
+ncu/sol.tsv	launches_per_pass	None	Launches of the class per pass of the traced request (plan record, from the census). The value is empty without a plan record.
+ncu/sol.tsv	duration_us	us	Mean measured duration of one launch of the class (ncu).
+ncu/sol.tsv	nsys_proxy_us	us	Mean duration of the same kernel in the nsys trace of the model pass that serves as the proxy of the traced pass.
+ncu/sol.tsv	bound	None	The limit that sets floor_us (the most frequent one among the launches of the class): DRAM, INT8, FP16, FP32 or launch.
+ncu/sol.tsv	floor_us	us	Time at the limit, mean over the launches of the class: the largest of model bytes / 422 GB/s, useful int8 ops / 149.3 TOP/s, fp16 flops / 38 TFLOP/s, fp32 flops / 18.1 TFLOP/s and the launch floor of 1.0 us.
+ncu/sol.tsv	pct_of_limit	%	floor_us divided by duration_us.
+ncu/sol.tsv	gap_us	us	duration_us minus floor_us: the gap per launch.
+ncu/sol.tsv	ms_per_pass	ms	duration_us times launches_per_pass: time of the class in one pass. The value is empty without launches_per_pass.
+ncu/sol.tsv	gap_ms_per_pass	ms	gap_us times launches_per_pass. The value is empty without launches_per_pass.
+ncu/sol.tsv	pass_nsys_ms	ms	GPU time of the traced pass in the nsys trace (plan record). The value is empty without a plan record.
+ncu/sol.tsv	share_of_pass_pct	%	ms_per_pass divided by pass_nsys_ms.
+ncu/sol.tsv	dram_gb_s	GB/s	Mean DRAM throughput of the launches of the class.
+ncu/sol.tsv	dram_pct_of_422	%	Mean of dram_pct_of_422 of the launches of the class.
+ncu/sol.tsv	useful_tops	TOP/s	Useful int8 operations of the plan (2*M*N*K) divided by duration_us. The value is empty for kernels with no int8 model.
+ncu/sol.tsv	useful_tops_pct	%	useful_tops divided by 149.3 TOP/s.
+ncu/sol.tsv	padded_over_useful	None	Executed int8 operations (sm__ops_path_tensor_src_int8.sum, mean over the launches) divided by the useful operations.
+ncu/sol.tsv	padded_expected	None	Padded operations divided by useful operations that the tile grid of the plan gives: the value that padded_over_useful should have.
+ncu/sol.tsv	imma_pipe_pct	%	Mean tensor pipe active for IMMA instructions.
+ncu/sol.tsv	l2_hit_pct	%	Mean L2 sector hit rate.
+ncu/sol.tsv	sm_clock_mhz	MHz	Mean SM clock.
+ncu/sol.tsv	stall_top3	None	The three largest stall reasons with their share in percent, for example 'long_scoreboard 22%; lg_throttle 19%; math_pipe_throttle 19%'.
+ncu/sol.tsv	floor_parts	None	The limit times of the first launch of the class that floor_us is the largest of, for example 'DRAM=60.1; INT8=24.2; launch=1.0' (microseconds).
+ncu/sol.tsv	floor_source	None	Where the bytes of the floor come from: 'model bytes' (weights + q8_1 input + f32 output for matmuls, or the read and write bytes of the model, from the plan) or 'measured DRAM bytes (no byte model for this kernel)'.
+ncu/alignment.tsv	run	None	Run name: the name of the report file without extension (p3-ncu-<x>).
+ncu/alignment.tsv	planned_launches	None	Number of launches that the plan expects in the window.
+ncu/alignment.tsv	profiled_launches	None	Number of launches in the report.
+ncu/alignment.tsv	matching	None	Number of profiled launches that match the planned kernels (function, grid, block) at the best shift.
+ncu/alignment.tsv	shift	None	Best shift in launches of the filter stream between the profiled launches and the plan (0 for an aligned window).
+ncu/alignment.tsv	status	None	ALIGNED, PARTIAL, SHIFTED by +s (with the plan_ncu.py --shift hint), MISALIGNED or EMPTY, with its explanation.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	address	None	Address of the SASS line in the kernel.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	sass	None	The SASS text of the line.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	opcode	None	The opcode of the line: the first word of the SASS text, without the predicate and without the part after the first dot.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_samples_all	count	All stall samples at the line.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_samples_not_issued	count	The stall samples at the line in which the warp did not issue an instruction.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	instructions_executed	count	Number of times that the kernel ran the instruction, for all warps.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_barrier	count	Stall samples with the stall reason barrier.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_branch_resolving	count	Stall samples with the stall reason branch_resolving.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_dispatch	count	Stall samples with the stall reason dispatch.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_drain	count	Stall samples with the stall reason drain.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_imc	count	Stall samples with the stall reason imc_miss.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_lg	count	Stall samples with the stall reason lg_throttle.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_long_sb	count	Stall samples with the stall reason long_scoreboard.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_math	count	Stall samples with the stall reason math_pipe_throttle.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_membar	count	Stall samples with the stall reason membar.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_mio	count	Stall samples with the stall reason mio_throttle.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_misc	count	Stall samples with the stall reason misc.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_no_inst	count	Stall samples with the stall reason no_instruction.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_not_selected	count	Stall samples with the stall reason not_selected.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_selected	count	Stall samples with the stall reason selected.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_short_sb	count	Stall samples with the stall reason short_scoreboard.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_sleep	count	Stall samples with the stall reason sleeping.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_tex	count	Stall samples with the stall reason tex_throttle.
+ncu/ffn_up_q4_0_N2048-instructions.tsv	stall_wait	count	Stall samples with the stall reason wait.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	opcode	None	Opcode of the SASS instruction. The last row `TOTAL` sums all opcodes.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	sass_lines	count	Number of SASS lines with this opcode.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_samples_all	count	All stall samples at the lines of this opcode.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_samples_share_pct	%	The stall samples of this opcode as a part of all stall samples.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_samples_not_issued	count	The stall samples of this opcode in which the warp did not issue an instruction.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	instructions_executed	count	Number of times that the kernel ran instructions of this opcode.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	instructions_executed_share_pct	%	The instructions of this opcode that the kernel ran, as a part of all instructions that it ran.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_barrier	count	Stall samples with the stall reason barrier.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_branch_resolving	count	Stall samples with the stall reason branch_resolving.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_dispatch	count	Stall samples with the stall reason dispatch.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_drain	count	Stall samples with the stall reason drain.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_imc	count	Stall samples with the stall reason imc_miss.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_lg	count	Stall samples with the stall reason lg_throttle.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_long_sb	count	Stall samples with the stall reason long_scoreboard.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_math	count	Stall samples with the stall reason math_pipe_throttle.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_membar	count	Stall samples with the stall reason membar.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_mio	count	Stall samples with the stall reason mio_throttle.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_misc	count	Stall samples with the stall reason misc.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_no_inst	count	Stall samples with the stall reason no_instruction.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_not_selected	count	Stall samples with the stall reason not_selected.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_selected	count	Stall samples with the stall reason selected.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_short_sb	count	Stall samples with the stall reason short_scoreboard.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_sleep	count	Stall samples with the stall reason sleeping.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_tex	count	Stall samples with the stall reason tex_throttle.
+ncu/ffn_up_q4_0_N2048-opcodes.tsv	stall_wait	count	Stall samples with the stall reason wait.
+leads-childpass/childpass-requests.tsv	run	None	label of the log: the log file name without .server.log
+leads-childpass/childpass-requests.tsv	k	None	index of the request line in that log (0-based)
+leads-childpass/childpass-requests.tsv	kind	None	request type (short1q, short2q, medium3q, long3q): from the client JSON when given, else derived from the request line
+leads-childpass/childpass-requests.tsv	case	None	benchmark case id from the client JSON; empty without a client JSON
+leads-childpass/childpass-requests.tsv	phase	None	client phase from the client JSON; empty without a client JSON
+leads-childpass/childpass-requests.tsv	n_q	count	questions of the request (request line n_questions)
+leads-childpass/childpass-requests.tsv	n_ubatches_obs	count	ubatch lines (model passes) of the request
+leads-childpass/childpass-requests.tsv	slots	None	slot ids of the question tasks in task order, parent first, as a tuple such as (0, 2); empty when the slot lines do not fit the request
+leads-childpass/childpass-requests.tsv	select	None	how the parent slot was chosen (slot line): LRU, LCP or id
+leads-childpass/childpass-requests.tsv	structure	None	census slot structure of the model that reproduces the ubatches: P<seqs> prefix pass, F whole prompt in one pass, S<seqs> suffix pass, separated by spaces; ? = no model reproduces them
+leads-childpass/childpass-requests.tsv	describe	None	passes of that model: P<tokens>, F<tokens>, S<seqs>x<tokens per seq>, joined by +; a leading ~ = rebuilt from the observed ubatches only
+leads-childpass/childpass-requests.tsv	below	None	True when a child slot has a lower slot id than the parent slot
+leads-childpass/childpass-requests.tsv	unified_ok	None	True when the census default model (unified split, sequential = false) reproduces the observed ubatches (n_tokens, n_seqs, n_outputs) for the observed slots
+leads-childpass/childpass-requests.tsv	seq_ok	None	True when the sequential-split model (sequential = true, the split of --no-kv-unified) reproduces the observed ubatches
+leads-childpass/childpass-requests.tsv	expected_mode	None	model expected for the cache mode of the log (kv_unified of the load_model line): unified or seq
+leads-childpass/childpass-requests.tsv	expected_ok	None	True when the expected model reproduces the observed ubatches
+leads-childpass/childpass-requests.tsv	n_dec	count	llama_decode calls (decode lines) of the request
+leads-childpass/childpass-requests.tsv	pred_dec	count	llama_decode calls that the census default model predicts
+leads-childpass/childpass-requests.tsv	fixed_dec	count	llama_decode calls of the fixed-order model: parent slot forced to the lowest id, all children in the parent's suffix batch
+leads-childpass/childpass-requests.tsv	pred_ub	count	ubatches that the census default model predicts
+leads-childpass/childpass-requests.tsv	fixed_ub	count	ubatches of the fixed-order model
+leads-childpass/childpass-requests.tsv	total_us	us	total_us of the request line (handler entry to end of handler)
+leads-childpass/childpass-requests.tsv	wait_us	us	wait_us of the request line (post_tasks to wait_for_all)
+leads-childpass/childpass-requests.tsv	client_wall_ms	ms	client wall time of the request from the client JSON; empty without a client JSON
+leads-childpass/childpass-requests.tsv	more_ub	None	True when the observed ubatch count is above pred_ub
+leads-childpass/childpass-requests.tsv	dec_vs_fixed	count	n_dec minus fixed_dec (positive = more llama_decode calls than the fixed order)
+leads-childpass/childpass-requests.tsv	sizes_vs_fixed	None	True when the observed ubatch sizes (n_tokens, n_seqs, n_outputs) differ from the fixed-order model
+leads-kvwin/kvwin-nsys-passes.tsv	trace	None	nsys run name (the run column of the passes table); in the old-trace file the trace name long, medium or short
+leads-kvwin/kvwin-nsys-passes.tsv	req	None	client request index of the pass (client_idx of the passes table); in the old-trace file the request index in the trace
+leads-kvwin/kvwin-nsys-passes.tsv	j	None	index of the pass in its request, 0-based
+leads-kvwin/kvwin-nsys-passes.tsv	phase	None	client phase of the request: warmup, T1, other, T2, T3, T4; in the old-trace file the trace name
+leads-kvwin/kvwin-nsys-passes.tsv	kind	None	pass kind of the passes table (prefix-large, prefix-small, suffix, ...)
+leads-kvwin/kvwin-nsys-passes.tsv	case	None	benchmark case id
+leads-kvwin/kvwin-nsys-passes.tsv	N	count	tokens of the pass (n_tokens)
+leads-kvwin/kvwin-nsys-passes.tsv	seen	cells	window seen: n_kv_padded = KQ-mask host-to-device bytes / (2 x n_tokens), padded to 256
+leads-kvwin/kvwin-nsys-passes.tsv	needed	cells	window needed: own cells of the longest sequence of the pass, padded to 256 (census attn_cost); old traces: n_kv_window_model of crosscheck-passes.tsv
+leads-kvwin/kvwin-nsys-passes.tsv	pool	cells	cells of the request in a perfectly compact unified pool (prefix cells + suffix cells of the sequences already placed), padded to 256; empty in the old-trace file
+leads-kvwin/kvwin-nsys-passes.tsv	eff	cells	mean cells a query tile reads when the own cells sit at the front of the pool and the masked tail is skipped (N >= 1024); equal to needed for N < 1024
+leads-kvwin/kvwin-nsys-passes.tsv	fa	ms	flash-attention kernel time of the pass, 8 layers (t_cat_flash_ms: flash kernels including mask scan and fix-up)
+leads-kvwin/kvwin-nsys-passes.tsv	busy	ms	GPU busy time of the pass: union of the kernel intervals (gpu_busy_ms)
+leads-kvwin/kvwin-nsys-passes.tsv	wall	ms	wall time of the pass in the trace: start of its first GPU kernel to end of its last kernel (wall_ms)
+leads-kvwin/kvwin-nsys-passes.tsv	w_impl	cells	window the kernel appears to read: (fa - a) / (b x N) with the fit fa = a + b x N x seen over the passes with N < 1024
+leads-kvwin/kvwin-nsys-passes.tsv	pred_need	ms	fit prediction at the needed window (need_eff); for N >= 1024 scaled by c_scan, the smallest observed / model ratio of the scan passes
+leads-kvwin/kvwin-nsys-passes.tsv	gain	ms	possible gain if the window were exact: b x N x (seen - needed) for N < 1024; fa above pred_need for N >= 1024 (never negative); empty when no needed window
+leads-kvwin/kvwin-nsys-passes.tsv	describe	None	pass structure of the model that reproduces the request, e.g. P88+S2x51+S1x69; ? = no model reproduces it
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	trace	None	nsys run name (the run column of the passes table); in the old-trace file the trace name long, medium or short
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	req	None	client request index of the pass (client_idx of the passes table); in the old-trace file the request index in the trace
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	j	None	index of the pass in its request, 0-based
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	phase	None	client phase of the request: warmup, T1, other, T2, T3, T4; in the old-trace file the trace name
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	kind	None	pass kind of the passes table (prefix-large, prefix-small, suffix, ...)
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	case	None	benchmark case id
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	N	count	tokens of the pass (n_tokens)
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	seen	cells	window seen: n_kv_padded = KQ-mask host-to-device bytes / (2 x n_tokens), padded to 256
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	needed	cells	window needed: own cells of the longest sequence of the pass, padded to 256 (census attn_cost); old traces: n_kv_window_model of crosscheck-passes.tsv
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	pool	cells	cells of the request in a perfectly compact unified pool (prefix cells + suffix cells of the sequences already placed), padded to 256; empty in the old-trace file
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	eff	cells	mean cells a query tile reads when the own cells sit at the front of the pool and the masked tail is skipped (N >= 1024); equal to needed for N < 1024
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	fa	ms	flash-attention kernel time of the pass, 8 layers (t_cat_flash_ms: flash kernels including mask scan and fix-up)
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	busy	ms	GPU busy time of the pass: union of the kernel intervals (gpu_busy_ms)
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	wall	ms	wall time of the pass in the trace: start of its first GPU kernel to end of its last kernel (wall_ms)
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	w_impl	cells	window the kernel appears to read: (fa - a) / (b x N) with the fit fa = a + b x N x seen over the passes with N < 1024
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	pred_need	ms	fit prediction at the needed window (need_eff); for N >= 1024 scaled by c_scan, the smallest observed / model ratio of the scan passes
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	gain	ms	possible gain if the window were exact: b x N x (seen - needed) for N < 1024; fa above pred_need for N >= 1024 (never negative); empty when no needed window
+leads-kvwin/kvwin-nsys-nokvu-passes.tsv	describe	None	pass structure of the model that reproduces the request, e.g. P88+S2x51+S1x69; ? = no model reproduces it
+leads-kvwin/kvwin-old-passes.tsv	src	None	source of the row: old (the three old traces)
+leads-kvwin/kvwin-old-passes.tsv	trace	None	nsys run name (the run column of the passes table); in the old-trace file the trace name long, medium or short
+leads-kvwin/kvwin-old-passes.tsv	req	None	client request index of the pass (client_idx of the passes table); in the old-trace file the request index in the trace
+leads-kvwin/kvwin-old-passes.tsv	j	None	index of the pass in its request, 0-based
+leads-kvwin/kvwin-old-passes.tsv	phase	None	client phase of the request: warmup, T1, other, T2, T3, T4; in the old-trace file the trace name
+leads-kvwin/kvwin-old-passes.tsv	kind	None	pass kind of the passes table (prefix-large, prefix-small, suffix, ...)
+leads-kvwin/kvwin-old-passes.tsv	case	None	benchmark case id
+leads-kvwin/kvwin-old-passes.tsv	N	count	tokens of the pass (n_tokens)
+leads-kvwin/kvwin-old-passes.tsv	seen	cells	window seen: n_kv_padded = KQ-mask host-to-device bytes / (2 x n_tokens), padded to 256
+leads-kvwin/kvwin-old-passes.tsv	needed	cells	window needed: own cells of the longest sequence of the pass, padded to 256 (census attn_cost); old traces: n_kv_window_model of crosscheck-passes.tsv
+leads-kvwin/kvwin-old-passes.tsv	pool	cells	cells of the request in a perfectly compact unified pool (prefix cells + suffix cells of the sequences already placed), padded to 256; empty in the old-trace file
+leads-kvwin/kvwin-old-passes.tsv	eff	cells	mean cells a query tile reads when the own cells sit at the front of the pool and the masked tail is skipped (N >= 1024); equal to needed for N < 1024
+leads-kvwin/kvwin-old-passes.tsv	need_eff	cells	window used for the prediction: needed for N < 1024, eff for N >= 1024
+leads-kvwin/kvwin-old-passes.tsv	fa	ms	flash-attention kernel time of the pass, 8 layers (t_cat_flash_ms: flash kernels including mask scan and fix-up)
+leads-kvwin/kvwin-old-passes.tsv	busy	ms	GPU busy time of the pass: union of the kernel intervals (gpu_busy_ms)
+leads-kvwin/kvwin-old-passes.tsv	wall	ms	wall time of the pass in the trace: start of its first GPU kernel to end of its last kernel (wall_ms)
+leads-kvwin/kvwin-old-passes.tsv	w_impl	cells	window the kernel appears to read: (fa - a) / (b x N) with the fit fa = a + b x N x seen over the passes with N < 1024
+leads-kvwin/kvwin-old-passes.tsv	pred_seen	ms	fit prediction a + b x N x seen at the window seen (N < 1024 only)
+leads-kvwin/kvwin-old-passes.tsv	pred_need	ms	fit prediction at the needed window (need_eff); for N >= 1024 scaled by c_scan, the smallest observed / model ratio of the scan passes
+leads-kvwin/kvwin-old-passes.tsv	gain	ms	possible gain if the window were exact: b x N x (seen - needed) for N < 1024; fa above pred_need for N >= 1024 (never negative); empty when no needed window
+summary/request-time-decomposition.tsv	request_type	None	Request type: `short1q`, `short2q`, `medium3q`, or `long3q`.
+summary/request-time-decomposition.tsv	requests	count	Number of requests of the phase `unique` in `tables/decomp/stack.tsv`.
+summary/request-time-decomposition.tsv	wall_ms	ms	Mean wall time of the requests.
+summary/request-time-decomposition.tsv	before_submit_ms	ms	Mean time of the steps before the submit step. They are HTTP, the prompt, the start of the task, and the host work to prepare the passes.
+summary/request-time-decomposition.tsv	submit_ms	ms	Mean host time to submit the passes to the GPU, for all passes of the request. It is not the time of the GPU.
+summary/request-time-decomposition.tsv	gpu_wait_ms	ms	Mean GPU wait, for all passes of the request.
+summary/request-time-decomposition.tsv	other_steps_ms	ms	Mean time of the other steps: the host work between the passes and after the last pass, the end in the server, the answer, and HTTP.
+summary/request-time-decomposition.tsv	gpu_span_ms	ms	Mean GPU span: from the start of the first pass to the end of the last GPU wait.
+summary/request-time-decomposition.tsv	floor_pass_max_ms	ms	Mean sum of the larger value of the weight-read floor and the int8 floor for the passes of the request.
+summary/request-time-decomposition.tsv	floor_roofline_ms	ms	Mean sum of the roofline floor for the passes of the request.
+summary/request-time-decomposition.tsv	span_over_floor_pass_max	ratio	The GPU span divided by `floor_pass_max_ms`.
+summary/short1q-waterfall.tsv	step	None	One step of a `short1q` request. The last row is the wall time.
+summary/short1q-waterfall.tsv	mean_ms	ms	Mean time of the step.
+summary/short1q-waterfall.tsv	cumulative_ms	ms	Sum of this step and the steps above it.
+summary/short1q-waterfall.tsv	share_of_wall_pct	%	The mean time of the step, as a part of the wall time.
+summary/short1q-reference.tsv	quantity	None	The name of the value.
+summary/short1q-reference.tsv	unit	None	`ms` or `ratio`.
+summary/short1q-reference.tsv	value	See unit	The value for a `short1q` request.
+summary/instrumentation-cost.tsv	request_type	None	Request type.
+summary/instrumentation-cost.tsv	requests_each_arm	count	Number of requests in each of the two runs.
+summary/instrumentation-cost.tsv	timing_build_mean_ms	ms	Mean wall time with the build `ablate-timing` and `DMK_TIMING=1`.
+summary/instrumentation-cost.tsv	reference_build_mean_ms	ms	Mean wall time with the build `b12004-sm86`.
+summary/instrumentation-cost.tsv	difference_pct	%	The time with `DMK_TIMING` minus the reference time, as a part of the reference time. A value below 0 means that the build with `DMK_TIMING` is faster.
+summary/warm-path.tsv	request_type	None	Request type.
+summary/warm-path.tsv	case	None	Name of the case.
+summary/warm-path.tsv	pairs	count	Number of pairs. A pair is two requests with the same text, one after the other.
+summary/warm-path.tsv	first_wall_ms	ms	Mean wall time of the first request of the pairs.
+summary/warm-path.tsv	second_wall_ms	ms	Mean wall time of the second request of the pairs.
+summary/warm-path.tsv	wall_change_ms	ms	The second time minus the first time, mean of the pairs.
+summary/warm-path.tsv	submit_change_ms	ms	The same change for the submit step.
+summary/warm-path.tsv	gpu_wait_change_ms	ms	The same change for the GPU wait.
+summary/nsys-overhead.tsv	request_type	None	Request type.
+summary/nsys-overhead.tsv	pairs	count	Number of pairs of the same case, one with Nsight Systems and one without it.
+summary/nsys-overhead.tsv	without_nsys_mean_ms	ms	Mean wall time without Nsight Systems.
+summary/nsys-overhead.tsv	with_nsys_mean_ms	ms	Mean wall time with Nsight Systems.
+summary/nsys-overhead.tsv	difference_ms	ms	The time with Nsight Systems minus the time without it.
+summary/nsys-overhead.tsv	difference_pct	%	The difference as a part of the time without Nsight Systems.
+summary/nsys-overhead.tsv	ci95_halfwidth_ms	ms	The difference is in the interval from minus this value to this value, with a probability of 95 %.
+summary/nsys-request-time.tsv	request_type	None	Request type.
+summary/nsys-request-time.tsv	requests	count	Number of requests of the run `p3-nsys-all48`, without the requests of the warm-up.
+summary/nsys-request-time.tsv	passes_per_request	count	Mean number of passes in a request.
+summary/nsys-request-time.tsv	client_wall_ms	ms	Mean wall time.
+summary/nsys-request-time.tsv	send_to_first_kernel_ms	ms	Mean time from the start of the request at the client to the first kernel.
+summary/nsys-request-time.tsv	gpu_busy_ms	ms	Mean of the GPU busy time of the request.
+summary/nsys-request-time.tsv	idle_inside_passes_ms	ms	Mean idle time of the GPU in the passes.
+summary/nsys-request-time.tsv	idle_between_passes_ms	ms	Mean idle time of the GPU between two passes.
+summary/nsys-request-time.tsv	last_kernel_to_recv_ms	ms	Mean time from the end of the last kernel to the end of the request at the client.
+summary/nsys-request-time.tsv	gpu_busy_share_pct	%	The GPU busy time as a part of the wall time.
+summary/nsys-gap-before-pass.tsv	request_type	None	Request type.
+summary/nsys-gap-before-pass.tsv	boundary	None	The position of the gap: the passes before and after it. `request-start` is the gap before the first pass.
+summary/nsys-gap-before-pass.tsv	passes	count	Number of passes with this position.
+summary/nsys-gap-before-pass.tsv	gap_mean_ms	ms	Mean gap: the sum of the four parts that follow.
+summary/nsys-gap-before-pass.tsv	gpu_done_to_sync_return_ms	ms	Mean time from the end of the last kernel of the previous pass to the end of the sync call.
+summary/nsys-gap-before-pass.tsv	no_cuda_call_ms	ms	Mean time in which the decode thread has no CUDA call.
+summary/nsys-gap-before-pass.tsv	no_cuda_call_in_os_wait_ms	ms	The part of `no_cuda_call_ms` in a system wait.
+summary/nsys-gap-before-pass.tsv	no_cuda_call_busy_ms	ms	The part of `no_cuda_call_ms` in which the CPU works.
+summary/nsys-gap-before-pass.tsv	cuda_calls_ms	ms	Mean time in CUDA calls.
+summary/nsys-gap-before-pass.tsv	first_launch_to_first_kernel_ms	ms	Mean time from the first launch of the pass to its first kernel.
+summary/nsys-uploads.tsv	request_type	None	Request type.
+summary/nsys-uploads.tsv	requests	count	Number of requests of the run `p3-nsys-all48`, without the warm-up.
+summary/nsys-uploads.tsv	upload_copies	count	Mean number of uploads in a request.
+summary/nsys-uploads.tsv	uploaded_mb	MB	Mean data of the uploads in a request.
+summary/nsys-uploads.tsv	upload_gpu_ms	ms	Mean GPU time of the uploads in a request.
+summary/nsys-uploads.tsv	upload_rate_gb_s	GB/s	The data of the uploads divided by their GPU time.
+summary/nsys-host-cuda-calls.tsv	request_type	None	Request type.
+summary/nsys-host-cuda-calls.tsv	requests	count	Number of requests.
+summary/nsys-host-cuda-calls.tsv	launch_calls	count	Mean number of launches in a request.
+summary/nsys-host-cuda-calls.tsv	launch_calls_ms	ms	Mean time of the decode thread in the launches of a request.
+summary/nsys-host-cuda-calls.tsv	sync_calls	count	Mean number of sync calls in a request.
+summary/nsys-host-cuda-calls.tsv	sync_calls_ms	ms	Mean time of the decode thread in the sync calls of a request.
+summary/nsys-host-cuda-calls.tsv	all_cuda_calls_ms	ms	Mean time of the decode thread in all CUDA calls of a request.
+summary/nsys-host-cuda-calls.tsv	command_buffer_full_events	count	Mean number of times in a request that the command buffer is full.
+summary/nsys-host-cuda-calls.tsv	command_buffer_full_ms	ms	Mean time in a request in which the command buffer is full.
+summary/nsys-host-cuda-calls.tsv	launch_queue_depth_max	launches	Largest launch queue in the requests.
+summary/nsys-kernel-ms-per-pass.tsv	pass_type	None	Type of the pass: `prefix-large`, `prefix-small`, `suffix`, or `single`.
+summary/nsys-kernel-ms-per-pass.tsv	tokens_in_pass	None	Group of the number of tokens of the pass.
+summary/nsys-kernel-ms-per-pass.tsv	passes	count	Number of passes in the group.
+summary/nsys-kernel-ms-per-pass.tsv	launches_per_pass	count	Mean number of launches of a pass.
+summary/nsys-kernel-ms-per-pass.tsv	all_kernels_ms	ms	Mean kernel time of a pass.
+summary/nsys-kernel-ms-per-pass.tsv	MMQ_ms	ms	Mean kernel time of the kernel class `MMQ`. The columns that follow give the same value for the other kernel classes.
+summary/nsys-kernel-ms-per-pass.tsv	GDN_ms	ms	Kernel class `GDN`: the Gated DeltaNet kernels.
+summary/nsys-kernel-ms-per-pass.tsv	glu_ms	ms	Kernel class `glu`.
+summary/nsys-kernel-ms-per-pass.tsv	FA_ms	ms	Kernel class `FA`: the flash-attention kernels.
+summary/nsys-kernel-ms-per-pass.tsv	quantize_ms	ms	Kernel class `quantize`.
+summary/nsys-kernel-ms-per-pass.tsv	copy_ms	ms	Kernel class `copy`.
+summary/nsys-kernel-ms-per-pass.tsv	rms_norm_ms	ms	Kernel class `rms_norm`.
+summary/nsys-kernel-ms-per-pass.tsv	ssm_conv_ms	ms	Kernel class `ssm_conv`.
+summary/nsys-kernel-ms-per-pass.tsv	elementwise_ms	ms	Kernel class `elementwise`.
+summary/nsys-kernel-ms-per-pass.tsv	MMVQ_ms	ms	Kernel class `MMVQ`.
+summary/nsys-kernel-ms-per-pass.tsv	other_ms	ms	All other kernels.
+summary/ncu-run-alignment.tsv	run	None	Name of the run, without the prefix `p3-ncu-`.
+summary/ncu-run-alignment.tsv	planned_launches	count	Number of launches in the list of the run.
+summary/ncu-run-alignment.tsv	matching_launches	count	Number of profiled launches that have the kernel and the grid of the list.
+summary/ncu-run-alignment.tsv	shift_launches	launches	The difference in launches between the start of the run and the start of the list. A value below 0 means that the run starts before the first launch of the list.
+summary/ncu-run-alignment.tsv	status	None	`ALIGNED`, `SHIFTED`, or `MISALIGNED`.
+summary/ncu-mmq-large-n.tsv	n_tokens	tokens	Number of tokens of the pass.
+summary/ncu-mmq-large-n.tsv	op	None	Operation of the model that the kernel does.
+summary/ncu-mmq-large-n.tsv	weight_type	None	Type of the weights: `Q4_0` or `Q8_0`.
+summary/ncu-mmq-large-n.tsv	launches_per_pass	count	Number of launches of this kernel in a pass.
+summary/ncu-mmq-large-n.tsv	duration_us	µs	Time of one launch, as Nsight Compute measures it.
+summary/ncu-mmq-large-n.tsv	share_of_pass_pct	%	The time of all launches of this kernel as a part of the kernel time of the pass.
+summary/ncu-mmq-large-n.tsv	int8_of_peak_pct	%	The int8 operations of the model, divided by the time and by the int8 peak of 149.3 TOP/s.
+summary/ncu-mmq-large-n.tsv	imma_pipe_active_pct	%	Part of the time in which the IMMA pipe is active.
+summary/ncu-mmq-large-n.tsv	dram_of_422_gb_s_pct	%	The DRAM data rate as a part of 422 GB/s.
+summary/ncu-mmq-large-n.tsv	top_stall_reasons	None	The three largest stall reasons, with their part of the stalls.
+summary/ncu-mmq-resources.tsv	kernel	None	Weight type and operation of the kernel.
+summary/ncu-mmq-resources.tsv	grid	None	Grid of the launch: the number of thread blocks in three dimensions.
+summary/ncu-mmq-resources.tsv	block	None	Thread block: the number of threads in three dimensions.
+summary/ncu-mmq-resources.tsv	registers_per_thread	count	Registers of each thread.
+summary/ncu-mmq-resources.tsv	dynamic_smem_b	B	Bytes of shared memory of a thread block that the launch sets.
+summary/ncu-mmq-resources.tsv	blocks_per_sm_limit_registers	count	Limit of the thread blocks on an SM by the registers.
+summary/ncu-mmq-resources.tsv	blocks_per_sm_limit_smem	count	Limit of the thread blocks on an SM by the shared memory.
+summary/ncu-mmq-resources.tsv	blocks_per_sm_limit_warps	count	Limit of the thread blocks on an SM by the warps.
+summary/ncu-mmq-resources.tsv	blocks_per_sm_limit_blocks	count	Limit of the thread blocks on an SM by the limit of the SM for thread blocks.
+summary/ncu-mmq-resources.tsv	warps_active_pct	%	Part of the warp slots of an SM that have an active warp.
+summary/ncu-mmq-resources.tsv	issue_slots_active_pct	%	Part of the issue slots that start an instruction.
+summary/ncu-mmq-resources.tsv	imma_pipe_active_pct	%	Part of the time in which the IMMA pipe is active.
+summary/ncu-mmq-resources.tsv	sm_clock_mhz	MHz	SM clock during the launch.
+summary/ncu-mmq-small-n.tsv	n_tokens	tokens	Number of tokens of the pass.
+summary/ncu-mmq-small-n.tsv	tile_columns_j	count	Number of columns of the tile of the kernel (the template value `J`).
+summary/ncu-mmq-small-n.tsv	op	None	Operation of the model that the kernel does.
+summary/ncu-mmq-small-n.tsv	weight_type	None	Type of the weights.
+summary/ncu-mmq-small-n.tsv	duration_us	µs	Time of one launch.
+summary/ncu-mmq-small-n.tsv	limit	None	The limit that sets the floor of the kernel: `DRAM`, `INT8`, `FP16`, `FP32`, or `launch`.
+summary/ncu-mmq-small-n.tsv	of_limit_pct	%	The floor of the kernel divided by the time of the launch.
+summary/ncu-mmq-small-n.tsv	imma_pipe_active_pct	%	Part of the time in which the IMMA pipe is active.
+summary/ncu-mmq-small-n.tsv	int8_of_peak_pct	%	The int8 operations of the model, divided by the time and by the int8 peak.
+summary/ncu-other-kernels.tsv	run	None	Name of the run, without the prefix `p3-ncu-`.
+summary/ncu-other-kernels.tsv	run_alignment	None	`ALIGNED`, `SHIFTED`, or `MISALIGNED`.
+summary/ncu-other-kernels.tsv	kernel	None	Name of the kernel and its grid.
+summary/ncu-other-kernels.tsv	duration_us	µs	Time of one launch.
+summary/ncu-other-kernels.tsv	limit	None	The limit that sets the floor of the kernel: `DRAM`, `INT8`, `FP16`, `FP32`, or `launch`.
+summary/ncu-other-kernels.tsv	of_limit_pct	%	The floor of the kernel divided by the time of the launch.
+summary/ncu-other-kernels.tsv	dram_gb_s	GB/s	DRAM data rate.
+summary/ncu-other-kernels.tsv	dram_of_422_gb_s_pct	%	The DRAM data rate as a part of 422 GB/s.
+summary/ncu-other-kernels.tsv	top_stall_reasons	None	The three largest stall reasons, with their part of the stalls.
+summary/ncu-instruction-mix.tsv	opcode	None	Opcode of the SASS instruction. The last row sums all opcodes.
+summary/ncu-instruction-mix.tsv	sass_lines	count	Number of SASS lines with this opcode.
+summary/ncu-instruction-mix.tsv	stall_samples_pct	%	The stall samples at these lines, as a part of all stall samples.
+summary/ncu-instruction-mix.tsv	instructions_executed_millions	10^6	Number of instructions that the kernel ran at these lines, divided by 10^6.
+summary/ncu-instruction-mix.tsv	instructions_per_imma	ratio	The number of instructions that the kernel ran at these lines, divided by the number of IMMA instructions that it ran.
+summary/lead-28495-nsys-phases.tsv	cache_mode	None	`kv-unified` or `no-kv-unified`.
+summary/lead-28495-nsys-phases.tsv	phase	None	Phase of the test: `T2`, `T3`, or `T4`. Phase `T1` is the reference.
+summary/lead-28495-nsys-phases.tsv	passes_compared	None	The number of passes of the phase that have a pass in `T1` with the same position and the same number of tokens, and the number of passes of the phase.
+summary/lead-28495-nsys-phases.tsv	fa_ms	ms	Sum of the flash-attention time of the passes that the table compares.
+summary/lead-28495-nsys-phases.tsv	fa_same_passes_of_t1_ms	ms	The same sum for the same passes of `T1`.
+summary/lead-28495-nsys-phases.tsv	fa_ratio	ratio	`fa_ms` divided by `fa_same_passes_of_t1_ms`.
+summary/lead-28495-nsys-phases.tsv	gpu_busy_ms	ms	Sum of the GPU busy time of the passes that the table compares.
+summary/lead-28495-nsys-phases.tsv	gpu_busy_same_passes_of_t1_ms	ms	The same sum for the same passes of `T1`.
+summary/lead-28495-nsys-phases.tsv	gpu_busy_ratio	ratio	`gpu_busy_ms` divided by `gpu_busy_same_passes_of_t1_ms`.
+summary/lead-30779-passes.tsv	request_type	None	Request type.
+summary/lead-30779-passes.tsv	requests	count	Number of requests in the three server logs with `DMK_TIMING`.
+summary/lead-30779-passes.tsv	passes_equal_census	count	Number of requests for which the census model for `--kv-unified` gives the passes.
+summary/lead-30779-passes.tsv	requests_with_more_passes_than_census	count	Number of requests that have more passes than the census model gives.
+summary/lead-30779-passes.tsv	requests_child_below_parent	count	Number of requests with a child slot that has a lower number than the parent slot.
+summary/lead-30779-passes.tsv	requests_with_more_decode_calls_than_fixed_order	count	Number of requests that use `llama_decode` more times than the fixed-order model.
+summary/lead-30779-passes.tsv	requests_with_other_pass_sizes_than_fixed_order	count	Number of requests with passes of other lengths than the passes of the fixed-order model.
+summary/lead-30779-cost.tsv	request_type	None	Request type: `medium3q` or `long3q`.
+summary/lead-30779-cost.tsv	child_below_parent	None	`yes` when a child slot has a lower number than the parent slot.
+summary/lead-30779-cost.tsv	requests	count	Number of requests.
+summary/lead-30779-cost.tsv	request_total_mean_ms	ms	Mean request time that the server writes in the request line.
+summary/lead-30779-cost.tsv	decode_calls_mean	count	Mean number of uses of `llama_decode` in a request.

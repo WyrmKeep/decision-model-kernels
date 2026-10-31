@@ -1,0 +1,10 @@
+step	mean_ms	p50_ms	cumulative_mean_ms	share_of_wall_pct
+weight floor of one pass with output (census-passes.tsv, check03)	7.4440	7.4440	7.4440	15.8902
+HTTP / client (send -> handler start, response -> client)	0.4436	0.4411	7.8876	0.9470
+parse + build + tokenize (request.parse_us, build_us)	0.5925	0.5830	8.4801	1.2648
+scheduling (post_tasks -> first decode start, decode setup)	0.2395	0.2390	8.7197	0.5113
+host graph build + submit (prepare, submit, between passes, post-submit)	9.5539	10.6900	18.2735	20.3940
+tail (server wake-up after the sync, softmax/format/JSON)	0.0827	0.0770	18.3562	0.1765
+GPU wait beyond the floor (gpu_wait_ms - floor; negative = part of the GPU time hides under the host submit)	28.4903	26.9770	46.8465	60.8165
+= client wall time	46.8464	46.4498	46.8465	100.0000
+residual (wall - stack)	-0.0002	-0.0000		-0.0004

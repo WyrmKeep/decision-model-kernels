@@ -1,0 +1,280 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+warn: LLAMA_ARG_PORT environment variable is set, but will be overwritten by command line argument --port
+DMK_ABLATE active: mask=0x0 items="" sync=0 sync_dump=0 timing=1
+0.00.345.968 I srv  llama_server: initializing ...
+0.00.345.997 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.346.154 I srv  init_listene: The UI is disabled
+0.00.346.154 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.346.267 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.348.417 I srv    load_model: loading model '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.03.482.876 I cmn          init: llama threadpool init, n_threads = 6
+DMK_TIMING cuda_compute t=176741.493657 n_nodes=1903 mode=direct host_us=73324.2
+DMK_TIMING ubatch t=176741.493732 id=1 n_tokens=2 n_seqs=1 n_seq_tokens=2 n_outputs=1 n_nodes=1905 reuse=0 apply_us=3 build_us=6216 alloc_us=676 inputs_us=45 submit_us=73990 total_us=80931
+DMK_TIMING decode t=176741.493805 n_tokens=2 n_ubatches=1 init_us=34 total_us=81071
+DMK_TIMING sync t=176741.502149 passes=1 tokens=2 wait_us=4 since_first_submit_us=89347 since_last_submit_us=8417
+0.03.580.201 I srv          init: decision model type: h2o-lightning
+DMK_TIMING cuda_compute t=176741.522416 n_nodes=1903 mode=graph_capture host_us=11691.0
+DMK_TIMING ubatch t=176741.522487 id=2 n_tokens=2 n_seqs=1 n_seq_tokens=2 n_outputs=1 n_nodes=1905 reuse=1 apply_us=1 build_us=0 alloc_us=0 inputs_us=14 submit_us=12045 total_us=12060
+DMK_TIMING decode t=176741.522555 n_tokens=2 n_ubatches=1 init_us=36 total_us=12184
+DMK_TIMING sync t=176741.528000 passes=1 tokens=2 wait_us=3652 since_first_submit_us=17572 since_last_submit_us=5513
+0.03.599.763 I srv    load_model: initializing, n_slots = 3, n_ctx_slot = 16384, kv_unified = 'true'
+0.03.599.887 I srv    load_model: decision model: prompt cache disabled by default, use `--cache-ram N` to enable it
+0.03.605.121 I srv  server_run_i: model loaded
+0.03.605.132 I srv  server_on_li: listening on http://0.0.0.0:8080
+0.04.548.966 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.04.548.982 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176742.509139 n_nodes=1903 mode=direct host_us=28856.7
+DMK_TIMING ubatch t=176742.509156 id=3 n_tokens=161 n_seqs=1 n_seq_tokens=161 n_outputs=1 n_nodes=1905 reuse=0 apply_us=15 build_us=800 alloc_us=566 inputs_us=70 submit_us=30132 total_us=31584
+DMK_TIMING decode t=176742.509190 n_tokens=161 n_ubatches=1 init_us=119 total_us=31783
+DMK_TIMING sync t=176742.544573 passes=1 tokens=161 wait_us=35368 since_first_submit_us=67002 since_last_submit_us=35418
+0.04.616.407 I slot      release: id  0 | task 0 | stop processing: n_tokens = 161, truncated = 0
+DMK_TIMING request t=176742.544735 n_questions=1 n_groups=1 parse_us=74 build_us=760 wait_us=67514 format_us=22 total_us=68369
+0.04.619.061 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.197 (> 0.100 thold), f_keep = 0.255
+0.04.619.073 I slot launch_slot_: id  1 | task 3 | processing task, is_child = 1
+0.04.619.075 I slot launch_slot_: id  0 | task 2 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176742.562799 n_nodes=1903 mode=direct host_us=5686.2
+DMK_TIMING ubatch t=176742.562817 id=4 n_tokens=88 n_seqs=1 n_seq_tokens=88 n_outputs=0 n_nodes=1905 reuse=0 apply_us=15 build_us=6038 alloc_us=770 inputs_us=29 submit_us=8354 total_us=15206
+DMK_TIMING decode t=176742.562830 n_tokens=88 n_ubatches=1 init_us=90 total_us=15346
+DMK_TIMING cuda_compute t=176742.591923 n_nodes=1903 mode=direct host_us=7644.6
+DMK_TIMING ubatch t=176742.591940 id=5 n_tokens=102 n_seqs=2 n_seq_tokens=51 n_outputs=1 n_nodes=1905 reuse=0 apply_us=12 build_us=743 alloc_us=544 inputs_us=23 submit_us=27346 total_us=28667
+DMK_TIMING cuda_compute t=176742.625030 n_nodes=1903 mode=direct host_us=6009.3
+DMK_TIMING ubatch t=176742.625048 id=6 n_tokens=69 n_seqs=1 n_seq_tokens=69 n_outputs=1 n_nodes=1905 reuse=0 apply_us=18 build_us=787 alloc_us=570 inputs_us=27 submit_us=31678 total_us=33080
+DMK_TIMING decode t=176742.625083 n_tokens=171 n_ubatches=2 init_us=162 total_us=62023
+DMK_TIMING sync t=176742.644564 passes=3 tokens=259 wait_us=19477 since_first_submit_us=96953 since_last_submit_us=19517
+0.04.716.487 I slot      release: id  0 | task 2 | stop processing: n_tokens = 208, truncated = 0
+0.04.716.505 I slot      release: id  1 | task 3 | stop processing: n_tokens = 139, truncated = 0
+DMK_TIMING request t=176742.644840 n_questions=2 n_groups=1 parse_us=33 build_us=1656 wait_us=97503 format_us=30 total_us=99223
+0.04.729.100 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.04.729.118 I slot launch_slot_: id  1 | task 7 | processing task, is_child = 1
+0.04.729.122 I slot launch_slot_: id  0 | task 8 | processing task, is_child = 1
+0.04.729.127 I slot launch_slot_: id  2 | task 6 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176742.732304 n_nodes=1903 mode=direct host_us=48683.7
+DMK_TIMING ubatch t=176742.732322 id=7 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=330 build_us=896 alloc_us=567 inputs_us=7529 submit_us=61984 total_us=71305
+DMK_TIMING decode t=176742.732338 n_tokens=2048 n_ubatches=1 init_us=1492 total_us=73275
+DMK_TIMING cuda_compute t=176743.130400 n_nodes=1903 mode=direct host_us=34166.5
+DMK_TIMING ubatch t=176743.130424 id=8 n_tokens=1174 n_seqs=1 n_seq_tokens=1174 n_outputs=0 n_nodes=1905 reuse=0 apply_us=178 build_us=925 alloc_us=686 inputs_us=3618 submit_us=391027 total_us=396435
+DMK_TIMING decode t=176743.130439 n_tokens=1174 n_ubatches=1 init_us=906 total_us=397608
+DMK_TIMING cuda_compute t=176743.360126 n_nodes=1903 mode=direct host_us=6073.4
+DMK_TIMING ubatch t=176743.360146 id=9 n_tokens=43 n_seqs=1 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=9 build_us=961 alloc_us=671 inputs_us=52 submit_us=226883 total_us=228577
+DMK_TIMING decode t=176743.360183 n_tokens=43 n_ubatches=1 init_us=82 total_us=228770
+DMK_TIMING sync t=176743.376092 passes=3 tokens=3265 wait_us=15903 since_first_submit_us=715075 since_last_submit_us=15946
+0.05.447.892 I slot      release: id  2 | task 6 | stop processing: n_tokens = 3265, truncated = 0
+DMK_TIMING cuda_compute t=176743.385387 n_nodes=1903 mode=direct host_us=6260.2
+DMK_TIMING ubatch t=176743.385451 id=10 n_tokens=94 n_seqs=2 n_seq_tokens=47 n_outputs=1 n_nodes=1905 reuse=0 apply_us=18 build_us=879 alloc_us=565 inputs_us=113 submit_us=7358 total_us=8932
+DMK_TIMING cuda_compute t=176743.417306 n_nodes=1903 mode=direct host_us=5657.7
+DMK_TIMING ubatch t=176743.417372 id=11 n_tokens=26 n_seqs=1 n_seq_tokens=26 n_outputs=1 n_nodes=1905 reuse=0 apply_us=19 build_us=921 alloc_us=591 inputs_us=43 submit_us=30304 total_us=31878
+DMK_TIMING decode t=176743.417441 n_tokens=120 n_ubatches=2 init_us=126 total_us=41091
+DMK_TIMING sync t=176743.429888 passes=2 tokens=120 wait_us=12427 since_first_submit_us=53369 since_last_submit_us=12517
+0.05.501.839 I slot      release: id  0 | task 8 | stop processing: n_tokens = 3295, truncated = 0
+0.05.502.093 I slot      release: id  1 | task 7 | stop processing: n_tokens = 3269, truncated = 0
+DMK_TIMING request t=176743.430438 n_questions=3 n_groups=1 parse_us=150 build_us=10489 wait_us=773092 format_us=37 total_us=783769
+0.05.512.466 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176743430143
+0.05.512.567 I slot launch_slot_: id  1 | task 14 | processing task, is_child = 1
+0.05.512.577 I slot launch_slot_: id  2 | task 15 | processing task, is_child = 1
+0.05.512.581 I slot launch_slot_: id  0 | task 13 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176743.518694 n_nodes=1903 mode=direct host_us=50806.6
+DMK_TIMING ubatch t=176743.518748 id=12 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=228 build_us=659 alloc_us=526 inputs_us=8191 submit_us=66221 total_us=75826
+DMK_TIMING decode t=176743.518763 n_tokens=2048 n_ubatches=1 init_us=1357 total_us=77496
+DMK_TIMING cuda_compute t=176743.923268 n_nodes=1903 mode=direct host_us=21463.0
+DMK_TIMING ubatch t=176743.923285 id=13 n_tokens=1378 n_seqs=1 n_seq_tokens=1378 n_outputs=0 n_nodes=1905 reuse=0 apply_us=141 build_us=798 alloc_us=583 inputs_us=5413 submit_us=396290 total_us=403225
+DMK_TIMING decode t=176743.923299 n_tokens=1378 n_ubatches=1 init_us=667 total_us=404113
+DMK_TIMING cuda_compute t=176744.212201 n_nodes=1903 mode=direct host_us=9359.2
+DMK_TIMING ubatch t=176744.212219 id=14 n_tokens=129 n_seqs=3 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=18 build_us=749 alloc_us=562 inputs_us=179 submit_us=286045 total_us=287554
+DMK_TIMING cuda_compute t=176744.263300 n_nodes=1903 mode=direct host_us=12406.2
+DMK_TIMING ubatch t=176744.263316 id=15 n_tokens=8 n_seqs=2 n_seq_tokens=4 n_outputs=1 n_nodes=1905 reuse=0 apply_us=16 build_us=665 alloc_us=481 inputs_us=34 submit_us=49873 total_us=51069
+DMK_TIMING cuda_compute t=176744.279975 n_nodes=1903 mode=direct host_us=4813.2
+DMK_TIMING ubatch t=176744.279999 id=16 n_tokens=26 n_seqs=1 n_seq_tokens=26 n_outputs=1 n_nodes=1905 reuse=0 apply_us=23 build_us=800 alloc_us=579 inputs_us=50 submit_us=15205 total_us=16657
+DMK_TIMING decode t=176744.280101 n_tokens=163 n_ubatches=3 init_us=164 total_us=355670
+DMK_TIMING sync t=176744.293492 passes=5 tokens=3589 wait_us=13386 since_first_submit_us=850569 since_last_submit_us=13493
+0.06.365.279 I slot      release: id  0 | task 13 | stop processing: n_tokens = 3469, truncated = 0
+0.06.365.304 I slot      release: id  1 | task 14 | stop processing: n_tokens = 3473, truncated = 0
+0.06.365.536 I slot      release: id  2 | task 15 | stop processing: n_tokens = 3499, truncated = 0
+DMK_TIMING request t=176744.293873 n_questions=3 n_groups=1 parse_us=157 build_us=9301 wait_us=853147 format_us=30 total_us=862636
+0.06.377.991 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176744293603
+0.06.378.002 I slot launch_slot_: id  2 | task 20 | processing task, is_child = 1
+0.06.378.009 I slot launch_slot_: id  0 | task 21 | processing task, is_child = 1
+0.06.378.038 I slot launch_slot_: id  1 | task 19 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176744.383730 n_nodes=1903 mode=direct host_us=48654.8
+DMK_TIMING ubatch t=176744.383751 id=17 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=235 build_us=809 alloc_us=552 inputs_us=8906 submit_us=64963 total_us=75466
+DMK_TIMING decode t=176744.383764 n_tokens=2048 n_ubatches=1 init_us=1318 total_us=77036
+DMK_TIMING cuda_compute t=176744.767419 n_nodes=1903 mode=direct host_us=16512.5
+DMK_TIMING ubatch t=176744.767486 id=18 n_tokens=1147 n_seqs=1 n_seq_tokens=1147 n_outputs=0 n_nodes=1905 reuse=0 apply_us=155 build_us=818 alloc_us=595 inputs_us=3585 submit_us=377237 total_us=382391
+DMK_TIMING decode t=176744.767504 n_tokens=1147 n_ubatches=1 init_us=676 total_us=383296
+DMK_TIMING cuda_compute t=176744.998807 n_nodes=1903 mode=direct host_us=7227.1
+DMK_TIMING ubatch t=176744.998878 id=19 n_tokens=86 n_seqs=2 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=12 build_us=724 alloc_us=535 inputs_us=78 submit_us=228488 total_us=229836
+DMK_TIMING cuda_compute t=176745.033649 n_nodes=1903 mode=direct host_us=9595.1
+DMK_TIMING ubatch t=176745.033716 id=20 n_tokens=4 n_seqs=1 n_seq_tokens=4 n_outputs=1 n_nodes=1905 reuse=0 apply_us=15 build_us=1091 alloc_us=691 inputs_us=23 submit_us=32989 total_us=34809
+DMK_TIMING decode t=176745.033797 n_tokens=90 n_ubatches=2 init_us=122 total_us=264935
+DMK_TIMING sync t=176745.040618 passes=4 tokens=3285 wait_us=6788 since_first_submit_us=732333 since_last_submit_us=6902
+0.07.112.864 I slot      release: id  1 | task 19 | stop processing: n_tokens = 3238, truncated = 0
+0.07.112.881 I slot      release: id  2 | task 20 | stop processing: n_tokens = 3242, truncated = 0
+DMK_TIMING cuda_compute t=176745.051731 n_nodes=1903 mode=direct host_us=5403.0
+DMK_TIMING ubatch t=176745.051797 id=21 n_tokens=73 n_seqs=1 n_seq_tokens=73 n_outputs=1 n_nodes=1905 reuse=0 apply_us=14 build_us=916 alloc_us=2718 inputs_us=79 submit_us=6391 total_us=10119
+DMK_TIMING decode t=176745.051841 n_tokens=73 n_ubatches=1 init_us=81 total_us=10286
+DMK_TIMING sync t=176745.073231 passes=1 tokens=73 wait_us=21385 since_first_submit_us=31553 since_last_submit_us=21434
+0.07.145.081 I slot      release: id  0 | task 21 | stop processing: n_tokens = 3268, truncated = 0
+DMK_TIMING request t=176745.073429 n_questions=3 n_groups=1 parse_us=157 build_us=11476 wait_us=767166 format_us=45 total_us=778845
+0.07.161.732 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176745041181
+0.07.161.849 I slot launch_slot_: id  0 | task 27 | processing task, is_child = 1
+0.07.161.859 I slot launch_slot_: id  1 | task 28 | processing task, is_child = 1
+0.07.161.863 I slot launch_slot_: id  2 | task 26 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176745.172980 n_nodes=1903 mode=direct host_us=51025.1
+DMK_TIMING ubatch t=176745.173072 id=22 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=328 build_us=1038 alloc_us=741 inputs_us=10873 submit_us=66831 total_us=79812
+DMK_TIMING decode t=176745.173093 n_tokens=2048 n_ubatches=1 init_us=1892 total_us=82369
+DMK_TIMING cuda_compute t=176745.581271 n_nodes=1903 mode=direct host_us=27371.1
+DMK_TIMING ubatch t=176745.581357 id=23 n_tokens=909 n_seqs=1 n_seq_tokens=909 n_outputs=0 n_nodes=1905 reuse=0 apply_us=131 build_us=1026 alloc_us=689 inputs_us=2764 submit_us=402388 total_us=406998
+DMK_TIMING decode t=176745.581406 n_tokens=909 n_ubatches=1 init_us=610 total_us=407877
+DMK_TIMING cuda_compute t=176745.775958 n_nodes=1903 mode=direct host_us=5541.2
+DMK_TIMING ubatch t=176745.776142 id=24 n_tokens=43 n_seqs=1 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=9 build_us=975 alloc_us=723 inputs_us=86 submit_us=191521 total_us=193314
+DMK_TIMING decode t=176745.776189 n_tokens=43 n_ubatches=1 init_us=87 total_us=193529
+DMK_TIMING sync t=176745.792460 passes=3 tokens=3000 wait_us=16266 since_first_submit_us=699200 since_last_submit_us=16318
+0.07.864.328 I slot      release: id  2 | task 26 | stop processing: n_tokens = 3000, truncated = 0
+DMK_TIMING cuda_compute t=176745.802659 n_nodes=1903 mode=direct host_us=6605.1
+DMK_TIMING ubatch t=176745.802850 id=25 n_tokens=94 n_seqs=2 n_seq_tokens=47 n_outputs=1 n_nodes=1905 reuse=0 apply_us=16 build_us=954 alloc_us=683 inputs_us=165 submit_us=7943 total_us=9761
+DMK_TIMING cuda_compute t=176745.834977 n_nodes=1903 mode=direct host_us=5360.6
+DMK_TIMING ubatch t=176745.835065 id=26 n_tokens=26 n_seqs=1 n_seq_tokens=26 n_outputs=1 n_nodes=1905 reuse=0 apply_us=19 build_us=947 alloc_us=676 inputs_us=52 submit_us=30316 total_us=32010
+DMK_TIMING decode t=176745.835147 n_tokens=120 n_ubatches=2 init_us=141 total_us=42255
+DMK_TIMING sync t=176745.847870 passes=2 tokens=120 wait_us=12674 since_first_submit_us=54781 since_last_submit_us=12805
+0.07.919.665 I slot      release: id  0 | task 27 | stop processing: n_tokens = 3004, truncated = 0
+0.07.919.933 I slot      release: id  1 | task 28 | stop processing: n_tokens = 3030, truncated = 0
+DMK_TIMING request t=176745.848277 n_questions=3 n_groups=1 parse_us=170 build_us=14274 wait_us=758573 format_us=35 total_us=773052
+0.07.931.377 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176745847994
+0.07.931.516 I slot launch_slot_: id  1 | task 34 | processing task, is_child = 1
+0.07.931.525 I slot launch_slot_: id  2 | task 35 | processing task, is_child = 1
+0.07.931.533 I slot launch_slot_: id  0 | task 33 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176745.941757 n_nodes=1903 mode=direct host_us=48763.9
+DMK_TIMING ubatch t=176745.941776 id=27 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=370 build_us=1254 alloc_us=721 inputs_us=11766 submit_us=65207 total_us=79317
+DMK_TIMING decode t=176745.941793 n_tokens=2048 n_ubatches=1 init_us=1615 total_us=81400
+DMK_TIMING cuda_compute t=176746.336024 n_nodes=1903 mode=direct host_us=28057.9
+DMK_TIMING ubatch t=176746.336042 id=28 n_tokens=948 n_seqs=1 n_seq_tokens=948 n_outputs=0 n_nodes=1905 reuse=0 apply_us=131 build_us=957 alloc_us=569 inputs_us=2589 submit_us=388815 total_us=393060
+DMK_TIMING decode t=176746.336058 n_tokens=948 n_ubatches=1 init_us=571 total_us=393846
+DMK_TIMING cuda_compute t=176746.540443 n_nodes=1903 mode=direct host_us=9156.8
+DMK_TIMING ubatch t=176746.540461 id=29 n_tokens=129 n_seqs=3 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=23 build_us=887 alloc_us=711 inputs_us=125 submit_us=201252 total_us=202997
+DMK_TIMING cuda_compute t=176746.582357 n_nodes=1903 mode=direct host_us=4585.8
+DMK_TIMING ubatch t=176746.582375 id=30 n_tokens=8 n_seqs=2 n_seq_tokens=4 n_outputs=1 n_nodes=1905 reuse=0 apply_us=19 build_us=805 alloc_us=556 inputs_us=34 submit_us=40471 total_us=41885
+DMK_TIMING cuda_compute t=176746.599919 n_nodes=1903 mode=direct host_us=5224.3
+DMK_TIMING ubatch t=176746.599935 id=31 n_tokens=26 n_seqs=1 n_seq_tokens=26 n_outputs=1 n_nodes=1905 reuse=0 apply_us=21 build_us=861 alloc_us=625 inputs_us=35 submit_us=15989 total_us=17531
+DMK_TIMING decode t=176746.599975 n_tokens=163 n_ubatches=3 init_us=159 total_us=262741
+DMK_TIMING sync t=176746.612792 passes=5 tokens=3159 wait_us=12811 since_first_submit_us=750334 since_last_submit_us=12857
+DMK_TIMING request t=176746.613418 n_questions=3 n_groups=1 parse_us=146 build_us=10285 wait_us=753800 format_us=22 total_us=764253
+0.08.684.588 I slot      release: id  0 | task 33 | stop processing: n_tokens = 3039, truncated = 0
+0.08.684.603 I slot      release: id  1 | task 34 | stop processing: n_tokens = 3043, truncated = 0
+0.08.684.842 I slot      release: id  2 | task 35 | stop processing: n_tokens = 3069, truncated = 0
+0.08.694.541 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176746612902
+0.08.694.668 I slot launch_slot_: id  2 | task 40 | processing task, is_child = 1
+0.08.694.680 I slot launch_slot_: id  0 | task 41 | processing task, is_child = 1
+0.08.694.685 I slot launch_slot_: id  1 | task 39 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176746.700666 n_nodes=1903 mode=direct host_us=51049.9
+DMK_TIMING ubatch t=176746.700686 id=32 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=229 build_us=738 alloc_us=591 inputs_us=8211 submit_us=66260 total_us=76030
+DMK_TIMING decode t=176746.700704 n_tokens=2048 n_ubatches=1 init_us=1051 total_us=77325
+DMK_TIMING cuda_compute t=176747.118280 n_nodes=1903 mode=direct host_us=35490.8
+DMK_TIMING ubatch t=176747.118300 id=33 n_tokens=1178 n_seqs=1 n_seq_tokens=1178 n_outputs=0 n_nodes=1905 reuse=0 apply_us=180 build_us=865 alloc_us=644 inputs_us=4264 submit_us=410019 total_us=415972
+DMK_TIMING decode t=176747.118317 n_tokens=1178 n_ubatches=1 init_us=780 total_us=417025
+DMK_TIMING cuda_compute t=176747.360306 n_nodes=1903 mode=direct host_us=7531.9
+DMK_TIMING ubatch t=176747.360378 id=34 n_tokens=86 n_seqs=2 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=14 build_us=822 alloc_us=531 inputs_us=130 submit_us=239349 total_us=240846
+DMK_TIMING cuda_compute t=176747.390379 n_nodes=1903 mode=direct host_us=4078.6
+DMK_TIMING ubatch t=176747.390399 id=35 n_tokens=4 n_seqs=1 n_seq_tokens=4 n_outputs=1 n_nodes=1905 reuse=0 apply_us=20 build_us=957 alloc_us=679 inputs_us=32 submit_us=28274 total_us=29962
+DMK_TIMING decode t=176747.390444 n_tokens=90 n_ubatches=2 init_us=107 total_us=271088
+DMK_TIMING sync t=176747.399061 passes=4 tokens=3316 wait_us=8612 since_first_submit_us=774405 since_last_submit_us=8662
+0.09.470.855 I slot      release: id  1 | task 39 | stop processing: n_tokens = 3269, truncated = 0
+0.09.470.870 I slot      release: id  2 | task 40 | stop processing: n_tokens = 3273, truncated = 0
+DMK_TIMING cuda_compute t=176747.407094 n_nodes=1903 mode=direct host_us=5071.0
+DMK_TIMING ubatch t=176747.407117 id=36 n_tokens=73 n_seqs=1 n_seq_tokens=73 n_outputs=1 n_nodes=1905 reuse=0 apply_us=13 build_us=798 alloc_us=583 inputs_us=119 submit_us=6035 total_us=7548
+DMK_TIMING decode t=176747.407154 n_tokens=73 n_ubatches=1 init_us=63 total_us=7685
+DMK_TIMING sync t=176747.430306 passes=1 tokens=73 wait_us=23147 since_first_submit_us=30737 since_last_submit_us=23188
+DMK_TIMING request t=176747.430440 n_questions=3 n_groups=1 parse_us=107 build_us=8432 wait_us=807636 format_us=31 total_us=816207
+0.09.502.105 I slot      release: id  0 | task 41 | stop processing: n_tokens = 3299, truncated = 0
+0.09.512.957 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176747399169
+0.09.513.062 I slot launch_slot_: id  0 | task 47 | processing task, is_child = 1
+0.09.513.072 I slot launch_slot_: id  1 | task 48 | processing task, is_child = 1
+0.09.513.080 I slot launch_slot_: id  2 | task 46 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176747.519056 n_nodes=1903 mode=direct host_us=49000.6
+DMK_TIMING ubatch t=176747.519075 id=37 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=328 build_us=929 alloc_us=669 inputs_us=8733 submit_us=64812 total_us=75471
+DMK_TIMING decode t=176747.519089 n_tokens=2048 n_ubatches=1 init_us=1403 total_us=77181
+DMK_TIMING cuda_compute t=176747.911936 n_nodes=1903 mode=direct host_us=22863.5
+DMK_TIMING ubatch t=176747.911957 id=38 n_tokens=1421 n_seqs=1 n_seq_tokens=1421 n_outputs=0 n_nodes=1905 reuse=0 apply_us=252 build_us=748 alloc_us=509 inputs_us=4370 submit_us=385496 total_us=391376
+DMK_TIMING decode t=176747.911971 n_tokens=1421 n_ubatches=1 init_us=845 total_us=392450
+DMK_TIMING cuda_compute t=176748.211648 n_nodes=1903 mode=direct host_us=5416.5
+DMK_TIMING ubatch t=176748.211711 id=39 n_tokens=43 n_seqs=1 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=10 build_us=936 alloc_us=686 inputs_us=81 submit_us=296468 total_us=298181
+DMK_TIMING decode t=176748.211748 n_tokens=43 n_ubatches=1 init_us=101 total_us=298394
+DMK_TIMING sync t=176748.228321 passes=3 tokens=3512 wait_us=16569 since_first_submit_us=784718 since_last_submit_us=16610
+0.10.300.165 I slot      release: id  2 | task 46 | stop processing: n_tokens = 3512, truncated = 0
+DMK_TIMING cuda_compute t=176748.237852 n_nodes=1903 mode=direct host_us=6433.8
+DMK_TIMING ubatch t=176748.237871 id=40 n_tokens=94 n_seqs=2 n_seq_tokens=47 n_outputs=1 n_nodes=1905 reuse=0 apply_us=12 build_us=827 alloc_us=594 inputs_us=144 submit_us=7570 total_us=9148
+DMK_TIMING cuda_compute t=176748.269871 n_nodes=1903 mode=direct host_us=4781.0
+DMK_TIMING ubatch t=176748.269938 id=41 n_tokens=26 n_seqs=1 n_seq_tokens=26 n_outputs=1 n_nodes=1905 reuse=0 apply_us=20 build_us=868 alloc_us=703 inputs_us=63 submit_us=30380 total_us=32034
+DMK_TIMING decode t=176748.270022 n_tokens=120 n_ubatches=2 init_us=96 total_us=41431
+DMK_TIMING sync t=176748.283357 passes=2 tokens=120 wait_us=13309 since_first_submit_us=54634 since_last_submit_us=13419
+0.10.355.199 I slot      release: id  0 | task 47 | stop processing: n_tokens = 3516, truncated = 0
+0.10.355.452 I slot      release: id  1 | task 48 | stop processing: n_tokens = 3542, truncated = 0
+DMK_TIMING request t=176748.283784 n_questions=3 n_groups=1 parse_us=124 build_us=9502 wait_us=842575 format_us=24 total_us=852225
+0.10.366.353 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176748283504
+0.10.366.464 I slot launch_slot_: id  1 | task 54 | processing task, is_child = 1
+0.10.366.473 I slot launch_slot_: id  2 | task 55 | processing task, is_child = 1
+0.10.366.478 I slot launch_slot_: id  0 | task 53 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176748.374380 n_nodes=1903 mode=direct host_us=50944.6
+DMK_TIMING ubatch t=176748.374447 id=42 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=461 build_us=910 alloc_us=723 inputs_us=8898 submit_us=66890 total_us=77881
+DMK_TIMING decode t=176748.374463 n_tokens=2048 n_ubatches=1 init_us=1178 total_us=79284
+DMK_TIMING cuda_compute t=176748.791664 n_nodes=1903 mode=direct host_us=35444.0
+DMK_TIMING ubatch t=176748.791685 id=43 n_tokens=1174 n_seqs=1 n_seq_tokens=1174 n_outputs=0 n_nodes=1905 reuse=0 apply_us=204 build_us=899 alloc_us=674 inputs_us=4468 submit_us=409349 total_us=415595
+DMK_TIMING decode t=176748.791701 n_tokens=1174 n_ubatches=1 init_us=848 total_us=416720
+DMK_TIMING cuda_compute t=176749.035736 n_nodes=1903 mode=direct host_us=9392.7
+DMK_TIMING ubatch t=176749.035755 id=44 n_tokens=129 n_seqs=3 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=24 build_us=962 alloc_us=682 inputs_us=184 submit_us=240454 total_us=242306
+DMK_TIMING cuda_compute t=176749.078389 n_nodes=1903 mode=direct host_us=4088.0
+DMK_TIMING ubatch t=176749.078405 id=45 n_tokens=8 n_seqs=2 n_seq_tokens=4 n_outputs=1 n_nodes=1905 reuse=0 apply_us=23 build_us=735 alloc_us=530 inputs_us=33 submit_us=41299 total_us=42620
+DMK_TIMING cuda_compute t=176749.096542 n_nodes=1903 mode=direct host_us=5015.2
+DMK_TIMING ubatch t=176749.096558 id=46 n_tokens=26 n_seqs=1 n_seq_tokens=26 n_outputs=1 n_nodes=1905 reuse=0 apply_us=23 build_us=740 alloc_us=524 inputs_us=41 submit_us=16797 total_us=18126
+DMK_TIMING decode t=176749.096599 n_tokens=163 n_ubatches=3 init_us=218 total_us=303455
+DMK_TIMING sync t=176749.109999 passes=5 tokens=3385 wait_us=13392 since_first_submit_us=813433 since_last_submit_us=13441
+0.11.181.878 I slot      release: id  0 | task 53 | stop processing: n_tokens = 3265, truncated = 0
+0.11.181.889 I slot      release: id  1 | task 54 | stop processing: n_tokens = 3269, truncated = 0
+0.11.182.121 I slot      release: id  2 | task 55 | stop processing: n_tokens = 3295, truncated = 0
+DMK_TIMING request t=176749.110459 n_questions=3 n_groups=1 parse_us=145 build_us=9924 wait_us=815841 format_us=31 total_us=825941
+0.11.193.421 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176749110188
+0.11.193.540 I slot launch_slot_: id  2 | task 60 | processing task, is_child = 1
+0.11.193.549 I slot launch_slot_: id  0 | task 61 | processing task, is_child = 1
+0.11.193.552 I slot launch_slot_: id  1 | task 59 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176749.200044 n_nodes=1903 mode=direct host_us=48850.0
+DMK_TIMING ubatch t=176749.200063 id=47 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=300 build_us=815 alloc_us=679 inputs_us=9594 submit_us=64891 total_us=76279
+DMK_TIMING decode t=176749.200077 n_tokens=2048 n_ubatches=1 init_us=1318 total_us=77829
+DMK_TIMING cuda_compute t=176749.602664 n_nodes=1903 mode=direct host_us=34599.5
+DMK_TIMING ubatch t=176749.602685 id=48 n_tokens=1174 n_seqs=1 n_seq_tokens=1174 n_outputs=0 n_nodes=1905 reuse=0 apply_us=155 build_us=876 alloc_us=540 inputs_us=3414 submit_us=396343 total_us=401329
+DMK_TIMING decode t=176749.602700 n_tokens=1174 n_ubatches=1 init_us=714 total_us=402251
+DMK_TIMING cuda_compute t=176749.838899 n_nodes=1903 mode=direct host_us=7531.9
+DMK_TIMING ubatch t=176749.838916 id=49 n_tokens=86 n_seqs=2 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=12 build_us=838 alloc_us=576 inputs_us=140 submit_us=233432 total_us=234998
+DMK_TIMING cuda_compute t=176749.869122 n_nodes=1903 mode=direct host_us=4077.3
+DMK_TIMING ubatch t=176749.869138 id=50 n_tokens=4 n_seqs=1 n_seq_tokens=4 n_outputs=1 n_nodes=1905 reuse=0 apply_us=19 build_us=722 alloc_us=494 inputs_us=20 submit_us=28942 total_us=30197
+DMK_TIMING decode t=176749.869173 n_tokens=90 n_ubatches=2 init_us=96 total_us=265405
+DMK_TIMING sync t=176749.877808 passes=4 tokens=3312 wait_us=8630 since_first_submit_us=754024 since_last_submit_us=8670
+0.11.949.629 I slot      release: id  1 | task 59 | stop processing: n_tokens = 3265, truncated = 0
+0.11.949.642 I slot      release: id  2 | task 60 | stop processing: n_tokens = 3269, truncated = 0
+DMK_TIMING cuda_compute t=176749.886484 n_nodes=1903 mode=direct host_us=5614.0
+DMK_TIMING ubatch t=176749.886503 id=51 n_tokens=73 n_seqs=1 n_seq_tokens=73 n_outputs=1 n_nodes=1905 reuse=0 apply_us=14 build_us=745 alloc_us=572 inputs_us=115 submit_us=6597 total_us=8043
+DMK_TIMING decode t=176749.886538 n_tokens=73 n_ubatches=1 init_us=87 total_us=8203
+DMK_TIMING sync t=176749.909230 passes=1 tokens=73 wait_us=22687 since_first_submit_us=30770 since_last_submit_us=22727
+0.11.981.068 I slot      release: id  0 | task 61 | stop processing: n_tokens = 3295, truncated = 0
+DMK_TIMING request t=176749.909400 n_questions=3 n_groups=1 parse_us=110 build_us=10270 wait_us=787712 format_us=31 total_us=798124
+0.11.991.150 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 176749877941
+0.11.991.242 I slot launch_slot_: id  0 | task 67 | processing task, is_child = 1
+0.11.991.250 I slot launch_slot_: id  1 | task 68 | processing task, is_child = 1
+0.11.991.255 I slot launch_slot_: id  2 | task 66 | processing task, is_child = 0
+DMK_TIMING cuda_compute t=176750.001831 n_nodes=1903 mode=direct host_us=50873.2
+DMK_TIMING ubatch t=176750.001976 id=52 n_tokens=2048 n_seqs=1 n_seq_tokens=2048 n_outputs=0 n_nodes=1905 reuse=0 apply_us=338 build_us=908 alloc_us=704 inputs_us=11054 submit_us=67109 total_us=80113
+DMK_TIMING decode t=176750.001994 n_tokens=2048 n_ubatches=1 init_us=1442 total_us=81860
+DMK_TIMING cuda_compute t=176750.419595 n_nodes=1903 mode=direct host_us=35465.4
+DMK_TIMING ubatch t=176750.419611 id=53 n_tokens=1174 n_seqs=1 n_seq_tokens=1174 n_outputs=0 n_nodes=1905 reuse=0 apply_us=176 build_us=810 alloc_us=573 inputs_us=3718 submit_us=410930 total_us=416207
+DMK_TIMING decode t=176750.419624 n_tokens=1174 n_ubatches=1 init_us=684 total_us=417147
+DMK_TIMING cuda_compute t=176750.658771 n_nodes=1903 mode=direct host_us=4836.7
+DMK_TIMING ubatch t=176750.658789 id=54 n_tokens=43 n_seqs=1 n_seq_tokens=43 n_outputs=1 n_nodes=1905 reuse=0 apply_us=10 build_us=805 alloc_us=500 inputs_us=52 submit_us=236635 total_us=238003
+DMK_TIMING decode t=176750.658820 n_tokens=43 n_ubatches=1 init_us=96 total_us=238183
+DMK_TIMING sync t=176750.676064 passes=3 tokens=3265 wait_us=17239 since_first_submit_us=754201 since_last_submit_us=17275
+0.12.747.846 I slot      release: id  2 | task 66 | stop processing: n_tokens = 3265, truncated = 0
+DMK_TIMING cuda_compute t=176750.685318 n_nodes=1903 mode=direct host_us=6419.2
+DMK_TIMING ubatch t=176750.685331 id=55 n_tokens=94 n_seqs=2 n_seq_tokens=47 n_outputs=1 n_nodes=1905 reuse=0 apply_us=18 build_us=823 alloc_us=495 inputs_us=109 submit_us=7421 total_us=8865
+DMK_TIMING cuda_compute t=176750.716415 n_nodes=1903 mode=direct host_us=4055.2
+DMK_TIMING ubatch t=176750.716433 id=56 n_tokens=26 n_seqs=1 n_seq_tokens=26 n_outputs=1 n_nodes=1905 reuse=0 apply_us=41 build_us=627 alloc_us=435 inputs_us=39 submit_us=29941 total_us=31083
+DMK_TIMING decode t=176750.716468 n_tokens=120 n_ubatches=2 init_us=140 total_us=40187
+DMK_TIMING sync t=176750.730672 passes=2 tokens=120 wait_us=14199 since_first_submit_us=54206 since_last_submit_us=14239
+0.12.802.462 I slot      release: id  0 | task 67 | stop processing: n_tokens = 3269, truncated = 0
+0.12.802.683 I slot      release: id  1 | task 68 | stop processing: n_tokens = 3295, truncated = 0
+DMK_TIMING request t=176750.731030 n_questions=3 n_groups=1 parse_us=135 build_us=9024 wait_us=811602 format_us=40 total_us=820800

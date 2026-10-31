@@ -1,0 +1,273 @@
+# Lead #28495: flash-attention K/V window with --kv-unified
+
+## 1. Existing evidence: the three old Nsight Systems traces (long, medium, short: 72 passes)
+
+Passes: 72 (61 with N < 1024: the kernel reads the whole window; 11 with N >= 1024: the mask scan `flash_attn_mask_to_KV_max` skips masked tail blocks, not interior ones).
+
+Fit on the N < 1024 passes:  FA kernel time of the 8 layers (ms) = a + b x N x n_kv  with  a = 0.483 ms,  b = 3.034 x 10^-6 ms per (token x cell) (379.31 ns per token x cell and layer),  R^2 = 0.9901,  rmse = 0.225 ms,  n = 61.
+Residuals (observed - fit, ms): min -0.216, p10 -0.192, median -0.000, p90 0.103, max 1.205.
+Largest residuals: long/3/4 N=73 n_kv=6400 observed 3.105 fit 1.900; long/0/4 N=73 n_kv=3584 observed 1.990 fit 1.277; medium/2/3 N=73 n_kv=2816 observed 1.698 fit 1.106; medium/2/2 N=4 n_kv=2816 observed 0.301 fit 0.517; short/7/0 N=84 n_kv=256 observed 0.332 fit 0.548
+
+**Table A1: passes of equal kind and N with different windows (N < 1024), FA kernel time of the 8 layers**
+
+| pass kind | N (tokens) | passes | windows seen (cells) | FA at smallest window, median (ms) | FA at largest window, median (ms) | FA ratio | window ratio | slope (10^-6 ms per token x cell) |
+|---|---|---|---|---|---|---|---|---|
+| suffix | 4 | 3 | 2816/3584/6400 | 0.301 (n=1) | 0.585 (n=1) | 1.95 | 2.27 | 19.86 |
+| suffix | 8 | 2 | 2560/3584 | 0.353 (n=1) | 0.429 (n=1) | 1.21 | 1.40 | 9.27 |
+| suffix | 26 | 5 | 1280/2560/2816/3584/6912 | 0.396 (n=1) | 0.959 (n=1) | 2.42 | 5.40 | 3.84 |
+| suffix | 43 | 3 | 1280/2816/6912 | 0.452 (n=1) | 1.332 (n=1) | 2.95 | 5.40 | 3.64 |
+| suffix | 51 | 12 | 256/512 | 0.520 (n=6) | 0.587 (n=6) | 1.13 | 2.00 | 5.12 |
+| suffix | 73 | 3 | 2816/3584/6400 | 1.698 (n=1) | 3.105 (n=1) | 1.83 | 2.27 | 5.38 |
+| suffix | 86 | 3 | 2816/3584/6400 | 1.127 (n=1) | 2.275 (n=1) | 2.02 | 2.27 | 3.73 |
+| suffix | 94 | 3 | 1280/2816/6912 | 0.667 (n=1) | 2.415 (n=1) | 3.62 | 5.40 | 3.30 |
+| suffix | 129 | 2 | 2560/3584 | 1.476 (n=1) | 1.967 (n=1) | 1.33 | 1.40 | 3.71 |
+
+Source: trace-passes.tsv; t_cat_flash_ms (flash kernels incl. mask scan and fix-up) per pass.
+
+**Table A2: passes with N >= 1024 (mask scan active): window seen, needed, effective (implied by the fit)**
+
+| trace/request/pass | kind | N (tokens) | window seen (cells) | window needed, own cells padded (cells) | mean cells read per tile if own cells at the front (cells) | window implied by the fit, (FA - a)/(b N) (cells) | FA observed (ms) | FA predicted at the needed window (ms) | FA above prediction (ms) | GPU busy (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| long/0/0 | prefix-large | 2048 | 2304 | 2048 | 1152 | 1496 | 9.78 | 8.85 | 0.93 | 415.0 |
+| long/0/1 | prefix-small | 1172 | 3584 | 3328 | 2774 | 3236 | 11.99 | 11.99 | 0.00 | 256.6 |
+| long/1/0 | prefix-large | 2048 | 5376 | 2048 | 1152 | 4333 | 27.41 | 8.85 | 18.56 | 424.9 |
+| long/1/1 | prefix-small | 1377 | 6912 | 3584 | 2878 | 6583 | 27.99 | 14.49 | 13.50 | 299.6 |
+| long/2/0 | prefix-large | 2048 | 6912 | 2048 | 1152 | 1532 | 10.00 | 8.85 | 1.15 | 407.0 |
+| long/2/1 | prefix-small | 1146 | 6912 | 3328 | 2759 | 3231 | 11.72 | 11.67 | 0.04 | 239.2 |
+| long/3/0 | prefix-large | 2048 | 5376 | 2048 | 1152 | 4339 | 27.45 | 8.85 | 18.59 | 425.2 |
+| medium/0/0 | prefix-small | 1037 | 6400 | 1280 | 650 | 2137 | 7.21 | 2.93 | 4.28 | 248.1 |
+| medium/1/0 | prefix-small | 1288 | 2560 | 1536 | 777 | 1912 | 7.95 | 4.08 | 3.88 | 272.1 |
+| medium/2/0 | prefix-small | 1337 | 2816 | 1536 | 805 | 1512 | 6.62 | 4.34 | 2.28 | 274.7 |
+| medium/3/0 | prefix-small | 1360 | 2816 | 1536 | 813 | 2001 | 8.74 | 4.45 | 4.29 | 278.7 |
+
+Source: observed from the trace; needed = crosscheck window model; implied window = (FA - a) / (b x N) with the fit above (cells the kernel appears to read, on average over the query tiles).
+
+**Table A3: the 4 passes of N = 2048 (same shape, different windows): does the pass time follow the FA time?**
+
+| trace/request/pass | window seen (cells) | FA (ms) | GPU busy (ms) | GPU busy minus FA (ms) |
+|---|---|---|---|---|
+| long/0/0 | 2304 | 9.78 | 415.0 | 405.2 |
+| long/2/0 | 6912 | 10.00 | 407.0 | 397.0 |
+| long/1/0 | 5376 | 27.41 | 424.9 | 397.5 |
+| long/3/0 | 5376 | 27.45 | 425.2 | 397.7 |
+
+Source: trace-passes.tsv; fit busy = c + s x FA over these passes: s = 0.80 ms per ms, R^2 = 0.855, n = 4 [INFERENCE: four points, different cases].
+
+**Table A4: possible gain if the window were exact (per request, summed over the passes)**
+
+| trace / request type | requests | passes | FA kernel time per request (ms) | GPU busy per request (ms) | FA share of GPU busy (%) | gain, passes N<1024: b x N x (seen - needed) (ms) | gain, passes N>=1024: FA above prediction (ms) | total possible gain (ms) | gain / GPU busy (%) | gain / pass wall (%) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| long | 4 | 20 | 40.44 | 743.3 | 5.4 | 3.18 | 13.19 | 16.37 | 2.2 | 2.2 |
+| medium | 4 | 16 | 9.97 | 339.3 | 2.9 | 0.44 | 3.68 | 4.12 | 1.2 | 1.2 |
+| short | 12 | 36 | 1.65 | 82.5 | 2.0 | 0.02 | 0.00 | 0.02 | 0.0 | 0.0 |
+
+Source: FA ms, busy and wall from the pass rows; gain per pass: N < 1024 = b x N x (seen - needed) from the fit; N >= 1024 = FA above c_scan x prediction at the front-of-pool window (c_scan = 1.16, the smallest observed / model ratio of the scan passes, so the gain is a lower bound); never negative. Under nsys the kernel times include profiler overhead [INFERENCE: small for kernels]. Per-pass rows: the TSV written with --out.
+
+Run-to-run spread among identical passes (same trace, kind, N, window; 3 groups of >= 3): FA time 4.5 %, GPU busy 4.4 % (relative standard deviation, median over the groups).
+
+### Decision from the old traces
+
+FA kernel: largest FA increase between passes of equal N with different windows: +262 % (N < 1024) and +181 % between the 2048-token passes; threshold = 2 x spread = 2 x 4.5 % = 9.0 %.
+Pass time: possible gain from an exact window = long 2.2 %, medium 1.2 %, short 0.0 % of GPU busy time (long 16.4 ms, medium 4.1 ms, short 0.0 ms per request); threshold = 2 x spread of the busy time of identical passes = 2 x 4.4 % = 8.8 %.
+
+## K/V test, nsys run p3-lead-kvwin-nsys
+
+Requests with passes: 12; phases: warmup (2), T1 (1), other (6), T2 (1), T3 (1), T4 (1). Fit on all N < 1024 passes of the run: a = 0.515 ms, b = 3.196 x 10^-6 ms per (token x cell), R^2 = 0.9912, n = 36.
+
+**Table K1: per pass of the target request (first request of every phase T1, T2, ...): window seen vs needed, FA kernel time, pass time**
+
+| phase | client request | pass | pass kind | N (tokens) | window seen (cells) | window needed, own cells (cells) | window needed, compact unified pool (cells) | seen / needed | FA, 8 layers (ms) | FA per layer (ms) | FA / T1 pass of equal N | GPU busy (ms) | busy / T1 pass of equal N | pass wall (ms) | module load in the pass (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| T1 | 2 | 0 | prefix-large | 2048 | 2304 | 2048 | 2048 | 1.12 | 9.554 | 1.1943 | 1.00 | 405.28 | 1.000 | 406.47 | 0.4 |
+| T1 | 2 | 1 | prefix-small | 1174 | 3584 | 3328 | 3328 | 1.08 | 11.982 | 1.4978 | 1.00 | 256.61 | 1.000 | 257.58 | 0.1 |
+| T1 | 2 | 2 | suffix | 43 | 3584 | 3328 | 3328 | 1.08 | 0.811 | 0.1013 | 1.00 | 20.84 | 1.000 | 22.31 | 0.6 |
+| T1 | 2 | 3 | suffix | 94 | 3584 | 3328 | 3584 | 1.08 | 1.368 | 0.1709 | 1.00 | 31.27 | 1.000 | 32.23 | 0 |
+| T1 | 2 | 4 | suffix | 26 | 3584 | 3328 | 3584 | 1.08 | 0.627 | 0.0784 | 1.00 | 17.27 | 1.000 | 18.50 | 0.4 |
+| T2 | 9 | 0 | prefix-large | 2048 | 6912 | 2048 | 2048 | 3.38 | 26.264 | 3.2831 | 2.75 | 424.20 | 1.047 | 425.05 | 0 |
+| T2 | 9 | 1 | prefix-small | 1174 | 6912 | 3328 | 3328 | 2.08 | 22.595 | 2.8243 | 1.89 | 268.71 | 1.047 | 269.60 | 0 |
+| T2 | 9 | 2 | suffix | 129 | 6400 | 3328 | 3584 | 1.92 | 3.344 | 0.4180 | n/a | 46.99 | n/a | 47.97 | 0 |
+| T2 | 9 | 3 | suffix | 8 | 6400 | 3328 | 3584 | 1.92 | 0.647 | 0.0809 | n/a | 16.05 | n/a | 16.85 | 0 |
+| T2 | 9 | 4 | suffix | 26 | 6400 | 3328 | 3584 | 1.92 | 0.918 | 0.1148 | 1.46 | 17.68 | 1.023 | 18.64 | 0 |
+| T3 | 10 | 0 | prefix-large | 2048 | 6400 | 2048 | 2048 | 3.12 | 9.951 | 1.2438 | 1.04 | 407.66 | 1.006 | 408.51 | 0 |
+| T3 | 10 | 1 | prefix-small | 1174 | 6656 | 3328 | 3328 | 2.00 | 15.581 | 1.9477 | 1.30 | 261.69 | 1.020 | 262.59 | 0 |
+| T3 | 10 | 2 | suffix | 86 | 6656 | 3328 | 3328 | 2.00 | 2.367 | 0.2959 | n/a | 32.11 | n/a | 33.47 | 0 |
+| T3 | 10 | 3 | suffix | 4 | 6656 | 3328 | 3328 | 2.00 | 0.599 | 0.0749 | n/a | 12.19 | n/a | 13.03 | 0 |
+| T3 | 10 | 4 | suffix | 73 | 6656 | 3328 | 3584 | 2.00 | 3.213 | 0.4017 | n/a | 27.69 | n/a | 28.64 | 0 |
+| T4 | 11 | 0 | prefix-large | 2048 | 6656 | 2048 | 2048 | 3.25 | 26.253 | 3.2816 | 2.75 | 424.32 | 1.047 | 425.17 | 0 |
+| T4 | 11 | 1 | prefix-small | 1174 | 6656 | 3328 | 3328 | 2.00 | 22.525 | 2.8156 | 1.88 | 268.38 | 1.046 | 269.28 | 0 |
+| T4 | 11 | 2 | suffix | 43 | 6400 | 3328 | 3328 | 1.92 | 1.271 | 0.1588 | 1.57 | 21.44 | 1.029 | 22.41 | 0 |
+| T4 | 11 | 3 | suffix | 94 | 6400 | 3328 | 3584 | 1.92 | 2.285 | 0.2856 | 1.67 | 32.49 | 1.039 | 33.46 | 0 |
+| T4 | 11 | 4 | suffix | 26 | 6400 | 3328 | 3584 | 1.92 | 0.908 | 0.1135 | 1.45 | 17.60 | 1.019 | 18.52 | 0 |
+
+Source: passes TSV (t_cat_flash_ms = flash kernels incl. mask scan and fix-up; gpu_busy_ms; wall_ms; module_load_ms), phases from the client JSON; needed = census_lib cell positions of the pass structure that reproduces the observed passes (leadlib.pass_windows). T1 includes one-time lazy module loads [INFERENCE]: see the last column.
+
+**Table K2: per request: sums over the passes**
+
+| client request | phase | case | pass structure (census labels) | passes | FA kernel time (ms) | GPU busy (ms) | pass wall (ms) | client wall (ms) | largest window seen (cells) | largest window needed (cells) | possible gain from an exact window (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | warmup | check03 | F161 | 1 | 0.68 | 45.2 | 71.3 | 94.8 | 256 | 256 | 0.00 |
+| 1 | warmup | triage09 | P88+S2x51+S1x69 | 3 | 1.57 | 82.4 | 85.9 | 101.7 | 512 | 256 | 0.06 |
+| 2 | T1 | long00-storage | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 24.34 | 731.3 | 737.1 | 808.2 | 3584 | 3328 | 0.85 |
+| 3 | other | long01-memory | P2048+P1378+S3x43+S2x4+S1x26 | 5 | 60.81 | 805.5 | 816.5 | 865.4 | 6912 | 3584 | 34.03 |
+| 4 | other | long02-network | P2048+P1147+S2x43+S1x4+S1x73 | 5 | 25.37 | 716.5 | 725.8 | 784.8 | 6912 | 3328 | 1.29 |
+| 5 | other | long03-none | P2048+P909+S1x43+S2x47+S1x26 | 5 | 49.87 | 712.0 | 716.6 | 763.6 | 6400 | 3072 | 30.02 |
+| 6 | other | long04-storage | P2048+P948+S3x43+S2x4+S1x26 | 5 | 33.58 | 707.7 | 712.1 | 761.4 | 6400 | 3072 | 11.25 |
+| 7 | other | long05-memory | P2048+P1178+S2x43+S1x4+S1x73 | 5 | 54.59 | 764.6 | 769.7 | 826.6 | 6400 | 3328 | 29.36 |
+| 8 | other | long06-network | P2048+P1421+S1x43+S2x47+S1x26 | 5 | 36.14 | 795.6 | 800.2 | 859.8 | 6912 | 3584 | 9.32 |
+| 9 | T2 | long00-storage | P2048+P1174+S3x43+S2x4+S1x26 | 5 | 53.77 | 773.6 | 778.1 | 833.2 | 6912 | 3328 | 29.64 |
+| 10 | T3 | long00-storage | P2048+P1174+S2x43+S1x4+S1x73 | 5 | 31.71 | 741.3 | 746.2 | 806.5 | 6656 | 3328 | 6.45 |
+| 11 | T4 | long00-storage | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 53.24 | 764.2 | 768.8 | 826.1 | 6656 | 3328 | 29.56 |
+
+Source: passes TSV; client JSON wall_ms; gain as in Table A4.
+
+**Table K3: T phases against T1 over the passes that have the same index and the same N as in T1**
+
+| client request | phase | passes compared | FA (ms) | FA of the same T1 passes (ms) | FA ratio | GPU busy (ms) | GPU busy of the same T1 passes (ms) | GPU busy ratio | pass wall ratio |
+|---|---|---|---|---|---|---|---|---|---|
+| 2 | T1 | 5 of 5 | 24.34 | 24.34 | 1.000 | 731.3 | 731.3 | 1.000 | 1.000 |
+| 9 | T2 | 3 of 5 | 49.78 | 22.16 | 2.246 | 710.6 | 679.2 | 1.046 | 1.045 |
+| 10 | T3 | 2 of 5 | 25.53 | 21.54 | 1.186 | 669.4 | 661.9 | 1.011 | 1.011 |
+| 11 | T4 | 5 of 5 | 53.24 | 24.34 | 2.187 | 764.2 | 731.3 | 1.045 | 1.043 |
+
+Source: Table K1 rows; the slot placement (hence the suffix pass sizes) differs between requests, so only passes with equal index and N are paired.
+
+### Decision from the nsys K/V run
+
+windows seen, sum over the passes: T1 16640, T2 33024, T3 33024, T4 32512 cells; needed (largest per request): T1 3328, T2 3328, T3 3328, T4 3328 cells.
+FA kernel, aligned passes: T2/T1 = 2.246, T3/T1 = 1.186, T4/T1 = 2.187; mean effect 87.3 %; threshold = 2 x max(spread 4.5 % from the old traces, floor 2.0 %) = 9.0 %.
+GPU busy, aligned passes: T2/T1 = 1.046, T3/T1 = 1.011, T4/T1 = 1.045; mean effect 3.4 %; pass wall effect 3.3 %; threshold = 2 x max(spread 4.4 % from the old traces, floor 2.0 %) = 8.8 %.
+
+## K/V test, nsys run p3-lead-kvwin-nokvu-nsys (--no-kv-unified)
+
+Requests with passes: 12; phases: warmup (2), T1 (1), other (6), T2 (1), T3 (1), T4 (1). No FA fit and no gain estimate for this run (the K/V window of a sequence is its own stream here; compare the T phases directly).
+
+**Table K1: per pass of the target request (first request of every phase T1, T2, ...): window seen vs needed, FA kernel time, pass time**
+
+| phase | client request | pass | pass kind | N (tokens) | window seen (cells) | window needed, own cells (cells) | window needed, compact unified pool (cells) | seen / needed | FA, 8 layers (ms) | FA per layer (ms) | FA / T1 pass of equal N | GPU busy (ms) | busy / T1 pass of equal N | pass wall (ms) | module load in the pass (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| T1 | 2 | 0 | prefix-large | 2048 | 2048 | 2048 | 2048 | 1.00 | 8.231 | 1.0289 | 1.00 | 403.61 | 1.000 | 404.78 | 0.5 |
+| T1 | 2 | 1 | prefix-small | 1174 | 3328 | 3328 | 3328 | 1.00 | 11.074 | 1.3843 | 1.00 | 255.98 | 1.000 | 256.92 | 0.1 |
+| T1 | 2 | 2 | suffix | 43 | 3328 | 3328 | 3328 | 1.00 | 0.770 | 0.0962 | 1.00 | 20.82 | 1.000 | 22.29 | 0.5 |
+| T1 | 2 | 3 | suffix | 94 | 3328 | 3328 | 3584 | 1.00 | 1.318 | 0.1648 | 1.00 | 31.04 | 1.000 | 32.00 | 0 |
+| T1 | 2 | 4 | suffix | 26 | 3328 | 3328 | 3584 | 1.00 | 0.594 | 0.0742 | 1.00 | 17.20 | 1.000 | 18.58 | 0.4 |
+| T2 | 9 | 0 | prefix-large | 2048 | 2048 | 2048 | 2048 | 1.00 | 8.310 | 1.0387 | 1.01 | 406.35 | 1.007 | 407.18 | 0 |
+| T2 | 9 | 1 | prefix-small | 1174 | 3328 | 3328 | 3328 | 1.00 | 11.147 | 1.3934 | 1.01 | 257.39 | 1.006 | 258.24 | 0 |
+| T2 | 9 | 2 | suffix | 129 | 3328 | 3328 | 3584 | 1.00 | 1.882 | 0.2352 | n/a | 45.30 | n/a | 46.29 | 0 |
+| T2 | 9 | 3 | suffix | 8 | 3328 | 3328 | 3584 | 1.00 | 0.672 | 0.0840 | n/a | 16.09 | n/a | 16.89 | 0 |
+| T2 | 9 | 4 | suffix | 26 | 3328 | 3328 | 3584 | 1.00 | 0.603 | 0.0753 | 1.01 | 17.32 | 1.007 | 18.26 | 0 |
+| T3 | 10 | 0 | prefix-large | 2048 | 2048 | 2048 | 2048 | 1.00 | 8.311 | 1.0389 | 1.01 | 406.40 | 1.007 | 407.23 | 0 |
+| T3 | 10 | 1 | prefix-small | 1174 | 3328 | 3328 | 3328 | 1.00 | 11.156 | 1.3946 | 1.01 | 257.31 | 1.005 | 258.15 | 0 |
+| T3 | 10 | 2 | suffix | 86 | 3328 | 3328 | 3328 | 1.00 | 1.325 | 0.1656 | n/a | 30.93 | n/a | 32.25 | 0 |
+| T3 | 10 | 3 | suffix | 4 | 3328 | 3328 | 3328 | 1.00 | 0.343 | 0.0429 | n/a | 11.92 | n/a | 12.78 | 0 |
+| T3 | 10 | 4 | suffix | 73 | 3328 | 3328 | 3584 | 1.00 | 1.897 | 0.2371 | n/a | 26.35 | n/a | 27.27 | 0 |
+| T4 | 11 | 0 | prefix-large | 2048 | 2048 | 2048 | 2048 | 1.00 | 8.288 | 1.0360 | 1.01 | 406.09 | 1.006 | 406.92 | 0 |
+| T4 | 11 | 1 | prefix-small | 1174 | 3328 | 3328 | 3328 | 1.00 | 11.167 | 1.3959 | 1.01 | 257.27 | 1.005 | 258.13 | 0 |
+| T4 | 11 | 2 | suffix | 43 | 3328 | 3328 | 3328 | 1.00 | 0.776 | 0.0971 | 1.01 | 20.89 | 1.003 | 21.88 | 0 |
+| T4 | 11 | 3 | suffix | 94 | 3328 | 3328 | 3584 | 1.00 | 1.329 | 0.1662 | 1.01 | 31.22 | 1.006 | 32.19 | 0 |
+| T4 | 11 | 4 | suffix | 26 | 3328 | 3328 | 3584 | 1.00 | 0.595 | 0.0744 | 1.00 | 17.24 | 1.002 | 18.18 | 0 |
+
+Source: passes TSV (t_cat_flash_ms = flash kernels incl. mask scan and fix-up; gpu_busy_ms; wall_ms; module_load_ms), phases from the client JSON; needed = census_lib cell positions of the pass structure that reproduces the observed passes (leadlib.pass_windows). T1 includes one-time lazy module loads [INFERENCE]: see the last column.
+
+**Table K2: per request: sums over the passes**
+
+| client request | phase | case | pass structure (census labels) | passes | FA kernel time (ms) | GPU busy (ms) | pass wall (ms) | client wall (ms) | largest window seen (cells) | largest window needed (cells) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | warmup | check03 | F161 | 1 | 0.68 | 45.1 | 68.5 | 83.0 | 256 | 256 |
+| 1 | warmup | triage09 | P88+S2x51+S1x69 | 3 | 1.53 | 82.4 | 86.2 | 105.5 | 256 | 256 |
+| 2 | T1 | long00-storage | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 21.99 | 728.7 | 734.6 | 784.6 | 3328 | 3328 |
+| 3 | other | long01-memory | P2048+P1378+S3x43+S2x4+S1x26 | 5 | 24.78 | 767.4 | 776.9 | 835.5 | 3584 | 3584 |
+| 4 | other | long02-network | P2048+P1147+S2x43+S1x4+S1x73 | 5 | 22.56 | 712.3 | 717.1 | 769.8 | 3328 | 3328 |
+| 5 | other | long03-none | P2048+P909+S1x43+S2x47+S1x26 | 5 | 19.60 | 681.2 | 685.8 | 739.9 | 3072 | 3072 |
+| 6 | other | long04-storage | P2048+P948+S3x43+S2x4+S1x26 | 5 | 21.52 | 695.6 | 700.1 | 751.1 | 3072 | 3072 |
+| 7 | other | long05-memory | P2048+P1178+S2x43+S1x4+S1x73 | 5 | 23.09 | 733.2 | 738.0 | 789.9 | 3328 | 3328 |
+| 8 | other | long06-network | P2048+P1421+S1x43+S2x47+S1x26 | 5 | 24.77 | 784.5 | 789.0 | 842.9 | 3584 | 3584 |
+| 9 | T2 | long00-storage | P2048+P1174+S3x43+S2x4+S1x26 | 5 | 22.61 | 742.4 | 746.9 | 800.2 | 3328 | 3328 |
+| 10 | T3 | long00-storage | P2048+P1174+S2x43+S1x4+S1x73 | 5 | 23.03 | 732.9 | 737.7 | 795.9 | 3328 | 3328 |
+| 11 | T4 | long00-storage | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 22.16 | 732.7 | 737.3 | 792.1 | 3328 | 3328 |
+
+Source: passes TSV; client JSON wall_ms.
+
+**Table K3: T phases against T1 over the passes that have the same index and the same N as in T1**
+
+| client request | phase | passes compared | FA (ms) | FA of the same T1 passes (ms) | FA ratio | GPU busy (ms) | GPU busy of the same T1 passes (ms) | GPU busy ratio | pass wall ratio |
+|---|---|---|---|---|---|---|---|---|---|
+| 2 | T1 | 5 of 5 | 21.99 | 21.99 | 1.000 | 728.7 | 728.7 | 1.000 | 1.000 |
+| 9 | T2 | 3 of 5 | 20.06 | 19.90 | 1.008 | 681.1 | 676.8 | 1.006 | 1.005 |
+| 10 | T3 | 2 of 5 | 19.47 | 19.31 | 1.008 | 663.7 | 659.6 | 1.006 | 1.006 |
+| 11 | T4 | 5 of 5 | 22.16 | 21.99 | 1.008 | 732.7 | 728.7 | 1.006 | 1.004 |
+
+Source: Table K1 rows; the slot placement (hence the suffix pass sizes) differs between requests, so only passes with equal index and N are paired.
+
+### Decision from the nsys --no-kv-unified run
+
+windows seen, sum over the passes: T1 15360, T2 15360, T3 15360, T4 15360 cells; needed (largest per request): T1 3328, T2 3328, T3 3328, T4 3328 cells.
+FA kernel, aligned passes: T2/T1 = 1.008, T3/T1 = 1.008, T4/T1 = 1.008; mean effect 0.8 %; threshold = 2 x max(spread 0.0 % from the repeats of this run (T2..Tn, equal windows), floor 2.0 %) = 4.0 %.
+GPU busy, aligned passes: T2/T1 = 1.006, T3/T1 = 1.006, T4/T1 = 1.006; mean effect 0.6 %; pass wall effect 0.5 %; threshold = 2 x max(spread 0.0 % from the repeats of this run (T2..Tn, equal windows), floor 2.0 %) = 4.0 %.
+
+## Timing run `kvu` (DMK_TIMING, no profiler)
+
+Requests: 12; parent slot selection {'LRU': 11, 'LCP': 1}; cache mode in the log kv_unified = True (expected split: unified); pass structure: census (unified split) exact in 12, sequential-split model exact in 12, expected model exact in 12, neither in 0 of 12 requests; llama_decode calls per request type: short1q 1-1, short2q 2-2, long3q 3-4.
+
+**Table T1 (kvu): per request of the K/V sequence (T phases and the others)**
+
+| request | phase | case | slots (Q0, Q1, Q2) | pass structure | ubatches | llama_decode calls | sync groups | sync groups (passes / tokens / since_first_submit) | GPU-side time: sum of sync since_first_submit_us (ms) | sum of sync wait_us (ms) | request wait_us (ms) | request total_us (ms) | client wall (ms) | serial roofline floor of the structure (ms) | GPU-side time / floor |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | T1 | long00-storage | (2, 1, 0) | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 4 | 2 | 3p/3265t/715.08ms; 2p/120t/53.37ms | 768.44 | 28.33 | 773.09 | 783.77 | 784.49 | 381.7 | 2.013 |
+| 3 | other | long01-memory | (0, 1, 2) | P2048+P1378+S3x43+S2x4+S1x26 | 5 | 3 | 1 | 5p/3589t/850.57ms | 850.57 | 13.39 | 853.15 | 862.64 | 863.26 | 406.6 | 2.092 |
+| 4 | other | long02-network | (1, 2, 0) | P2048+P1147+S2x43+S1x4+S1x73 | 5 | 4 | 2 | 4p/3285t/732.33ms; 1p/73t/31.55ms | 763.89 | 28.17 | 767.17 | 778.85 | 779.78 | 378.8 | 2.017 |
+| 5 | other | long03-none | (2, 0, 1) | P2048+P909+S1x43+S2x47+S1x26 | 5 | 4 | 2 | 3p/3000t/699.2ms; 2p/120t/54.78ms | 753.98 | 28.94 | 758.57 | 773.05 | 774.39 | 351.8 | 2.143 |
+| 6 | other | long04-storage | (0, 1, 2) | P2048+P948+S3x43+S2x4+S1x26 | 5 | 3 | 1 | 5p/3159t/750.33ms | 750.33 | 12.81 | 753.80 | 764.25 | 765.02 | 357.9 | 2.097 |
+| 7 | other | long05-memory | (1, 2, 0) | P2048+P1178+S2x43+S1x4+S1x73 | 5 | 4 | 2 | 4p/3316t/774.4ms; 1p/73t/30.74ms | 805.14 | 31.76 | 807.64 | 816.21 | 817.18 | 382.3 | 2.106 |
+| 8 | other | long06-network | (2, 0, 1) | P2048+P1421+S1x43+S2x47+S1x26 | 5 | 4 | 2 | 3p/3512t/784.72ms; 2p/120t/54.63ms | 839.35 | 29.88 | 842.58 | 852.23 | 852.88 | 409.8 | 2.048 |
+| 9 | T2 | long00-storage | (0, 1, 2) | P2048+P1174+S3x43+S2x4+S1x26 | 5 | 3 | 1 | 5p/3385t/813.43ms | 813.43 | 13.39 | 815.84 | 825.94 | 826.61 | 383.4 | 2.122 |
+| 10 | T3 | long00-storage | (1, 2, 0) | P2048+P1174+S2x43+S1x4+S1x73 | 5 | 4 | 2 | 4p/3312t/754.02ms; 1p/73t/30.77ms | 784.79 | 31.32 | 787.71 | 798.12 | 798.69 | 381.9 | 2.055 |
+| 11 | T4 | long00-storage | (2, 0, 1) | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 4 | 2 | 3p/3265t/754.2ms; 2p/120t/54.21ms | 808.41 | 31.44 | 811.60 | 820.80 | 821.47 | 381.7 | 2.118 |
+
+Source: DMK_TIMING sync / decode / ubatch / request lines and slot lines of the server log; since_first_submit_us runs from the start of the first pending ubatch to the end of the wait for the GPU (all pending passes together: the logits read is the only synchronise of a request, so prefix passes and the first suffix batch share one group); floor = census_lib pass_costs of the matching structure (window needed).
+[kvu] GPU-side time / structure floor, Tk / T1: T2 1.054 (raw time ratio 1.059, structure P2048+P1174+S3x43+S2x4+S1x26 vs P2048+P1174+S1x43+S2x47+S1x26), T3 1.021 (raw time ratio 1.021, structure P2048+P1174+S2x43+S1x4+S1x73 vs P2048+P1174+S1x43+S2x47+S1x26), T4 1.052 (raw time ratio 1.052, structure P2048+P1174+S1x43+S2x47+S1x26 vs P2048+P1174+S1x43+S2x47+S1x26); mean effect 4.2 %; threshold = 2 x max(spread of T2..Tn 1.8 %, floor 2.0 %) = 4.0 %.
+
+## Timing run `nokvu` (DMK_TIMING, no profiler)
+
+Requests: 12; parent slot selection {'LRU': 11, 'LCP': 1}; cache mode in the log kv_unified = False (expected split: seq); pass structure: census (unified split) exact in 12, sequential-split model exact in 12, expected model exact in 12, neither in 0 of 12 requests; llama_decode calls per request type: short1q 1-1, short2q 2-2, long3q 3-4.
+
+**Table T1 (nokvu): per request of the K/V sequence (T phases and the others)**
+
+| request | phase | case | slots (Q0, Q1, Q2) | pass structure | ubatches | llama_decode calls | sync groups | sync groups (passes / tokens / since_first_submit) | GPU-side time: sum of sync since_first_submit_us (ms) | sum of sync wait_us (ms) | request wait_us (ms) | request total_us (ms) | client wall (ms) | serial roofline floor of the structure (ms) | GPU-side time / floor |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2 | T1 | long00-storage | (2, 1, 0) | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 4 | 3 | 2p/3222t/693.17ms; 1p/43t/23.58ms; 2p/120t/53.61ms | 770.36 | 248.34 | 779.17 | 792.00 | 792.86 | 381.7 | 2.018 |
+| 3 | other | long01-memory | (0, 1, 2) | P2048+P1378+S3x43+S2x4+S1x26 | 5 | 3 | 2 | 2p/3426t/725.47ms; 3p/163t/86.82ms | 812.28 | 274.30 | 819.93 | 833.04 | 833.79 | 406.6 | 1.998 |
+| 4 | other | long02-network | (1, 2, 0) | P2048+P1147+S2x43+S1x4+S1x73 | 5 | 4 | 3 | 2p/3195t/676.61ms; 2p/90t/54.52ms; 1p/73t/33.9ms | 765.03 | 244.87 | 773.23 | 785.19 | 787.05 | 378.8 | 2.020 |
+| 5 | other | long03-none | (2, 0, 1) | P2048+P909+S1x43+S2x47+S1x26 | 5 | 4 | 3 | 2p/2957t/643.56ms; 1p/43t/23.48ms; 2p/120t/53.17ms | 720.21 | 204.84 | 728.83 | 739.98 | 741.64 | 351.8 | 2.047 |
+| 6 | other | long04-storage | (0, 1, 2) | P2048+P948+S3x43+S2x4+S1x26 | 5 | 3 | 2 | 2p/2996t/649.88ms; 3p/163t/83.97ms | 733.85 | 193.60 | 741.78 | 756.56 | 757.54 | 357.9 | 2.051 |
+| 7 | other | long05-memory | (1, 2, 0) | P2048+P1178+S2x43+S1x4+S1x73 | 5 | 4 | 3 | 2p/3226t/695.26ms; 2p/90t/47.2ms; 1p/73t/29.13ms | 771.59 | 252.09 | 779.40 | 791.68 | 792.36 | 382.3 | 2.018 |
+| 8 | other | long06-network | (2, 0, 1) | P2048+P1421+S1x43+S2x47+S1x26 | 5 | 4 | 3 | 2p/3469t/744.04ms; 1p/43t/23.41ms; 2p/120t/53.08ms | 820.53 | 310.36 | 828.15 | 840.15 | 840.86 | 409.8 | 2.003 |
+| 9 | T2 | long00-storage | (0, 1, 2) | P2048+P1174+S3x43+S2x4+S1x26 | 5 | 3 | 2 | 2p/3222t/696.22ms; 3p/163t/83.84ms | 780.05 | 235.31 | 791.86 | 801.57 | 802.27 | 383.4 | 2.035 |
+| 10 | T3 | long00-storage | (1, 2, 0) | P2048+P1174+S2x43+S1x4+S1x73 | 5 | 4 | 3 | 2p/3222t/695.85ms; 2p/90t/47.08ms; 1p/73t/29.01ms | 771.94 | 250.33 | 779.66 | 792.07 | 794.07 | 381.9 | 2.022 |
+| 11 | T4 | long00-storage | (2, 0, 1) | P2048+P1174+S1x43+S2x47+S1x26 | 5 | 4 | 3 | 2p/3222t/691.41ms; 1p/43t/23.41ms; 2p/120t/52.79ms | 767.61 | 250.40 | 774.50 | 783.41 | 784.02 | 381.7 | 2.011 |
+
+Source: DMK_TIMING sync / decode / ubatch / request lines and slot lines of the server log; since_first_submit_us runs from the start of the first pending ubatch to the end of the wait for the GPU (all pending passes together: the logits read is the only synchronise of a request, so prefix passes and the first suffix batch share one group); floor = census_lib pass_costs of the matching structure (window needed).
+[nokvu] GPU-side time / structure floor, Tk / T1: T2 1.008 (raw time ratio 1.013, structure P2048+P1174+S3x43+S2x4+S1x26 vs P2048+P1174+S1x43+S2x47+S1x26), T3 1.002 (raw time ratio 1.002, structure P2048+P1174+S2x43+S1x4+S1x73 vs P2048+P1174+S1x43+S2x47+S1x26), T4 0.996 (raw time ratio 0.996, structure P2048+P1174+S1x43+S2x47+S1x26 vs P2048+P1174+S1x43+S2x47+S1x26); mean effect 0.2 %; threshold = 2 x max(spread of T2..Tn 0.6 %, floor 2.0 %) = 4.0 %.
+
+**Table T2: kv-unified against --no-kv-unified (the upstream workaround), same client sequence**
+
+| phase | kvu: pass structure | kvu: GPU-side time (ms) | kvu: request total_us (ms) | kvu: client wall (ms) | nokvu: pass structure | nokvu: GPU-side time (ms) | nokvu: request total_us (ms) | nokvu: client wall (ms) | nokvu / kvu GPU-side time |
+|---|---|---|---|---|---|---|---|---|---|
+| T1 | P2048+P1174+S1x43+S2x47+S1x26 | 768.44 | 783.77 | 784.49 | P2048+P1174+S1x43+S2x47+S1x26 | 770.36 | 792.00 | 792.86 | 1.002 |
+| T2 | P2048+P1174+S3x43+S2x4+S1x26 | 813.43 | 825.94 | 826.61 | P2048+P1174+S3x43+S2x4+S1x26 | 780.05 | 801.57 | 802.27 | 0.959 |
+| T3 | P2048+P1174+S2x43+S1x4+S1x73 | 784.79 | 798.12 | 798.69 | P2048+P1174+S2x43+S1x4+S1x73 | 771.94 | 792.07 | 794.07 | 0.984 |
+| T4 | P2048+P1174+S1x43+S2x47+S1x26 | 808.41 | 820.80 | 821.47 | P2048+P1174+S1x43+S2x47+S1x26 | 767.61 | 783.41 | 784.02 | 0.950 |
+
+Source: Table T1 rows of both runs; with --no-kv-unified every slot is its own stream (n_ctx_slot = 5461 cells) and the window of a sequence is its own cells; a child's prefix is copied across streams (llama_kv_cache::seq_cp -> buffer copy after llama_synchronize) [source]. Pass structures can differ between the runs (slot placement, split mode).
+
+## Decisions
+
+Thresholds: an effect counts if it exceeds 2 x the run-to-run spread (relative standard deviation = stdev / mean of repeated identical measurements; floor 2 %). Spreads come from the repeated T phases of the run when they have equal windows, else from identical passes of the old traces (printed above).
+[old traces]   window effect on the FA kernel: yes (largest equal-N FA increase 262 %, threshold 9.0 %); window effect on pass time: no (possible gain 2.2 % of GPU busy, threshold 8.8 %)
+[kvwin nsys]   window effect on the FA kernel: yes (mean T2..Tn / T1 effect 87.3 %, threshold 9.0 %); window effect on pass time: no (GPU busy effect 3.4 %, threshold 8.8 %)
+[nsys --no-kv-unified]   window effect on the FA kernel: no (mean T2..Tn / T1 effect 0.8 %, threshold 4.0 %); window effect on pass time: no (GPU busy effect 0.6 %, threshold 4.0 %)
+[timing:kvu]   window effect on pass time: yes (GPU-side time / floor, mean Tk / T1 effect 4.2 %, threshold 4.0 %)
+[timing:nokvu]   window effect on pass time: no (GPU-side time / floor, mean Tk / T1 effect 0.2 %, threshold 4.0 %)
+
+Final (the most direct source available: nsys run for the FA kernel, timing run for the pass time, else the old traces):
+window effect on the FA kernel: yes   (effect 87 %, threshold 9.0 %; source: kvwin nsys run)
+window effect on pass time: yes   (effect 4.2 %, threshold 4.0 %; source: kvwin timing run)

@@ -1,0 +1,352 @@
+# Shape and launch census of the decision model (phase 3)
+
+What every pass of every request type of the benchmark computes (matmul shapes, CUDA paths, FLOPs, bytes, roofline floors) and what the three old Nsight Systems traces show (launch counts, gaps), with a cross-check of the two. Model: H2O Lightning 4B mix8 on llama.cpp b12004 (commit 3c809f4), RTX 3060 Ti (sm_86, 38 SMs). Nothing here runs on the GPU: the scripts run on the CPU (python3 stdlib, `uv run` only for step 2) and read the header of the model file, the tokenizer and the three old captures.
+
+All tables: units are in the column headers, one quantity per column, the source is under the table. Values that no source or trace shows are marked [INFERENCE]. `make_tables.sh` of the data set writes this report from the tables in `raw/`.
+
+## 1 Key results
+
+- **Cross-check**: the analytic model predicts the launch count of every kernel class per pass in all 72 traced passes and, for the 37 passes that have a launch listing, every one of the 9,119 matmul launches (weight type, tile width, need_check, grid.x, fix-up kernel) exactly. 11 of 12 checks pass without exception; the exception is the flash-attention K/V window (section 9, item 5).
+- **Passes per request** (ref variant, with the `Ref:` line): short one-question 1, short two-question 3, medium 4, long 5. The question suffixes are *not* always batched by length: which sequences share a pass depends on the slots of the parent and the children (section 3.2); the pass count is the same for every slot placement, the pass sizes are not.
+- **Every pass streams almost the same weights**: 3.34 GB for a pass with the output head, 2.62 GB without (prefix passes), 7.44 ms and 5.85 ms at 448 GB/s. A request is therefore 7.4 / 20.7 / 28.2 / 34.0 ms of weight reads (short-1q / short-2q / medium / long); the int8 compute floor is 7.3 / 11.4 / 68.6 / 161.5 ms at 144.8 TOPS (medium and long requests are bound by int8 work, short requests by weight reads).
+- **MMQ is the only prompt matmul path** for Q4_0 and Q8_0 once a pass has more than 8 tokens; a pass of at most 8 tokens (4 tokens of one sequence, 2 x 4 tokens of two) runs *all* matmuls as MMVQ. cuBLAS is never used. 245 MMQ launches per pass, plus 3 MMVQ launches (fused FFN of the last layer on the output rows, output head) when the pass has an output.
+- **The output head is computed for 248,320 rows per output; the API reads 2-8 of them** (section 6.3): 0.68 GB (one head read) per one-question request, 2.03 GB per medium or long request (three head reads).
+- **Traces vs floor** (nsys overhead not removed): the GPU-busy time of a pass is 1.6x (pass of at most 8 tokens) to 4.3x (prefix passes) the larger of the weight and int8 floors and 1.4x to 2.1x the serial per-kernel roofline floor (section 8.2); the MMQ kernels reach 31-53 int8 TOPS (22-37 % of 144.8; 31 TOPS in the suffix passes, 53 TOPS in the large prefix passes) and the all-MMVQ pass reads weights at 365 GB/s (81 % of 448) (section 8.3). In-pass launch gaps are 0.20-0.35 % of a long or medium prefix pass and 3.3-5.3 % of a suffix pass (section 7).
+
+## 2 Model and weights
+
+### 2.1 Hyperparameters (Table 1)
+
+| parameter | value | unit | GGUF key / derivation |
+|---|---|---|---|
+| arch | qwen35 | - | general.architecture |
+| model_name | H2O Lightning 4B | - | general.name |
+| gguf_file_bytes | 3,349,945,376 | B | size of the GGUF file |
+| n_tensors | 426 | - | GGUF.tensor_count |
+| n_layer (executed) | 32 | - | block_count - nextn_predict_layers (qwen35.cpp: the NextN/MTP layer has no tensors in this file and is not executed) |
+| n_layers_recurrent (Gated DeltaNet) | 24 | - | attention.recurrent_layers[:n_layer] |
+| n_layers_attention | 8 | - | n_layer - recurrent |
+| layer_pattern | RRRARRRARRRARRRARRRARRRARRRARRRA | - | attention.recurrent_layers (R = Gated DeltaNet, A = full attention) |
+| n_embd | 2,560 | - | qwen35.embedding_length |
+| n_ff | 9,216 | - | qwen35.feed_forward_length |
+| n_head | 16 | - | qwen35.attention.head_count |
+| n_head_kv | 4 | - | qwen35.attention.head_count_kv |
+| head_dim_k | 256 | - | qwen35.attention.key_length |
+| head_dim_v | 256 | - | qwen35.attention.value_length |
+| gqa_ratio | 4 | - | n_head / n_head_kv |
+| attn_q_rows (query + output gate) | 8,192 | - | wq ne1 = 2 * n_head * head_dim |
+| attn_kv_rows (each of K, V) | 1,024 | - | n_head_kv * head_dim |
+| attn_o_in | 4,096 | - | n_head * head_dim_v |
+| rope_dimension_count | 64 | - | qwen35.rope.dimension_count |
+| rope_sections | 11 11 10 0 | - | qwen35.rope.dimension_sections (M-RoPE) |
+| rope_freq_base | 10000000.0 | - | qwen35.rope.freq_base |
+| rms_norm_eps | 9.999999974752427e-07 | - | qwen35.attention.layer_norm_rms_epsilon |
+| context_length_train | 262,144 | - | qwen35.context_length |
+| ssm_conv_kernel | 4 | - | qwen35.ssm.conv_kernel |
+| ssm_inner_size (d_inner) | 4,096 | - | qwen35.ssm.inner_size |
+| ssm_state_size = GDN head_k_dim | 128 | - | qwen35.ssm.state_size |
+| ssm_group_count = GDN num_k_heads | 16 | - | qwen35.ssm.group_count |
+| ssm_time_step_rank = GDN num_v_heads | 32 | - | qwen35.ssm.time_step_rank |
+| GDN head_v_dim | 128 | - | d_inner / num_v_heads |
+| GDN conv_channels | 8,192 | - | d_inner + 2 * n_group * d_state |
+| GDN qkv rows (attn_qkv ne1) | 8,192 | - | 2 * n_group * d_state + d_inner |
+| GDN recurrent state per layer per sequence | 2,097,152 | B | head_v_dim^2 * num_v_heads * 4 B (F32) |
+| GDN conv state per layer per sequence | 98,304 | B | (d_conv-1) * conv_channels * 4 B (F32) |
+| n_vocab | 248,320 | - | len(tokenizer.ggml.tokens) |
+| output head | tied to token_embd | - | tensor list (no output.weight in the file => LM head = token_embd, Q8_0) |
+| decision.n_labels | 255 | - | qwen35.decision.labels |
+| tokenizer | gpt2/qwen2 | - | tokenizer.ggml.model / .pre |
+| tensor bytes, type Q4_0 | 1,274,019,840 | B | sum over tensors.tsv |
+| tensor bytes, type Q8_0 | 2,061,107,200 | B | sum over tensors.tsv |
+| tensor bytes, type F32 | 3,846,144 | B | sum over tensors.tsv |
+| tensor bytes in the 32 layers | 2,663,532,544 | B | sum over tensors.tsv (layer >= 0) |
+| tensor bytes token_embd (= LM head) | 675,430,400 | B | tensors.tsv |
+| matmul weight elements in the 32 layers | 3,569,090,560 | - | sum over Q4_0/Q8_0 tensors of the layers |
+
+Source: `tensors.tsv`, `hparams.tsv`, `layers.tsv` from `01_gguf_header.py` (GGUF header of the mix8 model file, first 16 MB read; the file was not modified).
+
+### 2.2 Weight tensors (Table 2)
+
+| tensor | ggml type | K (input dim) | M (output rows) | tensors in the file | bytes per tensor (MB) | bytes total (MB) | share of tensor bytes (%) | CUDA path |
+|---|---|---|---|---|---|---|---|---|
+| F32 vectors / conv (all) | F32 | - | - | 177 | 0.022 | 3.8 | 0.1 | element-wise / conv kernels |
+| token_embd.weight | Q8_0 | 2560 | 248320 | 1 | 675.430 | 675.4 | 20.2 | get_rows (input) and MMVQ (output head, N<=3) |
+| attn_gate.weight | Q8_0 | 2560 | 4096 | 24 | 11.141 | 267.4 | 8.0 | MMQ (N>8) / MMVQ (N<=8) |
+| attn_qkv.weight | Q8_0 | 2560 | 8192 | 24 | 22.282 | 534.8 | 16.0 | MMQ (N>8) / MMVQ (N<=8) |
+| ffn_down.weight | Q4_0 | 9216 | 2560 | 32 | 13.271 | 424.7 | 12.7 | MMQ (N>8) / MMVQ (N<=8) |
+| ffn_gate.weight | Q4_0 | 2560 | 9216 | 32 | 13.271 | 424.7 | 12.7 | MMQ (N>8) / MMVQ (N<=8) |
+| ffn_up.weight | Q4_0 | 2560 | 9216 | 32 | 13.271 | 424.7 | 12.7 | MMQ (N>8) / MMVQ (N<=8) |
+| ssm_alpha.weight | Q8_0 | 2560 | 32 | 24 | 0.087 | 2.1 | 0.1 | MMQ (N>8) / MMVQ (N<=8) |
+| ssm_beta.weight | Q8_0 | 2560 | 32 | 24 | 0.087 | 2.1 | 0.1 | MMQ (N>8) / MMVQ (N<=8) |
+| ssm_out.weight | Q8_0 | 4096 | 2560 | 24 | 11.141 | 267.4 | 8.0 | MMQ (N>8) / MMVQ (N<=8) |
+| attn_k.weight | Q8_0 | 2560 | 1024 | 8 | 2.785 | 22.3 | 0.7 | MMQ (N>8) / MMVQ (N<=8) |
+| attn_output.weight | Q8_0 | 4096 | 2560 | 8 | 11.141 | 89.1 | 2.7 | MMQ (N>8) / MMVQ (N<=8) |
+| attn_q.weight | Q8_0 | 2560 | 8192 | 8 | 22.282 | 178.3 | 5.3 | MMQ (N>8) / MMVQ (N<=8) |
+| attn_v.weight | Q8_0 | 2560 | 1024 | 8 | 2.785 | 22.3 | 0.7 | MMQ (N>8) / MMVQ (N<=8) |
+
+Source: `tensors.tsv` (426 tensors; sizes = 18 B per 32 Q4_0 elements, 34 B per 32 Q8_0 elements). The 24 recurrent layers have attn_qkv, attn_gate, ssm_beta, ssm_alpha, ssm_out; the 8 attention layers have attn_q (query + gate), attn_k, attn_v, attn_output; all 32 layers have ffn_up, ffn_gate, ffn_down (Q4_0). The NextN/MTP layer (block 32) has no tensors in this file.
+
+## 3 Requests and passes
+
+### 3.1 Token counts (Table 3)
+
+| task | size | cases | questions per request | shared prefix, ref variant (tokens) | suffix per question, ref variant (tokens) | sum of prompt tokens, raw variant, mean (tokens) | sum of prompt tokens, ref variant, mean (tokens) | sum of prompt tokens, ref variant, min-max (tokens) |
+|---|---|---|---|---|---|---|---|---|
+| check | short | 8 | 1 | 0 (no sharing) | 132-166 | 139.2 | 152.5 | 132-166 |
+| commit | short | 4 | 1 | 0 (no sharing) | 131-180 | 137.5 | 150.0 | 131-180 |
+| triage | short | 12 | 2 | 73-100 | 120 / 51 | 314.3 | 339.8 | 317-371 |
+| style | short | 8 | 2 | 66-103 | 67 / 54 | 263.8 | 288.5 | 253-327 |
+| syslog-medium | medium | 8 | 3 | 1040-1361 | 43 / 47 / 73 | 3,892.4 | 3,930.2 | 3283-4246 |
+| syslog-long | long | 8 | 3 | 2954-3467 | 43 / 47 / 73 | 9,662.9 | 9,699.2 | 9025-10564 |
+
+Source: `token-counts.tsv`, `cases-plan.tsv` from `02_tokens.py` (systemone template rendered as the server does, tokenised with the b12004 `llama-tokenize` and the GGUF vocabulary). The raw variant matches `quality.input_tokens_mean` of a benchmark run (`data/2026-10-30-window1/raw/p1-bench-b1-S.json`) exactly: short 235.8125 vs 235.8125, medium 3892.3750 vs 3892.3750, long 9662.8750 vs 9662.8750. The ref variant adds the `Ref: <10 hex>\n` line (about 13 tokens per prompt) that the timed benchmark sends. Prefix = shared tokens of the question prompts of one request; suffix = tokens after the prefix; one-question requests have no sharing (the whole prompt is the suffix).
+
+### 3.2 How a request becomes passes
+
+The server (`tools/server/server-context.cpp`, `server-decision.cpp`, `src/llama-batch.cpp` `split_equal`) turns a request into passes by these rules (all read from the b12004 source, then confirmed by 20 traced requests):
+
+1. A request with one question has no sharing: one pass with the whole prompt (split at 2048 tokens), output on its last token.
+2. A request with 2-3 questions is a parent task (question 0) plus child tasks that run in other slots (`-np 3`). The parent evaluates the shared prefix alone in ubatches of at most 2048 tokens (no outputs; the last layer's FFN and the output head are empty and are skipped).
+3. When the prefix is done the parent starts the children. In the same `update_slots()` loop the children whose slot index is *above* the parent's are visited after it, so their suffix is in the same `llama_decode` batch as the parent's suffix; children with a *lower* slot index were visited before and follow in the next batch (one extra iteration).
+4. Every batch is split by `split_equal(n_ubatch, sequential)`; the hybrid memory passes `sequential = !unified` (`src/llama-memory-hybrid.cpp` lines 83-90), and production runs `--kv-unified`, so `sequential = false`: a ubatch takes the first sequence with unused tokens and then every other sequence with unused tokens, each with min(remaining) tokens (so a sequence in slot 0 and one in slot 2 share a pass); a sequence that finishes in a ubatch gets an output row. [Correction: the first version of this census used `sequential = true`, the setting of the pure recurrent memory, which only lets consecutive seq ids share a pass. The 20 traced requests are reproduced by both settings; they differ only for a two-question request in slots (0, 2). `census_lib.SPLIT_SEQUENTIAL` selects the setting; the DMK_TIMING `ubatch` lines (n_seqs) of a request with the child in a higher slot than the parent decide it on the running server.]
+5. Slot placement is decided by the server (least recently used among idle slots), not by the benchmark. All six placements of 2 or 3 questions on 3 slots are enumerated by `census_lib.arrangements()`.
+
+**Table 4: pass structures of a request for every slot placement** (example: prefix 81, suffixes 120/51 for two questions; prefix 1,288, suffixes 43/47/73 for three; a prefix above 2,048 tokens adds one more prefix pass)
+
+| request type | prefix + suffix tokens | passes (tokens = sequences x tokens per sequence) | slots of (Q0, Q1[, Q2]) that give it | placements of 6 | passes with N <= 8 (all-MMVQ) | traced requests with this structure |
+|---|---|---|---|---|---|---|
+| short-2q | 81 + [120, 51] | prefix 81 + 2 seq x 51 + 1 seq x 69 | (0,1) (0,2) (1,2) | 3 | 0 | 0 |
+| short-2q | 81 + [120, 51] | prefix 81 + 1 seq x 120 + 1 seq x 51 | (1,0) (2,0) (2,1) | 3 | 0 | 12 |
+| medium-3q | 1288 + [43, 47, 73] | prefix 1288 + 3 seq x 43 + 2 seq x 4 + 1 seq x 26 | (0,1,2) (0,2,1) | 2 | 1 | 2 |
+| medium-3q | 1288 + [43, 47, 73] | prefix 1288 + 2 seq x 43 + 1 seq x 30 + 1 seq x 47 | (1,0,2) | 1 | 0 | 0 |
+| medium-3q | 1288 + [43, 47, 73] | prefix 1288 + 2 seq x 43 + 1 seq x 4 + 1 seq x 73 | (1,2,0) | 1 | 1 | 3 |
+| medium-3q | 1288 + [43, 47, 73] | prefix 1288 + 1 seq x 43 + 2 seq x 47 + 1 seq x 26 | (2,0,1) (2,1,0) | 2 | 0 | 3 |
+
+Source: `census_lib.simulate_request()` (rules above) over `census_lib.arrangements()`; traced count = requests of `crosscheck-requests.tsv` whose observed passes are reproduced by that placement (the three captured request types: short two-question = triage, medium, long).
+
+In the traces the 12 short requests all ran the two suffixes as separate one-sequence passes (120, 51), never 2 x 51 + 69; with `sequential = false` this means the child's slot was below the parent's in all 12 (placements (1,0), (2,0), (2,1): the child runs one decode batch after the parent's suffix, the case of upstream PR #30779); the 8 three-question requests show three structures (3 x 43 + 2 x 4 + 26 twice, 43 + 2 x 47 + 26 three times, 2 x 43 + 4 + 73 three times); the parent slot rotated 1, 2, 0, 1 in the long trace and 2, 0, 1, 2 in the medium trace [INFERENCE: least-recently-used rotation; the arrangement of a production request is a function of the previous requests]. `crosscheck-requests.tsv` lists the matching placements of each traced request.
+
+## 4 Matmul shapes and the kernels they hit
+
+Rules (`ggml/src/ggml-cuda/ggml-cuda.cu` `ggml_cuda_mul_mat`, `mmq.cu/cuh`, `mmvq.cu`, `mmq-config-ampere.cuh`; every one reproduced by the traces): Q4_0/Q8_0 weights with N <= 8 columns use `mul_mat_vec_q` (MMVQ), otherwise `mul_mat_q` (MMQ, stream-k, 128-row tiles, 256 threads, tile width J chosen as the smallest of {8,16,24,32,40,48,64,80,96,112,128} (fallback tiles for M % 128 != 0: {8,16,32,64,128}) that gives the fewest column tiles); stream-k grid.x = number of tiles if the tile efficiency is >= 90 %, else min(38, work units) with a fix-up kernel when tiles % grid.x != 0. Every matmul has its own activation quantize kernel (`quantize_mmq_q8_1` or `quantize_q8_1`); there is no gate/up fusion for MMQ with Q4_0, so up and gate are two launches. MMVQ with N = 1 fuses gate+up+SwiGLU and down+residual add (`mul_mat_vec_q<Q4_0,1,fusion>`).
+
+**Table 5: kernel hit by every matmul shape for the N values of the benchmark passes** (cell = path, tile width J of `mul_mat_q<type,J,...>`, grid.x `g`, `+fix` = stream-k fix-up kernel follows; MMVQ cell = ncols_dst `n`, grid.x `g`; N = 1 is the last layer's FFN and the head of a pass with one output; the head has at most 3 outputs)
+
+| op | layers | weight type | M (rows) | K | N=1 | N=4 | N=8 | N=26 | N=43 | N=51 | N=86 | N=129 | N=1288 | N=2048 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| attn_qkv | 24 recurrent | Q8_0 | 8,192 | 2,560 | MMVQ n=1 g=8192 | MMVQ n=4 g=4096 | MMVQ n=8 g=4096 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=704 | MMQ J=128 g=1024 |
+| attn_gate (z) | 24 recurrent | Q8_0 | 4,096 | 2,560 | MMVQ n=1 g=4096 | MMVQ n=4 g=2048 | MMVQ n=8 g=2048 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=352 | MMQ J=128 g=512 |
+| ssm_beta | 24 recurrent | Q8_0 | 32 | 2,560 | MMVQ n=1 g=32 | MMVQ n=4 g=16 | MMVQ n=8 g=16 | MMQ J=32 g=10+fix | MMQ J=64 g=10+fix | MMQ J=64 g=10+fix | MMQ J=128 g=10+fix | MMQ J=128 g=20+fix | MMQ J=128 g=38+fix | MMQ J=128 g=38+fix |
+| ssm_alpha | 24 recurrent | Q8_0 | 32 | 2,560 | MMVQ n=1 g=32 | MMVQ n=4 g=16 | MMVQ n=8 g=16 | MMQ J=32 g=10+fix | MMQ J=64 g=10+fix | MMQ J=64 g=10+fix | MMQ J=128 g=10+fix | MMQ J=128 g=20+fix | MMQ J=128 g=38+fix | MMQ J=128 g=38+fix |
+| ssm_out | 24 recurrent | Q8_0 | 2,560 | 4,096 | MMVQ n=1 g=2560 | MMVQ n=4 g=1280 | MMVQ n=8 g=1280 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=220 | MMQ J=128 g=320 |
+| attn_q (+gate) | 8 attention | Q8_0 | 8,192 | 2,560 | MMVQ n=1 g=8192 | MMVQ n=4 g=4096 | MMVQ n=8 g=4096 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=704 | MMQ J=128 g=1024 |
+| attn_k | 8 attention | Q8_0 | 1,024 | 2,560 | MMVQ n=1 g=1024 | MMVQ n=4 g=512 | MMVQ n=8 g=512 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=38+fix | MMQ J=128 g=38+fix |
+| attn_v | 8 attention | Q8_0 | 1,024 | 2,560 | MMVQ n=1 g=1024 | MMVQ n=4 g=512 | MMVQ n=8 g=512 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=38+fix | MMQ J=128 g=38+fix |
+| attn_output | 8 attention | Q8_0 | 2,560 | 4,096 | MMVQ n=1 g=2560 | MMVQ n=4 g=1280 | MMVQ n=8 g=1280 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=220 | MMQ J=128 g=320 |
+| ffn_up | 32 (last: output rows only) | Q4_0 | 9,216 | 2,560 | MMVQ n=1 g=9216 | MMVQ n=4 g=4608 | MMVQ n=8 g=4608 | MMQ J=32 g=72 | MMQ J=48 g=72 | MMQ J=64 g=72 | MMQ J=96 g=72 | MMQ J=80 g=144 | MMQ J=128 g=792 | MMQ J=128 g=1152 |
+| ffn_gate | 32 (last: output rows only) | Q4_0 | 9,216 | 2,560 | MMVQ n=1 g=9216 | MMVQ n=4 g=4608 | MMVQ n=8 g=4608 | MMQ J=32 g=72 | MMQ J=48 g=72 | MMQ J=64 g=72 | MMQ J=96 g=72 | MMQ J=80 g=144 | MMQ J=128 g=792 | MMQ J=128 g=1152 |
+| ffn_down | 32 (last: output rows only) | Q4_0 | 2,560 | 9,216 | MMVQ n=1 g=2560 | MMVQ n=4 g=1280 | MMVQ n=8 g=1280 | MMQ J=32 g=38+fix | MMQ J=48 g=38+fix | MMQ J=64 g=38+fix | MMQ J=96 g=38+fix | MMQ J=80 g=38+fix | MMQ J=128 g=220 | MMQ J=128 g=320 |
+| output head (token_embd) | 1 (output rows only) | Q8_0 | 248,320 | 2,560 | MMVQ n=1 g=248320 | - | - | - | - | - | - | - | - | - |
+
+Source: `census_lib.matmul()` (tile and grid prediction); all 9,119 launches of `trace-mmq-launches.tsv` are reproduced with the same type, J, need_check, grid.x and fix-up (`crosscheck-passes.tsv`). ssm_beta and ssm_alpha (M = 32) always use the fallback tiles (`need_check = true`).
+
+**Table 6: the other kernels of a pass**
+
+| kernel group | rule | kernel | validated |
+|---|---|---|---|
+| quantize | one per matmul launch, immediately before it (`prev_quant_distance` = 1 in all 9,119 launches) | `quantize_mmq_q8_1` (MMQ) / `quantize_q8_1` (MMVQ) | 72/72 passes |
+| Gated DeltaNet (24 layers) | tokens per sequence >= 64: tensor-core chunk kernel; fewer: recurrent kernel | `gdn_single<16,128,1>` grid 32 x 1 x 1 (x sequences) / `gated_delta_net_cuda<128,false,false,4>` grid 32 x S x 8 | 10/10 kernel/grid classes |
+| flash attention (8 layers) | `flash_attn_ext_f16<256,256,ncols1,4>`, ncols1 = 2/4/8/16 for N <= 2/4/8/more (gqa 4, F16 K/V, MMA path of cc 8.6) | + one stream-k fix-up kernel per layer | 7/7 kernel classes |
+| state gather / write-back | `k_get_rows_float_vec` gathers the S states of the pass (grid.x = S), `cpy` writes them back; 2.1 MB state per layer and sequence | get_rows + cpy per layer | grid.x = S in all passes (`trace-kernels.tsv`) |
+| other (about 577 launches) | rms_norm, conv1d (`ssm_conv*`), silu/sigmoid gating, elementwise, rope, set_rows (KV cache) | see `trace-kernels.tsv` | counts per pass in `trace-passes.tsv` |
+
+Source: `ggml/src/ggml-cuda/gated-delta-net-mma.cu` (`select_gdn_mma_path`), `fattn.cu`, `llama-graph.cpp` `build_rs`; counts from `crosscheck-summary.tsv` and `crosscheck-kernels.tsv`.
+
+## 5 Census per pass type
+
+**Table 7: every distinct pass of the representative requests** (the median case of each task, every slot structure)
+
+| pass kind | N (tokens) | sequences | output rows | MMQ launches | MMVQ launches | MMQ fix-up kernels (pred.) | GDN kernel | FA ncols1 | matmul work (GFLOP) | padded tile work (GOP) | weight bytes read (MB) | weight floor (ms) | int8 floor (ms) | serial roofline floor (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| prefix | 84 | 1 | 0 | 245 | 0 | 183 | gdn_single<16,128,1> | 16 | 587.7 | 674.9 | 2,620 | 5.85 | 4.06 | 11.8 |
+| prefix | 86 | 1 | 0 | 245 | 0 | 183 | gdn_single<16,128,1> | 16 | 601.7 | 674.9 | 2,620 | 5.85 | 4.16 | 12.0 |
+| prefix | 1,173 | 1 | 0 | 245 | 0 | 127 | gdn_single<16,128,1> | 16 | 8,207.0 | 8,985.9 | 2,620 | 5.85 | 56.68 | 129.7 |
+| prefix | 1,288 | 1 | 0 | 245 | 0 | 64 | gdn_single<16,128,1> | 16 | 9,011.7 | 9,884.5 | 2,620 | 5.85 | 62.23 | 133.2 |
+| prefix | 2,048 | 1 | 0 | 245 | 0 | 64 | gdn_single<16,128,1> | 16 | 14,329.1 | 14,377.4 | 2,620 | 5.85 | 98.96 | 214.6 |
+| suffix | 8 | 2 | 1 | 0 | 248 | 0 | gated_delta_net_cuda | 8 | 57.4 | 57.3 | 3,335 | 7.44 | 0.40 | 9.4 |
+| suffix | 13 | 1 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 92.4 | 113.7 | 3,335 | 7.44 | 0.64 | 9.0 |
+| suffix | 26 | 1 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 183.3 | 226.0 | 3,335 | 7.44 | 1.27 | 9.9 |
+| suffix | 30 | 1 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 211.3 | 226.0 | 3,335 | 7.44 | 1.46 | 10.2 |
+| suffix | 43 | 1 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 302.3 | 338.8 | 3,335 | 7.44 | 2.09 | 11.0 |
+| suffix | 47 | 1 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 330.3 | 338.8 | 3,335 | 7.44 | 2.28 | 11.3 |
+| suffix | 51 | 1 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 358.2 | 450.7 | 3,335 | 7.44 | 2.47 | 11.4 |
+| suffix | 54 | 1 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 379.2 | 450.7 | 3,335 | 7.44 | 2.62 | 11.6 |
+| suffix | 67 | 1 | 1 | 245 | 3 | 183 | gdn_single<16,128,1> | 16 | 470.2 | 564.5 | 3,335 | 7.44 | 3.25 | 12.4 |
+| suffix | 69 | 1 | 1 | 245 | 3 | 183 | gdn_single<16,128,1> | 16 | 484.2 | 564.5 | 3,335 | 7.44 | 3.34 | 12.5 |
+| suffix | 86 | 2 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 603.1 | 676.3 | 3,335 | 7.44 | 4.17 | 14.6 |
+| suffix | 94 | 2 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 659.1 | 676.3 | 3,335 | 7.44 | 4.55 | 15.2 |
+| suffix | 102 | 2 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 715.1 | 788.1 | 3,335 | 7.44 | 4.94 | 15.3 |
+| suffix | 108 | 2 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 757.0 | 788.1 | 3,335 | 7.44 | 5.23 | 15.7 |
+| suffix | 120 | 1 | 1 | 245 | 3 | 183 | gdn_single<16,128,1> | 16 | 841.0 | 900.0 | 3,335 | 7.44 | 5.81 | 15.9 |
+| suffix | 129 | 3 | 1 | 245 | 3 | 183 | gated_delta_net_cuda | 16 | 904.0 | 1,127.6 | 3,335 | 7.44 | 6.24 | 18.5 |
+| single | 151 | 1 | 1 | 245 | 3 | 183 | gdn_single<16,128,1> | 16 | 1,057.9 | 1,127.6 | 3,335 | 7.44 | 7.31 | 18.5 |
+| single | 158 | 1 | 1 | 245 | 3 | 183 | gdn_single<16,128,1> | 16 | 1,106.9 | 1,127.6 | 3,335 | 7.44 | 7.64 | 19.1 |
+
+Source: `census-passes.tsv` from `03_census.py` (`census_lib.pass_costs`). Weight floor = weight bytes / 448 GB/s; int8 floor = matmul FLOPs / 144.8 TOPS; serial roofline floor = sum over kernels of max(bytes / 448 GB/s, ops / peak) with all activation traffic assumed to come from DRAM (an upper bound for small N, where tensors fit the 4 MiB L2), FP32 peak 18.1 TFLOPS for the GDN kernels, FP16-tensor peak = int8 / 4 for flash attention [INFERENCE: GeForce GA10x FP16 with FP32 accumulate]. Prefix passes have no outputs: no head, no last-layer FFN. Full per-op rows: `census.tsv`; per-launch order: `census-sequence.tsv`.
+
+## 6 Census per request type
+
+### 6.1 Per request (Table 8)
+
+| request type | slot structure (sequences per pass; P = prefix) | cases x slot placements | passes | prompt tokens counted by the API (tokens) | tokens evaluated (tokens) | MMQ launches | MMVQ launches | matmul work (GFLOP) | weight bytes read (GB) | weight floor (ms) | int8 floor (ms) | max(weight, int8) per pass, summed (ms) | serial roofline floor (ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| short-1q | all (uniform over slot arrangements) | 12 | 1 | 152 | 152 | 245 | 3 | 1,063 | 3.33 | 7.4 | 7.3 | 7.7 | 18.5 |
+| short-2q | all (uniform over slot arrangements) | 120 | 3 | 319 | 235 | 735 | 6 | 1,648 | 9.29 | 20.7 | 11.4 | 20.7 | 38.1 |
+| short-2q | P1 S1 S1 | 60 | 3 | 319 | 235 | 735 | 6 | 1,648 | 9.29 | 20.7 | 11.4 | 20.7 | 37.8 |
+| short-2q | P1 S2 S1 | 60 | 3 | 319 | 235 | 735 | 6 | 1,648 | 9.29 | 20.7 | 11.4 | 20.7 | 38.4 |
+| medium-3q | all (uniform over slot arrangements) | 48 | 4 | 3,930 | 1,419 | 858 | 132 | 9,931 | 12.62 | 28.2 | 68.6 | 83.0 | 166.4 |
+| medium-3q | P1 S1 S2 S1 | 16 | 4 | 3,930 | 1,419 | 980 | 9 | 9,931 | 12.62 | 28.2 | 68.6 | 83.0 | 165.9 |
+| medium-3q | P1 S2 S1 S1 | 16 | 4 | 3,930 | 1,419 | 858 | 132 | 9,931 | 12.62 | 28.2 | 68.6 | 83.0 | 165.9 |
+| medium-3q | P1 S3 S2 S1 | 16 | 4 | 3,930 | 1,419 | 735 | 254 | 9,931 | 12.62 | 28.2 | 68.6 | 83.0 | 167.5 |
+| long-3q | all (uniform over slot arrangements) | 48 | 5 | 9,699 | 3,342 | 1,102 | 132 | 23,385 | 15.24 | 34.0 | 161.5 | 175.9 | 377.4 |
+| long-3q | P1 P1 S1 S2 S1 | 16 | 5 | 9,699 | 3,342 | 1,225 | 9 | 23,385 | 15.24 | 34.0 | 161.5 | 175.9 | 376.8 |
+| long-3q | P1 P1 S2 S1 S1 | 16 | 5 | 9,699 | 3,342 | 1,102 | 132 | 23,385 | 15.24 | 34.0 | 161.5 | 175.9 | 376.9 |
+| long-3q | P1 P1 S3 S2 S1 | 16 | 5 | 9,699 | 3,342 | 980 | 254 | 23,385 | 15.24 | 34.0 | 161.5 | 175.9 | 378.6 |
+
+Source: `census-summary.tsv` (ref variant; means over the cases of the type and over the slot placements of the structure; the first row of a type is the mean over all six placements, weights of the placements unknown). The raw variant (no `Ref:` line) and the per-task rows (check, commit, triage, style) are in the same file. Rooflines as in Table 7.
+
+Sharing the prefix saves tokens, not passes: the three-question requests evaluate 1,419 (medium) and 3,342 (long) tokens instead of the 3,930 and 9,699 that the API counts, but need 4 and 5 passes of the whole model.
+
+### 6.2 Where the FLOPs go (Table 9)
+
+| request type | matmul (GFLOP) | flash attention, causal (GFLOP) | Gated DeltaNet (GFLOP) | matmul share of FLOPs (%) | recurrent-state traffic, read+write (GB) | activation traffic of quantize, matmul output and element-wise ops (GB) |
+|---|---|---|---|---|---|---|
+| short-1q | 1,063 | 2 | 11 | 98.8 | 0.48 | 4.0 |
+| short-2q | 1,648 | 3 | 18 | 98.8 | 1.34 | 6.1 |
+| medium-3q | 9,931 | 131 | 107 | 97.7 | 3.39 | 37.0 |
+| long-3q | 23,385 | 733 | 252 | 96.0 | 5.98 | 87.2 |
+
+Source: `census-summary.tsv` (ref variant, mean over all slot placements). Attention FLOPs = 4 x 256 x 16 heads x visible keys per layer (causal); the K/V window of the model is the request's own cells padded to 256 (the traces show wider windows, section 9 item 5). Activation traffic is a per-op estimate (`census_lib.side_ops`, [INFERENCE], not traced).
+
+### 6.3 Output head: rows computed vs rows needed (Table 10)
+
+| request type | task | questions | passes with the head | head rows computed per request (rows) | head rows the API reads per request (rows) | head weight bytes read (MB) | head weight bytes needed (MB) | head weight read time at 448 GB/s (ms) |
+|---|---|---|---|---|---|---|---|---|
+| short-1q | check | 1 | 1 | 248,320 | 2 | 675 | 0.005 | 1.51 |
+| short-1q | commit | 1 | 1 | 248,320 | 2 | 675 | 0.005 | 1.51 |
+| short-2q | triage | 2 | 2 | 496,640 | 8 | 1,351 | 0.022 | 3.02 |
+| short-2q | style | 2 | 2 | 496,640 | 4 | 1,351 | 0.011 | 3.02 |
+| medium-3q | syslog-medium | 3 | 3 | 744,960 | 8 | 2,026 | 0.022 | 4.52 |
+| long-3q | syslog-long | 3 | 3 | 744,960 | 8 | 2,026 | 0.022 | 4.52 |
+
+Source: `census-head.tsv`. Computed rows = one output row per question x 248,320 vocabulary rows (MMVQ, N = 1; confirmed by the trace: `mul_mat_vec_q<Q8_0,1>` grid.x 248,320 and a 993,280 B logits copy per output). Needed rows = the answer tokens of the question options (2 for an on/off question, 4-6 for a choice question; `decision.labels` has 255 entries in total), read from `token-counts.tsv` `n_options`; the read-out happens on the host from the full logits row.
+
+## 7 Trace census (three Nsight Systems captures)
+
+`trace-passes.tsv`, `trace-kernels.tsv`, `trace-mmq-launches.tsv` were exported by `trace_export.sh` + `trace_census.py` from the three old Nsight Systems captures `short`, `medium` and `long` (the README of the data set names them; `trace_census.py` prints the validation of the pass segmentation). Captured requests: 12 short (triage00-11), 4 medium, 4 long; one stream; no CUDA graph launched in any captured pass.
+
+**Table 11: launches and in-pass gaps per pass class (median over the passes of the class)**
+
+| trace | pass class | passes | N (tokens) | kernels per pass | main MMQ | stream-k fix-up | MMVQ | quantize | flash attention (main + fix-up) | GDN | pass wall, first kernel start to last end (ms) | GPU busy (ms) | gap total in the pass (ms) | gap share of wall (%) | gaps > 5 us per pass | gaps > 20 us per pass |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| long | prefix-large | 4 | 2048-2048 | 1,166 | 245 | 64 | 0 | 245 | 16 | 24 | 420.9 | 419.9 | 0.84 | 0.20 | 0 | 0 |
+| long | prefix-small | 4 | 908-1377 | 1,146 | 245 | 96 | 0 | 245 | 16 | 24 | 248.8 | 247.9 | 0.84 | 0.35 | 0 | 0 |
+| long | suffix, MMQ path | 9 | 26-129 | 1,296 | 245 | 183 | 3 | 248 | 16 | 24 | 28.4 | 27.5 | 0.97 | 4.01 | 4 | 0 |
+| long | suffix, MMVQ path (N<=8) | 3 | 4-8 | 1,065 | 0 | 0 | 248 | 248 | 16 | 24 | 24.0 | 12.1 | 12.04 | 47.57 | 8 | 2 |
+| medium | prefix-small | 4 | 1037-1360 | 1,166 | 245 | 64 | 0 | 245 | 16 | 24 | 274.3 | 273.4 | 0.85 | 0.31 | 0 | 0 |
+| medium | suffix, MMQ path | 10 | 26-129 | 1,296 | 245 | 183 | 3 | 248 | 16 | 24 | 24.3 | 23.4 | 0.96 | 4.28 | 4 | 0 |
+| medium | suffix, MMVQ path (N<=8) | 2 | 4-8 | 1,065 | 0 | 0 | 248 | 248 | 16 | 24 | 14.6 | 13.8 | 0.76 | 5.32 | 3 | 0 |
+| short | prefix-small | 12 | 75-105 | 1,285 | 245 | 183 | 0 | 245 | 16 | 24 | 26.3 | 25.4 | 0.93 | 3.57 | 4 | 0 |
+| short | suffix, MMQ path | 24 | 51-120 | 1,272 | 245 | 183 | 3 | 248 | 16 | 24 | 29.8 | 28.9 | 0.91 | 3.30 | 3 | 0 |
+
+Source: `trace-passes.tsv` (`row_kind = pass`; gap = start of kernel i+1 minus end of kernel i inside one pass, one stream). The long MMVQ-path row contains two one-time lazy module loads of 11.4 and 12.6 ms (printed by `trace_census.py`).
+
+**Table 12: gap totals per trace** (count / total ms for the histogram columns)
+
+| trace | passes | kernels | first kernel start to last kernel end (ms) | GPU busy (ms) | gap total (ms) | of which inside passes (ms) | of which between passes (ms) | in-pass gaps < 1 us (count / ms) | 1-5 us (count / ms) | 5-20 us (count / ms) | 20-100 us (count / ms) | > 100 us (count / ms) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| long | 20 | 23,905 | 3,174.7 | 2,973.3 | 201.4 | 43.9 | 157.5 | 22,098 / 15.2 | 1,666 / 2.4 | 109 / 1.2 | 9 / 0.48 | 3 / 24.6 |
+| medium | 16 | 19,546 | 1,442.7 | 1,357.3 | 85.4 | 14.7 | 70.7 | 18,429 / 12.7 | 1,035 / 1.2 | 65 / 0.7 | 1 / 0.03 | 0 / 0.0 |
+| short | 36 | 45,948 | 1,107.9 | 989.6 | 118.2 | 33.8 | 84.4 | 43,530 / 29.9 | 2,254 / 2.6 | 126 / 1.2 | 2 / 0.07 | 0 / 0.0 |
+
+Source: `trace-passes.tsv` (`row_kind = trace_total`). Between-pass gaps are idle time of the GPU between two `llama_decode` calls (input copies, logits copy, sampling, HTTP); the > 100 us in-pass gaps of the long trace are one-time lazy module loads.
+
+## 8 Cross-check: analytic census against the traces
+
+### 8.1 What agrees (Table 13)
+
+| check | passed | compared | all passed |
+|---|---|---|---|
+| matmul count (MMQ) per pass | 72 | 72 | yes |
+| matmul count (MMVQ) per pass | 72 | 72 | yes |
+| stream-k fix-up launches per pass | 72 | 72 | yes |
+| quantize launches per pass | 72 | 72 | yes |
+| flash attention launches per pass | 72 | 72 | yes |
+| Gated DeltaNet launches per pass | 72 | 72 | yes |
+| launch keys (type, tile, need_check, grid.x, fix-up) identical as multiset, passes with launch records | 37 | 37 | yes |
+| flash-attention K/V window (padded n_kv) per pass | 33 | 72 | NO |
+| pass sequence of the request reproduced by a slot arrangement | 20 | 20 | yes |
+| tokens evaluated per request = shared prefix + sum of suffixes | 20 | 20 | yes |
+| flash-attention kernel template (ncols1) over the whole trace | 7 | 7 | yes |
+| Gated DeltaNet kernel and grid (sequences) over the whole trace | 10 | 10 | yes |
+
+Source: `crosscheck-summary.tsv` from `04_crosscheck.py` (`crosscheck-requests.tsv`, `crosscheck-passes.tsv`, `crosscheck-keys.tsv`, `crosscheck-kernels.tsv`). Matmul launches are compared as multisets per pass because ggml executes the graph depth-first (the attention_gate matmul of a recurrent layer runs after the delta-net, not next to attn_qkv). The launch listing of `trace-mmq-launches.tsv` covers the first pass of each distinct (trace, pass kind, N): 37 of the 72 passes; equal-shape passes have identical grids (checked in `trace_census.py`).
+
+### 8.2 Observed pass time against the floors (Table 14)
+
+| pass class (all traces) | passes | N (tokens) | observed GPU busy under nsys (ms) | weight floor (ms) | int8 floor (ms) | serial roofline floor (ms) | busy / max(weight, int8) | busy / roofline |
+|---|---|---|---|---|---|---|---|---|
+| prefix, N<200 | 12 | 75-105 | 25.4 | 5.85 | 4.11 | 11.9 | 4.34 | 2.11 |
+| prefix, N>=200 | 12 | 908-2048 | 276.7 | 5.85 | 65.16 | 139.6 | 4.31 | 1.98 |
+| suffix, N<=8 | 5 | 4-8 | 12.1 | 7.44 | 0.20 | 8.6 | 1.63 | 1.41 |
+| suffix, N>8 | 43 | 26-129 | 26.1 | 7.44 | 3.54 | 13.5 | 3.51 | 2.03 |
+
+Source: `crosscheck-passes.tsv` (medians; model passes chosen to reproduce each traced request). The trace includes nsys overhead (an earlier estimate is about 3 % for long and 25 % for short requests; not verified here). Per-pass rows: `crosscheck-passes.tsv`.
+
+### 8.3 Where the observed time goes and the rate of the matmul kernels (Table 15)
+
+| pass class (all traces) | passes | GPU busy (ms) | MMQ + stream-k fix-up kernels (ms) | MMVQ kernels (ms) | quantize kernels (ms) | flash attention incl. mask + fix-up (ms) | Gated DeltaNet kernels (ms) | all other kernels (ms) | model int8 work of the MMQ launches (GFLOP) | MMQ rate (int8 TOPS) | MMQ rate (% of 144.8 TOPS) | model weight bytes of the MMVQ launches (MB) | MMVQ weight rate (GB/s) | MMVQ weight rate (% of 448 GB/s) |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| prefix, N<200 | 12 | 25.4 | 17.76 | 0.00 | 1.04 | 0.37 | 1.71 | 4.51 | 595 | 33.0 | 23 | 0 | - | - |
+| prefix, N>=200 | 12 | 276.7 | 179.12 | 0.00 | 15.42 | 10.86 | 21.18 | 53.30 | 9,435 | 53.2 | 37 | 0 | - | - |
+| suffix, N<=8 | 5 | 12.1 | 0.00 | 9.14 | 0.41 | 0.36 | 0.25 | 1.76 | 0 | - | - | 3,335 | 365 | 81 |
+| suffix, N>8 | 43 | 26.1 | 16.24 | 1.75 | 0.92 | 0.63 | 2.19 | 3.93 | 511 | 31.5 | 22 | 715 | 408 | 91 |
+
+Source: `crosscheck-passes.tsv` (medians over the passes of the class; kernel times from `trace-passes.tsv` category sums; rate = model work or bytes / observed kernel time of the category, so the MMQ rate counts useful FLOPs, not padded tile work, and includes the stream-k fix-up kernels; in the N > 8 suffix class the 3 MMVQ launches are the fused last-layer FFN and the 675 MB output head). Under nsys; an earlier estimate of the MMQ rate was 52 TOPS (36 %): the same quantity.
+
+## 9 Discrepancies and corrections
+
+Each item: what the first version of the model (or an earlier estimate) assumed, what the source or trace shows, and what the census now does.
+
+1. **Passes are not formed by distinct suffix lengths alone.** First model: all active sequences with the same remaining length share a pass (3 x 43, then 2 x 4, then 1 x 26). Traces: that holds for 2 of 8 three-question requests; the others ran 43 + 2 x 47 + 26 or 2 x 43 + 4 + 73, and all 12 two-question requests ran 120 and 51 as separate passes. Cause: slot order in `update_slots()` (a child below the parent follows in the next batch; section 3.2) and `split_equal(sequential = false)` of the hybrid memory (the first version of the census assumed `sequential = true`; see 3.2 rule 4). Census: `simulate_request()` over all slot placements; the pass count per request is the same in every placement, the N of the passes differs, and the all-MMVQ pass (N <= 8) exists only in the structure 3 x 43 + 2 x 4 + 26.
+2. **The last layer's FFN at one output row is two fused MMVQ launches, not three.** First model: up, gate, down. Trace: `mul_mat_vec_q<Q4_0,1,fusion>` grid 9,216 (gate+up+SwiGLU) and grid 2,560 (down + residual add); a pass with an output therefore has 245 MMQ + 3 MMVQ (fused up/gate, fused down, head) = 248 matmul launches, and 248 MMVQ in an N <= 8 pass. Fixed in `pass_matmuls()`.
+3. **A second Gated DeltaNet kernel.** First model: only `gated_delta_net_cuda`. Trace: `gdn_single<16,128,1>` (tensor-core chunk kernel, grid 32 x S x 1) in every pass with >= 64 tokens per sequence (all prefix passes, 73- and 120-token suffix passes); the 4/26/43/51-token passes (also 2 x 43 tokens) use the recurrent kernel. Fixed in `gdn_cost()`.
+4. **Graph order is not creation order.** The census-sequence order (qwen35.cpp node order) does not match the launch order in the trace (for example ssm_beta/ssm_alpha follow attn_qkv, attn_gate follows the delta-net). The cross-check compares multisets per pass; `census-sequence.tsv` is a list of the matmuls of a pass, not a schedule.
+5. **The flash-attention K/V window is wider than the request's own cells.** First model: n_kv = the highest position of the request, padded to 256. Trace (derived from the mask copy): equal in 33 of 72 passes, larger in the rest by up to 5.0x (for example 5,376 cells for a 2,048-token prefix pass); never smaller. [INFERENCE] cause: cells of idle slots stay in the unified cache. Not corrected in the model (needs the slot history). Effect: the attention FLOPs and the attention mask (N x n_kv x 2 B per pass, host to device) are larger than modelled for those passes; whether the flash-attention kernel time grows with the window was not measured.
+6. **Recurrent-state copies.** The model assumes the gather of S states plus a write-back per layer (get_rows grid.x = S in all passes, confirmed). The three 86-token suffix passes (2 sequences x 43 tokens, structure 2 + 1 + 1) additionally contain 48 device-to-device copies of 2.2 MB (about 1 ms per pass, column `d2d_gpu_in_pass_ms` of `trace-passes.tsv`); [INFERENCE] the third sequence's recurrent cell lies between the two used cells and is copied as well. Not in the model.
+7. **Kernel counts per pass.** An earlier estimate was about 1,280 launches per pass; the traces show 1,065-1,296 (1,166 for 2,048-token prefix passes; 1,248 or 1,296 for suffix passes with the MMQ path; 1,065 for N <= 8). 245 MMQ launches per pass is exact. The census counts only matmul, quantize, flash-attention and GDN launches (the rest is in `trace-kernels.tsv`).
+8. **Main MMQ grid.x is not always 38.** It is the tile count when the tile efficiency is >= 90 % (for example 1,024 and 72) and 38 or 10 with a fix-up kernel otherwise; the model predicts every observed value (Table 5, `crosscheck-keys.tsv` is empty).
+9. **Token counts**: the sum of the question prompts per request (what the API counts) matches the production run exactly for the raw variant (Table 3). The traced short requests use a random `Ref:` value, so their prefix length varies by a few tokens; the cross-check takes the observed prefix length and the plan's suffix lengths.
+10. **Not verifiable here**: the nsys overhead (3 % long, 25 % short, earlier estimate), the frequency of the slot placements in production, and the cause of the wider K/V window (item 5). No untraced measurement was made.
+
+## 10 Limits, GPU needs, files
+
+**What needs the GPU**: nothing. All steps (`run_all.sh`) run on the CPU: steps 1 and 2 need the model file and the tokenizer, the trace step needs the three captures, steps 3 to 5 need only the data set. For phase 3 the model gives measurement targets that do need the GPU (not run here): the time per kernel class at the N values of Table 7, the pass time for N <= 8 against the 7.44 ms weight floor, and the slot placement distribution of a production-like request stream.
+
+**Assumptions of the analytic columns**: FLOPs are 2 x M x N x K per matmul (padded tile work is in `padded_gops`); weight bytes are the file sizes (34 / 18 bytes per 32 elements); floors use the nominal 448 GB/s and 144.8 int8 TOPS (1,861 MHz); the FP16 and FP32 peaks and the element-wise traffic per layer (`census_lib.side_ops`) are [INFERENCE]; the K/V window is the request's own cells (item 5).
+
+**Files** (the code is in `harness/profile/census/`; the inputs and tables are in the data set `data/2026-10-30-shape-census/`):
+
+| file | content |
+|---|---|
+| `run_all.sh` | lists every step with its inputs and runs them (steps 1-5 and the trace step) |
+| `01_gguf_header.py` | -> `tensors.tsv` (426 tensors), `hparams.tsv`, `layers.tsv` (reads the header of the GGUF file) |
+| `02_tokens.py` | -> `token-counts.tsv`, `cases-plan.tsv`, `token-check.tsv`, `ref-line-tokens.tsv` (reads the template, the labels and the vocabulary of the GGUF file) |
+| `census_lib.py` | the analytic model: MMQ / MMVQ launch prediction, `pass_matmuls`, `gdn_cost`, `attn_cost`, `simulate_request`, `pass_costs` |
+| `03_census.py` | -> `census.tsv`, `census-sequence.tsv`, `census-passes.tsv`, `request-floors.tsv`, `census-cases.tsv` (48 cases x raw/ref x slot placements), `census-summary.tsv`, `census-head.tsv` |
+| `trace_export.sh`, `trace_census.py` | -> `trace-kernels.tsv`, `trace-passes.tsv`, `trace-mmq-launches.tsv` (reads the three old captures; the captures are not in the data set) |
+| `04_crosscheck.py` | -> `crosscheck-requests.tsv`, `crosscheck-passes.tsv`, `crosscheck-keys.tsv`, `crosscheck-kernels.tsv`, `crosscheck-summary.tsv` |
+| `05_report.py` | -> this report (every table is generated from the TSVs) |
+
+Source: `harness/profile/census/`.
+
