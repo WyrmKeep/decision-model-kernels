@@ -616,7 +616,9 @@ Thus the rule does not stop the project at the checkpoint. The budget of the pro
 
 ## The next steps
 
-No target has code at the checkpoint. The target `E` has a measurement as a lead, and the project does not use it in production. The owner selects the next target. Each target that the project does gets a prediction entry, a result entry, and a change document.
+No target had code at the checkpoint. The target `E` had a measurement as a lead, and the project did not use it in production. This document stops at the checkpoint.
+
+After the checkpoint, the owner approved phase 5. The owner approved the sequence of the ranked list. The project can operate the GPU when it is necessary. A build with the changes can go into production after its tests. Each target that the project does gets a prediction entry, a result entry, and a change document. The [notebook](notebook/README.md) has the entries of phase 5.
 
 The [conditions of the README](../README.md#condition-of-each-change) show the state of each target.
 

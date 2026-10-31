@@ -15,12 +15,12 @@ The project has no model files. You can download the model from Hugging Face. Th
 
 ## Where the project is at this time
 
-The project is at the checkpoint of phase 4. We measured where the time goes. We ranked the possible changes and wrote a prediction for each one. The code of llama.cpp has no change at this time.
+Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked list. The owner also lets the project operate the GPU when it is necessary. Each change has a different branch. Each change gets a prediction, its tests of correctness, a speed test and a change document. The [notebook](docs/notebook/README.md) shows each result when it is complete.
 
 - A request uses 2.13 to 2.45 times its roofline floor.
 - The GPU runs a kernel for 90 % to 94 % of the time of a request. The host is not the limit.
-- The ranked list has 15 targets. The first change to use is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
-- The owner selects the next step from the [ranked list](docs/notebook/2026-10-31-phase4-ranked-targets.md).
+- The ranked list has 15 targets. The first change is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
+- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and target `E`.
 
 ## How we got here
 
@@ -171,20 +171,21 @@ The folder `data/` has these data sets.
 
 ## Condition of each change
 
-No change has a change document at this time. A change gets its number when it gets its document. The table shows the changes in the sequence of work of the [phase 4 entry](docs/notebook/2026-10-31-phase4-ranked-targets.md#recommended-sequence). The owner selects the budget and the next step.
+A change gets its number when it gets its document. The table shows the changes in the sequence of work of the [phase 4 entry](docs/notebook/2026-10-31-phase4-ranked-targets.md#recommended-sequence). Each change starts from the branch `dmk/stack` and we compare it with the build of that branch.
 
 | Target | Change | Equivalence class | Condition |
 |---|---|---|---|
-| `E` | Pull request #30489: GLU fused into the quantization of the activation | `exact` | First in the sequence. Measured as a lead: `lat_ms` is 1.94 % lower. Not in production. |
-| `D` | Value-split path of `gdn_single` | `exact` | Second in the sequence. Not started. |
-| `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | Second in the sequence. Not started. |
-| `A` | Output head for the answer tokens only | `exact` | Third in the sequence. Not started. |
-| `B` | Attention mask on the GPU | `exact` | Fourth in the sequence. Not started. |
-| `C` | Concat folded into `ssm_conv` | `exact` | Fourth in the sequence. Not started. |
-| `G` | MMQ as a pipeline with `cp.async` tile loads | `exact` | Fifth in the sequence. Not started. |
-| `J` | Ragged batching for the suffixes of the questions | `re-associated` | Sixth in the sequence. Not started. |
+| `E` | Pull request #30489: GLU fused into the quantization of the activation | `exact` | Measured as a lead: `lat_ms` is 1.94 % lower. In the branch `dmk/stack`. Not in production. |
+| `D` | Value-split path of `gdn_single` | `exact` | In work. |
+| `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | In work. |
+| `A` | Output head for the answer tokens only | `exact` | In work. |
+| `B` | Attention mask on the GPU | `exact` | In work. |
+| `C` | Concat folded into `ssm_conv` | `exact` | In work. |
+| `P` | A smaller number of stream synchronizations in a pass | `exact` | In work. |
+| `G` | MMQ as a pipeline with `cp.async` tile loads | `exact` | After `H`. Not started. |
+| `J` | Ragged batching for the suffixes of the questions | `re-associated` | Not started. |
 
-The targets `F`, `L`, `P`, `K` and `O` come after these changes, if the rule to stop does not stop the project. The phase 4 entry does not recommend `N` and `M`.
+The targets `F`, `L`, `K` and `O` come after these changes, if the rule to stop does not stop the project. The phase 4 entry does not recommend `N` and `M`.
 
 ## Standard for the text
 
