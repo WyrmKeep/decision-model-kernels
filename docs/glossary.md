@@ -190,6 +190,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | GDN | technical name | The short name of Gated DeltaNet. |
 | GEMM | technical name | The operation that multiplies one matrix with a different matrix. A model layer does it with its weights and the activations of the tokens. |
 | GFLOP | technical name | The unit of 10^9 floating point operations. A multiply-add counts as 2 operations. |
+| ggml | technical name | The library of llama.cpp that has the tensors, the graph, the scheduler, and the backends. |
 | GGUF | technical name | The type of file that holds a model for llama.cpp. |
 | git | technical name | The program that keeps all changes of the code in a repository. |
 | git push | technical noun | One use of the command `git push`. It sends commits to a remote. |
@@ -223,6 +224,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | Hugging Face | technical name | A server that keeps model files. You can download the files from it. |
 | hybrid memory | technical noun | The memory code of llama.cpp for a hybrid model. It keeps the KV cache of the attention layers and the layer states of the recurrent layers. |
 | hybrid model | technical noun | A model that has attention layers and recurrent layers. |
+| I | technical name | The short name of the build of `L` with the change 0007. Arm I uses it. |
 | idle time | technical noun | The time in which the GPU runs no kernel. |
 | image | technical noun | A program with all the files that it must have. A container tool starts a container from an image. |
 | image ID | technical noun | The SHA-256 name that a host gives to a local image. |
@@ -426,6 +428,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | scan | technical noun | One time that the publication gate or gitleaks scans text. A scan gives a list of items or no item. |
 | scan | technical verb | To read the files and the history of a repository and to find private data. |
 | schedule | technical noun | A text file with one line for each run. The harness does the lines in the sequence of the file. |
+| scheduler | technical noun | The part of ggml that gives the nodes of a graph to the backends. It also uploads the inputs of each part of the graph. |
 | script | technical noun | A short program that a person writes in a file of text. |
 | secret | technical noun | A text that gives access to a server. An access token and an access key are secrets. A person must not give a secret to other persons. |
 | section | technical noun | A heading and the text below it until the next heading of the same level or a higher level. |
