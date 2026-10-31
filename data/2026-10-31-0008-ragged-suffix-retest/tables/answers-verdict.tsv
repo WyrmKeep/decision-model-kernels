@@ -1,0 +1,9 @@
+rule	measure	build_b	build_a	ratio_b_to_a	limit	result	note
+max_abs_dp of -np 3 against arm A with -np 1	max_abs_dp	0.019074	0.022426	0.851	1.5	pass	Arm B runs a and b: 0.019074, 0.019074. Arm A runs a and b: 0.022426, 0.022426. Each side uses the larger value of its two runs.
+mean_abs_dp of -np 3 against arm A with -np 1	mean_abs_dp	0.002036	0.002342	0.869	1.5	pass	Arm B runs a and b: 0.002036, 0.002036. Arm A runs a and b: 0.002342, 0.002342. Each side uses the larger value of its two runs.
+Top answer of the decisions	decisions with a different top answer in arm B that arm A does not have	0	0		0	pass	Arm B -np 3 against arm A -np 1: no decision. Arm A -np 3 against arm A -np 1: no decision.
+self_repeat of arm B	the two runs of arm B with -np 3 are the same bit for bit	True			True	pass	
+self_repeat of arm A	the two runs of arm A with -np 3 are the same bit for bit		True		True	pass	
+Arm B with -np 1 against arm A with -np 1	the answers are the same bit for bit	True			True	pass	max_abs_dp 0.000000, decisions with a difference 0
+52-decision set	correct decisions	48	48		equal	pass	Items with a different top answer: 0. The table dectest-items.tsv has each item.
+Guards of the benchmark and errors	runs of the private benchmark with all guards true and 0 errors	15	15		all	pass	

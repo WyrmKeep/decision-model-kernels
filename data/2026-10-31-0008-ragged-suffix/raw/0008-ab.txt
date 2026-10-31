@@ -1,0 +1,18 @@
+# make_schedule.py --prefix ragged0008-bench --blocks 4 --seed 80080 --arm A=build:lead-30489 --arm B=build:0008-ragged-suffix --kind bench
+bench ragged0008-bench-b1-A build:lead-30489 --write-reference ragged0008-bench-b1-A
+bench ragged0008-bench-b1-B build:0008-ragged-suffix --write-reference ragged0008-bench-b1-B
+bench ragged0008-bench-b2-B build:0008-ragged-suffix --write-reference ragged0008-bench-b2-B
+bench ragged0008-bench-b2-A build:lead-30489 --write-reference ragged0008-bench-b2-A
+bench ragged0008-bench-b3-B build:0008-ragged-suffix --write-reference ragged0008-bench-b3-B
+bench ragged0008-bench-b3-A build:lead-30489 --write-reference ragged0008-bench-b3-A
+bench ragged0008-bench-b4-A build:lead-30489 --write-reference ragged0008-bench-b4-A
+bench ragged0008-bench-b4-B build:0008-ragged-suffix --write-reference ragged0008-bench-b4-B
+# make_schedule.py --prefix ragged0008-llb --blocks 4 --seed 80081 --arm A=build:lead-30489 --arm B=build:0008-ragged-suffix --kind tool
+tool ragged0008-llb-b1-B build:0008-ragged-suffix bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool ragged0008-llb-b1-A build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool ragged0008-llb-b2-A build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool ragged0008-llb-b2-B build:0008-ragged-suffix bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool ragged0008-llb-b3-A build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool ragged0008-llb-b3-B build:0008-ragged-suffix bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool ragged0008-llb-b4-A build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool ragged0008-llb-b4-B build:0008-ragged-suffix bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json

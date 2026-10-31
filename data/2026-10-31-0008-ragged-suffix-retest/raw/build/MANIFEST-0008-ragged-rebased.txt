@@ -1,0 +1,207 @@
+# MANIFEST for 0008-ragged-rebased
+built:            2026-10-31T09:21:20Z (configure+build 1793438469..1793438480, 11 s wall)
+
+## source
+src commit:       7b3698d452ca8a219b581974a32f3ae6c7456c54
+src describe:     b12004-10-g7b3698d45
+src branch:       dmk/0008-ragged-suffix
+src dirty files:  0
+src diff vs HEAD sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  (hash of empty input is e3b0c442...)
+
+## toolchain
+base image tag:   docker.io/nvidia/cuda:12.8.1-devel-ubuntu24.04
+base image index digest:  sha256:520292dbb4f755fd360766059e62956e9379485d9e073bbd2f6e3c20c270ed66
+base image amd64 digest:  sha256:4b9ed5fa8361736996499f64ecebf25d4ec37ff56e4d11323ccde10aa36e0c43
+builder image:    localhost/dmk-builder:cuda12.8.1-gcc14 54be7481bcfd4bd3085c5572a80f565384671b5aa2f5879ea4fb2a3c74f9c947
+nvcc:             Cuda compilation tools, release 12.8, V12.8.93 Build cuda_12.8.r12.8/compiler.35583870_0 
+gcc:              gcc-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0
+g++:              g++-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0
+cmake:            cmake version 3.28.3
+ccache:           ccache version 4.9.1 (enabled: 0)
+packages:         cmake=3.28.3-1build7 cuda-cudart-dev-12-8=12.8.90-1 cuda-nvcc-12-8=12.8.93-1 g++-14=14.2.0-4ubuntu2~24.04.1 gcc-14=14.2.0-4ubuntu2~24.04.1 libcublas-dev-12-8=12.8.4.1-1 libssl-dev=3.0.13-0ubuntu3.16 
+
+## cmake configure
+CC=gcc-14 CXX=g++-14 CUDAHOSTCXX=g++-14
+cmake -S <src> -B <out>/build -DCMAKE_BUILD_TYPE=Release -DGGML_NATIVE=OFF -DGGML_CUDA=ON -DGGML_BACKEND_DL=ON -DGGML_CPU_ALL_VARIANTS=ON -DLLAMA_BUILD_TESTS=ON -DCMAKE_CUDA_ARCHITECTURES=86-real -DCMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined -DCMAKE_BUILD_RPATH_USE_ORIGIN=ON -DLLAMA_USE_PREBUILT_UI=OFF -DGGML_CCACHE=OFF
+cmake --build <out>/build --config Release -j16 --target llama-server llama-app llama-bench llama-perplexity llama-tokenize test-backend-ops test-batch-alloc test-ragged-suffix
+cache: CMAKE_BUILD_TYPE:STRING=Release
+cache: CMAKE_CUDA_ARCHITECTURES:UNINITIALIZED=86-real
+cache: CMAKE_CUDA_FLAGS:STRING=
+cache: CMAKE_CXX_FLAGS:STRING=
+cache: GGML_ACCELERATE:BOOL=ON
+cache: GGML_ALL_WARNINGS_3RD_PARTY:BOOL=OFF
+cache: GGML_AMX_BF16:BOOL=OFF
+cache: GGML_AMX_INT8:BOOL=OFF
+cache: GGML_AMX_TILE:BOOL=OFF
+cache: GGML_AVAILABLE_BACKENDS:INTERNAL=ggml-cpu-x64;ggml-cpu-sse42;ggml-cpu-sandybridge;ggml-cpu-ivybridge;ggml-cpu-piledriver;ggml-cpu-haswell;ggml-cpu-skylakex;ggml-cpu-cannonlake;ggml-cpu-cascadelake;ggml-cpu-icelake;ggml-cpu-cooperlake;ggml-cpu-zen4;ggml-cpu-alderlake;ggml-cpu-sapphirerapids;ggml-cuda
+cache: GGML_AVX2:BOOL=ON
+cache: GGML_AVX512:BOOL=OFF
+cache: GGML_AVX512_BF16:BOOL=OFF
+cache: GGML_AVX512_VBMI:BOOL=OFF
+cache: GGML_AVX512_VNNI:BOOL=OFF
+cache: GGML_AVX:BOOL=ON
+cache: GGML_AVX_VNNI:BOOL=OFF
+cache: GGML_BACKEND_DIR:PATH=
+cache: GGML_BACKEND_DL:BOOL=ON
+cache: GGML_BIN_INSTALL_DIR:PATH=bin
+cache: GGML_BLAS:BOOL=OFF
+cache: GGML_BLAS_VENDOR:STRING=Generic
+cache: GGML_BMI2:BOOL=ON
+cache: GGML_BUILD_EXAMPLES:BOOL=OFF
+cache: GGML_BUILD_TESTS:BOOL=OFF
+cache: GGML_CCACHE:BOOL=OFF
+cache: GGML_CPU:BOOL=ON
+cache: GGML_CPU_ALL_VARIANTS:BOOL=ON
+cache: GGML_CPU_ARM_ARCH:STRING=
+cache: GGML_CPU_HBM:BOOL=OFF
+cache: GGML_CPU_KLEIDIAI:BOOL=OFF
+cache: GGML_CPU_POWERPC_CPUTYPE:STRING=
+cache: GGML_CPU_REPACK:BOOL=ON
+cache: GGML_CUDA:BOOL=ON
+cache: GGML_CUDA_CCCL_VERSION:STRING=
+cache: GGML_CUDA_COMPRESSION_MODE:STRING=size
+cache: GGML_CUDA_FA:BOOL=ON
+cache: GGML_CUDA_FA_ALL_QUANTS:BOOL=OFF
+cache: GGML_CUDA_FA_QUANTS:STRING=q4_0-q4_0;q8_0-q8_0;f16-f16;bf16-bf16
+cache: GGML_CUDA_FORCE_CUBLAS:BOOL=OFF
+cache: GGML_CUDA_FORCE_MMQ:BOOL=OFF
+cache: GGML_CUDA_GRAPHS:BOOL=ON
+cache: GGML_CUDA_NCCL:BOOL=ON
+cache: GGML_CUDA_NO_PEER_COPY:BOOL=OFF
+cache: GGML_CUDA_NO_VMM:BOOL=OFF
+cache: GGML_ET:BOOL=OFF
+cache: GGML_ET_SYSEMU:BOOL=OFF
+cache: GGML_F16C:BOOL=ON
+cache: GGML_FMA:BOOL=ON
+cache: GGML_GPROF:BOOL=OFF
+cache: GGML_HEXAGON:BOOL=OFF
+cache: GGML_HIP:BOOL=OFF
+cache: GGML_HIP_EXPORT_METRICS:BOOL=OFF
+cache: GGML_HIP_GRAPHS:BOOL=ON
+cache: GGML_HIP_MMQ_MFMA:BOOL=ON
+cache: GGML_HIP_NO_VMM:BOOL=ON
+cache: GGML_HIP_RCCL:BOOL=OFF
+cache: GGML_INCLUDE_INSTALL_DIR:PATH=include
+cache: GGML_LASX:BOOL=ON
+cache: GGML_LIB_INSTALL_DIR:PATH=lib
+cache: GGML_LLAMAFILE:BOOL=ON
+cache: GGML_LSX:BOOL=ON
+cache: GGML_LTO:BOOL=OFF
+cache: GGML_METAL:BOOL=OFF
+cache: GGML_METAL_EMBED_LIBRARY:BOOL=OFF
+cache: GGML_METAL_MACOSX_VERSION_MIN:STRING=
+cache: GGML_METAL_NDEBUG:BOOL=OFF
+cache: GGML_METAL_SHADER_DEBUG:BOOL=OFF
+cache: GGML_METAL_STD:STRING=
+cache: GGML_METAL_TARGET_OS:STRING=macos
+cache: GGML_MUSA:BOOL=OFF
+cache: GGML_MUSA_GRAPHS:BOOL=OFF
+cache: GGML_MUSA_MUDNN_COPY:BOOL=OFF
+cache: GGML_NATIVE:BOOL=OFF
+cache: GGML_OPENCL:BOOL=OFF
+cache: GGML_OPENCL_EMBED_KERNELS:BOOL=ON
+cache: GGML_OPENCL_PROFILING:BOOL=OFF
+cache: GGML_OPENCL_TARGET_VERSION:STRING=300
+cache: GGML_OPENCL_USE_ADRENO_KERNELS:BOOL=ON
+cache: GGML_OPENMP:BOOL=ON
+cache: GGML_OPENMP_ENABLED:INTERNAL=ON
+cache: GGML_OPENMP_FETCH:BOOL=OFF
+cache: GGML_OPENVINO:BOOL=OFF
+cache: GGML_RPC:BOOL=OFF
+cache: GGML_RVV:BOOL=ON
+cache: GGML_RV_ZFH:BOOL=ON
+cache: GGML_RV_ZICBOP:BOOL=ON
+cache: GGML_RV_ZIHINTPAUSE:BOOL=ON
+cache: GGML_RV_ZVFBFWMA:BOOL=OFF
+cache: GGML_RV_ZVFH:BOOL=ON
+cache: GGML_SANITIZE_ADDRESS:BOOL=OFF
+cache: GGML_SANITIZE_THREAD:BOOL=OFF
+cache: GGML_SANITIZE_UNDEFINED:BOOL=OFF
+cache: GGML_SCHED_MAX_COPIES:STRING=4
+cache: GGML_SCHED_NO_REALLOC:BOOL=OFF
+cache: GGML_SSE42:BOOL=ON
+cache: GGML_STATIC:BOOL=OFF
+cache: GGML_SYCL:BOOL=OFF
+cache: GGML_SYCL_DEVICE_ARCH:STRING=
+cache: GGML_SYCL_DNN:BOOL=ON
+cache: GGML_SYCL_F16:BOOL=OFF
+cache: GGML_SYCL_GRAPH:BOOL=ON
+cache: GGML_SYCL_HOST_MEM_FALLBACK:BOOL=ON
+cache: GGML_SYCL_SUPPORT_LEVEL_ZERO_API:BOOL=ON
+cache: GGML_SYCL_SUPPORT_XMX:BOOL=ON
+cache: GGML_SYCL_TARGET:STRING=INTEL
+cache: GGML_VIRTGPU:BOOL=OFF
+cache: GGML_VIRTGPU_BACKEND:BOOL=OFF
+cache: GGML_VULKAN:BOOL=OFF
+cache: GGML_VULKAN_CHECK_RESULTS:BOOL=OFF
+cache: GGML_VULKAN_DEBUG:BOOL=OFF
+cache: GGML_VULKAN_MEMORY_DEBUG:BOOL=OFF
+cache: GGML_VULKAN_RUN_TESTS:BOOL=OFF
+cache: GGML_VULKAN_SHADERS_GEN_TOOLCHAIN:FILEPATH=
+cache: GGML_VULKAN_SHADER_DEBUG_INFO:BOOL=OFF
+cache: GGML_VULKAN_VALIDATE:BOOL=OFF
+cache: GGML_VXE:BOOL=OFF
+cache: GGML_WEBGPU:BOOL=OFF
+cache: GGML_WEBGPU_CPU_PROFILE:BOOL=OFF
+cache: GGML_WEBGPU_DEBUG:BOOL=OFF
+cache: GGML_WEBGPU_GPU_PROFILE:BOOL=OFF
+cache: GGML_WEBGPU_JSPI:BOOL=ON
+cache: GGML_XTHEADVECTOR:BOOL=OFF
+cache: GGML_ZDNN:BOOL=OFF
+cache: GGML_ZENDNN:BOOL=OFF
+cache: LLAMA_BUILD_APP:BOOL=ON
+cache: LLAMA_BUILD_COMMON:BOOL=ON
+cache: LLAMA_BUILD_EXAMPLES:BOOL=ON
+cache: LLAMA_BUILD_MTMD:BOOL=OFF
+cache: LLAMA_BUILD_SERVER:BOOL=ON
+cache: LLAMA_BUILD_TESTS:BOOL=ON
+cache: LLAMA_BUILD_TOOLS:BOOL=ON
+cache: LLAMA_BUILD_UI:BOOL=OFF
+
+## files (sha256, bytes, name)
+symlink  libggml-base.so -> libggml-base.so.0
+symlink  libggml-base.so.0 -> libggml-base.so.0.28.0
+a2a5008bff609abf1f501eb5bbf886d6a6609e45903c901315f40e1e08a323d1  958192  libggml-base.so.0.28.0
+09cb8cdae45801c4621151dd34097c5e8b288b87ce4516c2b68f6f8784527e0b  1477440  libggml-cpu-alderlake.so
+e93bcb146f28329a628034d6d5d71fbed6a1b73b3facfe27acb320d4d5845872  1655488  libggml-cpu-cannonlake.so
+0baf546a350bbd3cf68f21f1c0e5640a3fac44ec48b22a55b0a49230b4ab4baf  1667480  libggml-cpu-cascadelake.so
+94c215b968025a585f6b1a326e48b2f7a5071e834a45aab8e0053034fe13e68b  1663552  libggml-cpu-cooperlake.so
+06a835b0c3f7183297d80e24bd562d4710ea4cb79d132a2721b20344c892f572  1477440  libggml-cpu-haswell.so
+dd24c7a83fd56756301e7e467d210dac968c3732f8bd6b83a5427bcdb8f676e2  1667480  libggml-cpu-icelake.so
+0fadade90b803e87a73b7df6699a86cafbf6459ad7b80a60aa0555211de8e8fa  1408936  libggml-cpu-ivybridge.so
+1760854895b32cccec0fe56ffb69506a0b3db097f50054146ee18f9c2de02a68  1404840  libggml-cpu-piledriver.so
+9878141825e346571da23bb780dee93b7b93051dfa6e8a3028f7de837d4490c1  1412080  libggml-cpu-sandybridge.so
+ce333809bdfbc7658f6506c382ca7f55928e8034aa3595aa292498a634188027  1937632  libggml-cpu-sapphirerapids.so
+9e34efec10118c5e80ecc95de54b0efd5e45f45b4d41e6a50134b773f970940e  1655488  libggml-cpu-skylakex.so
+93c30628c6b5171b9c36aba142307520c87aee92ace1dd26ad5c2fbad21f157f  1081160  libggml-cpu-sse42.so
+93d9e13a657353a4068e6e4d141c3901e395c593d0fb611139be840ec55f5958  1048512  libggml-cpu-x64.so
+0f34b03b517311b864cba4a43863c0abe8dd08e9903cd5ab83ee215809221433  1663552  libggml-cpu-zen4.so
+d3f4af745e9493ca65fbccc637ff13bab314b95450067648ec80401e9e047112  43479184  libggml-cuda.so
+symlink  libggml.so -> libggml.so.0
+symlink  libggml.so.0 -> libggml.so.0.28.0
+44e8663405b29800ef3e8a51e77748a771bc2c0fa20d4fcbb3e20ccf2e95af2b  55648  libggml.so.0.28.0
+8dbac56f09a3eda96f5d28c1ec8b6c638d789f1a09b44e37e3ff0193274e133b  44448  libllama-batched-bench-impl.so
+7394afb3854624b531bfb1f4919791fe17ad2175fc0f44ff1c74b4aa231e57c9  476776  libllama-bench-impl.so
+5fb055d4b31e68091e9b9a77d11b283f8288da4fa735aefe554e078101b488a4  251160  libllama-cli-impl.so
+symlink  libllama-common.so -> libllama-common.so.0
+symlink  libllama-common.so.0 -> libllama-common.so.0.8.0
+6c1233dc4cf80fbfcd952cc3b586a2f418c9411338b5a83ff73749a26d18e222  6791272  libllama-common.so.0.8.0
+0f300b5d9aae9b9e86dedd364660fa0fc3ce721f069cadbe91ab9e8fc66cef7d  142016  libllama-completion-impl.so
+906a6373377fe551bcd3b233eec37ba282a0ec9c2bf8895dc3ec5863e548b7f6  34984  libllama-fit-params-impl.so
+8ce19af69315f5c018d42d1af84c3b4d69f7dd53defec4a2ceb8cef352d58de1  168376  libllama-perplexity-impl.so
+db3435ef00dcaa7f668efd5fc385d1a8cbc9c9e166c7e260059c646cf4ecbc1a  88432  libllama-quantize-impl.so
+30e993b5c0fb6b1d8413e75302576939b0b205f0ecbdadc2895be1a4a4a8d1e2  4930696  libllama-server-impl.so
+symlink  libllama.so -> libllama.so.0
+symlink  libllama.so.0 -> libllama.so.0.8.0
+266f878598299af7273e7175865d7e6e55266aaf77af2dc6c08bf681b2f03a68  5509104  libllama.so.0.8.0
+symlink  libmtmd.so -> libmtmd.so.0
+symlink  libmtmd.so.0 -> libmtmd.so.0.8.0
+739bd105a3b2c08450742c4df23e094b1268fa5c43665d0e9a761aab28abcf24  2353448  libmtmd.so.0.8.0
+10b562935d9d469d08fb13fd75d67cf13cc0b9fe54bd18a54c8c2103cea3fae5  58320  llama
+e90c0f971d5aeaed889c2cdc9349e12872fcf4568be21996e3fda3f8e142f96e  17880  llama-bench
+de3a9ef5a65d8798131f75e6c63f07b9c987b8cf07c0b622011cdd9bdab53504  15968  llama-perplexity
+7d8541daf8062c50267731214b7fb756f21273b74bc5e7daf80529a657735abf  17880  llama-server
+0cec370022c2826b9de5582a44dfe1735901023b3b63b54afd4329a493dc8d75  40408  llama-tokenize
+cb2506610143d71cb92aeaa772abc6cddf7718bcad5dee7a4c8491ead517f0d5  1656856  test-backend-ops
+1901ad1c3d20375c905a4e6ba23feaf3411266f8f3fb51502772ca2cbd20feeb  391384  test-batch-alloc
+04992f8e35e46fce9684e20798a478a4f7242dfe1003f282fcebd490c0e3c7ef  50512  test-ragged-suffix

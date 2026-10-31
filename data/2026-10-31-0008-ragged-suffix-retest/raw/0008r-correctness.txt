@@ -1,0 +1,15 @@
+# Change 0008 (ragged batching of the suffixes), second test: correctness runs, not timed.
+# Arm A is build:stack-fbfd9cb. Arm B is build:0008-ragged-rebased.
+# 1. The benchmark with production flags (-np 3), two runs of each arm. The two runs of an arm give self_repeat.
+bench 0008r-A3a build:stack-fbfd9cb --passes 1 --write-reference 0008r-A3a
+bench 0008r-A3b build:stack-fbfd9cb --passes 1 --write-reference 0008r-A3b
+bench 0008r-B3a build:0008-ragged-rebased --passes 1 --write-reference 0008r-B3a
+bench 0008r-B3b build:0008-ragged-rebased --passes 1 --write-reference 0008r-B3b
+# 2. The benchmark with one slot (-np 1): the questions of a request run one at a time. This is the reference decode.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 1 --kv-unified --no-webui --no-slots" bench 0008r-A1 build:stack-fbfd9cb --passes 1 --write-reference 0008r-A1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 1 --kv-unified --no-webui --no-slots" bench 0008r-B1 build:0008-ragged-rebased --passes 1 --write-reference 0008r-B1
+# 3. One run of arm B with the debug log of the server (-lv 5): the log shows each ubatch with suffixes of different length.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 5" bench 0008r-B3-lv5 build:0008-ragged-rebased --passes 1 --write-reference 0008r-B3-lv5
+# 4. The 52-decision set on the two arms.
+client 0008r-dectest-A build:stack-fbfd9cb /extra/dectest/run_dectest.py --url http://127.0.0.1:18080 --cases /extra/dectest/cases.json --out /runs/{name}.answers.json
+client 0008r-dectest-B build:0008-ragged-rebased /extra/dectest/run_dectest.py --url http://127.0.0.1:18080 --cases /extra/dectest/cases.json --out /runs/{name}.answers.json

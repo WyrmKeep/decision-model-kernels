@@ -1,0 +1,6 @@
+test	filter	log	passed	cases	failing_operations
+SSM_CONV_RAGGED	-o SSM_CONV_RAGGED	tests/conv.log	18	18	
+GATED_DELTA_NET_RAGGED, without the fusion	-o GATED_DELTA_NET_RAGGED	tests/gdn.log	5	5	
+GATED_DELTA_NET_RAGGED, with the fusion into CPY	-p cache=1,lens=	tests/tbo-cache.log	3	3	
+Built-in cases of the five operations of the layer	-o GATED_DELTA_NET,CPY,SSM_CONV,L2_NORM,SOFTPLUS	tests/builtin.log	390	390	
+187 operations of the graph of mix8	--test-file <file of the 187 operations>	tests/graph.log	181	187	CPY x5, GATED_DELTA_NET x1

@@ -1,0 +1,29 @@
+rule	quantity	value_ragged	value_equal	ratio	limit	result	note
+Sum of the 8 inputs	mean KL divergence	5.962886e-03	7.681755e-03	0.776	1.5	pass	
+Sum of the 8 inputs	largest KL divergence	6.121495e-02	4.743620e-02	1.290	1.5	pass	
+Sum of the 8 inputs	rows with another top token	7.000000e+00	6.000000e+00	1.167	1.5	pass	
+Sum of the 8 inputs	NMSE of the conv state	4.900231e-03	5.313695e-03	0.922	1.5	pass	
+Sum of the 8 inputs	NMSE of the SSM state	2.313649e-03	2.141338e-03	1.080	1.5	pass	
+Each input, 3 times	mean KL divergence	0			0 inputs	pass	
+Each input, 3 times	largest KL divergence	1			0 inputs	FAIL	input 7: ragged 3.545497e-02, equal 9.434796e-03, ratio 3.76
+Each input, 3 times	rows with another top token	1			0 inputs	FAIL	input 8: ragged 1.000000e+00, equal 0.000000e+00, d(equal) is 0
+Each input, 3 times	NMSE of the conv state	1			0 inputs	FAIL	input 1: ragged 1.442632e-03, equal 3.196205e-04, ratio 4.51
+Each input, 3 times	NMSE of the SSM state	0			0 inputs	pass	
+Each input, 3 times	all 5 quantities: pairs of input and quantity over the limit	3			0 pairs	FAIL	input 7 largest KL divergence: ragged 3.545497e-02, equal 9.434796e-03, ratio 3.76; input 8 rows with another top token: ragged 1.000000e+00, equal 0.000000e+00, d(equal) is 0; input 1 NMSE of the conv state: ragged 1.442632e-03, equal 3.196205e-04, ratio 4.51
+10 % of the KL budget	mean KL divergence, input 1 (WikiText-2)	2.080593e-04			0.002783	pass	KL budget 0.027830
+10 % of the KL budget	mean KL divergence, input 2 (WikiText-2)	6.953343e-04			0.002783	pass	KL budget 0.027830
+10 % of the KL budget	mean KL divergence, input 3 (WikiText-2)	4.824296e-04			0.002783	pass	KL budget 0.027830
+10 % of the KL budget	mean KL divergence, input 4 (WikiText-2)	1.045608e-03			0.002783	pass	KL budget 0.027830
+10 % of the KL budget	mean KL divergence, input 5 (WikiText-2)	1.016112e-03			0.002783	pass	KL budget 0.027830
+10 % of the KL budget	mean KL divergence, input 6 (text of the states)	6.817287e-04			0.005759	pass	KL budget 0.057587
+10 % of the KL budget	mean KL divergence, input 7 (WikiText-2)	8.080100e-04			0.002783	pass	KL budget 0.027830
+10 % of the KL budget	mean KL divergence, input 8 (WikiText-2)	1.025604e-03			0.002783	pass	KL budget 0.027830
+10 % of the KL budget	inputs over the limit	0			0 inputs	pass	
+Ragged batching decodes the suffixes in one pass	inputs with the check ok	8			8 inputs	pass	
+The equal split has more than one pass	inputs with the check ok	8			8 inputs	pass	
+A second run of ragged batching is the same bit for bit	inputs with the check ok	8			8 inputs	pass	
+Information only: ragged against equal split	mean KL divergence	6 inputs with a ratio of 1 or less, 1 with a ratio of 2 or less, 1 with a larger ratio			none	info	Ratio of 1 or less: inputs 1,2,3,4,5,6. Ratio of 2 or less: inputs 7. Larger ratio: inputs 8.
+Information only: ragged against equal split	largest KL divergence	6 inputs with a ratio of 1 or less, 1 with a ratio of 2 or less, 1 with a larger ratio			none	info	Ratio of 1 or less: inputs 1,2,3,4,5,6. Ratio of 2 or less: inputs 7. Larger ratio: inputs 8.
+Information only: ragged against equal split	rows with another top token	7 inputs with a ratio of 1 or less, 0 with a ratio of 2 or less, 1 with a larger ratio			none	info	Ratio of 1 or less: inputs 1,2,3,4,5,6,7. Ratio of 2 or less: inputs none. Larger ratio: inputs 8.
+Information only: ragged against equal split	NMSE of the conv state	4 inputs with a ratio of 1 or less, 3 with a ratio of 2 or less, 1 with a larger ratio			none	info	Ratio of 1 or less: inputs 5,6,7,8. Ratio of 2 or less: inputs 2,3,4. Larger ratio: inputs 1.
+Information only: ragged against equal split	NMSE of the SSM state	2 inputs with a ratio of 1 or less, 6 with a ratio of 2 or less, 0 with a larger ratio			none	info	Ratio of 1 or less: inputs 4,5. Ratio of 2 or less: inputs 1,2,3,6,7,8. Larger ratio: inputs none.
