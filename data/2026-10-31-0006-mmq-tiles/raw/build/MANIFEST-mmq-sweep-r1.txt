@@ -1,0 +1,28 @@
+# MANIFEST for mmq-sweep-r1 (the sweep program `llama`, started as `llama sweep ...`)
+built:            2026-10-31T05:14:12Z (142 variants and the harness; compile 125 s wall with 10 jobs, one repeat of the link after the removal of 2 variants)
+
+## source
+fork branch:      dmk/0006-mmq-sweep
+src commit:       df6730c95a37831f42c9660af91ec4a3e8b464a7
+base commit:      6b8b65e6672f07805000d3c9683b65c72cc62303 (branch dmk/stack: b12004 and change 0001)
+src dirty files:  0 (the sources of the build are the files of this commit; the work copy was not yet committed at the build time and has the same content)
+build script:     tools/dmk-mmq-sweep/build_sweep.sh <tree> r1 <out dir>
+
+## toolchain
+builder image:    localhost/dmk-builder:cuda12.8.1-gcc14 54be7481bcfd4bd3085c5572a80f565384671b5aa2f5879ea4fb2a3c74f9c947 (the image of the builds of the project)
+nvcc:             Cuda compilation tools, release 12.8, V12.8.93 Build cuda_12.8.r12.8/compiler.35583870_0
+g++:              g++-14 (Ubuntu 14.2.0-4ubuntu2~24.04.1) 14.2.0
+
+## compile command of one variant (the same flags for the harness)
+nvcc -O3 -DNDEBUG -std=c++17 --generate-code=arch=compute_86,code=[sm_86] -use_fast_math -extended-lambda \
+     -DGGML_CUDA_USE_GRAPHS -DGGML_SCHED_MAX_COPIES=4 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 \
+     -I<tree>/ggml/src/ggml-cuda -I<tree>/ggml/src -I<tree>/ggml/include -I<out dir> -w -Xptxas -v \
+     -c sweep_variant.cu -o <name>.o \
+     -DSWEEP_NAME=<name> -DSWEEP_TYPE=GGML_TYPE_<Q4_0|Q8_0> -DSWEEP_NT=<threads> -DSWEEP_OCC=<occupancy> -DSWEEP_I=<rows> -DSWEEP_J=<tokens> \
+     -DSWEEP_STREAMK=1 -DSWEEP_FALLBACK=0 -DSWEEP_LAYOUT=GGML_CUDA_MMQ_SRAM_LAYOUT_Q8_0
+## link command
+nvcc -O3 --generate-code=arch=compute_86,code=[sm_86] -Xcompiler -static-libstdc++,-static-libgcc <all objects> -o llama
+
+## files
+llama             22081304 bytes, sha256 367753501f81a1853e8655ff9b6078a376bae63f52c4c3593239c4aa18684ef2 (the file on the GPU host has the same hash)
+variants.tsv      the 142 variants of round r1 (gen_variants.py r1): name, type, threads, occupancy, tile rows I, tile tokens J, stream-k, fallback
