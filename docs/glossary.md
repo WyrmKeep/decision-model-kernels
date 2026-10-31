@@ -68,6 +68,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | builder image | technical noun | The image that has the compiler and the other programs that build llama.cpp. The script `build.sh` builds in a container from it. |
 | cache | technical noun | A small memory that gives fast reads of data that you use many times. |
 | cache key | technical noun | The value that a program uses to find an entry in a cache. |
+| candidate branch | technical noun | The branch `dmk/0002-gdn-split-candidate` of the fork. It has a value-split path for a GPU with 38 SMs. We do not merge it. |
 | cap | technical noun | The time of the arm `base` minus the time of an arm of an ablation. It is the largest time that a faster part can remove from a request. |
 | capability | technical noun | One type of task that Linux lets a program do. The flag `--cap-add` of Docker gives a container one capability. |
 | capture | technical verb | To record the kernel launches of one pass in a CUDA graph. The program can then start all of them with one launch. |
@@ -107,6 +108,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | confidence | technical noun | The probability that a change passes the test of its equivalence class and gives 50 % or more of the gain of its prediction. We give it before the test. |
 | confidence interval | technical noun | A range of values that we calculate from the data of a test. The true value is in the range with a probability that we write with the range, for example 95 %. |
 | configuration file | technical noun | The file `tools/ste/config.toml`. It holds the limits and the lists of words of the checker. |
+| contended time | technical noun | A time of a run that is more than 1.10 times the smallest time of the 3 runs of the same path and shape. A different program on the GPU can cause it. |
 | contraction | technical noun | Two words that a person writes as one word with a mark, for example `don't`. |
 | conv state | technical noun | A part of the layer state of a Gated DeltaNet layer. It has the last inputs of the layer. The kernel `ssm_conv` reads it. |
 | convolution | technical noun | The step of a recurrent layer that mixes each token with the tokens before it. The node `SSM_CONV` does it. |
@@ -184,6 +186,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | gain | technical noun | The time that a change removes from the time of a request. A prediction or a measurement gives it, in ms or in %. |
 | gap | technical noun | The idle time of the GPU before a pass or between two kernels. |
 | garbage collection | technical noun | The work of git or Gitea that removes the data that no ref holds. |
+| gate | technical noun | A number of a GDN layer for each token and each head. It sets how much of the state the layer keeps for the next token. |
 | Gated DeltaNet | technical name | The type of recurrent layer in this model. |
 | gather | technical noun | The operation that reads pieces of data from different positions and writes them together in one new area. |
 | gather | technical verb | To read pieces of data from different positions and write them together in one new area. |
@@ -201,8 +204,10 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | GLU | technical name | A step of a feed-forward layer. It multiplies two lists of numbers of the layer, number by number. |
 | GPU | technical name | The device that does the work of the kernels. In this project it is the `RTX 3060 Ti`. |
 | GPU busy time | technical noun | The time in which one kernel or more run on the GPU. |
+| GPU lock | technical noun | A file lock. A program that uses the GPU holds it. Only one program holds it at one time. |
 | GPU span | technical noun | The time from the start of the first pass of a request to the end of the last wait for the GPU. It is the maximum of the GPU time. |
 | GPU wait | technical noun | The time in which the decode thread waits for the GPU to complete the work of a pass. |
+| Gram matrix | technical noun | A matrix that the kernel calculates from the keys and the queries of one chunk, for example `K K^T` and `Q K^T`. |
 | graph | technical noun | The sequence of the operations that the model does for one batch. The program makes it again for each batch. |
 | graph plan | technical noun | An object that a backend makes from a graph one time. The backend can use it for many runs of the graph. |
 | grid | technical noun | All the thread blocks of one launch of a kernel. |
@@ -232,6 +237,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | int8 | technical noun | A number that has 8 bits. Its value is from -128 to 127. |
 | int8 peak | technical noun | The largest number of int8 operations in one second that the tensor cores can do. The scripts of the project use 149.3 TOP/s. |
 | integer | technical noun | A number that does not have a part after the point, for example 3 or -7. |
+| inverse matrix | technical noun | A matrix that the kernel calculates for each chunk. Each step of the work uses the result of the step before it. |
 | IP address | technical noun | The number that names a host in a network. |
 | issue | technical noun | A report or a question in a repository on GitHub. It has a number. |
 | JSON | technical name | A type of text file for data with fields and lists. |
@@ -291,6 +297,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | merge commit | technical noun | A commit that puts the changes of two branches together. |
 | merge conflict | technical noun | The condition when two branches have different changes for the same line. A person must select the correct change. |
 | metric | technical noun | A number that measures one quality of a run. |
+| micro-benchmark | technical noun | A test of only one kernel. It uses `test-backend-ops perf`. It does not run a model. |
 | mirror sync | technical noun | One time that a push mirror sends the refs of a repository to a different server. |
 | misaligned run | technical noun | A run of Nsight Compute in which the profiled launches are not the launches of the list that the run must profile. |
 | MMA | technical name | The instruction of an NVIDIA GPU that multiplies two tiles and adds the result to a third tile. A kernel that uses it is an MMA kernel. |
@@ -329,6 +336,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | padding | technical noun | The tokens that the program adds to a sequence or to a ubatch to make it longer. |
 | paragraph | technical noun | A group of sentences with an empty line before it and after it. |
 | parameter | technical noun | A value that a program gives to a function or to an operation. |
+| parent build | technical noun | The build of the branch `dmk/stack`. We compare a change with it. It is the same as the build `lead-30489`. |
 | parent slot | technical noun | The task slot of a parent task. |
 | parent task | technical noun | The first task of a group of questions. It runs the model on the shared prefix of the group. |
 | Pascal | technical name | A type of NVIDIA GPU. It comes before Volta. |
@@ -336,10 +344,12 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | pass spread | technical noun | The difference between the highest and the lowest mean latency of the timed passes of one run, in % of the mean of the pass means. |
 | passive verb | technical noun | A verb group, for example `is removed`. It does not show who does the work. |
 | path | technical noun | The name of a file or a folder, with the names of the folders that hold it. |
+| path selector | technical noun | The function `select_gdn_mma_path` of the fork. It selects the path of the kernel `gdn_single` for each launch. |
 | PCI address | technical noun | The text that names the slot of a GPU in a host. |
 | PCIe | technical name | The connection between the GPU and the host. The version and the width of the slot give the rate of the copies. |
 | PDF | technical name | A type of file for text. The STE specification is a PDF. |
 | percentile | technical noun | A value in a list of numbers. Some numbers of the list are below it. The 95th percentile has 95 % of the numbers below it. |
+| perf case | technical noun | A case of `test-backend-ops` in the mode `perf`. It gives the time of one operation. |
 | perplexity | technical noun | A number that the program calculates from the probabilities that the model gives to the tokens of a text. A smaller number shows a better model for that text. |
 | persistent kernel | technical noun | A kernel that stays on the GPU and gets new work with no new launch. |
 | phase | technical noun | A part of a run of the client `bench.py`. A phase has a name, a start, and an end. The names are `warmup`, `quality`, `seq`, `tput`, and `cold`. |
@@ -398,6 +408,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | release | technical noun | A set of files of llama.cpp that a person can download from GitHub. Each release has a tag. |
 | remote | technical noun | A repository on a different host. A clone sends commits to it and gets commits from it. |
 | repack | technical verb | To write the model weights again in a new sequence in memory. A kernel then reads them faster. |
+| repetition | technical noun | One of the runs of the same path in a micro-benchmark. The micro-benchmark has 3 repetitions. |
 | repository | technical noun | A folder with the files of the project. Git keeps all changes of the files in it. |
 | reproduce | technical verb | To do a test again with the same commit, the same flags, and the same data. |
 | request | technical noun | The data that a client sends to the server for one case. |
@@ -414,6 +425,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | roofline floor | technical noun | The sum of the times of the kernels of one pass or of one request. The time of a kernel is the larger of two times: the time of its memory work and the time to calculate. |
 | root folder | technical noun | The folder that has all other files of the repository. |
 | rotation | technical noun | The change of a tensor with a matrix that does not change. It turns each list of numbers of the tensor and does not change the length of the list. |
+| round | technical noun | A group of thread blocks that run at the same time on the SMs. The next round starts when the thread blocks of the round are complete. |
 | rsync | technical name | The program that puts the changes of a folder into a folder on a different host. |
 | rule | technical noun | One instruction of STE for the text. |
 | run | technical noun | One time that a program does its work from start to stop. |
@@ -443,6 +455,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | short request | technical noun | A request for a case with a short state. The state has less than 100 tokens. |
 | SiLU | technical name | The function `x/(1+exp(-x))`. |
 | skip | technical verb | To make no launch for a node or a kernel. The ablation skips the work of a part of the model. |
+| slice | technical noun | A group of value columns of one head. One thread block of a value-split path calculates one slice. |
 | slot assignment | technical noun | The list of the task slots that hold the questions of one request. Different lists can give different passes. |
 | SM | technical noun | One part of the GPU. It runs the threads of a thread block. The `RTX 3060 Ti` has 38 SMs. |
 | snapshot | technical noun | A copy of the layer state of a recurrent layer at one token. The memory keeps it. The program can then go back to that token. |
