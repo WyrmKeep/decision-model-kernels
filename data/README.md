@@ -23,6 +23,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-31-0007-input-copies`](2026-10-31-0007-input-copies/README.md) | 2026-10-31 | The test of change 0007 against the build of `dmk/stack`: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, the SASS compare, and the number of uploads and sync calls in each pass from Nsight Systems. |
 | [`2026-10-31-0002-gdn-value-split`](2026-10-31-0002-gdn-value-split/README.md) | 2026-10-31 | The kernel test of 8 paths of `gdn_single` on 21 shapes, the bit compare of the paths, and the tests of the build of the pull request and of the candidate branch. The whole-head path is the fastest path. We do not use target `D`. |
 | [`2026-10-31-0004-gpu-mask`](2026-10-31-0004-gpu-mask/README.md) | 2026-10-31 | The test of change 0004 (the attention mask on the GPU) against the build of `dmk/stack`: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, the GPU attention mask against the CPU attention mask, and `compute-sanitizer`. |
+| [`2026-10-31-0006-mmq-tiles`](2026-10-31-0006-mmq-tiles/README.md) | 2026-10-31 | The sweep of 142 MMQ tile adjustments on 6 weight shapes and 29 numbers of tokens. Each variant has a bit compare against the baseline. We do not use target `H`. The data set also has the ablation runs that measure the ceiling of target `G`. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 

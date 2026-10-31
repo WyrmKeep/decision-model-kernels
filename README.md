@@ -172,6 +172,7 @@ The folder `data/` has these data sets.
 | [`2026-10-31-0007-input-copies`](data/2026-10-31-0007-input-copies/README.md) | The test of change 0007 |
 | [`2026-10-31-0002-gdn-value-split`](data/2026-10-31-0002-gdn-value-split/README.md) | The kernel test of the paths of `gdn_single` (change 0002) |
 | [`2026-10-31-0004-gpu-mask`](data/2026-10-31-0004-gpu-mask/README.md) | The test of change 0004 |
+| [`2026-10-31-0006-mmq-tiles`](data/2026-10-31-0006-mmq-tiles/README.md) | The sweep of the MMQ tiles (target `H`) and the ceiling of target `G` |
 
 ## Condition of each change
 
@@ -181,12 +182,12 @@ A change gets its number when it gets its document. The table shows the changes 
 |---|---|---|---|
 | `E` | Change [0001](docs/changes/0001-glu-into-quantize.md): pull request #30489, GLU fused into the quantization of the activation | `exact` | Measured as a lead: `lat_ms` is 1.94 % lower. In the branch `dmk/stack`. Not in production. |
 | `D` | Change [0002](docs/changes/0002-gdn-value-split.md): value-split path of `gdn_single` | `exact` | We do not use it. The best value-split path is 1.15 to 1.31 times as slow as the whole-head path. The tensor cores are the limit of the kernel, and a value-split path adds work. |
-| `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | In work. |
+| `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | We do not use it. No rule that the code can use gives a gain. The [result entry](docs/notebook/2026-10-31-0006-mmq-tiles-result.md) has the sweep. |
 | `A` | Output head for the answer tokens only | `exact` | In work. |
 | `B` | Change [0004](docs/changes/0004-gpu-mask.md): attention mask on the GPU | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. Not in production. |
 | `C` | Concat folded into `ssm_conv` | `exact` | In work. |
 | `P` | Change [0007](docs/changes/0007-input-copies.md): the scheduler skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower, `long_ms` is 1.3 % lower, and `lat_ms` is 0.9 % lower (the interval includes 0). Not in production. |
-| `G` | MMQ as a pipeline with `cp.async` tile loads | `exact` | After `H`. Not started. |
+| `G` | MMQ as a pipeline for the tile loads | `exact` | In work, as change 0009. The ceiling that we measured is 12.4 % of `lat_ms`. |
 | `J` | Ragged batching for the suffixes of the questions | `re-associated` | In work. |
 
 The targets `F`, `L`, `K` and `O` come after these changes, if the rule to stop does not stop the project. The phase 4 entry does not recommend `N` and `M`.

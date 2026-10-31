@@ -36,6 +36,7 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Change 0002: value-split path of `gdn_single` (result)](2026-10-31-0002-gdn-value-split-result.md) | Results | Complete. We do not use target `D`. The best value-split path is 1.15 to 1.31 times as slow as the whole-head path. The prediction of phase 4 is in the [phase 4 entry](2026-10-31-phase4-ranked-targets.md). |
 | 2026-10-31 | [Change 0004: attention mask on the GPU (prediction)](2026-10-31-0004-gpu-mask-prediction.md) | Prediction | Committed at 05:24 UTC, before the first run of the speed test at 07:11 UTC. |
 | 2026-10-31 | [Change 0004: attention mask on the GPU (result)](2026-10-31-0004-gpu-mask-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. The gain is 37 % to 44 % of the prediction, because the upload time of phase 4 has more than the attention mask. |
+| 2026-10-31 | [Target H: MMQ tile and occupancy adjustments (result)](2026-10-31-0006-mmq-tiles-result.md) | Results | Complete. We do not use target `H`: no rule that the code can use gives a gain. The entry also measures the ceiling of target `G`: the loads make the kernels wait for 12.4 % of `lat_ms`. `G` is above the limit of the rule to stop, but only by a small quantity. |
 
 Source: the files in this folder.
 
