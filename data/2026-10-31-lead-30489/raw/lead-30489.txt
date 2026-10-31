@@ -1,0 +1,20 @@
+# Lead #30489 (GLU fused into the MMQ Q8_1 activation quantize step), one A/B measurement for ranking, not an adoption.
+# D = build:b12004-sm86 (stock source), L = build:lead-30489 (b12004 + commit 6b8b65e66, cherry-pick of PR 30489). 4 blocks each, arm order shuffled per block.
+# make_schedule.py --prefix lead30489-bench --blocks 4 --seed 30489 --arm D=build:b12004-sm86 --arm L=build:lead-30489 --kind bench
+bench lead30489-bench-b1-L build:lead-30489 --write-reference lead30489-bench-b1-L
+bench lead30489-bench-b1-D build:b12004-sm86 --write-reference lead30489-bench-b1-D
+bench lead30489-bench-b2-D build:b12004-sm86 --write-reference lead30489-bench-b2-D
+bench lead30489-bench-b2-L build:lead-30489 --write-reference lead30489-bench-b2-L
+bench lead30489-bench-b3-D build:b12004-sm86 --write-reference lead30489-bench-b3-D
+bench lead30489-bench-b3-L build:lead-30489 --write-reference lead30489-bench-b3-L
+bench lead30489-bench-b4-D build:b12004-sm86 --write-reference lead30489-bench-b4-D
+bench lead30489-bench-b4-L build:lead-30489 --write-reference lead30489-bench-b4-L
+# make_schedule.py --prefix lead30489-llb --blocks 4 --seed 30490 --arm D=build:b12004-sm86 --arm L=build:lead-30489 --kind tool
+tool lead30489-llb-b1-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool lead30489-llb-b1-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool lead30489-llb-b2-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool lead30489-llb-b2-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool lead30489-llb-b3-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool lead30489-llb-b3-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool lead30489-llb-b4-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool lead30489-llb-b4-D build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json

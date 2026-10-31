@@ -67,6 +67,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | carrier-grade NAT range | technical noun | A range of IP addresses that RFC 6598 gives for internal use in large networks. |
 | case | technical noun | One item of the benchmark. A case has one state and one to three questions. |
 | CDNA | technical name | A type of AMD GPU. It has the instruction `MFMA`, which multiplies two tiles. |
+| ceiling | technical noun | The largest speed increase that we think a change can give. We calculate it before a test. |
 | cell | technical noun | One item in a row of a table. |
 | chain | technical noun | A sequence of MMA instructions in one warp. Each instruction uses the result of the instruction before it. |
 | character | technical noun | One symbol of a text, for example a letter, a number, or a space. |
@@ -208,6 +209,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | KL floor | technical noun | The KL divergence of a run against a base file that the same build wrote. It is small and not 0. |
 | KV cache | technical noun | The cache of an attention layer. It keeps data of the previous tokens. |
 | KV cell | technical noun | One part of the KV cache that keeps the data of one token. |
+| L | technical name | The short name of the build of `D` with the patch of pull request #30489. Arm L uses it. |
 | L2 cache | technical noun | The cache that all SMs of the GPU use together. It is between the SMs and the DRAM. |
 | label | technical noun | The correct answer to one question of a case. A person writes it. |
 | latency | technical noun | The time from the start of a request to the end of its response. |
@@ -215,6 +217,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | launch | technical verb | To tell the GPU to start a kernel. |
 | layer state | technical noun | The numbers that a recurrent layer keeps between tokens. |
 | layout | technical noun | The sequence of the values of a matrix in memory, for example `col` or `col32`. |
+| lead | technical noun | A change from the code of upstream that we measure to see its effect. The project does not use it in production. |
 | leading dimension | technical noun | The number of values from the start of one group of columns of a matrix to the start of the next group. The code uses the name `ld`. |
 | letter | technical noun | One symbol of a word. |
 | library | technical noun | A set of programs that other programs can use. |
@@ -263,6 +266,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | multiply-add | technical noun | The operation that multiplies two numbers and adds the result to a third number. A test counts it as 2 operations. |
 | MUSA | technical name | A system that lets a program use a GPU, as CUDA does. A MUSA GPU is not an NVIDIA GPU. |
 | network | technical noun | The links between hosts. A host sends data to a different host through the network. |
+| NMSE | technical name | A number that shows the difference between a result and a reference result. A value of 0 shows no difference. The tests of `test-backend-ops` use a limit for it. |
 | node | technical noun | One operation of a graph. |
 | nominal rate | technical noun | The highest rate that you can calculate from the architecture of the GPU. A test does not measure it. |
 | non-causal attention | technical noun | A type of attention in which each token compares with the previous tokens and with the next tokens. |
