@@ -157,6 +157,8 @@ Source: [README of the data set](../../data/2026-10-30-window1/README.md) and th
 
 The three runs of mix8 ran before the reference run. They have no numbers for `agree` and `mean_dp`. They are not the baseline of the benchmark. The file `bench/reference.json` has the answers of `p2-pub-ref-q8`.
 
-The file `bench/baseline.json` has the mark `not-measured`. It comes from the next measurement window with the procedure of the [README of the benchmark](../../bench/README.md#make-the-reference-and-the-baseline). The procedure has three runs after the reference run and a fourth run. The fourth run must give `PASS`.
+The file `bench/baseline.json` had the mark `not-measured` when we wrote this entry. It comes from the next measurement window with the procedure of the [README of the benchmark](../../bench/README.md#make-the-reference-and-the-baseline). The procedure has three runs after the reference run and a fourth run. The fourth run must give `PASS`.
+
+On 2026-10-31, the project made the baseline in the second measurement window, with the procedure above. The fourth run gave `PASS`. The [README of the benchmark](../../bench/README.md#source-of-the-baseline) gives the numbers. The [data set](../../data/2026-10-31-public-baseline/README.md) has the raw files.
 
 The three runs of mix8 have a mean `lat_ms` of 237.31 ms. The 6 runs of the private benchmark in blocks 4 to 6 of phase 1 have a mean of 237.36 ms. The difference is -0.02 %. The load average of the host was 2.16 to 3.56 for the three runs of the public benchmark. It was 2.13 to 2.84 for the 6 runs of the private benchmark. On a host with a low load, the public benchmark thus gives the same speed as the private benchmark.

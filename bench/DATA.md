@@ -108,6 +108,8 @@ The file holds the numbers of the baseline build. The guard of `bench.py` reads 
 | `conc` | integer | Requests | The requests in flight during the throughput phase |
 | `vram_mib` | number | MiB | The largest GPU memory use of the runs, or `null` |
 
+The file `baseline.json` in this repository holds the numbers that the project measured on 2026-10-31. The [README of the folder](README.md#source-of-the-baseline) gives the source and the values. The [data set](../data/2026-10-31-public-baseline/README.md) has the raw files of the runs. The value of `status` is `measured`, and `runs` has the names `p3-pub-base-1`, `p3-pub-base-2` and `p3-pub-base-3`.
+
 ## Result file of a run
 
 `bench.py` writes this file. Times are in milliseconds. If a field has a different unit, the table gives that unit.

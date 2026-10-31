@@ -293,7 +293,7 @@ The runs of the public benchmark. One row for each run.
 | `decisions` | decisions | The number of decisions |
 | `errors` | errors | The number of requests with an error |
 
-The baseline runs ran before the reference run. They have no numbers for the metrics `agree` and `mean_dp`. The file `bench/baseline.json` comes from the next measurement window.
+The baseline runs ran before the reference run. They have no numbers for the metrics `agree` and `mean_dp`. The file `bench/baseline.json` comes from the next measurement window. The [data set of that measurement window](../2026-10-31-public-baseline/README.md) has its runs.
 
 ## Steps to make the tables again
 
