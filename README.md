@@ -21,6 +21,8 @@ Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked lis
 - The GPU runs a kernel for 90 % to 94 % of the time of a request. The host is not the limit.
 - The ranked list has 15 targets. The first change is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
 - The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and the changes 0001 (target `E`), 0004 (target `B`), 0005 (target `C`) and 0007 (target `P`).
+- The [first test of the stack](docs/notebook/2026-10-31-stack-1-result.md) compares the stack with build `D`. `lat_ms` is 8.04 % lower, `long_ms` is 8.71 % lower and `short_ms` is 6.00 % lower. The answers are the same as the answers of build `D`, bit for bit.
+- The changes for the targets `D`, `G`, `H` and `J` are not in the stack. Their result entries give the causes.
 
 ## How we got here
 
@@ -177,6 +179,7 @@ The folder `data/` has these data sets.
 | [`2026-10-31-0008-ragged-suffix`](data/2026-10-31-0008-ragged-suffix/README.md) | The first test of change 0008 |
 | [`2026-10-31-0008-ragged-suffix-retest`](data/2026-10-31-0008-ragged-suffix-retest/README.md) | The second test of change 0008, on the branch `dmk/stack` |
 | [`2026-10-31-0009-mmq-pipeline`](data/2026-10-31-0009-mmq-pipeline/README.md) | The micro-benchmark of the Q4_0 tile load pipeline (target `G`) |
+| [`2026-10-31-stack-1`](data/2026-10-31-stack-1/README.md) | The first test of the stack against build `D` |
 
 ## Condition of each change
 

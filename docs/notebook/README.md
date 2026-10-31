@@ -44,6 +44,8 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Change 0008: second test (prediction)](2026-10-31-0008-ragged-suffix-retest-prediction.md) | Prediction | Committed at 09:19 UTC, before the first run at 09:26 UTC. New inputs, and limits against a pass for each sequence. |
 | 2026-10-31 | [Change 0008: second test (result)](2026-10-31-0008-ragged-suffix-retest-result.md) | Results | Complete. `lat_ms` is 2.46 % lower. The limit of 3 times for one input is not true for 3 of 40 pairs. We do not use the change. |
 | 2026-10-31 | [Target G: MMQ tile load pipeline (result)](2026-10-31-0009-mmq-pipeline-result.md) | Results | Complete. We do not use target `G` in this shape. The Q4_0 pipeline gives the same bits and a mean ratio of 1.042 at 1,025 tokens or more. The limit is 1.08. |
+| 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (prediction)](2026-10-31-stack-1-prediction.md) | Prediction | Committed at 08:38 UTC, before the first run of the speed test at 08:43 UTC. |
+| 2026-10-31 | [Test of the stack 1: `dmk/stack` at `fbfd9cb8c` against build `D` (result)](2026-10-31-stack-1-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 8.04 % lower. 7 of 8 results are in their range. `short_ms` is better than its range: -6.0 % against -2.4 % to -5.4 %. A second test of 2 blocks gives -5.0 % for `short_ms`, in the range. |
 
 Source: the files in this folder.
 
