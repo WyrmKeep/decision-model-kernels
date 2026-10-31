@@ -258,3 +258,42 @@ The tables use the rows of the second measurement window for these two shapes. T
 - The program `llama` of the sweep (22 MB). Build it again with `src/build_sweep.sh`.
 - The full log of the build (the `-Xptxas -v` output for each variant).
 - The object files of the variants.
+
+## Ablation runs for target G
+
+The ablation runs measure the time of the loads of the loop on `K`. The [results entry](../../docs/notebook/2026-10-31-0006-mmq-tiles-result.md) gives the method and the result.
+
+The measurement window `0006-abl-r1` ran from 07:50:47 to 07:51:23 UTC on 2026-10-31. Its two runs ended with an error in 2 s, because the program was not on the GPU host. They gave no data, and we did not add their files.
+
+The measurement window `0006-abl-r2` ran from 07:57:45 to 07:59:11 UTC. The run `0006-abl-r2-q4` started at 07:58:00 UTC, and the run `0006-abl-r2-q8` started at 07:58:19 UTC. It used the first three ablation variants.
+
+The measurement window `0006-abl-r3` ran from 08:08:56 to 08:10:59 UTC. The run `0006-abl-r3-q4` started at 08:09:11 UTC, and the run `0006-abl-r3-q8` started at 08:09:44 UTC. It used six ablation variants and gives the tables.
+
+The measurement window `0006-abl-r2` used the program with the SHA-256 `467a9ac72d360dd31e6b7f618bda09d458e13bc587d155a5642e36ea562752a9`. It is the build of the commit `eb87c9d403c8e674ebdd90e56e463dd7a7d1b065`. The measurement window `0006-abl-r3` used the program with the SHA-256 `a35c7cc2a74643ae220ef27f3a67d9c35d63623c5ff9c901f6a95e16064d54ef`. It is the build of the commit `819f8e0d455f3f0b17a9548c6652d6189e17f205`.
+
+The two commits are on the branch `dmk/0006-mmq-sweep`. The files in `src/` are the files of the commit `819f8e0d455f3f0b17a9548c6652d6189e17f205`. The file `src/sweep.patch` is the difference between this commit and `6b8b65e6672f07805000d3c9683b65c72cc62303` in `ggml/src/ggml-cuda`.
+
+The build command is `bash src/build_sweep.sh <patched llama.cpp tree> ab <output folder>`. It uses the same image, the same compilers, and the same flags as the sweep, with `-DSWEEP_ABL=<n>` for the ablation. The set `ab` makes the baseline variants and the ablation variants for each `J` from 8 to 128. The first program has 128 variants, and the second program has 224 variants.
+
+The ablation `n` is 1 (no weight load), 2 (no activation load), 3 (no loads), 4 (weight loads read the first block of `K`), 8 (activation loads read the first block of `K`), or 12 (the two loads read the first block of `K`).
+
+The schedule lines are in `raw/0006-abl-r2.txt` and `raw/0006-abl-r3.txt`. The runs used this command:
+
+```
+sweep --shapes <shapes> --ns <29 numbers> --policies 0 --variants _abl --j-baseline-only 1 --reps-ms 15 --trials 5
+```
+
+The 29 numbers are the numbers of the section "Commands". The flag `--variants _abl` selects the ablation variants, and the baseline of each cell always runs. The flag `--j-baseline-only 1` runs a variant only at the `J` of the baseline. The run with the name `q4` has the two Q4_0 shapes, and the run with the name `q8` has the four Q8_0 shapes.
+
+The files of the ablation runs are `raw/0006-abl-r2-q4.*`, `raw/0006-abl-r2-q8.*`, `raw/0006-abl-r3-q4.*`, and `raw/0006-abl-r3-q8.*` (`.out`, `.err`, `.meta`, `.smi`). The files `raw/build/variants-ab.tsv` and `raw/build/variants-ab2.tsv` list the variants of the two programs. The name of an ablation variant ends in `_abl<n>`. The columns `ndiff` and `maxabs` have no meaning for these variants, because their output is incorrect.
+
+| Table | Data |
+|---|---|
+| `ablation.tsv` | The time of the baseline and of the six variants for each shape and number of tokens, and the ratios. |
+| `ablation-repeat.tsv` | The difference of the runs `0006-abl-r2` and `0006-abl-r3` for the baseline and for three variants. |
+| `g-ceiling.tsv` | The time that each variant removes for each request type, and the confidence that gives 3 %. |
+| `g-ceiling-by-n.tsv` | The same, for each group of numbers of tokens of a pass. |
+| `g-ceiling-by-op.tsv` | The same, for each operation of the model. |
+| `g-ceiling-by-wtype.tsv` | The time that `no_loads` and `same_loads` remove from the Q4_0 operations and from the Q8_0 operations. |
+
+The data set does not have the program of the ablation runs (20 MB) or the build logs of the two programs. It does not have the logs of the measurement windows. These logs have names of hosts and numbers of monitors.

@@ -450,3 +450,130 @@ for sh in shapes:
 write_tsv("class.tsv", ["type", "M_rows", "K", "N_values", "N_values_where_base_runs_fixup", "N_values_best_has_equal_bits", "N_values_best_is_10pct_faster", "of_these_with_equal_bits"], out)
 
 print("rows used:", len(rows), "r1:", len(r1), "r1b:", len(r1b), "shapes:", len(shapes), "N values:", len(grid_ns))
+
+# ------------------------------------------------------------------------------------------ measured ceiling of target G
+# The ablation run (round ab of gen_variants.py): the baseline of each cell, and timing-only variants at the J of the baseline.
+#   no_weight_load: the weight tile is loaded in the first iteration of the k loop only
+#   no_act_load:    the activation tile is loaded in the first iteration only
+#   no_loads:       both. The time is compute, shared memory reads, and synchronisation. The result is wrong.
+#   same_weight:    the weight loads of every iteration read the first k block again, so the data come from the caches
+#   same_act:       the same for the activation loads
+#   same_loads:     both. The load code, the unpacking, and the stores to shared memory stay in the loop.
+# The earlier run (ABL_REPEAT_FILES) has the first three variants only. It is the repeat of the same measurement.
+ABL_FILES = ["0006-abl-r3-q4.out", "0006-abl-r3-q8.out"]
+ABL_REPEAT_FILES = ["0006-abl-r2-q4.out", "0006-abl-r2-q8.out"]
+ABL_NAMES = {1: "no_weight_load", 2: "no_act_load", 3: "no_loads", 4: "same_weight", 8: "same_act", 12: "same_loads"}
+MODES = (1, 2, 3, 4, 8, 12)
+
+
+def load_ablation(files):
+    res = defaultdict(dict)
+    for fn in files:
+        for r in load_sweep(fn):
+            k = (r["type"], r["M"], r["K"], r["N"])
+            m = re.search(r"_abl(\d+)$", r["variant"])
+            if m:
+                res[k][int(m.group(1))] = r
+            elif r["ref"] and r["policy"] == 0:
+                res[k]["base"] = r
+    return res
+
+
+ab = load_ablation(ABL_FILES)
+ab_r2 = load_ablation(ABL_REPEAT_FILES)
+assert all(len(v) == 1 + len(MODES) for v in ab.values()), "a cell of the ablation run is incomplete"
+assert all(len(v) == 4 for v in ab_r2.values()), "a cell of the repeat of the ablation run is incomplete"
+assert sorted({k[:3] for k in ab}) == shapes and sorted({k[3] for k in ab}) == grid_ns
+
+out = []
+for k in sorted(ab):
+    a = ab[k]
+    b = a["base"]
+    row = [k[0], k[1], k[2], k[3], b["J"], b["grid"], b["fixup"], f"{b['t']:.2f}", f"{base[k]['t']:.2f}"]
+    for m in MODES:
+        row.append(f"{a[m]['t']:.2f}")
+    for m in MODES:
+        row.append(f"{b['t'] / a[m]['t']:.3f}")
+    row.append(pct(100 * (b["t"] - a[3]["t"]) / b["t"]))
+    row.append(f"{tops(k[1], k[2], k[3], a[3]['t']):.1f}")
+    out.append(row)
+write_tsv("ablation.tsv", ["type", "M_rows", "K", "N_tokens", "J_tile_tokens", "grid_blocks", "fixup", "base_time_us", "base_time_in_sweep_us"]
+          + [f"{ABL_NAMES[m]}_us" for m in MODES] + [f"base_over_{ABL_NAMES[m]}" for m in MODES] + ["removed_by_no_loads_pct", "tops_int8_no_loads"], out)
+
+out = []
+for sh in shapes:
+    for series in ("base", 1, 2, 3):
+        d = sorted(abs(100 * (ab[sh + (n,)][series]["t"] / ab_r2[sh + (n,)][series]["t"] - 1)) for n in grid_ns)
+        out.append([sh[0], sh[1], sh[2], "base" if series == "base" else ABL_NAMES[series], len(d), pct(statistics.median(d)), pct(d[-1])])
+write_tsv("ablation-repeat.tsv", ["type", "M_rows", "K", "series", "cells", "median_abs_diff_pct", "max_abs_diff_pct"], out)
+
+
+def ablation_model(mode, cls_of=None):
+    """MMQ ms of one request of each type (base), and the ms that the ablation removes."""
+    ms = {t: 0.0 for t in TYPES}
+    sv = {t: 0.0 for t in TYPES}
+    for (t, n), w in weights.items():
+        g = nearest(n)
+        for _, typ, M, K, layers in OPS:
+            a = ab[(typ, M, K, g)]
+            ms[t] += w * layers * a["base"]["t"] / 1000.0 / cases[t]
+            sv[t] += w * layers * (a["base"]["t"] - a[mode]["t"]) / 1000.0 / cases[t]
+    return ms, sv
+
+
+out = []
+n_all = sum(cases.values())
+for mode in MODES:
+    ms, sv = ablation_model(mode)
+    for t in TYPES:
+        pc = 100 * sv[t] / wall[t]
+        out.append([ABL_NAMES[mode], t, f"{ms[t]:.2f}", f"{sv[t]:.2f}", pct(100 * sv[t] / ms[t]), pct(pc), f"{3.0 / pc:.2f}"])
+    lat_b = sum(cases[t] * ms[t] for t in TYPES) / n_all
+    lat_s = sum(cases[t] * sv[t] for t in TYPES) / n_all
+    pc = 100 * lat_s / lat
+    out.append([ABL_NAMES[mode], "lat_ms", f"{lat_b:.2f}", f"{lat_s:.2f}", pct(100 * lat_s / lat_b), pct(pc), f"{3.0 / pc:.2f}"])
+write_tsv("g-ceiling.tsv", ["ablation", "request_type", "base_mmq_ms", "removed_ms", "removed_pct_of_mmq", "removed_pct_of_request", "confidence_for_3pct"], out)
+
+out = []
+for mode in MODES:
+    ms = defaultdict(float)
+    sv = defaultdict(float)
+    for (t, n), w in weights.items():
+        cls = next(c for c, lo, hi in N_CLASSES if lo <= n <= hi)
+        g = nearest(n)
+        for _, typ, M, K, layers in OPS:
+            a = ab[(typ, M, K, g)]
+            ms[cls] += w * layers * a["base"]["t"] / 1000.0 / n_all
+            sv[cls] += w * layers * (a["base"]["t"] - a[mode]["t"]) / 1000.0 / n_all
+    for cls, lo, hi in N_CLASSES:
+        out.append([ABL_NAMES[mode], cls, f"{ms[cls]:.2f}", f"{sv[cls]:.2f}", pct(100 * sv[cls] / ms[cls])])
+write_tsv("g-ceiling-by-n.tsv", ["ablation", "tokens_of_pass", "base_ms_per_case", "removed_ms_per_case", "removed_pct_of_class"], out)
+
+out = []
+for mode in MODES:
+    ms = defaultdict(float)
+    sv = defaultdict(float)
+    for (t, n), w in weights.items():
+        g = nearest(n)
+        for name, typ, M, K, layers in OPS:
+            a = ab[(typ, M, K, g)]
+            ms[name] += w * layers * a["base"]["t"] / 1000.0 / n_all
+            sv[name] += w * layers * (a["base"]["t"] - a[mode]["t"]) / 1000.0 / n_all
+    for name, typ, M, K, layers in OPS:
+        out.append([ABL_NAMES[mode], name, typ, M, K, f"{ms[name]:.2f}", f"{sv[name]:.2f}", pct(100 * sv[name] / ms[name])])
+write_tsv("g-ceiling-by-op.tsv", ["ablation", "operation", "type", "M_rows", "K", "base_ms_per_case", "removed_ms_per_case", "removed_pct_of_operation"], out)
+
+# The ceiling of each weight type: the ms that the ablation removes from the Q4_0 operations and from the Q8_0 operations, as a part of the request time.
+out = []
+for mode in (3, 12):
+    for typ in ("Q4_0", "Q8_0"):
+        sv = {t: 0.0 for t in TYPES}
+        for (t, n), w in weights.items():
+            g = nearest(n)
+            for _, ty, M, K, layers in OPS:
+                if ty == typ:
+                    a = ab[(ty, M, K, g)]
+                    sv[t] += w * layers * (a["base"]["t"] - a[mode]["t"]) / 1000.0 / cases[t]
+        lat_s = sum(cases[t] * sv[t] for t in TYPES) / n_all
+        out.append([ABL_NAMES[mode], typ] + [pct(100 * sv[t] / wall[t]) for t in TYPES] + [pct(100 * lat_s / lat)])
+write_tsv("g-ceiling-by-wtype.tsv", ["ablation", "weight_type"] + [f"{t}_removed_pct_of_request" for t in TYPES] + ["lat_removed_pct"], out)

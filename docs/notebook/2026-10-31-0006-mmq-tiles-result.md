@@ -1,6 +1,6 @@
 # MMQ tile and occupancy for this GPU (target H): result of the sweep
 
-Written 2026-10-31, after the measurement window `0006-sweep-r1` (05:40 to 05:53 UTC) and the measurement window `0006-sweep-r1b` (07:05 to 07:10 UTC).
+Written 2026-10-31, after the measurement window `0006-sweep-r1` (05:40 to 05:53 UTC) and the measurement window `0006-sweep-r1b` (07:05 to 07:10 UTC). The ablation runs `0006-abl-r2` (07:57 to 07:59 UTC) and `0006-abl-r3` (08:08 to 08:11 UTC) came after them.
 
 ## Task of this entry
 
@@ -10,7 +10,7 @@ We ran a sweep with a micro-benchmark. We did not build a change of llama.cpp, a
 
 There is no prediction entry for the sweep. The prediction is the text for `H` in the phase-4 entry. The section "Prediction against result" gives it. The [README of the data set](../../data/2026-10-31-0006-mmq-tiles/README.md) gives the raw files, the tables, and the conditions of the runs.
 
-The section "Effect on target `G`" gives the data of the sweep for target `G`.
+The section "Effect on target `G`" gives the data of the sweep for target `G`. The section "Measured ceiling of target `G`" gives the measurement of the ceiling of `G`.
 
 ## Result in short
 
@@ -24,7 +24,9 @@ The section "Effect on target `G`" gives the data of the sweep for target `G`.
 - The rules that the code can have do not give a gain. The rule "64-row tiles where the baseline runs the fix-up kernel" makes `lat_ms` 2.40 % slower. The same rule for Q8_0 makes it 0.43 % slower.
 - The phase-4 prediction was 8 % of the MMQ time at 1,025 tokens or more. The `oracle` gives 0.54 % for the tokens from 1,025 to 2,048.
 - More thread blocks on one SM do not give back load time at 1,173 tokens or more. The time is 1.09 to 1.27 times the baseline for two blocks of 8 warps. It is 1.04 to 1.17 times for three blocks of 4 warps.
-- New estimate for target `G`: MMQ is 1.08 times faster at 1,025 tokens or more, in a range from 1.00 to 1.20. The phase-4 value was 1.35.
+- The estimate for target `G` from the sweep was 1.08 times for MMQ at 1,025 tokens or more. The ablation variants replace it with a measurement.
+- The loads of the MMQ kernel use 27.6 % of the MMQ time and 15.6 % of `lat_ms`. The warps wait for data in 21.8 % of the MMQ time and 12.4 % of `lat_ms`. The phase-4 value for `G` (1.35 times) is the same as the first number.
+- Target `G` is above the limit of the rule to stop the project with the middle values: 4.28 % for `short2q` against 3 %. The gain is near the limit. The section "Measured ceiling of target `G`" gives the conditions.
 
 ## Prediction against result
 
@@ -210,9 +212,9 @@ The time has a part that gets smaller when `J` gets larger. This is the work of 
 6. The load time is not the only cause of the low speed of MMQ. In the phase-3 profile, the IMMA pipe is active for 35 % to 41 % of the time. The stall reason `math_pipe_throttle` is 27 % to 30 % in most kernels. A cuBLASLt int8 GEMM with the same dimensions runs at about 69 % of the int8 rate (about 103 TOPS). It does not apply the scales of MMQ. The fastest MMQ adjustment gets 54 TOPS.
 7. [INFERENCE: after each `IMMA` instruction, the kernel runs 4 `I2FP`, 4 `FMUL`, and 4 `FFMA` instructions (phase 3). We use the value of 16 `I2FP` operations in each clock for an SM. Then the `I2FP` pipe can limit MMQ to about 50 % of the int8 maximum. A pipeline for the loads does not remove this limit. We did not measure it.]
 
-### New estimate for `G`
+### Estimate for `G` before the ablation
 
-We do not change the phase-4 entry. The next table gives the estimate that we use from this point. It uses the time model of phase 4.
+We do not change the phase-4 entry. The next table gives the estimate that we used before the ablation. It uses the time model of phase 4.
 
 | MMQ speed increase at | Phase 4 | New | Low | High |
 |---|---:|---:|---:|---:|
@@ -240,9 +242,125 @@ The cause of each value:
 - **65 to 256 tokens and 9 to 64 tokens.** These kernels run for 18 to 242 µs and have 10 to 36 steps in `K`. The fastest rows of the sweep show that the grid and the latency limit these launches. Other tiles remove 3 % to 4 % of the MMQ time. A pipeline can decrease the effect of latency in each block. We use values that are near this gain.
 - **Confidence.** The sweep shows no gain for large `N` and adds no data for a gain. The confidence changes from 0.40 to 0.25.
 
-With the new estimate, `G` is below the limit of the rule to stop the project: 1.40 % against 3 %. The high estimate is also below it, with 2.42 %. Phase 4 had `G` above the limit with 6.07 %.
+With this estimate, `G` is below the limit of the rule to stop the project: 1.40 % against 3 %. The section "Measured ceiling of target `G`" gives a measurement of the ceiling. The measurement replaces this estimate.
 
-A short test can give the ceiling of `G`. Run the MMA loop of the baseline kernel with the tile loads of the first step only. The loop then has no new loads. The time is the best time that a pipeline can get. The test has one small change in the code of the sweep, one build, and one measurement window.
+## Measured ceiling of target `G`
+
+The estimate above comes from the `J` values and from the source of the load code. It does not measure the load time. We then measured the load time, and the result replaces the estimate.
+
+### Method
+
+We added variants of the production kernel to the micro-benchmark. The kernel has 256 threads, 8 warps, one block for each SM, the `J` of the baseline, stream-k, and the grid rule 0. A variant changes the loop on `K`. Its output is incorrect, and we use only its time. The next table gives the variants.
+
+| Variant | Change of the loop on `K` |
+|---|---|
+| `no_weight_load` | The kernel loads the weight tile in the first step only. |
+| `no_act_load` | The kernel loads the activation tile in the first step only. |
+| `no_loads` | The kernel loads the two tiles in the first step only. |
+| `same_weight` | The weight loads of each step read the first block of `K` again. The data come from the caches. |
+| `same_act` | The activation loads of each step read the first block of `K` again. |
+| `same_loads` | The two loads of each step read the first block of `K` again. |
+
+All variants keep the MMA work, the work that reads shared memory, and the barriers of each step. The variants `no_*` also remove the instructions of the loads. These instructions find the data, change the 4-bit values, and write to shared memory. A pipeline does not remove them.
+
+The variants `same_*` keep these instructions. They remove only the time in which the warps wait for data from DRAM and from the L2 cache. The code has an empty `asm volatile` line. It does not let the compiler remove the loads from the loop.
+
+Thus `no_loads` is the ceiling for a change of the loads. The variant `same_loads` is the ceiling for a pipeline that only removes the time in which the warps wait for data. We ran each variant in the 174 cells of the sweep. The time of a row is the lowest of 5 runs of the loop. The tables use the baseline of the same run.
+
+The run `0006-abl-r2` had the first three variants. The run `0006-abl-r3` has the six variants and gives the tables. The two runs agree: the ceiling of `no_loads` for `lat_ms` is 27.74 % and 27.56 % of the MMQ time. The median difference of one cell is 0.2 % to 0.7 %.
+
+### Result
+
+The next table gives the MMQ time that each variant removes, in % of the MMQ time of each group of numbers of tokens.
+
+| Variant | 9 to 64 | 65 to 256 | 257 to 1,024 | 1,025 to 2,048 | All passes |
+|---|---:|---:|---:|---:|---:|
+| `no_loads` | 40.50 | 28.71 | 26.40 | 25.84 | 27.56 |
+| `same_loads` | 35.15 | 24.17 | 20.85 | 19.64 | 21.81 |
+| `no_weight_load` | 34.81 | 20.46 | 10.57 | 10.21 | 14.20 |
+| `same_weight` | 31.63 | 18.97 | 12.19 | 11.30 | 14.47 |
+| `no_act_load` | 3.81 | 6.23 | 8.00 | 6.29 | 6.20 |
+| `same_act` | 5.84 | 4.70 | -1.29 | -0.61 | 0.94 |
+
+Source: the tables `g-ceiling-by-n.tsv` and `g-ceiling.tsv` in [2026-10-31-0006-mmq-tiles](../../data/2026-10-31-0006-mmq-tiles/README.md).
+
+The next table gives the time of the baseline divided by the time of the variant for two large shapes. A value of 1.38 means that the variant is 1.38 times faster.
+
+| Shape | Tokens | `no_loads` | `same_loads` |
+|---|---:|---:|---:|
+| Q4_0, 9,216 rows | 64 | 1.546 | 1.407 |
+| Q4_0, 9,216 rows | 256 | 1.269 | 1.194 |
+| Q4_0, 9,216 rows | 1,024 | 1.281 | 1.211 |
+| Q4_0, 9,216 rows | 2,048 | 1.295 | 1.235 |
+| Q8_0, 8,192 rows | 64 | 1.497 | 1.438 |
+| Q8_0, 8,192 rows | 256 | 1.383 | 1.294 |
+| Q8_0, 8,192 rows | 1,024 | 1.390 | 1.262 |
+| Q8_0, 8,192 rows | 2,048 | 1.379 | 1.254 |
+
+Source: the table `ablation.tsv` in [2026-10-31-0006-mmq-tiles](../../data/2026-10-31-0006-mmq-tiles/README.md).
+
+In the 18 cells with 1,173 tokens or more, `no_loads` gives 1.28 to 1.57 (median 1.38). The variant `same_loads` gives 1.18 to 1.42 (median 1.25).
+
+The next table gives the part of the request time that each variant removes, in % for each request type. The last two rows give the part of `same_loads` for each weight type.
+
+| Variant | `short1q` | `short2q` | `medium` | `long` | `lat_ms` |
+|---|---:|---:|---:|---:|---:|
+| `no_loads` | 15.72 | 16.78 | 15.62 | 15.33 | 15.64 |
+| `same_loads` | 12.87 | 14.45 | 11.83 | 12.01 | 12.38 |
+| `no_weight_load` | 10.93 | 12.82 | 7.75 | 6.64 | 8.06 |
+| `same_weight` | 9.90 | 11.90 | 7.81 | 7.23 | 8.21 |
+| `no_act_load` | 3.81 | 2.94 | 2.85 | 3.95 | 3.52 |
+| `same_act` | 2.15 | 2.59 | 0.21 | -0.02 | 0.54 |
+| `same_loads`, Q4_0 operations | 6.93 | 7.32 | 6.56 | 6.97 | 6.92 |
+| `same_loads`, Q8_0 operations | 5.94 | 7.13 | 5.28 | 5.04 | 5.46 |
+
+Source: the tables `g-ceiling.tsv` and `g-ceiling-by-wtype.tsv` in [2026-10-31-0006-mmq-tiles](../../data/2026-10-31-0006-mmq-tiles/README.md).
+
+### Meaning of the result
+
+1. The loads use 27.6 % of the MMQ time and 15.6 % of the request time (`lat_ms`). No change of the loads can remove more. At 1,025 tokens or more, the baseline is a median of 1.38 times slower than `no_loads`.
+2. The phase-4 value for `G` is 1.35 times. This is the same as the ceiling `no_loads`. Phase 4 thus used the full load time as the gain of a pipeline. The estimate of 1.08 above is too low.
+3. About 79 % of the ceiling is the time in which the warps wait for data (`same_loads`: 21.8 % of the MMQ time, 12.4 % of `lat_ms`). The other 21 % is the instructions of the loads. A pipeline does not remove them.
+4. The warps wait for the weight loads in most of the time. The variants `same_weight` (14.5 %) and `no_weight_load` (14.2 %) are almost the same.
+5. The warps do not wait for the activation loads. The variant `same_act` removes 0.9 %, and `no_act_load` removes 6.2 %. The time of the activation loads is the instructions, with the instructions that write to shared memory.
+6. The variants add to more than their parts: `no_loads` is 27.6 %, and the sum of `no_weight_load` and `no_act_load` is 20.4 %. [INFERENCE: all warps wait at the same barrier for the two tiles. When one tile loads, the warps continue to wait for the other tile.]
+7. [INFERENCE: the time in which the warps wait is latency and not bandwidth. The weight tile of Q4_0 with 9,216 rows has 13.3 MB, and the kernel loads it 16 times at 2,048 tokens. This is 212 MB in 1.76 ms, or 120 GB/s. Q8_0 with 8,192 rows gives 357 MB in 1.58 ms, or 226 GB/s. The two values are below the 448 GB/s of the DRAM of the GPU (the value from the specification, not measured).]
+8. [INFERENCE: one step of the loop is about 5.8 µs for Q4_0 at 2,048 tokens, with 303 steps for each SM. In `same_loads`, the warps wait about 1.1 µs less in each step. A pipeline issues the loads of the next step before the MMA work of this step. It then has 4.7 µs for the next load.]
+9. [INFERENCE: a load of one step into registers adds about 18 registers for each thread for Q4_0 and 34 for Q8_0. The kernel uses 216 registers for Q4_0 and 254 for Q8_0, and the limit is 255. Q4_0 stays below the limit with 234. Q8_0 goes above it with 288. Q8_0 must use a different method, for example a second area in shared memory.]
+
+### Stop rule for `G`
+
+The rule of phase 4 stops a target if its gain, multiplied by its confidence, is below 3 % for each request type. We use the ceiling `same_loads` for a pipeline, with the part of each weight type.
+
+We multiply two values to set the confidence of each weight type. The first value is the probability that the change works and gives the same bits. The second value is the part of the ceiling that a change that works gets.
+
+| Weight type | Probability that the change works | Part of the ceiling | Confidence |
+|---|---:|---:|---:|
+| Q4_0 | 0.70 | 0.60 | 0.42 |
+| Q8_0 | 0.28 | 0.60 | 0.17 |
+
+The causes of the values:
+
+- **Q4_0, 0.70.** The registers stay below the limit. The change does not change the sums, because only the time of the loads changes. The warps wait for data in a large part of the time, and bandwidth is not the limit. The risk is the pull request for `cp.async` that upstream closed, and the barriers that the change adds.
+- **Q8_0, 0.28.** The kernel is at 254 registers. The change must be possible for Q4_0 (0.70) and then have a different method for Q8_0 (0.40).
+- **Part of the ceiling, 0.60.** The change keeps the instructions of the loads and the barriers. It gives a gain only if the next load ends before the step ends. The range is 0.40 to 0.80.
+
+The next table gives the gain of each request type in % of the request time. The gain is the part of the ceiling of each weight type, multiplied by the confidence.
+
+| Case | `short1q` | `short2q` | `medium` | `long` | Largest |
+|---|---:|---:|---:|---:|---:|
+| Ceiling `same_loads` | 12.87 | 14.45 | 11.83 | 12.01 | 14.45 |
+| Gain with Q4_0 and Q8_0 | 3.92 | 4.28 | 3.66 | 3.79 | 4.28 |
+| Gain with Q4_0 only | 2.91 | 3.07 | 2.76 | 2.93 | 3.07 |
+| Gain with low values (0.20 for Q4_0, 0.06 for Q8_0) | 1.74 | 1.89 | 1.63 | 1.69 | 1.89 |
+
+Source: the tables `g-ceiling.tsv` and `g-ceiling-by-wtype.tsv` in [2026-10-31-0006-mmq-tiles](../../data/2026-10-31-0006-mmq-tiles/README.md).
+
+The confidence that gives 3 % is 3 % divided by the ceiling of the request type. It is 0.23 for `short1q`, 0.21 for `short2q`, 0.25 for `medium`, and 0.25 for `long`. The ceiling `no_loads` gives 0.19 to 0.20.
+
+With the middle values, `G` is above the limit: 4.28 % for `short2q` against 3 %. The gain is near the limit. With the Q4_0 part only, the gain is 3.07 %, which is the same as the limit in the error of the values. With the low values it is 1.89 %, and `G` is below the limit.
+
+`G` is the largest target that stays: the ceiling is 12.4 % of `lat_ms`. A first change that gives Q4_0 less than 1.08 times at 1,025 tokens or more is below the limit. [INFERENCE: this value is 41 % of the ceiling `same_loads` for `ffn_up` at 2,048 tokens, which is 1.235 times.]
 
 ## Decision
 
@@ -261,10 +379,10 @@ We do not use target `H`. We build no change, we run no test with two arms, and 
 - Each row is the lowest of three runs. The noise of 2 % to 3 % limits all results of 3 % or less.
 - The sweep has no adjustment with 64 threads, none with a tile of 96 rows, and none for the 32-row shapes.
 - The program has two more grid rules, 2 and 3. They start one block for each SM, and each block gets a part of `K`. We did not run them.
-- The estimate for `G` is an estimate. No test measured a pipeline.
+- The ablation gives a ceiling for `G`. No test measured a pipeline.
 
 ## Data
 
-- [Data set 2026-10-31-0006-mmq-tiles](../../data/2026-10-31-0006-mmq-tiles/README.md): the raw files of the two measurement windows, the program, the tables, and the build.
-- The branch `dmk/0006-mmq-sweep` of the fork of llama.cpp of this project has the code of the micro-benchmark. The commit is `df6730c95a37831f42c9660af91ec4a3e8b464a7`.
+- [Data set 2026-10-31-0006-mmq-tiles](../../data/2026-10-31-0006-mmq-tiles/README.md): the raw files of the measurement windows, the program, the tables, and the build.
+- The branch `dmk/0006-mmq-sweep` of the fork of llama.cpp of this project has the code of the micro-benchmark. The commit `df6730c95a37831f42c9660af91ec4a3e8b464a7` has the sweep. The commit `819f8e0d455f3f0b17a9548c6652d6189e17f205` adds the ablation variants.
 - [Phase-4 entry](2026-10-31-phase4-ranked-targets.md): the prediction for `H` and `G`.
