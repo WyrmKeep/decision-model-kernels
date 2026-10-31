@@ -170,6 +170,7 @@ The folder `data/` has these data sets.
 | [`2026-10-31-0001-correctness`](data/2026-10-31-0001-correctness/README.md) | The tests of correctness of change 0001 |
 | [`2026-10-31-phase4-model`](data/2026-10-31-phase4-model/README.md) | The time model of phase 4 |
 | [`2026-10-31-0007-input-copies`](data/2026-10-31-0007-input-copies/README.md) | The test of change 0007 |
+| [`2026-10-31-0002-gdn-value-split`](data/2026-10-31-0002-gdn-value-split/README.md) | The kernel test of the paths of `gdn_single` (change 0002) |
 
 ## Condition of each change
 
@@ -177,8 +178,8 @@ A change gets its number when it gets its document. The table shows the changes 
 
 | Target | Change | Equivalence class | Condition |
 |---|---|---|---|
-| `E` | Pull request #30489: GLU fused into the quantization of the activation | `exact` | Measured as a lead: `lat_ms` is 1.94 % lower. In the branch `dmk/stack`. Not in production. |
-| `D` | Value-split path of `gdn_single` | `exact` | In work. |
+| `E` | Change [0001](docs/changes/0001-glu-into-quantize.md): pull request #30489, GLU fused into the quantization of the activation | `exact` | Measured as a lead: `lat_ms` is 1.94 % lower. In the branch `dmk/stack`. Not in production. |
+| `D` | Change [0002](docs/changes/0002-gdn-value-split.md): value-split path of `gdn_single` | `exact` | We do not use it. The best value-split path is 1.15 to 1.31 times as slow as the whole-head path. The tensor cores are the limit of the kernel, and a value-split path adds work. |
 | `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | In work. |
 | `A` | Output head for the answer tokens only | `exact` | In work. |
 | `B` | Attention mask on the GPU | `exact` | In work. |

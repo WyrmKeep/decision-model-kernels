@@ -5,6 +5,7 @@ This folder has one document for each change to llama.cpp.
 | Number | Change | Equivalence class | Condition |
 |---|---|---|---|
 | [`0001`](0001-glu-into-quantize.md) | GLU fused into the quantization of the activation in MMQ (upstream pull request #30489) | `exact` | In the branch `dmk/stack`. Not in production. |
+| [`0002`](0002-gdn-value-split.md) | Test cases for the shape of `gdn_single` and a comment at the selection of its path. We do not use the value-split path. | `exact` | In the branch `dmk/stack`. The program does not change. |
 | [`0007`](0007-input-copies.md) | The scheduler of ggml skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower and `long_ms` is 1.3 % lower. Not in production. |
 
 Source: the change documents in this folder.
