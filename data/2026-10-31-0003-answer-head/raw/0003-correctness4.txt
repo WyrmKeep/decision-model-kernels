@@ -1,0 +1,19 @@
+# Change 0003 (output head for the answer tokens only): runs with the log level 4 on the final build, before the A/B. This is not a speed test.
+# L = build:lead-30489 (the parent), A3 = build:0003-answer-head.
+# Part 1: one pass of the private benchmark for each arm, two times. The log of A3 must show no graph reallocation. The answers must be the same.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-r-bench-A3-1 build:0003-answer-head --passes 1 --write-reference 0003-r-bench-A3-1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-r-bench-L-1 build:lead-30489 --passes 1 --write-reference 0003-r-bench-L-1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-r-bench-L-2 build:lead-30489 --passes 1 --write-reference 0003-r-bench-L-2
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-r-bench-A3-2 build:0003-answer-head --passes 1 --write-reference 0003-r-bench-A3-2
+# Part 2: the weight of the head is in the CPU buffer. The graph has the full head and takes the values of the tokens from it. One request at a time. The answers must be the same.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot output.weight=CPU" client 0003-r-cpuhead-A3-1 build:0003-answer-head /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot output.weight=CPU" client 0003-r-cpuhead-L-1 build:lead-30489 /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot output.weight=CPU" client 0003-r-cpuhead-L-2 build:lead-30489 /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot output.weight=CPU" client 0003-r-cpuhead-A3-2 build:0003-answer-head /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+# Part 3: 6 slots and 6 requests in flight. The graph has the full head, because the context can have 6 outputs.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-r-np6-A3-1 build:0003-answer-head /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-r-np6-L-1 build:lead-30489 /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-r-np6-L-2 build:lead-30489 /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-r-np6-A3-2 build:0003-answer-head /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+# Part 4: the server of arm A3 in compute-sanitizer (memcheck), one request of each type. The wrapper stops the server only on TERM, so that the sanitizer prints its summary.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" DMK_SERVER_WRAP="/tools/san-wrap-0003.sh" client 0003-r-memcheck-A3 build:0003-answer-head /extra/0003/memcheck_client.py 18080 /runs/{name}.answers.json

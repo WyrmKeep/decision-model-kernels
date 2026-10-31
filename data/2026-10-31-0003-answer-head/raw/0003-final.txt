@@ -1,0 +1,7 @@
+# Change 0003 (output head for the answer tokens only), the final commit 419b8f612. F = build:0003-answer-head-final (419b8f612), A3R = build:0003-answer-head-rebased (ca69612da, the build before the repair of the mixed batch).
+# Part 1: two passes of the private benchmark of F with the flags of production. The answers must be the same as the answers of arm S (build:stack-fbfd9cb).
+bench 0003-final-bench-F-1 build:0003-answer-head-final --write-reference 0003-final-bench-F-1
+bench 0003-final-bench-F-2 build:0003-answer-head-final --write-reference 0003-final-bench-F-2
+# Part 2: mixed load with the flags of production. The decision requests go one at a time while 20 completions and 5 chat requests are in flight. F must give all status 200. A3R may fail: its failure is the reason for the repair.
+client 0003-final-mixed-F build:0003-answer-head-final /extra/0003/mixed_client.py 18080 /runs/{name}.answers.json /runs/{name}.others.json
+client 0003-final-mixed-A3R build:0003-answer-head-rebased /extra/0003/mixed_client.py 18080 /runs/{name}.answers.json /runs/{name}.others.json

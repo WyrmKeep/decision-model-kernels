@@ -1,0 +1,14 @@
+# Change 0003 (output head for the answer tokens only): correctness runs before the A/B. This is not a speed test.
+# L = build:lead-30489 (the parent), A3 = build:0003-answer-head.
+# Answers of the private benchmark, two runs of each arm (the first line of each pair: arm L).
+bench 0003-corr-L-1 build:lead-30489 --passes 1 --write-reference 0003-corr-L-1
+bench 0003-corr-A3-1 build:0003-answer-head --passes 1 --write-reference 0003-corr-A3-1
+bench 0003-corr-A3-2 build:0003-answer-head --passes 1 --write-reference 0003-corr-A3-2
+bench 0003-corr-L-2 build:lead-30489 --passes 1 --write-reference 0003-corr-L-2
+# Six slots and six requests in flight: a pass can have 5 or 6 output rows, so the graph takes the values from the full head.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-np6-A3-1 build:0003-answer-head /extra/0003/concurrent.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-np6-L-1 build:lead-30489 /extra/0003/concurrent.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-np6-L-2 build:lead-30489 /extra/0003/concurrent.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots -lv 4" client 0003-np6-A3-2 build:0003-answer-head /extra/0003/concurrent.py 18080 /runs/{name}.answers.json 6
+# The server of arm A3 in compute-sanitizer (memcheck), one request of each type.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" DMK_SERVER_WRAP="/tools/compute-sanitizer-12.8.93/bin/compute-sanitizer --tool memcheck --error-exitcode 99" client 0003-memcheck-A3 build:0003-answer-head /extra/0003/memcheck_client.py 18080 /runs/{name}.answers.json

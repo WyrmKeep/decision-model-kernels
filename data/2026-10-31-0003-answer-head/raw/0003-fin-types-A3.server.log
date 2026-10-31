@@ -1,0 +1,36 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+warn: LLAMA_ARG_PORT environment variable is set, but will be overwritten by command line argument --port
+0.00.257.820 I srv  llama_server: initializing ...
+0.00.257.837 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.257.973 I srv  init_listene: The UI is disabled
+0.00.257.977 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.258.068 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.259.817 I srv    load_model: loading model '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.02.693.131 I cmn          init: llama threadpool init, n_threads = 6
+0.02.767.204 I srv          init: decision model type: h2o-lightning
+0.02.784.607 I srv    load_model: initializing, n_slots = 3, n_ctx_slot = 16384, kv_unified = 'true'
+0.02.784.677 I srv    load_model: decision model: prompt cache disabled by default, use `--cache-ram N` to enable it
+0.02.788.805 I srv  server_run_i: model loaded
+0.02.788.812 I srv  server_on_li: listening on http://0.0.0.0:8080
+0.03.270.616 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.03.270.628 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+0.03.325.920 I slot      release: id  0 | task 0 | stop processing: n_tokens = 132, truncated = 0
+0.03.328.294 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.202 (> 0.100 thold), f_keep = 0.288
+0.03.328.302 I slot launch_slot_: id  1 | task 3 | processing task, is_child = 1
+0.03.328.303 I slot launch_slot_: id  0 | task 2 | processing task, is_child = 0
+0.03.414.439 I slot      release: id  0 | task 2 | stop processing: n_tokens = 188, truncated = 0
+0.03.414.452 I slot      release: id  1 | task 3 | stop processing: n_tokens = 119, truncated = 0
+0.03.419.194 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.03.419.203 I slot launch_slot_: id  1 | task 7 | processing task, is_child = 1
+0.03.419.205 I slot launch_slot_: id  0 | task 8 | processing task, is_child = 1
+0.03.419.206 I slot launch_slot_: id  2 | task 6 | processing task, is_child = 0
+0.03.665.685 I slot      release: id  2 | task 6 | stop processing: n_tokens = 1069, truncated = 0
+0.03.713.892 I slot      release: id  0 | task 8 | stop processing: n_tokens = 1099, truncated = 0
+0.03.713.995 I slot      release: id  1 | task 7 | stop processing: n_tokens = 1073, truncated = 0
+0.03.723.512 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 201741852135
+0.03.723.542 I slot launch_slot_: id  1 | task 13 | processing task, is_child = 1
+0.03.723.547 I slot launch_slot_: id  2 | task 14 | processing task, is_child = 1
+0.03.723.550 I slot launch_slot_: id  0 | task 12 | processing task, is_child = 0
+0.04.488.031 I slot      release: id  0 | task 12 | stop processing: n_tokens = 3251, truncated = 0
+0.04.488.048 I slot      release: id  1 | task 13 | stop processing: n_tokens = 3255, truncated = 0
+0.04.488.236 I slot      release: id  2 | task 14 | stop processing: n_tokens = 3281, truncated = 0
