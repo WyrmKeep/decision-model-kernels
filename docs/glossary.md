@@ -471,6 +471,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | split KV cache | technical noun | A KV cache with one different part for each slot. The unified KV cache is not the same. |
 | SSH | technical name | The program that gives you a terminal on a different host. The link is safe. |
 | SSM state | technical noun | The part of the layer state of a Gated DeltaNet layer that is not the conv state. |
+| stack | technical noun | The branch `dmk/stack` of the fork, or its build. It has tag `b12004` and each change that is complete and correct, in sequence. Each new change starts from it. |
 | stage | technical noun | A group of runs of the ablation. Stage 1 has one run for each arm. Stage 2 has more blocks for some arms. |
 | stall | technical noun | A cycle in which a warp does not start an instruction. |
 | stall reason | technical noun | The cause of a stall. Nsight Compute gives the stalls of each stall reason, for example `wait` or `long_scoreboard`. |
