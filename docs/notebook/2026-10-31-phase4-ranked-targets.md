@@ -220,7 +220,7 @@ Thus the rule to stop does not stop the project at this time.
 
 - **`M`.** One kernel for each layer removes most launches and some of the movement of data in the memory. The GPU runs a kernel during 90 % or more of the time. Thus the gain is small for a very large effort.
 - **`O`.** A cache of the tokens of the prompt prefix removes 70 % of the time to make the prompt and its tokens.
-- **`P`.** The host runs `cudaStreamSynchronize` 21 to 25 times in each pass. After each synchronization, the GPU waits 40 to 50 µs for the next kernel. We did not find the code that starts these synchronizations. If they are not necessary, the change removes 80 % of the idle time in the passes.
+- **`P`.** The host runs `cudaStreamSynchronize` 21 to 25 times in each pass. After each stream synchronization, the GPU waits 40 to 50 µs for the next kernel. We did not find the code that starts these stream synchronizations. If they are not necessary, the change removes 80 % of the idle time in the passes.
 - **`K`.** CUDA graphs remove part of the idle time in the passes. The shape of a pass changes with each request. Thus a new graph can be necessary for each pass, and that can use more time than it removes.
 
 ## Causes of an incorrect prediction
