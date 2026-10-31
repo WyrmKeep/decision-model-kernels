@@ -1,0 +1,33 @@
+case	suffix_lengths	check	result
+medium	43,47,73	the ragged split decodes all the suffixes in one pass	ok
+medium	43,47,73	the equal split needs more than one pass	ok
+medium	43,47,73	mean KL of the logits of the ragged split is inside the limit	FAIL
+medium	43,47,73	largest KL of the logits of the ragged split is inside the limit	ok
+medium	43,47,73	the most likely token is the same in all rows	ok
+medium	43,47,73	conv states of the ragged split are inside the tolerance	FAIL
+medium	43,47,73	recurrent states of the ragged split are inside the tolerance	FAIL
+medium	43,47,73	floor of the logits: mean KL 0.000e+00, largest KL 0.000e+00; limits: mean KL 1.000e-05, largest KL 1.000e-03	info
+short2q	51,120	the ragged split decodes all the suffixes in one pass	ok
+short2q	51,120	the equal split needs more than one pass	ok
+short2q	51,120	mean KL of the logits of the ragged split is inside the limit	FAIL
+short2q	51,120	largest KL of the logits of the ragged split is inside the limit	ok
+short2q	51,120	the most likely token is the same in all rows	ok
+short2q	51,120	conv states of the ragged split are inside the tolerance	FAIL
+short2q	51,120	recurrent states of the ragged split are inside the tolerance	FAIL
+short2q	51,120	floor of the logits: mean KL 0.000e+00, largest KL 0.000e+00; limits: mean KL 1.000e-05, largest KL 1.000e-03	info
+five	2,33,2,64,31	the ragged split decodes all the suffixes in one pass	ok
+five	2,33,2,64,31	the equal split needs more than one pass	ok
+five	2,33,2,64,31	mean KL of the logits of the ragged split is inside the limit	FAIL
+five	2,33,2,64,31	largest KL of the logits of the ragged split is inside the limit	FAIL
+five	2,33,2,64,31	the most likely token is the same in all rows	ok
+five	2,33,2,64,31	conv states of the ragged split are inside the tolerance	FAIL
+five	2,33,2,64,31	recurrent states of the ragged split are inside the tolerance	FAIL
+five	2,33,2,64,31	floor of the logits: mean KL 0.000e+00, largest KL 0.000e+00; limits: mean KL 1.000e-05, largest KL 1.000e-03	info
+alllogits	43,47,73	the ragged split decodes all the suffixes in one pass	ok
+alllogits	43,47,73	the equal split needs more than one pass	ok
+alllogits	43,47,73	mean KL of the logits of the ragged split is inside the limit	FAIL
+alllogits	43,47,73	largest KL of the logits of the ragged split is inside the limit	FAIL
+alllogits	43,47,73	the most likely token is the same in all rows	FAIL
+alllogits	43,47,73	conv states of the ragged split are inside the tolerance	FAIL
+alllogits	43,47,73	recurrent states of the ragged split are inside the tolerance	ok
+alllogits	43,47,73	floor of the logits: mean KL 0.000e+00, largest KL 0.000e+00; limits: mean KL 1.000e-05, largest KL 1.000e-03	info
