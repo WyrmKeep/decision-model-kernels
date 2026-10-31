@@ -20,7 +20,7 @@ Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked lis
 - A request uses 2.13 to 2.45 times its roofline floor.
 - The GPU runs a kernel for 90 % to 94 % of the time of a request. The host is not the limit.
 - The ranked list has 15 targets. The first change is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
-- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and the changes 0001 (target `E`), 0003 (target `A`), 0004 (target `B`), 0005 (target `C`) and 0007 (target `P`).
+- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and the changes 0001 (target `E`), 0003 (target `A`), 0004 (target `B`), 0005 (target `C`) and 0007 (target `P`). It also has the test cases and a comment of change 0002 (target `D`), with no change to the program.
 - The [first test of the stack](docs/notebook/2026-10-31-stack-1-result.md) compares the stack with build `D`. `lat_ms` is 8.04 % lower, `long_ms` is 8.71 % lower and `short_ms` is 6.00 % lower. The answers are the same as the answers of build `D`, bit for bit.
 - The [second test of the stack](docs/notebook/2026-10-31-stack-2-result.md) compares the stack with change 0003 with the image in production. `lat_ms` is 9.15 % lower, `short_ms` is 9.61 % lower and `long_ms` is 8.96 % lower. The answers are the same as the answers of the image, bit for bit.
 - The changes for the targets `D`, `G`, `H` and `J` are not in the stack. Their result entries give the causes.
@@ -123,7 +123,8 @@ The private benchmark is not in this repository. The [public benchmark](bench/RE
 - **Tests of correctness.** An `exact` change must give the same answers bit for bit. A `re-associated` change must stay in the limits of `test-backend-ops` and have a KL divergence at noise level. An `approximation` has a limit for the KL divergence.
 - **Blocks of runs.** A speed test uses blocks. Each block has one run of each build in a random sequence. The interval is a 95 % bootstrap interval of the blocks.
 - **One test at a time.** The GPU does the work of one run only. The server in production is off during a measurement window.
-- **Rule to stop.** We stop work on a target when the result is different from the prediction and we cannot find the cause.
+- **Stop a target.** We stop work on a target when the result is different from the prediction and we cannot find the cause.
+- **Rule to stop.** We stop the project when the expected gain of each target that stays is less than 3 % for each request type.
 
 The [method](docs/method.md) gives all rules.
 
@@ -207,7 +208,7 @@ A change gets its number when it gets its document. The table shows the changes 
 | `G` | MMQ as a pipeline for the tile loads | `exact` | We do not use it in this shape. The Q4_0 pipeline gives the same bits, but the micro-benchmark gives only 1.042 times at 1,025 tokens or more. The limit was 1.08. The largest gain for one request type is 2.2 %, less than the limit of the rule to stop. The [result entry](docs/notebook/2026-10-31-0009-mmq-pipeline-result.md) has the data. |
 | `J` | Change [0008](docs/changes/0008-ragged-suffix.md): ragged batching for the suffixes of the questions | `re-associated` | We do not use it. The second test gives -2.46 % for `lat_ms`, but one limit of the decision is not true: for 3 of 40 pairs of an input and a value, the error is more than 3 times the error of the equal split. We declared the limits before the test. |
 
-The targets `F`, `L`, `K` and `O` come after these changes, if the rule to stop does not stop the project. The phase 4 entry does not recommend `N` and `M`.
+The rule to stop stops the project before the targets `F`, `L`, `K`, `O`, `N` and `M`. The [entry of the rule to stop](docs/notebook/2026-10-31-phase5-rule-to-stop.md) gives their expected gains.
 
 ## Standard for the text
 
