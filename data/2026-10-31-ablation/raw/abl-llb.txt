@@ -1,0 +1,20 @@
+# make_ablate_runs.py --build ablate-timing --passes 5 --blocks-core 2 --seed 20261101
+# llama bench, prompt sizes of a short parent / suffix, medium and long request; same flags as production
+DMK_WRAP=/opt/dmk/abl/head.sh tool abl-llb-b1-head build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+tool abl-llb-b1-ref build:b12004-sm86 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/glu.sh tool abl-llb-b1-glu build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/fattn.sh tool abl-llb-b1-fattn build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/mmvq.sh tool abl-llb-b1-mmvq build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/ssm_conv.sh tool abl-llb-b1-ssm_conv build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/quantize.sh tool abl-llb-b1-quantize build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/elementwise.sh tool abl-llb-b1-elementwise build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/matmul.sh tool abl-llb-b1-matmul build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/base.sh tool abl-llb-b1-base build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/norm.sh tool abl-llb-b1-norm build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/gdn.sh tool abl-llb-b1-gdn build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/matmul_q.sh tool abl-llb-b1-matmul_q build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/all.sh tool abl-llb-b1-all build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/copies.sh tool abl-llb-b1-copies build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/mmq.sh tool abl-llb-b1-mmq build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/all_timing.sh tool abl-llb-b1-all_timing build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json
+DMK_WRAP=/opt/dmk/abl/timing.sh tool abl-llb-b1-timing build:ablate-timing bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 8,32,160,1100,3200 -n 0 -r 5 -o json

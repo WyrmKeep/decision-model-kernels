@@ -489,3 +489,14 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | whole-head path | technical noun | A path of the kernel `gdn_single`. One thread block calculates all value columns of one head. |
 | word | technical noun | One unit of text between two spaces. |
 | wrapper | technical noun | A program that starts a second program. It records or checks the work of the second program. |
+| ablation | technical noun | A test in which a build skips the work of one part of the program. The time of a request then shows how much time that part uses. |
+| ablation build | technical noun | The build of the branch `dmk/ablate-timing`. It skips the work of the parts that an environment variable names. |
+| cap | technical noun | The time of the arm `base` minus the time of an arm of an ablation. It is the largest time that a faster part can remove from a request. |
+| convolution | technical noun | The step of a recurrent layer that mixes each token with the tokens before it. The node `SSM_CONV` does it. |
+| drift | technical noun | A slow change of the speed of the host during a test. |
+| projection | technical noun | A matrix multiply of the activations with one weight matrix of a layer. A feed-forward layer has three projections: `ffn_up`, `ffn_gate` and `ffn_down`. |
+| skip | technical verb | To make no launch for a node or a kernel. The ablation skips the work of a part of the model. |
+| stage | technical noun | A group of runs of the ablation. Stage 1 has one run for each arm. Stage 2 has more blocks for some arms. |
+| SiLU | technical name | The function `x/(1+exp(-x))`. |
+| SwiGLU | technical name | The GLU of the feed-forward layers of this model. It multiplies the SiLU of the first list by the second list. |
+| pass spread | technical noun | The difference between the highest and the lowest mean latency of the timed passes of one run, in % of the mean of the pass means. |
