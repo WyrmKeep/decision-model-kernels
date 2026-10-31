@@ -171,6 +171,7 @@ The folder `data/` has these data sets.
 | [`2026-10-31-phase4-model`](data/2026-10-31-phase4-model/README.md) | The time model of phase 4 |
 | [`2026-10-31-0007-input-copies`](data/2026-10-31-0007-input-copies/README.md) | The test of change 0007 |
 | [`2026-10-31-0002-gdn-value-split`](data/2026-10-31-0002-gdn-value-split/README.md) | The kernel test of the paths of `gdn_single` (change 0002) |
+| [`2026-10-31-0004-gpu-mask`](data/2026-10-31-0004-gpu-mask/README.md) | The test of change 0004 |
 
 ## Condition of each change
 
@@ -182,7 +183,7 @@ A change gets its number when it gets its document. The table shows the changes 
 | `D` | Change [0002](docs/changes/0002-gdn-value-split.md): value-split path of `gdn_single` | `exact` | We do not use it. The best value-split path is 1.15 to 1.31 times as slow as the whole-head path. The tensor cores are the limit of the kernel, and a value-split path adds work. |
 | `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | In work. |
 | `A` | Output head for the answer tokens only | `exact` | In work. |
-| `B` | Attention mask on the GPU | `exact` | In work. |
+| `B` | Change [0004](docs/changes/0004-gpu-mask.md): attention mask on the GPU | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. Not in production. |
 | `C` | Concat folded into `ssm_conv` | `exact` | In work. |
 | `P` | Change [0007](docs/changes/0007-input-copies.md): the scheduler skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower, `long_ms` is 1.3 % lower, and `lat_ms` is 0.9 % lower (the interval includes 0). Not in production. |
 | `G` | MMQ as a pipeline with `cp.async` tile loads | `exact` | After `H`. Not started. |

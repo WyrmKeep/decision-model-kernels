@@ -22,6 +22,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-31-phase4-model`](2026-10-31-phase4-model/README.md) | 2026-10-31 | The time model of phase 4: the input numbers, the assumption of each target, and the predicted time that each target removes for each request type. It has no run of the GPU. |
 | [`2026-10-31-0007-input-copies`](2026-10-31-0007-input-copies/README.md) | 2026-10-31 | The test of change 0007 against the build of `dmk/stack`: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, the SASS compare, and the number of uploads and sync calls in each pass from Nsight Systems. |
 | [`2026-10-31-0002-gdn-value-split`](2026-10-31-0002-gdn-value-split/README.md) | 2026-10-31 | The kernel test of 8 paths of `gdn_single` on 21 shapes, the bit compare of the paths, and the tests of the build of the pull request and of the candidate branch. The whole-head path is the fastest path. We do not use target `D`. |
+| [`2026-10-31-0004-gpu-mask`](2026-10-31-0004-gpu-mask/README.md) | 2026-10-31 | The test of change 0004 (the attention mask on the GPU) against the build of `dmk/stack`: 4 blocks of the private benchmark, 4 blocks of `llama bench`, the answers, the GPU attention mask against the CPU attention mask, and `compute-sanitizer`. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 

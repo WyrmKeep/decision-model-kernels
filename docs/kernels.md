@@ -64,6 +64,14 @@ Facts about the structure of the kernels:
 
 The [ablation](notebook/2026-10-31-phase3-ablation-caps.md#caps-for-each-part-and-each-request) gives the cap of the MMQ kernels as 60.3 % to 61.1 % of the latency of a request. The [long version](story.md) puts these facts in the sequence of the work.
 
+## Kernels that the changes add
+
+| Change | Operation | File | Work of one thread | Measured time | Source |
+|---|---|---|---|---|---|
+| [0004](changes/0004-gpu-mask.md) | `KQ_MASK` | `ggml/src/ggml-cuda/kq-mask.cu` | It writes 16 bytes of the attention mask for each of 4 token rows. It reads the data of its KV cells one time. | 72 µs for an attention mask of 6,912 cells and 2,048 tokens (28 MB, 367 GB/s) | [Result of change 0004](notebook/2026-10-31-0004-gpu-mask-result.md) |
+
+Source: the change documents in the first column.
+
 ## Related documents
 
 - [Model](model.md): the layers, the quantization, and the server.
