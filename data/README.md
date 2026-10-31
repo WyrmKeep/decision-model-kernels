@@ -14,6 +14,8 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-30-test-backend-ops`](2026-10-30-test-backend-ops/README.md) | 2026-10-30 | The logs of `test-backend-ops` for the 187 operations of the graph of mix8 and for five built-in tests, on build `D` |
 | [`2026-10-30-card-limits`](2026-10-30-card-limits/README.md) | 2026-10-30 | The highest rates of the `RTX 3060 Ti` for the tensor cores, the DRAM and the L2 cache, and the time of a cuBLASLt int8 GEMM for the weight shapes of the model. |
 | [`2026-10-31-public-baseline`](2026-10-31-public-baseline/README.md) | 2026-10-31 | The baseline of the public benchmark: three runs of build `D` with the model mix8, the file `bench/baseline.json`, and a check run with the result `PASS`. |
+| [`2026-10-31-lead-30489`](2026-10-31-lead-30489/README.md) | 2026-10-31 | The test of pull request #30489 against build `D`. It has 4 blocks of the private benchmark and 4 blocks of `llama bench`. It also has the answers of 8 runs and the SASS compare of the two builds. |
+| [`2026-10-31-phase4-model`](2026-10-31-phase4-model/README.md) | 2026-10-31 | The time model of phase 4: the input numbers, the assumption of each target, and the predicted time that each target removes for each request type. It has no run of the GPU. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 
