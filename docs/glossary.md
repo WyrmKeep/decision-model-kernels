@@ -300,7 +300,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | merge commit | technical noun | A commit that puts the changes of two branches together. |
 | merge conflict | technical noun | The condition when two branches have different changes for the same line. A person must select the correct change. |
 | metric | technical noun | A number that measures one quality of a run. |
-| micro-benchmark | technical noun | A test of only one kernel. It uses `test-backend-ops perf`. It does not run a model. |
+| micro-benchmark | technical noun | A test of only one kernel, for example `test-backend-ops perf` or a program that runs one kernel many times with random data. It measures the time of the kernel and not the time of a request. It does not run a model. |
 | mirror sync | technical noun | One time that a push mirror sends the refs of a repository to a different server. |
 | misaligned run | technical noun | A run of Nsight Compute in which the profiled launches are not the launches of the list that the run must profile. |
 | MMA | technical name | The instruction of an NVIDIA GPU that multiplies two tiles and adds the result to a third tile. A kernel that uses it is an MMA kernel. |
@@ -330,6 +330,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | opcode | technical noun | The name of one SASS instruction, for example `IMMA`, `LDS`, or `FFMA`. |
 | operand | technical noun | A matrix that an MMA instruction reads. |
 | operation class | technical noun | A group of kernels that do the same type of operation, for example the MMQ kernels or the GDN kernels. |
+| oracle | technical noun | A table that has the fastest row of a sweep for each cell. It is the limit of the gain of all rules, and it includes the noise. |
 | output head | technical noun | The last model weights of the model. They change the data of one token to one logit for each token of the vocabulary. |
 | overhead | technical noun | The time that a program uses for steps that are not the task, for example a kernel launch. |
 | override | technical noun | A value that a schedule line sets for that line only. It replaces the value of the env file for the run of that line. |
@@ -484,6 +485,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | submit | technical verb | To send the launches of one pass to the GPU. |
 | suffix | technical noun | The tokens of a prompt after the shared prefix. They have one question. |
 | summary | technical noun | A short section at the start of a document. It gives the primary facts. |
+| sweep | technical noun | A micro-benchmark that runs one kernel with many tile adjustments, for the same shapes and the same numbers of tokens. |
 | SwiGLU | technical name | The GLU of the feed-forward layers of this model. It multiplies the SiLU of the first list by the second list. |
 | switch point | technical noun | The number of columns in a batch at which llama.cpp changes from MMVQ to MMQ. Each GPU and each type of quantization can have a different switch point. |
 | sync call | technical noun | A CUDA call that waits until the GPU stops its work. The CUDA function `cudaStreamSynchronize` makes a sync call. |
@@ -510,6 +512,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | threshold | technical noun | A limit for a result. We write it before the test. |
 | throughput | technical noun | The number of decisions that the server finishes in one second. |
 | tile | technical noun | A small part of a matrix that one thread block reads and writes at one time. |
+| tile adjustment | technical noun | One set of values for the MMQ kernel: the threads of a thread block, the rows and the columns of the tile, and the number of thread blocks for each SM. |
 | time model | technical noun | The functions of the script `make_tables.py` in the data set `2026-10-31-phase4-model`. They calculate the time of a request after a change, from the kernel times and the assumptions. |
 | timed pass | technical noun | One time that the client sends all cases to the server, one request at a time, in a random sequence. The client measures the latency of each request. |
 | title | technical noun | The text that gives a name to an issue or to a pull request. |

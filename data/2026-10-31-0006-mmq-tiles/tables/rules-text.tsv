@@ -1,0 +1,10 @@
+rule	meaning
+base	The launch rule of the base build (J with the fewest tiles, 256 threads, 128 rows, stream-k)
+oracle-all	Best row for each shape and N (picks the noise too)
+oracle-all-guard3	Best row if it is at least 3 % faster, else the base
+oracle-exact	Best row with equal bits
+oracle-exact-guard3	Best row with equal bits if it is at least 3 % faster, else the base
+rule-i64-same-J	Where the base runs the fixup path: 128 threads, 64 rows, the J of the base, one block for each tile
+rule-i64-best-J	Where the base runs the fixup path: the best J of the 128 thread, 64-row tile with one block for each tile
+rule-q8-i64-same-J	The rule rule-i64-same-J for Q8_0 only
+rule-q8-i64-best-J	The rule rule-i64-best-J for Q8_0 only
