@@ -1,6 +1,6 @@
 # Change 0004: attention mask on the GPU (prediction)
 
-Written 2026-10-31, 05:40 UTC, before the first run of this change in the measurement window.
+Written 2026-10-31, 05:24 UTC, before the first run of this change in the measurement window.
 
 ## Task of this entry
 
