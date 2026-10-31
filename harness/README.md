@@ -21,6 +21,7 @@ The harness runs the [benchmark](../bench/README.md). The [method](../docs/metho
 | `analysis/ab_stats.py` | Calculates the ratio of two arms for each block. It gives the mean and an interval. |
 | `analysis/answers_compare.py` | Compares the answers of two arms. |
 | `ablate/` | The tools of the ablation: the script that makes the schedules, the client, the script that makes the tables, the SASS check and the files of the arms. Its [README](ablate/README.md) gives the steps. |
+| `profile/` | The code of phase 3: the census, the profile runs, and the scripts that make the tables. The [README](profile/README.md) gives the commands. |
 
 ## How the harness works
 

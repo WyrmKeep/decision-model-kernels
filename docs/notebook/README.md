@@ -27,6 +27,7 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-30 | [Test of the build from source](2026-10-30-phase1-equivalence-plan.md) | Prediction | Written before the first measurement. The [result entry](2026-10-30-phase1-equivalence-result.md) gives the result. |
 | 2026-10-30 | [Result of the test of the build from source](2026-10-30-phase1-equivalence-result.md) | Results | Complete. Build D is in all limits of the prediction entry. |
 | 2026-10-30 | [Correctness baseline of the model mix8 on build D](2026-10-30-phase2-correctness-baseline.md) | Results | Complete. It has no prediction entry. The numbers are the baseline for the next entries. |
+| 2026-10-31 | [Where the time of a request goes](2026-10-31-phase3-where-the-time-goes.md) | Results | Complete. It has no prediction entry. The numbers are the measurement of phase 3. |
 | 2026-10-31 | [Phase 3: caps of the parts of the GPU work (result)](2026-10-31-phase3-ablation-caps.md) | Results | Complete. It has no prediction entry. A cap is the largest time that a part can remove. It is not a prediction. The table `DMK_OPS` has no rows. |
 | 2026-10-31 | [Lead 30489: GLU in the quantization of the activation (result)](2026-10-31-lead-30489.md) | Results | Complete. The notebook has no prediction entry for it. It is a lead. The project does not use it in production. |
 | 2026-10-31 | [Phase 4: ranked list of targets](2026-10-31-phase4-ranked-targets.md) | Prediction | Written before a change to the code of a target. The owner selects the next step. |
