@@ -15,11 +15,15 @@ The harness runs the [benchmark](../bench/README.md). The [method](../docs/metho
 | `remote/run_bench.sh` | Does one run of the benchmark. |
 | `remote/run_client.sh` | Does one run of a client script. |
 | `remote/run_tool.sh` | Does one run of a `llama` command. |
+| `remote/run_soak.sh` | Does a soak test of one arm. |
+| `remote/san_wrap.sh` | The wrapper of the server for the sanitizer phase of the soak test. |
+| `remote/san_client.py` | The client of the sanitizer phase of the soak test. |
 | `build/build.sh` | Builds llama.cpp in a container on the local device. |
 | `build/Containerfile.builder` | The file of the builder image. |
 | `build/sass_compare.py` | Compares the SASS of two builds. |
 | `analysis/ab_stats.py` | Calculates the ratio of two arms for each block. It gives the mean and an interval. |
 | `analysis/answers_compare.py` | Compares the answers of two arms. |
+| `analysis/soak_check.py` | Checks the results of a soak test. It writes `PASS` or `FAIL` for each condition. |
 | `ablate/` | The tools of the ablation: the script that makes the schedules, the client, the script that makes the tables, the SASS check and the files of the arms. Its [README](ablate/README.md) gives the steps. |
 | `profile/` | The code of phase 3: the census, the profile runs, and the scripts that make the tables. The [README](profile/README.md) gives the commands. |
 
@@ -51,7 +55,7 @@ A `tool` run has no server and no client. The script starts the sampler and one 
 | Device | Parts |
 |---|---|
 | Local device | `bash`, Python 3, SSH and `rsync`. `podman` for the script `build/build.sh`. |
-| GPU host | SSH that works with no input from a person. `rsync`, `bash`, `curl`, `awk`, `setsid` and `nvidia-smi`. Docker with the flag `--runtime=nvidia`. |
+| GPU host | SSH that works with no input from a person. `rsync`, `bash`, `curl`, `awk`, `setsid` and `nvidia-smi`. Docker with the flag `--runtime=nvidia`. For a soak test, the host must also have `dmesg`, `flock`, `gzip`, `sed` and `timeout`, and the user must read `dmesg`. |
 
 Python is not necessary on the GPU host. The client runs in a container with a Python image.
 
@@ -98,6 +102,13 @@ The scripts read these environment variables, but the example file does not have
 | `DMK_SERVER_WRAP` | `start_server.sh` | None | The command of a wrapper for `llama-server`, for example a profiler. The section Server script gives the rules. |
 | `DMK_STOP_TIMEOUT` | `run_client.sh` | `600` | The longest time, in seconds, that `run_client.sh` waits while it stops the server container. It uses this value only with `DMK_SERVER_WRAP`. |
 | `DMK_WRAP_<w>` | `run_schedule.sh` | None | The command of the wrapper `<w>`. A `tool@<w>` line uses it. |
+| `DMK_SOAK_SANITIZER` | `run_soak.sh` | None | Necessary for the soak test. The path of `compute-sanitizer` in the container, in the folder `/tools`. |
+| `DMK_SOAK_INTERVAL` | `run_soak.sh` | `1800` | The time between two checks of the soak test, in seconds. |
+| `DMK_SOAK_BENCH_ARGS` | `run_soak.sh` | None | The flags of `bench.py` for each benchmark run of the soak test. |
+| `DMK_SOAK_PASS_TIMEOUT` | `run_soak.sh` | `1200` | The longest time of one benchmark run of the soak test, in seconds. |
+| `DMK_SOAK_SAN_TIMEOUT` | `run_soak.sh` | `1800` | The longest time of the client in one sanitizer phase, in seconds. |
+| `DMK_SOAK_SMI_MS` | `run_soak.sh` | `1000` | The time between two samples of the GPU sampler of the soak test, in ms. |
+| `DMK_SOAK_MIN_UNALLOC_MIB` | `run_soak.sh` | `0` | The soak test stops if `btrfs filesystem usage` shows less than this value, in MiB, in the line `Device unallocated`. The value 0 turns this limit off. |
 
 A wrapper starts the tool and records or checks its work. The name `<w>` has only letters, numbers and `_`. The first word of the value is the program of the wrapper in the container. The tool container sees the folder `tools` of the work folder on the GPU host at `/tools` as read-only. Put the program of the wrapper in that folder. Example:
 
@@ -423,6 +434,136 @@ The script writes one JSON object to the standard output. It compares the values
 
 If a path gives no file, the script stops with the text `no files for <path>`.
 
+## Soak test
+
+A soak test keeps the server of one arm up for many hours. The benchmark runs against this server again and again. At a regular interval, the script examines the server, the GPU, `dmesg` and the log of the server. A soak test finds faults that a short run does not find. Examples are a leak of memory, a slow decrease of the speed, and a GPU error.
+
+The script `remote/run_soak.sh` does the test on the GPU host. The script `analysis/soak_check.py` reads the results and writes `PASS` or `FAIL` for each condition.
+
+### Steps to start a soak test
+
+1. Make sure that no other program uses the GPU. The script does not stop the production server.
+2. Put a copy of the folder `remote` in the folder `harness` of the work folder on the GPU host.
+3. Put a copy of the folder `bench` in the folder `bench` of the work folder.
+4. Put the env file in `harness/run.env`, without the lines of `DMK_HOST`, `DMK_BENCH_DIR` and `DMK_EXTRA_DIR`.
+5. Add the line `DMK_SOAK_SANITIZER=<path>` to `harness/run.env`.
+6. Start the script with `setsid` and `nohup`. The script then continues if the SSH connection stops.
+7. Read `runs/<name>/<name>.soak.log` to see the work of the script.
+8. Put a copy of the folder `runs/<name>` on the local device, and run `soak_check.py` on it.
+
+Steps 2 to 4 are the same as the first steps of `run_schedule.sh`. This example starts a soak test of 24 hours:
+
+```
+ssh gpu-host "cd /srv/dmk && set -a && . harness/run.env && set +a && \
+    setsid nohup bash harness/run_soak.sh soak-1 build:b12004-sm86 24h \
+    > runs/soak-1.out 2>&1 < /dev/null &"
+rsync -a gpu-host:/srv/dmk/runs/soak-1/ results/soak-1/
+python3 harness/analysis/soak_check.py results/soak-1
+```
+
+### The script of the soak test
+
+```
+harness/remote/run_soak.sh <run name> <arm> <time>
+```
+
+The time is a number of seconds, or numbers with the units `s`, `m`, `h` and `d`. The values `90m`, `24h` and `1h30m` are correct. The run name must be new. The script makes the folder `runs/<run name>` in the work folder and writes all files there. It does these tasks in this sequence:
+
+1. It reads the time of the last line of `dmesg`. Only the lines after this time count.
+2. It does the first sanitizer phase.
+3. It starts the server of the arm with `start_server.sh` and waits for `/health`. The flags of the server are the flags of the other runs of the harness.
+4. It does the first check. The time of the soak test starts.
+5. It starts `bench.py` with the flag `--write-reference`. It does this again and again until the time of the soak test ends.
+6. It does a check after the first run of `bench.py`, a check at each interval, and a check at the end.
+7. It stops the server and does the second sanitizer phase.
+8. It does the last check.
+
+The script stops the soak test before the time ends in these cases:
+
+- The server container does not run.
+- Three runs of `bench.py`, one after the other, give an exit code other than 0.
+- `btrfs filesystem usage` shows less than `DMK_SOAK_MIN_UNALLOC_MIB` MiB in the line `Device unallocated`.
+
+If the script gets `SIGTERM`, `SIGINT` or `SIGHUP`, it stops the client, removes the containers and writes `<name>.status`. Do not use `kill -9`. The script then cannot remove the containers.
+
+The server container has no `--restart` flag. If the server stops, Docker does not start it again. Condition `d` is then not true.
+
+A server can write many log lines. The server container keeps at most 3 log files of 50 MB each. At each check, the script writes the new lines to a `gzip` file.
+
+### The sanitizer phase
+
+The phase starts the server of the arm below `compute-sanitizer` with the tool `memcheck`. The flags of the server are the same as in the soak test. The script `san_client.py` sends one request of each type, one at a time. The types are the short cases with each number of questions, the first `medium` case and the first `long` case. Each request must give the code 200 and an answer for each question.
+
+Then the script runs `docker stop`, and the container gets `SIGTERM`. The wrapper `san_wrap.sh` stops only the server. The sanitizer then stops and writes the line `ERROR SUMMARY`. The phase is correct if this line has 0 errors, the exit code of the container is 0, and all requests are correct. The phase uses some minutes, because the sanitizer makes the server slow.
+
+### The checks
+
+A check writes one line of JSON to `<name>.checks.jsonl`. The table gives the keys of the line.
+
+| Key | Meaning |
+|---|---|
+| `tag` | The type of the check: `start`, `warm` (after the first run of `bench.py`), `periodic`, `end`, or `final` (after the second sanitizer phase, with no server). |
+| `state`, `restarts`, `exit_code`, `oom`, `started_at` | The values of `docker inspect` for the server container. |
+| `mem_mib`, `power_w`, `pstate`, `clock_sm`, `clock_mem`, `temp_c` | The values of `nvidia-smi`: `memory.used`, `power.draw`, `pstate`, `clocks.sm`, `clocks.mem` and `temperature.gpu`. |
+| `dmesg_hits` | The number of lines with `Xid` or `NVRM` in `dmesg` after the start time of the test. |
+| `log_error_hits` | The number of log lines of the server that agree with a regular expression of `<name>.error-patterns`. |
+| `unalloc_mib` | The value of `Device unallocated` of `btrfs`, in MiB. It is `null` if the folder of Docker is not on `btrfs`. |
+| `passes_done`, `passes_failed` | The number of runs of `bench.py` that are completed, and the number of runs with an exit code other than 0. |
+
+### Files of a soak test
+
+The folder `runs/<name>` has these files. `NNNN` is the number of the run of `bench.py`.
+
+| File | Contents |
+|---|---|
+| `<name>-pNNNN.json` | The result of `bench.py` for the run `NNNN`. |
+| `<name>-pNNNN.reference.json` | The answers of the quality phase of the run `NNNN`. |
+| `<name>.passes` | One row for each run of `bench.py`: the number, the exit code, the start time, the end time and the file name. The character `\t` is between two values. |
+| `<name>.bench.out` | The output of each run of `bench.py`. |
+| `<name>.checks.jsonl` | The checks. |
+| `<name>.server.log.gz` | The log of the server. Each line starts with the time of Docker. |
+| `<name>.error-patterns` | The regular expressions for the error lines of the log, one in each line. |
+| `<name>.errors.log` | The lines of the log that agree with a regular expression. |
+| `<name>.dmesg.log` | The lines of `dmesg` with `Xid` or `NVRM` after the start time of the test. |
+| `<name>.events.log` | The lines of `docker events` for the server container: `die`, `kill`, `oom`, `restart` and `stop`. |
+| `<name>.san-start.*`, `<name>.san-end.*` | The files of the two sanitizer phases: `.result`, `.server.log`, `.client.out`, `.answers.json` and `.launch.log`. |
+| `<name>.smi` | The samples of the GPU sampler. |
+| `<name>.meta`, `<name>.status` | The facts of the test and the state at the end. |
+| `<name>.soak.log` | The log of the script, with the time in UTC. |
+| `<name>.build.sha256` | The checksums of `llama-server` and of the libraries of the build. The arm `stock` has no such file. |
+| `<name>.launch.log`, `<name>.load0`, `<name>.load1` | The same files as for `run_bench.sh`. |
+
+### The check script
+
+```
+python3 harness/analysis/soak_check.py RUN_FOLDER [--reference GLOB ...] [--slowdown-pct N] [--mem-mib N] [--window N]
+```
+
+The script writes one line for each condition. The last line is `RESULT: PASS` or `RESULT: FAIL`. The exit code is 0 only if all conditions are true. The script uses the Python standard library only.
+
+| Condition | The condition is true if |
+|---|---|
+| `a` | Each run of `bench.py` has all guards true. |
+| `b` | The answers of each run are the same, bit for bit, as the answers in one set of the group of correct sets. The group has the different sets in the files of `--reference`. Without `--reference`, the group has only the set of the first run. |
+| `c` | `dmesg` has no line with `Xid` or `NVRM` after the start time of the test. |
+| `d` | `RestartCount` of the server container is 0, the container did not stop, and `docker events` shows no `die`, `kill`, `oom`, `restart` or `stop`. |
+| `e` | The log of the server and the results of the runs have no HTTP 5xx line, no CUDA error line, and no line with `Aborted`, `GGML_ASSERT` or `SIGSEGV`. |
+| `f` | The two sanitizer phases have `ERROR SUMMARY: 0 errors`, and each request gave the code 200. |
+| `g` | The mean `lat_ms` of the last runs is at most `--slowdown-pct` above the mean of the first runs. |
+| `h` | `memory.used` at the end is at most `--mem-mib` away from `memory.used` after the first run. |
+| `i` | The script stopped after the last phase. The soak test ran for the full time. No gap between two checks is more than two times the interval plus 60 s. |
+
+| Flag | Default | Meaning |
+|---|---|---|
+| `--reference` | None | A path of answer files of a build that is correct. It can have `*`. Put the marks `'` around it. You can use the flag more than one time. |
+| `--slowdown-pct` | `2` | The largest increase of `lat_ms`, in %. |
+| `--mem-mib` | `64` | The largest change of `memory.used`, in MiB. |
+| `--window` | `10` | The number of runs at the start and at the end for condition `g`. If there are less than 20 runs, each group has `runs // 2` runs. |
+
+One server can give more than one set of answers for the same requests. The state of the server after the requests before changes the numbers by a small quantity. Test runs of two builds gave the same 3 sets, and the largest change of a probability was 0.02. No top selection changed. Use the files of all correct sets for `--reference`. Condition `b` is then not true only if the server gives a new set.
+
+The script reads the regular expressions for condition `e` from `<name>.error-patterns`. It also writes lines with `info` for the space of Docker, and for the clocks, the power and the temperature of the GPU.
+
 ## Build the programs of an arm
 
 The script `build/build.sh` builds llama.cpp for the harness. It runs on the local device, and `podman` must be on that device. You then put the programs on the GPU host in the structure that the harness uses.
@@ -625,5 +766,7 @@ Use `tools/publish/scan-dir.sh` on the folder of the data set before you add it 
 - Each run removes the containers `dmx-server` and `dmx-bench`. A `tool` run removes `dmx-tool`. Do not use these names for other containers.
 - `run_bench.sh` and `run_client.sh` use the name `dmx-server` for the log, the check of the server and the removal. `run_client.sh` also uses it to stop the server. If you change `DMK_CONTAINER`, these scripts cannot find the server container.
 - The harness does not change the power limit or the clocks of the GPU. It records the power limit in each `.meta` file.
-- Use the GPU for no other work during a schedule.
+- Use the GPU for no other work during a schedule or during a soak test.
 - `run_bench.sh` does not stop the server before it removes it. A wrapper of the server gets no `SIGTERM` in a `bench` run. Use a `client` line.
+- A soak test holds the GPU for many hours. `run_soak.sh` removes the containers `dmx-server` and `dmx-bench` when it starts.
+- `run_soak.sh` gives exit code 2 for an incorrect command or for a `dmesg` that the user cannot read. It gives exit code 3 if a server does not start.
