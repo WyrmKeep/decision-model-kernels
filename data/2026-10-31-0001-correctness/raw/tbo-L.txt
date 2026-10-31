@@ -1,0 +1,207 @@
+Testing 2 devices
+
+Backend 1/2: CUDA0
+  Device description: NVIDIA GeForce RTX 3060 Ti
+  Device memory: 7834 MB (3318 MB free)
+
+  SWIGLU(name=ffn_swiglu-31,type=f32,ne=[9216,160,1,1],op_params=[0:2],sources=f32[9216,160,1,1],f32[9216,160,1,1]): [1;32mOK[0m
+  SWIGLU(name=ffn_swiglu-0,type=f32,ne=[9216,162,1,1],op_params=[0:2],sources=f32[9216,162,1,1],f32[9216,162,1,1]): [1;32mOK[0m
+  SWIGLU(name=ffn_swiglu-31,type=f32,ne=[9216,2048,1,1],op_params=[0:2],sources=f32[9216,2048,1,1],f32[9216,2048,1,1]): [1;32mOK[0m
+  SWIGLU(name=ffn_swiglu-0,type=f32,ne=[9216,2049,1,1],op_params=[0:2],sources=f32[9216,2049,1,1],f32[9216,2049,1,1]): [1;32mOK[0m
+  SWIGLU(name=ffn_swiglu-0,type=f32,ne=[9216,3,1,1],op_params=[0:2],sources=f32[9216,3,1,1],f32[9216,3,1,1]): [1;32mOK[0m
+  SWIGLU(name=ffn_swiglu-0,type=f32,ne=[9216,48,1,1],op_params=[0:2],sources=f32[9216,48,1,1],f32[9216,48,1,1]): [1;32mOK[0m
+  DUP(name=node_2,type=f32,ne=[2560,162,1,1],op_params=[],sources=f32[2560,162,1,1]): [1;32mOK[0m
+  DUP(name=node_2,type=f32,ne=[2560,2049,1,1],op_params=[],sources=f32[2560,2049,1,1]): [1;32mOK[0m
+  DUP(name=node_2,type=f32,ne=[2560,3,1,1],op_params=[],sources=f32[2560,3,1,1]): [1;32mOK[0m
+  DUP(name=node_2,type=f32,ne=[2560,48,1,1],op_params=[],sources=f32[2560,48,1,1]): [1;32mOK[0m
+  ADD(name=attn_residual-31,type=f32,ne=[2560,160,1,1],op_params=[],sources=f32[2560,160,1,1],f32[2560,160,1,1]): [1;32mOK[0m
+  ADD(name=attn_residual-0,type=f32,ne=[2560,162,1,1],op_params=[],sources=f32[2560,162,1,1],f32[2560,162,1,1]): [1;32mOK[0m
+  ADD(name=attn_residual-31,type=f32,ne=[2560,2048,1,1],op_params=[],sources=f32[2560,2048,1,1],f32[2560,2048,1,1]): [1;32mOK[0m
+  ADD(name=attn_residual-0,type=f32,ne=[2560,2049,1,1],op_params=[],sources=f32[2560,2049,1,1],f32[2560,2049,1,1]): [1;32mOK[0m
+  ADD(name=attn_residual-0,type=f32,ne=[2560,3,1,1],op_params=[],sources=f32[2560,3,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  ADD(name=attn_residual-0,type=f32,ne=[2560,48,1,1],op_params=[],sources=f32[2560,48,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  ADD(name=node_41,type=f32,ne=[32,1,3,1],op_params=[],sources=f32[32,1,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  ADD(name=node_41,type=f32,ne=[32,16,3,1],op_params=[],sources=f32[32,16,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  ADD(name=node_41,type=f32,ne=[32,54,3,1],op_params=[],sources=f32[32,54,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  ADD(name=node_41,type=f32,ne=[32,683,3,1],op_params=[],sources=f32[32,683,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  CONCAT(name=conv_input-0,type=f32,ne=[19,8192,3,1],op_params=[],sources=f32[3,8192,3,1],f32[16,8192,3,1]nb[32768,4,524288,1572864]): [1;32mOK[0m
+  CONCAT(name=conv_input-0,type=f32,ne=[4,8192,3,1],op_params=[],sources=f32[3,8192,3,1],f32[1,8192,3,1]nb[32768,4,32768,98304]): [1;32mOK[0m
+  CONCAT(name=conv_input-0,type=f32,ne=[57,8192,3,1],op_params=[],sources=f32[3,8192,3,1],f32[54,8192,3,1]nb[32768,4,1769472,5308416]): [1;32mOK[0m
+  CONCAT(name=conv_input-0,type=f32,ne=[686,8192,3,1],op_params=[],sources=f32[3,8192,3,1],f32[683,8192,3,1]nb[32768,4,22380544,67141632]): [1;32mOK[0m
+  RMS_NORM(name=node_33,type=f32,ne=[128,16,1,3],op_params=[0:839268285],sources=f32[128,16,1,3]nb[4,512,32768,32768]): [1;32mOK[0m
+  RMS_NORM(name=node_33,type=f32,ne=[128,16,16,3],op_params=[0:839268285],sources=f32[128,16,16,3]nb[4,512,32768,524288]): [1;32mOK[0m
+  RMS_NORM(name=node_33,type=f32,ne=[128,16,54,3],op_params=[0:839268285],sources=f32[128,16,54,3]nb[4,512,32768,1769472]): [1;32mOK[0m
+  RMS_NORM(name=node_33,type=f32,ne=[128,16,683,3],op_params=[0:839268285],sources=f32[128,16,683,3]nb[4,512,32768,22380544]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[128,32,1,3],op_params=[0:897988541],sources=f32[128,32,1,3]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[128,32,16,3],op_params=[0:897988541],sources=f32[128,32,16,3]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[128,32,54,3],op_params=[0:897988541],sources=f32[128,32,54,3]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[128,32,683,3],op_params=[0:897988541],sources=f32[128,32,683,3]): [1;32mOK[0m
+  RMS_NORM(name=norm-31,type=f32,ne=[2560,160,1,1],op_params=[0:897988541],sources=f32[2560,160,1,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[2560,162,1,1],op_params=[0:897988541],sources=f32[2560,162,1,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-31,type=f32,ne=[2560,2048,1,1],op_params=[0:897988541],sources=f32[2560,2048,1,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[2560,2049,1,1],op_params=[0:897988541],sources=f32[2560,2049,1,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[2560,3,1,1],op_params=[0:897988541],sources=f32[2560,3,1,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-0,type=f32,ne=[2560,48,1,1],op_params=[0:897988541],sources=f32[2560,48,1,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,16,162,1],op_params=[0:897988541],sources=f32[256,16,162,1]nb[4,2048,32768,5308416]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,16,2049,1],op_params=[0:897988541],sources=f32[256,16,2049,1]nb[4,2048,32768,67141632]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,16,3,1],op_params=[0:897988541],sources=f32[256,16,3,1]nb[4,2048,32768,98304]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,16,48,1],op_params=[0:897988541],sources=f32[256,16,48,1]nb[4,2048,32768,1572864]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,4,162,1],op_params=[0:897988541],sources=f32[256,4,162,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,4,2049,1],op_params=[0:897988541],sources=f32[256,4,2049,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,4,3,1],op_params=[0:897988541],sources=f32[256,4,3,1]): [1;32mOK[0m
+  RMS_NORM(name=norm-3,type=f32,ne=[256,4,48,1],op_params=[0:897988541],sources=f32[256,4,48,1]): [1;32mOK[0m
+  MUL_MAT(name=Vcur-3,type=f32,ne=[1024,162,1,1],op_params=[],sources=q8_0[2560,1024,1,1],f32[2560,162,1,1]): [1;32mOK[0m
+  MUL_MAT(name=Vcur-3,type=f32,ne=[1024,2049,1,1],op_params=[],sources=q8_0[2560,1024,1,1],f32[2560,2049,1,1]): [1;32mOK[0m
+  MUL_MAT(name=Vcur-3,type=f32,ne=[1024,3,1,1],op_params=[],sources=q8_0[2560,1024,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=Vcur-3,type=f32,ne=[1024,48,1,1],op_params=[],sources=q8_0[2560,1024,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  MUL_MAT(name=result_output,type=f32,ne=[248320,160,1,1],op_params=[],sources=q8_0[2560,248320,1,1],f32[2560,160,1,1]): [1;32mOK[0m
+  MUL_MAT(name=result_output,type=f32,ne=[248320,2048,1,1],op_params=[],sources=q8_0[2560,248320,1,1],f32[2560,2048,1,1]): [1;32mOK[0m
+  MUL_MAT(name=result_output,type=f32,ne=[248320,3,1,1],op_params=[],sources=q8_0[2560,248320,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=result_output,type=f32,ne=[248320,48,1,1],op_params=[],sources=q8_0[2560,248320,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_out-31,type=f32,ne=[2560,160,1,1],op_params=[],sources=q4_0[9216,2560,1,1],f32[9216,160,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_out-0,type=f32,ne=[2560,162,1,1],op_params=[],sources=q4_0[9216,2560,1,1],f32[9216,162,1,1]): [1;32mOK[0m
+  MUL_MAT(name=linear_attn_out-0,type=f32,ne=[2560,162,1,1],op_params=[],sources=q8_0[4096,2560,1,1],f32[4096,162,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_out-31,type=f32,ne=[2560,2048,1,1],op_params=[],sources=q4_0[9216,2560,1,1],f32[9216,2048,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_out-0,type=f32,ne=[2560,2049,1,1],op_params=[],sources=q4_0[9216,2560,1,1],f32[9216,2049,1,1]): [1;32mOK[0m
+  MUL_MAT(name=linear_attn_out-0,type=f32,ne=[2560,2049,1,1],op_params=[],sources=q8_0[4096,2560,1,1],f32[4096,2049,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_out-0,type=f32,ne=[2560,3,1,1],op_params=[],sources=q4_0[9216,2560,1,1],f32[9216,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=linear_attn_out-0,type=f32,ne=[2560,3,1,1],op_params=[],sources=q8_0[4096,2560,1,1],f32[4096,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_out-0,type=f32,ne=[2560,48,1,1],op_params=[],sources=q4_0[9216,2560,1,1],f32[9216,48,1,1]): [1;32mOK[0m
+  MUL_MAT(name=linear_attn_out-0,type=f32,ne=[2560,48,1,1],op_params=[],sources=q8_0[4096,2560,1,1],f32[4096,48,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_39,type=f32,ne=[32,162,1,1],op_params=[],sources=q8_0[2560,32,1,1],f32[2560,162,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_39,type=f32,ne=[32,2049,1,1],op_params=[],sources=q8_0[2560,32,1,1],f32[2560,2049,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_39,type=f32,ne=[32,3,1,1],op_params=[],sources=q8_0[2560,32,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_39,type=f32,ne=[32,48,1,1],op_params=[],sources=q8_0[2560,32,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  MUL_MAT(name=z-0,type=f32,ne=[4096,162,1,1],op_params=[],sources=q8_0[2560,4096,1,1],f32[2560,162,1,1]): [1;32mOK[0m
+  MUL_MAT(name=z-0,type=f32,ne=[4096,2049,1,1],op_params=[],sources=q8_0[2560,4096,1,1],f32[2560,2049,1,1]): [1;32mOK[0m
+  MUL_MAT(name=z-0,type=f32,ne=[4096,3,1,1],op_params=[],sources=q8_0[2560,4096,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=z-0,type=f32,ne=[4096,48,1,1],op_params=[],sources=q8_0[2560,4096,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_15,type=f32,ne=[8192,162,1,1],op_params=[],sources=q8_0[2560,8192,1,1],f32[2560,162,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_15,type=f32,ne=[8192,2049,1,1],op_params=[],sources=q8_0[2560,8192,1,1],f32[2560,2049,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_15,type=f32,ne=[8192,3,1,1],op_params=[],sources=q8_0[2560,8192,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=node_15,type=f32,ne=[8192,48,1,1],op_params=[],sources=q8_0[2560,8192,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_gate-31,type=f32,ne=[9216,160,1,1],op_params=[],sources=q4_0[2560,9216,1,1],f32[2560,160,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_gate-0,type=f32,ne=[9216,162,1,1],op_params=[],sources=q4_0[2560,9216,1,1],f32[2560,162,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_gate-31,type=f32,ne=[9216,2048,1,1],op_params=[],sources=q4_0[2560,9216,1,1],f32[2560,2048,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_gate-0,type=f32,ne=[9216,2049,1,1],op_params=[],sources=q4_0[2560,9216,1,1],f32[2560,2049,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_gate-0,type=f32,ne=[9216,3,1,1],op_params=[],sources=q4_0[2560,9216,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  MUL_MAT(name=ffn_gate-0,type=f32,ne=[9216,48,1,1],op_params=[],sources=q4_0[2560,9216,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  SCALE(name=q_conv_predelta-0,type=f32,ne=[128,16,1,3],op_params=[0:1035273459],sources=f32[128,16,1,3]): [1;32mOK[0m
+  SCALE(name=q_conv_predelta-0,type=f32,ne=[128,16,16,3],op_params=[0:1035273459],sources=f32[128,16,16,3]): [1;32mOK[0m
+  SCALE(name=q_conv_predelta-0,type=f32,ne=[128,16,54,3],op_params=[0:1035273459],sources=f32[128,16,54,3]): [1;32mOK[0m
+  SCALE(name=q_conv_predelta-0,type=f32,ne=[128,16,683,3],op_params=[0:1035273459],sources=f32[128,16,683,3]): [1;32mOK[0m
+  SCALE(name=cache_r_l0,type=f32,ne=[24576,1,1,1],op_params=[],sources=f32[24576,1,1,1]): [1;32mOK[0m
+  SCALE(name=cache_s_l0,type=f32,ne=[524288,1,1,1],op_params=[],sources=f32[524288,1,1,1]): [1;32mOK[0m
+  CPY(name=cache_r_l0,type=f32,ne=[24576,0,1,1],op_params=[],sources=f32[24576,0,1,1],f32[24576,0,1,1]): [1;32mOK[0m
+[CPY] ERR = inf > 0.000500000   CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,16,131072,393216],f32[24576,3,1,1]): [1;31mFAIL[0m
+[CPY] ERR = inf > 0.000500000   CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,228,1867776,5603328],f32[24576,3,1,1]): [1;31mFAIL[0m
+[CPY] ERR = inf > 0.000500000   CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,2744,22478848,67436544],f32[24576,3,1,1]): [1;31mFAIL[0m
+[CPY] ERR = inf > 0.000500000   CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,76,622592,1867776],f32[24576,3,1,1]): [1;31mFAIL[0m
+  CPY(name=cache_s_l0,type=f32,ne=[524288,0,1,1],op_params=[],sources=f32[524288,0,1,1],f32[524288,0,1,1]): [1;32mOK[0m
+[CPY] ERR = inf > 0.000500000   CPY(name=cache_s_l0,type=f32,ne=[524288,3,1,1],op_params=[],sources=f32[128,128,32,3],f32[524288,3,1,1]): [1;31mFAIL[0m
+  CONT(name=gate_reshaped-3,type=f32,ne=[4096,162,1,1],op_params=[],sources=f32[256,16,162,1]nb[4,2048,32768,5308416]): [1;32mOK[0m
+  CONT(name=gate_reshaped-3,type=f32,ne=[4096,2049,1,1],op_params=[],sources=f32[256,16,2049,1]nb[4,2048,32768,67141632]): [1;32mOK[0m
+  CONT(name=gate_reshaped-3,type=f32,ne=[4096,3,1,1],op_params=[],sources=f32[256,16,3,1]nb[4,2048,32768,98304]): [1;32mOK[0m
+  CONT(name=gate_reshaped-3,type=f32,ne=[4096,48,1,1],op_params=[],sources=f32[256,16,48,1]nb[4,2048,32768,1572864]): [1;32mOK[0m
+  GET_ROWS(name=node_9,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[24576,3,1,1],i32[3,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=node_1908,type=f32,ne=[2560,160,1,1],op_params=[],sources=f32[2560,162,1,1],i32[160,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=model.input_embed,type=f32,ne=[2560,162,1,1],op_params=[],sources=q8_0[2560,248320,1,1],i32[162,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=node_1908,type=f32,ne=[2560,2048,1,1],op_params=[],sources=f32[2560,2049,1,1],i32[2048,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=model.input_embed,type=f32,ne=[2560,2049,1,1],op_params=[],sources=q8_0[2560,248320,1,1],i32[2049,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=node_1908,type=f32,ne=[2560,3,1,1],op_params=[],sources=f32[2560,3,1,1],i32[3,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=model.input_embed,type=f32,ne=[2560,3,1,1],op_params=[],sources=q8_0[2560,248320,1,1],i32[3,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=node_1908,type=f32,ne=[2560,48,1,1],op_params=[],sources=f32[2560,48,1,1],i32[48,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=model.input_embed,type=f32,ne=[2560,48,1,1],op_params=[],sources=q8_0[2560,248320,1,1],i32[48,1,1,1]): [1;32mOK[0m
+  GET_ROWS(name=node_25,type=f32,ne=[524288,3,1,1],op_params=[],sources=f32[524288,3,1,1],i32[3,1,1,1]): [1;32mOK[0m
+  SET_ROWS(name=(view),type=f32,ne=[2560,162,1,1],op_params=[],sources=f32[2560,162,1,1],i64[162,1,1,1],f32[2560,162,1,1]): [1;32mOK[0m
+  SET_ROWS(name=(view),type=f32,ne=[2560,2049,1,1],op_params=[],sources=f32[2560,2049,1,1],i64[2049,1,1,1],f32[2560,2049,1,1]): [1;32mOK[0m
+  SET_ROWS(name=(view),type=f32,ne=[2560,3,1,1],op_params=[],sources=f32[2560,3,1,1],i64[3,1,1,1],f32[2560,3,1,1]): [1;32mOK[0m
+  SET_ROWS(name=(view),type=f32,ne=[2560,48,1,1],op_params=[],sources=f32[2560,48,1,1],i64[48,1,1,1],f32[2560,48,1,1]): [1;32mOK[0m
+  SET_ROWS(name=cache_k_l3,type=f16,ne=[1024,16896,1,1],op_params=[],sources=f32[1024,162,1,1],i64[162,1,1,1],f16[1024,16896,1,1]): [1;32mOK[0m
+  SET_ROWS(name=cache_k_l3,type=f16,ne=[1024,16896,1,1],op_params=[],sources=f32[1024,2049,1,1],i64[2049,1,1,1],f16[1024,16896,1,1]): [1;32mOK[0m
+  SET_ROWS(name=cache_k_l3,type=f16,ne=[1024,16896,1,1],op_params=[],sources=f32[1024,3,1,1],i64[3,1,1,1],f16[1024,16896,1,1]): [1;32mOK[0m
+  SET_ROWS(name=cache_k_l3,type=f16,ne=[1024,16896,1,1],op_params=[],sources=f32[1024,48,1,1],i64[48,1,1,1],f16[1024,16896,1,1]): [1;32mOK[0m
+  ROPE(name=Qcur-3,type=f32,ne=[256,16,162,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,16,162,1],i32[648,1,1,1]): [1;32mOK[0m
+  ROPE(name=Qcur-3,type=f32,ne=[256,16,2049,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,16,2049,1],i32[8196,1,1,1]): [1;32mOK[0m
+  ROPE(name=Qcur-3,type=f32,ne=[256,16,3,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,16,3,1],i32[12,1,1,1]): [1;32mOK[0m
+  ROPE(name=Qcur-3,type=f32,ne=[256,16,48,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,16,48,1],i32[192,1,1,1]): [1;32mOK[0m
+  ROPE(name=Kcur-3,type=f32,ne=[256,4,162,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,4,162,1],i32[648,1,1,1]): [1;32mOK[0m
+  ROPE(name=Kcur-3,type=f32,ne=[256,4,2049,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,4,2049,1],i32[8196,1,1,1]): [1;32mOK[0m
+  ROPE(name=Kcur-3,type=f32,ne=[256,4,3,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,4,3,1],i32[12,1,1,1]): [1;32mOK[0m
+  ROPE(name=Kcur-3,type=f32,ne=[256,4,48,1],op_params=[1:64,2:40,4:262144,5:1259902592,6:1065353216,8:1065353216,9:1107296256,10:1065353216,11:11,12:11,13:10],sources=f32[256,4,48,1],i32[192,1,1,1]): [1;32mOK[0m
+  MUL(name=node_55,type=f32,ne=[128,32,1,3],op_params=[],sources=f32[128,32,1,3],f32[128,1,1,1]): [1;32mOK[0m
+  MUL(name=node_59,type=f32,ne=[128,32,1,3],op_params=[],sources=f32[128,32,1,3],f32[128,32,1,3]): [1;32mOK[0m
+  MUL(name=node_55,type=f32,ne=[128,32,16,3],op_params=[],sources=f32[128,32,16,3],f32[128,1,1,1]): [1;32mOK[0m
+  MUL(name=node_59,type=f32,ne=[128,32,16,3],op_params=[],sources=f32[128,32,16,3],f32[128,32,16,3]): [1;32mOK[0m
+  MUL(name=node_55,type=f32,ne=[128,32,54,3],op_params=[],sources=f32[128,32,54,3],f32[128,1,1,1]): [1;32mOK[0m
+  MUL(name=node_59,type=f32,ne=[128,32,54,3],op_params=[],sources=f32[128,32,54,3],f32[128,32,54,3]): [1;32mOK[0m
+  MUL(name=node_55,type=f32,ne=[128,32,683,3],op_params=[],sources=f32[128,32,683,3],f32[128,1,1,1]): [1;32mOK[0m
+  MUL(name=node_59,type=f32,ne=[128,32,683,3],op_params=[],sources=f32[128,32,683,3],f32[128,32,683,3]): [1;32mOK[0m
+  MUL(name=attn_post_norm-31,type=f32,ne=[2560,160,1,1],op_params=[],sources=f32[2560,160,1,1],f32[2560,1,1,1]): [1;32mOK[0m
+  MUL(name=attn_norm-0,type=f32,ne=[2560,162,1,1],op_params=[],sources=f32[2560,162,1,1],f32[2560,1,1,1]): [1;32mOK[0m
+  MUL(name=attn_post_norm-31,type=f32,ne=[2560,2048,1,1],op_params=[],sources=f32[2560,2048,1,1],f32[2560,1,1,1]): [1;32mOK[0m
+  MUL(name=attn_norm-0,type=f32,ne=[2560,2049,1,1],op_params=[],sources=f32[2560,2049,1,1],f32[2560,1,1,1]): [1;32mOK[0m
+  MUL(name=attn_norm-0,type=f32,ne=[2560,3,1,1],op_params=[],sources=f32[2560,3,1,1],f32[2560,1,1,1]): [1;32mOK[0m
+  MUL(name=attn_norm-0,type=f32,ne=[2560,48,1,1],op_params=[],sources=f32[2560,48,1,1],f32[2560,1,1,1]): [1;32mOK[0m
+  MUL(name=Qcur_normed-3,type=f32,ne=[256,16,162,1],op_params=[],sources=f32[256,16,162,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=Qcur_normed-3,type=f32,ne=[256,16,2049,1],op_params=[],sources=f32[256,16,2049,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=Qcur_normed-3,type=f32,ne=[256,16,3,1],op_params=[],sources=f32[256,16,3,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=Qcur_normed-3,type=f32,ne=[256,16,48,1],op_params=[],sources=f32[256,16,48,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=Kcur_normed-3,type=f32,ne=[256,4,162,1],op_params=[],sources=f32[256,4,162,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=Kcur_normed-3,type=f32,ne=[256,4,2049,1],op_params=[],sources=f32[256,4,2049,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=Kcur_normed-3,type=f32,ne=[256,4,3,1],op_params=[],sources=f32[256,4,3,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=Kcur_normed-3,type=f32,ne=[256,4,48,1],op_params=[],sources=f32[256,4,48,1],f32[256,1,1,1]): [1;32mOK[0m
+  MUL(name=gate-0,type=f32,ne=[32,1,3,1],op_params=[],sources=f32[32,1,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  MUL(name=gate-0,type=f32,ne=[32,16,3,1],op_params=[],sources=f32[32,16,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  MUL(name=gate-0,type=f32,ne=[32,54,3,1],op_params=[],sources=f32[32,54,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  MUL(name=gate-0,type=f32,ne=[32,683,3,1],op_params=[],sources=f32[32,683,3,1],f32[32,1,1,1]): [1;32mOK[0m
+  MUL(name=attn_gated-3,type=f32,ne=[4096,162,1,1],op_params=[],sources=f32[4096,162,1,1],f32[4096,162,1,1]): [1;32mOK[0m
+  MUL(name=attn_gated-3,type=f32,ne=[4096,2049,1,1],op_params=[],sources=f32[4096,2049,1,1],f32[4096,2049,1,1]): [1;32mOK[0m
+  MUL(name=attn_gated-3,type=f32,ne=[4096,3,1,1],op_params=[],sources=f32[4096,3,1,1],f32[4096,3,1,1]): [1;32mOK[0m
+  MUL(name=attn_gated-3,type=f32,ne=[4096,48,1,1],op_params=[],sources=f32[4096,48,1,1],f32[4096,48,1,1]): [1;32mOK[0m
+  FLASH_ATTN_EXT(name=node_228,type=f32,ne=[256,16,1,3],op_params=[0:1031798784,3:10],sources=f32[256,1,16,3]nb[4,16384,1024,16384],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[5632,1,1,3]): [1;32mOK[0m
+  FLASH_ATTN_EXT(name=node_228,type=f32,ne=[256,16,16,3],op_params=[0:1031798784,3:10],sources=f32[256,16,16,3]nb[4,16384,1024,262144],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[5632,16,1,3]): [1;32mOK[0m
+  FLASH_ATTN_EXT(name=node_228,type=f32,ne=[256,16,54,3],op_params=[0:1031798784,3:10],sources=f32[256,54,16,3]nb[4,16384,1024,884736],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[5632,54,1,3]): [1;32mOK[0m
+  FLASH_ATTN_EXT(name=node_228,type=f32,ne=[256,16,683,3],op_params=[0:1031798784,3:10],sources=f32[256,683,16,3]nb[4,16384,1024,11190272],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[256,5632,4,3]nb[2,2048,512,11534336],f16[5632,683,1,3]): [1;32mOK[0m
+  SSM_CONV(name=conv_output_raw-0,type=f32,ne=[8192,1,3,1],op_params=[],sources=f32[4,8192,3,1],f32[4,8192,1,1]): [1;32mOK[0m
+  SSM_CONV(name=conv_output_raw-0,type=f32,ne=[8192,16,3,1],op_params=[],sources=f32[19,8192,3,1],f32[4,8192,1,1]): [1;32mOK[0m
+  SSM_CONV(name=conv_output_raw-0,type=f32,ne=[8192,54,3,1],op_params=[],sources=f32[57,8192,3,1],f32[4,8192,1,1]): [1;32mOK[0m
+  SSM_CONV(name=conv_output_raw-0,type=f32,ne=[8192,683,3,1],op_params=[],sources=f32[686,8192,3,1],f32[4,8192,1,1]): [1;32mOK[0m
+[GATED_DELTA_NET] NaN at index 524416 (CUDA0=nan CPU=-597644967420350748342883822327562240.000000)   GATED_DELTA_NET(name=node_49,type=f32,ne=[4096,2433,1,1],op_params=[0:1],sources=f32[128,16,683,3],f32[128,16,683,3],f32[128,32,683,3]nb[4,512,32768,22380544],f32[1,32,683,3],f32[1,32,683,3],f32[128,128,32,3]): [1;31mFAIL[0m
+  GATED_DELTA_NET(name=node_49,type=f32,ne=[4096,387,1,1],op_params=[0:1],sources=f32[128,16,1,3],f32[128,16,1,3],f32[128,32,1,3]nb[4,512,32768,32768],f32[1,32,1,3],f32[1,32,1,3],f32[128,128,32,3]): [1;32mOK[0m
+  GATED_DELTA_NET(name=node_49,type=f32,ne=[4096,432,1,1],op_params=[0:1],sources=f32[128,16,16,3],f32[128,16,16,3],f32[128,32,16,3]nb[4,512,32768,524288],f32[1,32,16,3],f32[1,32,16,3],f32[128,128,32,3]): [1;32mOK[0m
+  GATED_DELTA_NET(name=node_49,type=f32,ne=[4096,546,1,1],op_params=[0:1],sources=f32[128,16,54,3],f32[128,16,54,3],f32[128,32,54,3]nb[4,512,32768,1769472],f32[1,32,54,3],f32[1,32,54,3],f32[128,128,32,3]): [1;32mOK[0m
+  SILU(name=node_58,type=f32,ne=[128,32,1,3],op_params=[0:10],sources=f32[128,32,1,3]): [1;32mOK[0m
+  SILU(name=node_58,type=f32,ne=[128,32,16,3],op_params=[0:10],sources=f32[128,32,16,3]): [1;32mOK[0m
+  SILU(name=node_58,type=f32,ne=[128,32,54,3],op_params=[0:10],sources=f32[128,32,54,3]): [1;32mOK[0m
+  SILU(name=node_58,type=f32,ne=[128,32,683,3],op_params=[0:10],sources=f32[128,32,683,3]): [1;32mOK[0m
+  SIGMOID(name=beta_sigmoid-0,type=f32,ne=[1,32,1,3],op_params=[0:7],sources=f32[1,32,1,3]): [1;32mOK[0m
+  SIGMOID(name=beta_sigmoid-0,type=f32,ne=[1,32,16,3],op_params=[0:7],sources=f32[1,32,16,3]): [1;32mOK[0m
+  SIGMOID(name=beta_sigmoid-0,type=f32,ne=[1,32,54,3],op_params=[0:7],sources=f32[1,32,54,3]): [1;32mOK[0m
+  SIGMOID(name=beta_sigmoid-0,type=f32,ne=[1,32,683,3],op_params=[0:7],sources=f32[1,32,683,3]): [1;32mOK[0m
+  SOFTPLUS(name=a_softplus-0,type=f32,ne=[32,1,3,1],op_params=[0:15],sources=f32[32,1,3,1]): [1;32mOK[0m
+  SOFTPLUS(name=a_softplus-0,type=f32,ne=[32,16,3,1],op_params=[0:15],sources=f32[32,16,3,1]): [1;32mOK[0m
+  SOFTPLUS(name=a_softplus-0,type=f32,ne=[32,54,3,1],op_params=[0:15],sources=f32[32,54,3,1]): [1;32mOK[0m
+  SOFTPLUS(name=a_softplus-0,type=f32,ne=[32,683,3,1],op_params=[0:15],sources=f32[32,683,3,1]): [1;32mOK[0m
+  SIGMOID(name=gate_sigmoid-3,type=f32,ne=[4096,162,1,1],op_params=[0:7],sources=f32[4096,162,1,1]): [1;32mOK[0m
+  SIGMOID(name=gate_sigmoid-3,type=f32,ne=[4096,2049,1,1],op_params=[0:7],sources=f32[4096,2049,1,1]): [1;32mOK[0m
+  SIGMOID(name=gate_sigmoid-3,type=f32,ne=[4096,3,1,1],op_params=[0:7],sources=f32[4096,3,1,1]): [1;32mOK[0m
+  SIGMOID(name=gate_sigmoid-3,type=f32,ne=[4096,48,1,1],op_params=[0:7],sources=f32[4096,48,1,1]): [1;32mOK[0m
+  SILU(name=conv_output_silu-0,type=f32,ne=[8192,1,3,1],op_params=[0:10],sources=f32[8192,1,3,1]): [1;32mOK[0m
+  SILU(name=conv_output_silu-0,type=f32,ne=[8192,16,3,1],op_params=[0:10],sources=f32[8192,16,3,1]): [1;32mOK[0m
+  SILU(name=conv_output_silu-0,type=f32,ne=[8192,54,3,1],op_params=[0:10],sources=f32[8192,54,3,1]): [1;32mOK[0m
+  SILU(name=conv_output_silu-0,type=f32,ne=[8192,683,3,1],op_params=[0:10],sources=f32[8192,683,3,1]): [1;32mOK[0m
+  181/187 tests passed
+
+Failing tests:
+  CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,16,131072,393216],f32[24576,3,1,1])
+  CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,228,1867776,5603328],f32[24576,3,1,1])
+  CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,2744,22478848,67436544],f32[24576,3,1,1])
+  CPY(name=conv_state_update-0,type=f32,ne=[24576,3,1,1],op_params=[],sources=f32[3,8192,3,1]nb[4,76,622592,1867776],f32[24576,3,1,1])
+  CPY(name=cache_s_l0,type=f32,ne=[524288,3,1,1],op_params=[],sources=f32[128,128,32,3],f32[524288,3,1,1])
+  GATED_DELTA_NET(name=node_49,type=f32,ne=[4096,2433,1,1],op_params=[0:1],sources=f32[128,16,683,3],f32[128,16,683,3],f32[128,32,683,3]nb[4,512,32768,22380544],f32[1,32,683,3],f32[1,32,683,3],f32[128,128,32,3])
+  Backend CUDA0: [1;31mFAIL[0m
+Backend 2/2: CPU
+  Skipping
+1/2 backends passed
+[1;31mFAIL[0m
