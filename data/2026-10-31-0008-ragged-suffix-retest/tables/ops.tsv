@@ -1,0 +1,10 @@
+test	arm_tag	filter	log	exit_code	passed	cases	failing_operations	result
+SSM_CONV_RAGGED	B	-o SSM_CONV_RAGGED	tests/conv-B.log	0	18	18		all cases OK
+GATED_DELTA_NET_RAGGED, without the fusion	B	-o GATED_DELTA_NET_RAGGED	tests/gdn-B.log	0	5	5		all cases OK
+GATED_DELTA_NET_RAGGED, with the fusion into CPY	B	-p cache=1,lens=	tests/fusion-B.log	0	3	3		all cases OK
+Built-in cases of five operations	A	-o GATED_DELTA_NET,CPY,SSM_CONV,KQ_MASK,CONCAT	tests/builtin-A.log	0	592	592		all cases OK
+Built-in cases of five operations	B	-o GATED_DELTA_NET,CPY,SSM_CONV,KQ_MASK,CONCAT	tests/builtin-B.log	0	592	592		all cases OK
+187 operations of the graph, file of the first test	A	--test-file <file of the first test>	tests/graph-A.log	139				no result: the program stopped with exit code 139 (signal 11)
+187 operations of the graph, file of the first test	B	--test-file <file of the first test>	tests/graph-B.log	139				no result: the program stopped with exit code 139 (signal 11)
+187 operations of the graph, file with the new operation numbers	A	--test-file <file with the new operation numbers>	tests/graph2-A.log	1	181	187	CPY x5, GATED_DELTA_NET x1	6 cases FAIL
+187 operations of the graph, file with the new operation numbers	B	--test-file <file with the new operation numbers>	tests/graph2-B.log	1	181	187	CPY x5, GATED_DELTA_NET x1	6 cases FAIL

@@ -1,0 +1,4 @@
+# MMQ tile sweep, round 1: micro-benchmark of 142 tile configurations on the census shapes (not an A/B).
+# The program is the sweep build (mmq_sweep.cu), started as `llama sweep ...` by the tool kind.
+tool 0006-sweep-r1-q4 build:mmq-sweep-r1 sweep --shapes q4_0:9216:2560,q4_0:2560:9216 --ns 9,13,16,26,30,32,43,47,51,54,64,67,69,84,86,94,102,108,120,128,129,151,158,256,512,1024,1173,1288,2048 --policies 0,1,4 --reps-ms 8 --trials 3
+tool 0006-sweep-r1-q8 build:mmq-sweep-r1 sweep --shapes q8_0:8192:2560,q8_0:4096:2560,q8_0:2560:4096,q8_0:1024:2560 --ns 9,13,16,26,30,32,43,47,51,54,64,67,69,84,86,94,102,108,120,128,129,151,158,256,512,1024,1173,1288,2048 --policies 0,1,4 --reps-ms 8 --trials 3

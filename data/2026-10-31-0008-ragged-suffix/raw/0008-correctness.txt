@@ -1,0 +1,16 @@
+# Change 0008 (ragged batching of the suffixes, build:0008-ragged-suffix): correctness runs, not timed.
+# 1. One pass of the benchmark with the debug log of the server (-lv 4): the log shows each ubatch with ragged batching. Arm A is the build before the change.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0008-check-B build:0008-ragged-suffix --passes 1 --write-reference 0008-check-B
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0008-check-A build:lead-30489 --passes 1 --write-reference 0008-check-A
+# 2. KL divergence of mix8 on the two text sets. The base file comes from arm A. A second run of arm A gives the KL floor.
+tool 0008-kld-wiki-A-base build:lead-30489 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -f /work/wiki.test.raw -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-A.kld
+tool 0008-kld-wiki-A-self build:lead-30489 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-A.kld --kl-divergence
+tool 0008-kld-wiki-B-vsA build:0008-ragged-suffix perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/wiki-A.kld --kl-divergence
+tool 0008-kld-domain-A-base build:lead-30489 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -f /work/domain-medium-long.txt -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-A.kld
+tool 0008-kld-domain-A-self build:lead-30489 perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-A.kld --kl-divergence
+tool 0008-kld-domain-B-vsA build:0008-ragged-suffix perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 512 --chunks 20 --kl-divergence-base /shm/domain-A.kld --kl-divergence
+# 3. The 52-decision set on the two arms.
+client 0008-dectest-A build:lead-30489 /extra/dectest/run_dectest.py --url http://127.0.0.1:18080 --cases /extra/dectest/cases.json --out /runs/{name}.answers.json
+client 0008-dectest-B build:0008-ragged-suffix /extra/dectest/run_dectest.py --url http://127.0.0.1:18080 --cases /extra/dectest/cases.json --out /runs/{name}.answers.json
+# 4. compute-sanitizer memcheck on the server of arm B, one request of each type (short with 1 question, short with 2, medium, long).
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" DMK_SERVER_WRAP="timeout 1800 /tools/compute-sanitizer-12.8.93/bin/compute-sanitizer --tool memcheck --error-exitcode 99" client 0008-san-memcheck build:0008-ragged-suffix /extra/0008/memcheck_client.py 18080 /runs/{name}.answers.json

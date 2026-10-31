@@ -1,0 +1,518 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11========= COMPUTE-SANITIZER
+ggml_cuda_init: found 1 CUDA devices (Total VRAM: 7834 MiB):
+  Device 0: NVIDIA GeForce RTX 3060 Ti, compute capability 8.6, VMM: yes, VRAM: 7834 MiB
+load_backend: loaded CUDA backend from /opt/dmk/libggml-cuda.so
+load_backend: loaded CPU backend from /opt/dmk/libggml-cpu-haswell.so
+Testing 2 devices
+
+Backend 1/2: CUDA0
+  Device description: NVIDIA GeForce RTX 3060 Ti
+  Device memory: 7834 MB (6789 MB free)
+
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=1,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=2,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=3,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=7,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=32,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=33,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=64,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=100,n_seqs=1,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=128,n_seq_tokens=1,n_seqs=3,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=128,n_seq_tokens=70,n_seqs=3,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=384,n_seq_tokens=515,n_seqs=2,transposed=1,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=1,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=2,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=3,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=7,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=32,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=33,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=64,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=256,n_seq_tokens=100,n_seqs=1,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=128,n_seq_tokens=1,n_seqs=3,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=128,n_seq_tokens=70,n_seqs=3,transposed=0,intermediate=0): [1;32mOK[0m
+  SSM_CONV_CONCAT_CPY(d_conv=3,n_channels=384,n_seq_tokens=515,n_seqs=2,transposed=0,intermediate=0): [1;32mOK[0m
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (104,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c00 is out of bounds
+=========     and is 1 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (105,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c04 is out of bounds
+=========     and is 5 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (106,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c08 is out of bounds
+=========     and is 9 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (107,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c0c is out of bounds
+=========     and is 13 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (108,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c10 is out of bounds
+=========     and is 17 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (109,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c14 is out of bounds
+=========     and is 21 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (110,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c18 is out of bounds
+=========     and is 25 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (111,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c1c is out of bounds
+=========     and is 29 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (112,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c20 is out of bounds
+=========     and is 33 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (113,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c24 is out of bounds
+=========     and is 37 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (114,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c28 is out of bounds
+=========     and is 41 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (115,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c2c is out of bounds
+=========     and is 45 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (116,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c30 is out of bounds
+=========     and is 49 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (117,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c34 is out of bounds
+=========     and is 53 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (118,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c38 is out of bounds
+=========     and is 57 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (119,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c3c is out of bounds
+=========     and is 61 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (120,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c40 is out of bounds
+=========     and is 65 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (121,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c44 is out of bounds
+=========     and is 69 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (122,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c48 is out of bounds
+=========     and is 73 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (123,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c4c is out of bounds
+=========     and is 77 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (124,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c50 is out of bounds
+=========     and is 81 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (125,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c54 is out of bounds
+=========     and is 85 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (126,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c58 is out of bounds
+=========     and is 89 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Invalid __global__ read of size 4 bytes
+=========     at void ssm_conv_long_token_f32<(bool)1, (unsigned long)128, (unsigned long)3, (long)32>(const float *, const float *, const float *, int, int, int, int, float *, int, int, int, long)+0x2160
+=========     by thread (127,0,0) in block (1,1,1)
+=========     Address 0x149f0b247c5c is out of bounds
+=========     and is 93 bytes after the nearest allocation at 0x149f0b21dc00 of size 172032 bytes
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: cuLaunchKernel [0x368d1a] in libcuda.so.1
+=========         Host Frame:  [0x13e88] in libcudart.so.12
+=========         Host Frame: cudaLaunchKernel [0x79f87] in libcudart.so.12
+=========         Host Frame: void ssm_conv_f32_cuda<true>(float const*, float const*, float const*, int, int, int, int, float*, int, int, int, long, long, long, long, CUstream_st*) [0x509064] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_op_ssm_conv(ggml_backend_cuda_context&, ggml_tensor*, ggml_tensor*, ggml_tensor*) [0x50c79d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_try_fuse(ggml_backend_cuda_context*, ggml_cgraph*, int, std::vector<bool, std::allocator<bool> >&) [0x3128ee] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x3176df] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+========= Program hit cudaErrorLaunchFailure (error 719) due to "unspecified launch failure" on CUDA API call to cudaStreamSynchronize.
+=========     Saved host backtrace up to driver entry point at error
+=========         Host Frame: ggml_backend_cuda_synchronize(ggml_backend*) [0x302828] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x3225b] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x38341] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x126453] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7fe73] in test-backend-ops
+=========         Host Frame: main [0x27f99] in test-backend-ops
+========= 
+CUDA error: unspecified launch failure
+  current device: 0, in function ggml_backend_cuda_synchronize at /src/ggml/src/ggml-cuda/ggml-cuda.cu:2891
+  cudaStreamSynchronize(cuda_ctx->stream())
+/src/ggml/src/ggml-cuda/ggml-cuda.cu:110: CUDA error
+/opt/dmk/libggml-base.so.0(+0x183a6)[0x149f939413a6]
+/opt/dmk/libggml-base.so.0(+0x1882a)[0x149f9394182a]
+/opt/dmk/libggml-base.so.0(ggml_abort+0x15b)[0x149f93941a0b]
+/opt/dmk/libggml-cuda.so(_Z15ggml_cuda_errorPKcS0_S0_iS0_+0xb5)[0x149f8b0fd825]
+/opt/dmk/libggml-cuda.so(+0x302888)[0x149f8b102888]
+/opt/dmk/libggml-base.so.0(ggml_backend_graph_compute+0x1c)[0x149f9395b25c]
+/opt/dmk/libggml-base.so.0(ggml_backend_compare_graph_backend+0x82)[0x149f93961342]
+/opt/dmk/test-backend-ops(+0x126454)[0x55923325f454]
+/opt/dmk/test-backend-ops(+0x7fe74)[0x5592331b8e74]
+/opt/dmk/test-backend-ops(+0x27f9a)[0x559233160f9a]
+/lib/x86_64-linux-gnu/libc.so.6(+0x2a1ca)[0x149f9322a1ca]
+/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0x8b)[0x149f9322a28b]
+/opt/dmk/test-backend-ops(+0x28d85)[0x559233161d85]
+========= Error: process didn't terminate successfully
+========= Target application returned an error
+========= ERROR SUMMARY: 25 errors

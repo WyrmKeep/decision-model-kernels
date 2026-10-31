@@ -1,0 +1,721 @@
+{
+ "label": "0004-check-streams",
+ "answers": {
+  "triage00": {
+   "category": {
+    "type": "choice",
+    "choice": "storage",
+    "probabilities": {
+     "storage": 0.6979856474126613,
+     "backup": 0.01072446860562628,
+     "availability": 0.009745668052562773,
+     "security": 0.006012738504782611,
+     "hardware": 0.008583336531504622,
+     "routine": 0.2669481408928625
+    },
+    "confidence": 0.6375827768951936
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.45750082200908315
+   }
+  },
+  "triage01": {
+   "category": {
+    "type": "choice",
+    "choice": "storage",
+    "probabilities": {
+     "storage": 0.9618084014398135,
+     "backup": 0.008486415231077106,
+     "availability": 0.006266364343370673,
+     "security": 0.006267902374290298,
+     "hardware": 0.008915460440641572,
+     "routine": 0.008255456170806936
+    },
+    "confidence": 0.9541700817277762
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.8880645335268763
+   }
+  },
+  "triage02": {
+   "category": {
+    "type": "choice",
+    "choice": "backup",
+    "probabilities": {
+     "storage": 0.011070520563038151,
+     "backup": 0.9427043181889233,
+     "availability": 0.019229448007427704,
+     "security": 0.008925438155651874,
+     "hardware": 0.0069308386160258015,
+     "routine": 0.011139436468933244
+    },
+    "confidence": 0.931245181826708
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.8199035599433443
+   }
+  },
+  "triage03": {
+   "category": {
+    "type": "choice",
+    "choice": "routine",
+    "probabilities": {
+     "storage": 0.006997658190030944,
+     "backup": 0.00740456929835904,
+     "availability": 0.007136432306725387,
+     "security": 0.007225146476953434,
+     "hardware": 0.008026747490507568,
+     "routine": 0.9632094462374238
+    },
+    "confidence": 0.9558513354849085
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.353035534068659
+   }
+  },
+  "triage04": {
+   "category": {
+    "type": "choice",
+    "choice": "availability",
+    "probabilities": {
+     "storage": 0.00767062706116004,
+     "backup": 0.010845607541555459,
+     "availability": 0.9548796655998026,
+     "security": 0.008816256140900319,
+     "hardware": 0.00727768462257242,
+     "routine": 0.010510159034008927
+    },
+    "confidence": 0.9458555987197632
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.7914902345677164
+   }
+  },
+  "triage05": {
+   "category": {
+    "type": "choice",
+    "choice": "security",
+    "probabilities": {
+     "storage": 0.007925321974672318,
+     "backup": 0.008753961863782857,
+     "availability": 0.011244033419026344,
+     "security": 0.9526123934678662,
+     "hardware": 0.008165204723424118,
+     "routine": 0.011299084551228116
+    },
+    "confidence": 0.9431348721614394
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.6060456902185731
+   }
+  },
+  "triage06": {
+   "category": {
+    "type": "choice",
+    "choice": "availability",
+    "probabilities": {
+     "storage": 0.008097333348243255,
+     "backup": 0.010742539224364758,
+     "availability": 0.9498898106949588,
+     "security": 0.008358503720593057,
+     "hardware": 0.007678937975858591,
+     "routine": 0.015232875035981542
+    },
+    "confidence": 0.9398677728339506
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.29324633838603203
+   }
+  },
+  "triage07": {
+   "category": {
+    "type": "choice",
+    "choice": "hardware",
+    "probabilities": {
+     "storage": 0.008839658991073196,
+     "backup": 0.017624536800465506,
+     "availability": 0.008368247233248834,
+     "security": 0.007612892096929014,
+     "hardware": 0.8943560137491706,
+     "routine": 0.06319865112911273
+    },
+    "confidence": 0.8732272164990047
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.7210865829433439
+   }
+  },
+  "triage08": {
+   "category": {
+    "type": "choice",
+    "choice": "backup",
+    "probabilities": {
+     "storage": 0.20405572947427347,
+     "backup": 0.5646552714214476,
+     "availability": 0.008367741330794504,
+     "security": 0.007670693205647004,
+     "hardware": 0.009956011268071382,
+     "routine": 0.2052945532997659
+    },
+    "confidence": 0.4775863257057371
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.14038648097423415
+   }
+  },
+  "triage09": {
+   "category": {
+    "type": "choice",
+    "choice": "hardware",
+    "probabilities": {
+     "storage": 0.007608553381654327,
+     "backup": 0.006527852328345183,
+     "availability": 0.006808206179241998,
+     "security": 0.006615248098918271,
+     "hardware": 0.9619253826591653,
+     "routine": 0.01051475735267483
+    },
+    "confidence": 0.9543104591909983
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.8971060702254003
+   }
+  },
+  "triage10": {
+   "category": {
+    "type": "choice",
+    "choice": "availability",
+    "probabilities": {
+     "storage": 0.008171792468778884,
+     "backup": 0.010129931134275903,
+     "availability": 0.9380865084117236,
+     "security": 0.009801930976498053,
+     "hardware": 0.007806031118653037,
+     "routine": 0.02600380589007044
+    },
+    "confidence": 0.9257038100940683
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.9189263032395086
+   }
+  },
+  "triage11": {
+   "category": {
+    "type": "choice",
+    "choice": "backup",
+    "probabilities": {
+     "storage": 0.015698980144090224,
+     "backup": 0.9058553320176107,
+     "availability": 0.010404401842324289,
+     "security": 0.0067781206080484,
+     "hardware": 0.009429833553694358,
+     "routine": 0.05183333183423193
+    },
+    "confidence": 0.8870263984211328
+   },
+   "needs_action": {
+    "type": "noul",
+    "noul": 0.09380528573181428
+   }
+  },
+  "check00": {
+   "done": {
+    "type": "noul",
+    "noul": 0.938218620771955
+   }
+  },
+  "check01": {
+   "done": {
+    "type": "noul",
+    "noul": 0.1051268379162596
+   }
+  },
+  "check02": {
+   "done": {
+    "type": "noul",
+    "noul": 0.066641879974069
+   }
+  },
+  "check03": {
+   "done": {
+    "type": "noul",
+    "noul": 0.7655754015813335
+   }
+  },
+  "check04": {
+   "done": {
+    "type": "noul",
+    "noul": 0.12476982633196392
+   }
+  },
+  "check05": {
+   "done": {
+    "type": "noul",
+    "noul": 0.866043000379223
+   }
+  },
+  "check06": {
+   "done": {
+    "type": "noul",
+    "noul": 0.0914209040315724
+   }
+  },
+  "check07": {
+   "done": {
+    "type": "noul",
+    "noul": 0.9366322322852338
+   }
+  },
+  "style00": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.9288040894580696
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.06786771025577427
+   }
+  },
+  "style01": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.06629271175323918
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.0665478464817158
+   }
+  },
+  "style02": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.0653276957784991
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.9254832977703356
+   }
+  },
+  "style03": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.06388302651589566
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.2813922315709049
+   }
+  },
+  "style04": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.9314192347005192
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.07074491095525103
+   }
+  },
+  "style05": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.0630842151395835
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.063554104208625
+   }
+  },
+  "style06": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.06778773993034212
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.929974826503421
+   }
+  },
+  "style07": {
+   "relative_date": {
+    "type": "noul",
+    "noul": 0.06728064395123161
+   },
+   "secret": {
+    "type": "noul",
+    "noul": 0.07124582582049076
+   }
+  },
+  "commit00": {
+   "matches": {
+    "type": "noul",
+    "noul": 0.918113089768376
+   }
+  },
+  "commit01": {
+   "matches": {
+    "type": "noul",
+    "noul": 0.09148573260162132
+   }
+  },
+  "commit02": {
+   "matches": {
+    "type": "noul",
+    "noul": 0.9307149860195328
+   }
+  },
+  "commit03": {
+   "matches": {
+    "type": "noul",
+    "noul": 0.11153809848404585
+   }
+  },
+  "medium00-storage": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.9367794873212448
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.061467673511186156
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "storage",
+    "probabilities": {
+     "storage": 0.962312739670815,
+     "memory": 0.012653918272934132,
+     "network": 0.013290117847004032,
+     "none": 0.011743224209247007
+    },
+    "confidence": 0.9497503195610867
+   }
+  },
+  "medium01-memory": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.09549329699503245
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.9308375534669147
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "memory",
+    "probabilities": {
+     "storage": 0.01862003050908314,
+     "memory": 0.9537038326101679,
+     "network": 0.013885155191966515,
+     "none": 0.013790981688782438
+    },
+    "confidence": 0.9382717768135572
+   }
+  },
+  "medium02-network": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.09201959515121409
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06279763660139606
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "network",
+    "probabilities": {
+     "storage": 0.05009253643960913,
+     "memory": 0.023561354012986025,
+     "network": 0.8682047870259694,
+     "none": 0.05814132252143545
+    },
+    "confidence": 0.8242730493679592
+   }
+  },
+  "medium03-none": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.07827043366197434
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06208017965130757
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "none",
+    "probabilities": {
+     "storage": 0.08278280806009376,
+     "memory": 0.02297664606881782,
+     "network": 0.1137393050386306,
+     "none": 0.7805012408324578
+    },
+    "confidence": 0.7073349877766103
+   }
+  },
+  "medium04-storage": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.9378449878322073
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06564376374741049
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "storage",
+    "probabilities": {
+     "storage": 0.9486190563843371,
+     "memory": 0.012854311481575134,
+     "network": 0.020762158936089535,
+     "none": 0.017764473197998176
+    },
+    "confidence": 0.9314920751791161
+   }
+  },
+  "medium05-memory": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.07713536631907136
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.9324074838836115
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "memory",
+    "probabilities": {
+     "storage": 0.021065383862114172,
+     "memory": 0.9470426563076089,
+     "network": 0.017970025285285008,
+     "none": 0.013921934544991866
+    },
+    "confidence": 0.9293902084101452
+   }
+  },
+  "medium06-network": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.08014147923442233
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.061417816161534425
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "network",
+    "probabilities": {
+     "storage": 0.023700757261361224,
+     "memory": 0.015603446782350473,
+     "network": 0.9353297589370906,
+     "none": 0.025366037019197846
+    },
+    "confidence": 0.9137730119161208
+   }
+  },
+  "medium07-none": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.09979334821461158
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06433766072545341
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "network",
+    "probabilities": {
+     "storage": 0.14039969335472569,
+     "memory": 0.03660135538972768,
+     "network": 0.4849230285723576,
+     "none": 0.338075922683189
+    },
+    "confidence": 0.31323070476314346
+   }
+  },
+  "long00-storage": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.9394224186317884
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06476259074663199
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "storage",
+    "probabilities": {
+     "storage": 0.9513919834242323,
+     "memory": 0.012932111355882918,
+     "network": 0.017248584943835528,
+     "none": 0.018427320276049142
+    },
+    "confidence": 0.9351893112323096
+   }
+  },
+  "long01-memory": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.08468069148241572
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.93064792393555
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "memory",
+    "probabilities": {
+     "storage": 0.0198728322740387,
+     "memory": 0.9462303737239416,
+     "network": 0.019729529446864638,
+     "none": 0.0141672645551549
+    },
+    "confidence": 0.9283071649652554
+   }
+  },
+  "long02-network": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.08803898498711762
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06310290675108875
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "network",
+    "probabilities": {
+     "storage": 0.034381778952366555,
+     "memory": 0.015370891748306872,
+     "network": 0.9137165796576965,
+     "none": 0.03653074964163001
+    },
+    "confidence": 0.8849554395435953
+   }
+  },
+  "long03-none": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.07787890314395711
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06409805133178591
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "network",
+    "probabilities": {
+     "storage": 0.14313515005885316,
+     "memory": 0.04103759715940855,
+     "network": 0.5523078857341164,
+     "none": 0.2635193670476219
+    },
+    "confidence": 0.40307718097882184
+   }
+  },
+  "long04-storage": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.939328766321345
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06630566274878817
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "storage",
+    "probabilities": {
+     "storage": 0.9531279534204351,
+     "memory": 0.012989540447500428,
+     "network": 0.018970046579120395,
+     "none": 0.01491245955294416
+    },
+    "confidence": 0.9375039378939135
+   }
+  },
+  "long05-memory": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.08139020663821887
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.9336896506994122
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "memory",
+    "probabilities": {
+     "storage": 0.018840036722921286,
+     "memory": 0.9416322907417717,
+     "network": 0.022716393717857053,
+     "none": 0.01681127881744983
+    },
+    "confidence": 0.9221763876556955
+   }
+  },
+  "long06-network": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.08628373496119887
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.06495583955229384
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "network",
+    "probabilities": {
+     "storage": 0.03405567016222463,
+     "memory": 0.01744674251877018,
+     "network": 0.8695174983435239,
+     "none": 0.07898008897548131
+    },
+    "confidence": 0.8260233311246985
+   }
+  },
+  "long07-none": {
+   "disk_error": {
+    "type": "noul",
+    "noul": 0.08477817707505939
+   },
+   "oom_kill": {
+    "type": "noul",
+    "noul": 0.066088132813289
+   },
+   "worst": {
+    "type": "choice",
+    "choice": "none",
+    "probabilities": {
+     "storage": 0.19747246871649865,
+     "memory": 0.04440948184062021,
+     "network": 0.3111089720043873,
+     "none": 0.4470090774384937
+    },
+    "confidence": 0.2626787699179916
+   }
+  }
+ }
+}

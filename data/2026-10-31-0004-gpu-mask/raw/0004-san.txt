@@ -1,0 +1,3 @@
+# Change 0004 (build:0004-gpu-mask): compute-sanitizer memcheck on llama perplexity, with a pass of 256 tokens and a pass of 2048 tokens. Not timed.
+tool@memcheck 0004-san-memcheck-ppl256-L build:0004-gpu-mask perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 256 -ub 256 -c 256 --chunks 1 -f /work/domain-medium-long.txt
+tool@memcheck 0004-san-memcheck-ppl2048-L build:0004-gpu-mask perplexity -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -c 2048 --chunks 1 -f /work/domain-medium-long.txt

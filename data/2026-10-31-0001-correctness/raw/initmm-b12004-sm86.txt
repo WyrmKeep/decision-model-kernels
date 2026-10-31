@@ -1,0 +1,1572 @@
+========= COMPUTE-SANITIZER
+Testing 2 devices
+
+Backend 1/2: CUDA0
+  Device description: NVIDIA GeForce RTX 3060 Ti
+  Device memory: 7834 MB (3268 MB free)
+
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=2,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=3,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=4,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=5,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=6,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=7,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=9,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=4096,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=4096,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (0,6,0) in block (19,0,0)
+=========     Address 0x6d601b100
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (1,6,0) in block (19,0,0)
+=========     Address 0x6d601b104
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (2,6,0) in block (19,0,0)
+=========     Address 0x6d601b108
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (3,6,0) in block (19,0,0)
+=========     Address 0x6d601b10c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (4,6,0) in block (19,0,0)
+=========     Address 0x6d601b110
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (5,6,0) in block (19,0,0)
+=========     Address 0x6d601b114
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (6,6,0) in block (19,0,0)
+=========     Address 0x6d601b118
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (7,6,0) in block (19,0,0)
+=========     Address 0x6d601b11c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (8,6,0) in block (19,0,0)
+=========     Address 0x6d601b120
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (9,6,0) in block (19,0,0)
+=========     Address 0x6d601b124
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (10,6,0) in block (19,0,0)
+=========     Address 0x6d601b128
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (11,6,0) in block (19,0,0)
+=========     Address 0x6d601b12c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (12,6,0) in block (19,0,0)
+=========     Address 0x6d601b130
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (13,6,0) in block (19,0,0)
+=========     Address 0x6d601b134
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (14,6,0) in block (19,0,0)
+=========     Address 0x6d601b138
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (15,6,0) in block (19,0,0)
+=========     Address 0x6d601b13c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (16,6,0) in block (19,0,0)
+=========     Address 0x6d601b140
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (17,6,0) in block (19,0,0)
+=========     Address 0x6d601b144
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (18,6,0) in block (19,0,0)
+=========     Address 0x6d601b148
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (19,6,0) in block (19,0,0)
+=========     Address 0x6d601b14c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (20,6,0) in block (19,0,0)
+=========     Address 0x6d601b150
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (21,6,0) in block (19,0,0)
+=========     Address 0x6d601b154
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (22,6,0) in block (19,0,0)
+=========     Address 0x6d601b158
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (23,6,0) in block (19,0,0)
+=========     Address 0x6d601b15c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (24,6,0) in block (19,0,0)
+=========     Address 0x6d601b160
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (25,6,0) in block (19,0,0)
+=========     Address 0x6d601b164
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (26,6,0) in block (19,0,0)
+=========     Address 0x6d601b168
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (27,6,0) in block (19,0,0)
+=========     Address 0x6d601b16c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (28,6,0) in block (19,0,0)
+=========     Address 0x6d601b170
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (29,6,0) in block (19,0,0)
+=========     Address 0x6d601b174
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (30,6,0) in block (19,0,0)
+=========     Address 0x6d601b178
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (31,6,0) in block (19,0,0)
+=========     Address 0x6d601b17c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (0,7,0) in block (1,0,0)
+=========     Address 0x6d601b180
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (1,7,0) in block (1,0,0)
+=========     Address 0x6d601b184
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (2,7,0) in block (1,0,0)
+=========     Address 0x6d601b188
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (3,7,0) in block (1,0,0)
+=========     Address 0x6d601b18c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (4,7,0) in block (1,0,0)
+=========     Address 0x6d601b190
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (5,7,0) in block (1,0,0)
+=========     Address 0x6d601b194
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (6,7,0) in block (1,0,0)
+=========     Address 0x6d601b198
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (7,7,0) in block (1,0,0)
+=========     Address 0x6d601b19c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (8,7,0) in block (1,0,0)
+=========     Address 0x6d601b1a0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (9,7,0) in block (1,0,0)
+=========     Address 0x6d601b1a4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (10,7,0) in block (1,0,0)
+=========     Address 0x6d601b1a8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (11,7,0) in block (1,0,0)
+=========     Address 0x6d601b1ac
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (12,7,0) in block (1,0,0)
+=========     Address 0x6d601b1b0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (13,7,0) in block (1,0,0)
+=========     Address 0x6d601b1b4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (14,7,0) in block (1,0,0)
+=========     Address 0x6d601b1b8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (15,7,0) in block (1,0,0)
+=========     Address 0x6d601b1bc
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (16,7,0) in block (1,0,0)
+=========     Address 0x6d601b1c0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (17,7,0) in block (1,0,0)
+=========     Address 0x6d601b1c4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (18,7,0) in block (1,0,0)
+=========     Address 0x6d601b1c8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (19,7,0) in block (1,0,0)
+=========     Address 0x6d601b1cc
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (20,7,0) in block (1,0,0)
+=========     Address 0x6d601b1d0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (21,7,0) in block (1,0,0)
+=========     Address 0x6d601b1d4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (22,7,0) in block (1,0,0)
+=========     Address 0x6d601b1d8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (23,7,0) in block (1,0,0)
+=========     Address 0x6d601b1dc
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (24,7,0) in block (1,0,0)
+=========     Address 0x6d601b1e0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (25,7,0) in block (1,0,0)
+=========     Address 0x6d601b1e4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (26,7,0) in block (1,0,0)
+=========     Address 0x6d601b1e8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (27,7,0) in block (1,0,0)
+=========     Address 0x6d601b1ec
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (28,7,0) in block (1,0,0)
+=========     Address 0x6d601b1f0
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (29,7,0) in block (1,0,0)
+=========     Address 0x6d601b1f4
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (30,7,0) in block (1,0,0)
+=========     Address 0x6d601b1f8
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (31,7,0) in block (1,0,0)
+=========     Address 0x6d601b1fc
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (0,6,0) in block (21,0,0)
+=========     Address 0x6d601b100
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (1,6,0) in block (21,0,0)
+=========     Address 0x6d601b104
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (2,6,0) in block (21,0,0)
+=========     Address 0x6d601b108
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (3,6,0) in block (21,0,0)
+=========     Address 0x6d601b10c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (4,6,0) in block (21,0,0)
+=========     Address 0x6d601b110
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (5,6,0) in block (21,0,0)
+=========     Address 0x6d601b114
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (6,6,0) in block (21,0,0)
+=========     Address 0x6d601b118
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (7,6,0) in block (21,0,0)
+=========     Address 0x6d601b11c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (8,6,0) in block (21,0,0)
+=========     Address 0x6d601b120
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (9,6,0) in block (21,0,0)
+=========     Address 0x6d601b124
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (10,6,0) in block (21,0,0)
+=========     Address 0x6d601b128
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (11,6,0) in block (21,0,0)
+=========     Address 0x6d601b12c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (12,6,0) in block (21,0,0)
+=========     Address 0x6d601b130
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (13,6,0) in block (21,0,0)
+=========     Address 0x6d601b134
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (14,6,0) in block (21,0,0)
+=========     Address 0x6d601b138
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (15,6,0) in block (21,0,0)
+=========     Address 0x6d601b13c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (16,6,0) in block (21,0,0)
+=========     Address 0x6d601b140
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (17,6,0) in block (21,0,0)
+=========     Address 0x6d601b144
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (18,6,0) in block (21,0,0)
+=========     Address 0x6d601b148
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (19,6,0) in block (21,0,0)
+=========     Address 0x6d601b14c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (20,6,0) in block (21,0,0)
+=========     Address 0x6d601b150
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (21,6,0) in block (21,0,0)
+=========     Address 0x6d601b154
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (22,6,0) in block (21,0,0)
+=========     Address 0x6d601b158
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (23,6,0) in block (21,0,0)
+=========     Address 0x6d601b15c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (24,6,0) in block (21,0,0)
+=========     Address 0x6d601b160
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (25,6,0) in block (21,0,0)
+=========     Address 0x6d601b164
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (26,6,0) in block (21,0,0)
+=========     Address 0x6d601b168
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (27,6,0) in block (21,0,0)
+=========     Address 0x6d601b16c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (28,6,0) in block (21,0,0)
+=========     Address 0x6d601b170
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (29,6,0) in block (21,0,0)
+=========     Address 0x6d601b174
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (30,6,0) in block (21,0,0)
+=========     Address 0x6d601b178
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (31,6,0) in block (21,0,0)
+=========     Address 0x6d601b17c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (0,6,0) in block (3,0,0)
+=========     Address 0x6d601b100
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (1,6,0) in block (3,0,0)
+=========     Address 0x6d601b104
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (2,6,0) in block (3,0,0)
+=========     Address 0x6d601b108
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+========= Uninitialized __global__ memory read of size 4 bytes
+=========     at void mul_mat_q<(ggml_type)2, (int)32, (bool)1, (ggml_prec)30, (bool)0>(const char *, const char *, const int *, const int *, const int *, float *, float *, const float *, ggml_glu_op, float, uint3, int, int, int, int, int, uint3, uint3, int, int, int, uint3, uint3, int, int, int, uint3)+0x1db0
+=========     by thread (3,6,0) in block (3,0,0)
+=========     Address 0x6d601b10c
+=========     Saved host backtrace up to driver entry point at kernel launch time
+=========         Host Frame: void launch_mul_mat_q<(ggml_type)2, 32, true, (ggml_prec)30, false>(ggml_backend_cuda_context&, mmq_args const&, CUstream_st*) [0xb7f01d] in libggml-cuda.so
+=========         Host Frame: ggml_cuda_mul_mat_q(ggml_backend_cuda_context&, ggml_tensor const*, ggml_tensor const*, ggml_tensor const*, ggml_tensor*, ggml_cuda_mm_fusion_args_host const*) [0x360103] in libggml-cuda.so
+=========         Host Frame: ggml_backend_cuda_graph_compute(ggml_backend*, ggml_cgraph*) [0x316a73] in libggml-cuda.so
+=========         Host Frame: ggml_backend_graph_compute [0x32251] in libggml-base.so.0
+=========         Host Frame: ggml_backend_compare_graph_backend [0x384d0] in libggml-base.so.0
+=========         Host Frame: test_case::eval(ggml_backend*, ggml_backend*, char const*, printer*) [0x120412] in test-backend-ops
+=========         Host Frame: test_backend(ggml_backend*, ggml_backend_device*, test_mode, char const*, char const*, printer*, char const*, int)::{lambda(ggml_backend*, ggml_backend*)#1}::operator()(ggml_backend*, ggml_backend*) const [0x7dc33] in test-backend-ops
+=========         Host Frame: main [0x26eb9] in test-backend-ops
+========= 
+  MUL_MAT(type_a=q4_0,type_b=f32,m=2880,n=32,k=2880,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=40,n=2,k=32,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=100,n=2,k=96,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=2,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=3000,n=2,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=6144,n=2,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=17408,n=2,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=64,n=2,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=8192,n=2,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=2,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=1280,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=2,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0,src1=[0,1]): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=40,n=3,k=32,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=100,n=3,k=96,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=3,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=3000,n=3,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=6144,n=3,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=17408,n=3,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=64,n=3,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=8192,n=3,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=3,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=1280,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=3,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0,src1=[0,1]): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=40,n=5,k=32,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=100,n=5,k=96,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=5,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=3000,n=5,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=6144,n=5,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=17408,n=5,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=64,n=5,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=8192,n=5,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=5,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=1280,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=5,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0,src1=[0,1]): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=40,n=8,k=32,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=100,n=8,k=96,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=8,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=3000,n=8,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=6144,n=8,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=17408,n=8,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=64,n=8,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=8192,n=8,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=8,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=1280,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=8,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0,src1=[0,1]): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=40,n=9,k=32,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=100,n=9,k=96,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=9,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=3000,n=9,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=6144,n=9,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=17408,n=9,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=64,n=9,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=8192,n=9,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=9,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=1280,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=9,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0,src1=[0,1]): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=40,n=13,k=32,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=100,n=13,k=96,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=13,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=3000,n=13,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=6144,n=13,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=17408,n=13,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=64,n=13,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=8192,n=13,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=13,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=1280,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=13,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0,src1=[0,1]): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=40,n=16,k=32,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=100,n=16,k=96,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=16,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=3000,n=16,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=6144,n=16,k=5120,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=17408,n=16,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=64,n=16,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=8192,n=16,k=512,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=16,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=1280,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1000,n=16,k=1024,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0,src1=[0,1]): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[1,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[1,1],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[3,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[3,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[3,2],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[3,2],nr=[2,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=4,k=256,bs=[3,2],nr=[2,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[1,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[1,1],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[3,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[3,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[3,2],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[3,2],nr=[2,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[2,3],nr=[1,1],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[2,3],nr=[1,1],per=[0,1,3,2],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=4,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=256,bs=[2,3],nr=[1,1],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=256,bs=[2,3],nr=[1,1],per=[0,1,3,2],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[2,3],nr=[1,1],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[2,3],nr=[1,1],per=[0,1,3,2],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=256,bs=[1,1],nr=[1,2],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=256,bs=[1,1],nr=[1,2],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=256,bs=[1,1],nr=[4,2],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=1,k=1024,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=1024,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=16,k=1024,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=16,n=8,k=256,bs=[1536,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[1,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[1,1],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[3,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[3,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[3,2],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[3,2],nr=[2,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=4,k=256,bs=[3,2],nr=[2,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[1,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[1,1],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[3,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[3,1],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[3,2],nr=[2,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[3,2],nr=[1,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[3,2],nr=[2,2],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[2,3],nr=[1,1],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[2,3],nr=[1,1],per=[0,1,3,2],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=4,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=8,k=256,bs=[2,3],nr=[1,1],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=8,k=256,bs=[2,3],nr=[1,1],per=[0,1,3,2],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=8,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[2,3],nr=[1,1],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[2,3],nr=[1,1],per=[0,1,3,2],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=256,bs=[2,3],nr=[1,1],per=[0,3,2,1],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=256,bs=[1,1],nr=[1,2],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=8,k=256,bs=[1,1],nr=[1,2],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=8,k=256,bs=[1,1],nr=[4,2],per=[0,2,1,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=1,k=1024,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=8,k=1024,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=16,k=1024,bs=[3,2],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f16,m=16,n=8,k=256,bs=[1536,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): not supported [CUDA0, CPU] 
+  MUL_MAT(type_a=q4_0,type_b=f32,m=576,n=512,k=576,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1,n=2048,k=8192,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  MUL_MAT(type_a=q4_0,type_b=f32,m=1,n=64,k=256,bs=[1,1],nr=[1,1],per=[0,1,2,3],k_v=0,o=1,src_overlap=0,m_v=0,pad=0): [1;32mOK[0m
+  121/121 tests passed
+  Backend CUDA0: [1;32mOK[0m
+Backend 2/2: CPU
+  Skipping
+2/2 backends passed
+[1;32mOK[0m
+========= ERROR SUMMARY: 2944 errors
+========= ERROR SUMMARY: 2844 errors were not printed. Use --print-limit option to adjust the number of printed errors

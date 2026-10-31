@@ -1,0 +1,11 @@
+log	build	sanitizer	selection	tests_ok	tests_run	sanitizer_errors
+tbo-L-glu.txt	L	none	-o GLU_MUL_MAT,SWIGLU_MUL_MAT_ID,SWIGLU_MUL_MAT_ID_REUSE	310	310	
+tbo-L.txt	L	none	--test-file ops-all.txt	181	187	
+san-memcheck-L.txt	L	memcheck	-o GLU_MUL_MAT,SWIGLU_MUL_MAT_ID,SWIGLU_MUL_MAT_ID_REUSE	310	310	0
+san-initcheck-L.txt	L	initcheck	-o GLU_MUL_MAT,SWIGLU_MUL_MAT_ID,SWIGLU_MUL_MAT_ID_REUSE	310	310	942080
+san-synccheck-L.txt	L	synccheck	-o GLU_MUL_MAT,SWIGLU_MUL_MAT_ID,SWIGLU_MUL_MAT_ID_REUSE	310	310	0
+san-racecheck-L.txt	L	racecheck	-o GLU_MUL_MAT,SWIGLU_MUL_MAT_ID,SWIGLU_MUL_MAT_ID_REUSE	310	310	0
+san-initcheck-quantize-L.txt	L	initcheck, only kernels with quantize_mmq_q8_1 in the name	-o GLU_MUL_MAT,SWIGLU_MUL_MAT_ID,SWIGLU_MUL_MAT_ID_REUSE	310	310	0
+san-initcheck-nofixup-L.txt	L	initcheck, no kernel with mul_mat_q in the name	-o GLU_MUL_MAT,SWIGLU_MUL_MAT_ID,SWIGLU_MUL_MAT_ID_REUSE	310	310	0
+initmm-b12004-sm86.txt	D	initcheck	-o MUL_MAT -p q4_0	121	121	2944
+initmm-lead-30489.txt	L	initcheck	-o MUL_MAT -p q4_0	121	121	2944

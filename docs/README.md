@@ -6,6 +6,7 @@ This folder has the documents of the project. The [README of the repository](../
 
 | Document | Contents |
 |---|---|
+| [story.md](story.md) | How the project went from the first question to the checkpoint of phase 4 |
 | [method.md](method.md) | The benchmark, how we compare builds, and the tests of correctness |
 | [model.md](model.md) | The facts about the model and about the server |
 | [kernels.md](kernels.md) | The kernels of llama.cpp that the project can change |
@@ -17,10 +18,11 @@ Source: the files in this folder.
 
 ## Where to start
 
-1. Read [method.md](method.md). It tells how we measure and how we know that an answer is correct.
-2. Read [model.md](model.md). It tells the facts about the model and the server.
-3. Read the [notebook](notebook/README.md) to see the tests in the sequence of their dates.
-4. Read a change document when a change is complete.
+1. Read [story.md](story.md). It tells how the project went from the first question to the ranked list of targets.
+2. Read [method.md](method.md). It tells how we measure and how we know that an answer is correct.
+3. Read [model.md](model.md). It tells the facts about the model and the server.
+4. Read the [notebook](notebook/README.md) to see the tests in the sequence of their dates.
+5. Read a change document when a change is complete.
 
 ## Standard for the text
 

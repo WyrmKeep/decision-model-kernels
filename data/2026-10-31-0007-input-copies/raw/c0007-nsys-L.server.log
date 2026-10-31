@@ -1,0 +1,80 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+warn: LLAMA_ARG_PORT environment variable is set, but will be overwritten by command line argument --port
+0.00.264.899 I srv  llama_server: initializing ...
+0.00.265.636 I cmn  common_param: common_params_print_info: verbosity = 3 (adjust with the `-lv N` CLI arg)
+0.00.265.775 I srv  init_listene: The UI is disabled
+0.00.265.778 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.265.886 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.268.073 I srv    load_model: loading model '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.02.963.607 I cmn          init: llama threadpool init, n_threads = 6
+0.03.049.457 I srv          init: decision model type: h2o-lightning
+0.03.071.882 I srv    load_model: initializing, n_slots = 3, n_ctx_slot = 16384, kv_unified = 'true'
+0.03.071.946 I srv    load_model: decision model: prompt cache disabled by default, use `--cache-ram N` to enable it
+0.03.076.121 I srv  server_run_i: model loaded
+0.03.076.129 I srv  server_on_li: listening on http://0.0.0.0:8080
+0.03.865.458 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.03.865.489 I slot launch_slot_: id  1 | task 1 | processing task, is_child = 1
+0.03.865.492 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+0.03.979.392 I slot      release: id  0 | task 0 | stop processing: n_tokens = 202, truncated = 0
+0.03.979.437 I slot      release: id  1 | task 1 | stop processing: n_tokens = 133, truncated = 0
+0.03.981.515 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.208 (> 0.100 thold), f_keep = 0.203
+0.03.981.537 I slot launch_slot_: id  2 | task 5 | processing task, is_child = 1
+0.03.981.539 I slot launch_slot_: id  0 | task 4 | processing task, is_child = 0
+0.04.067.216 I slot      release: id  0 | task 4 | stop processing: n_tokens = 197, truncated = 0
+0.04.067.244 I slot      release: id  2 | task 5 | stop processing: n_tokens = 128, truncated = 0
+0.04.069.425 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.197 (> 0.100 thold), f_keep = 0.208
+0.04.069.432 I slot launch_slot_: id  1 | task 9 | processing task, is_child = 1
+0.04.069.433 I slot launch_slot_: id  0 | task 8 | processing task, is_child = 0
+0.04.157.512 I slot      release: id  0 | task 8 | stop processing: n_tokens = 208, truncated = 0
+0.04.157.539 I slot      release: id  1 | task 9 | stop processing: n_tokens = 139, truncated = 0
+0.04.159.437 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.205 (> 0.100 thold), f_keep = 0.192
+0.04.159.444 I slot launch_slot_: id  2 | task 13 | processing task, is_child = 1
+0.04.159.445 I slot launch_slot_: id  0 | task 12 | processing task, is_child = 0
+0.04.245.133 I slot      release: id  0 | task 12 | stop processing: n_tokens = 195, truncated = 0
+0.04.245.159 I slot      release: id  2 | task 13 | stop processing: n_tokens = 126, truncated = 0
+0.04.247.095 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.192 (> 0.100 thold), f_keep = 0.205
+0.04.247.101 I slot launch_slot_: id  1 | task 17 | processing task, is_child = 1
+0.04.247.103 I slot launch_slot_: id  0 | task 16 | processing task, is_child = 0
+0.04.335.281 I slot      release: id  0 | task 16 | stop processing: n_tokens = 208, truncated = 0
+0.04.335.307 I slot      release: id  1 | task 17 | stop processing: n_tokens = 139, truncated = 0
+0.04.336.776 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.296 (> 0.100 thold), f_keep = 0.192
+0.04.336.785 I slot launch_slot_: id  2 | task 21 | processing task, is_child = 1
+0.04.336.791 I slot launch_slot_: id  0 | task 20 | processing task, is_child = 0
+0.04.412.914 I slot      release: id  0 | task 20 | stop processing: n_tokens = 135, truncated = 0
+0.04.412.939 I slot      release: id  2 | task 21 | stop processing: n_tokens = 122, truncated = 0
+0.04.414.531 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.265 (> 0.100 thold), f_keep = 0.296
+0.04.414.539 I slot launch_slot_: id  1 | task 25 | processing task, is_child = 1
+0.04.414.540 I slot launch_slot_: id  0 | task 24 | processing task, is_child = 0
+0.04.493.053 I slot      release: id  0 | task 24 | stop processing: n_tokens = 151, truncated = 0
+0.04.493.080 I slot      release: id  1 | task 25 | stop processing: n_tokens = 138, truncated = 0
+0.04.494.553 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.238 (> 0.100 thold), f_keep = 0.265
+0.04.494.560 I slot launch_slot_: id  2 | task 29 | processing task, is_child = 1
+0.04.494.562 I slot launch_slot_: id  0 | task 28 | processing task, is_child = 0
+0.04.576.418 I slot      release: id  0 | task 28 | stop processing: n_tokens = 168, truncated = 0
+0.04.576.442 I slot      release: id  2 | task 29 | stop processing: n_tokens = 155, truncated = 0
+0.04.577.936 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.274 (> 0.100 thold), f_keep = 0.238
+0.04.577.942 I slot launch_slot_: id  1 | task 33 | processing task, is_child = 1
+0.04.577.944 I slot launch_slot_: id  0 | task 32 | processing task, is_child = 0
+0.04.655.105 I slot      release: id  0 | task 32 | stop processing: n_tokens = 146, truncated = 0
+0.04.655.203 I slot      release: id  1 | task 33 | stop processing: n_tokens = 133, truncated = 0
+0.04.656.795 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.301 (> 0.100 thold), f_keep = 0.281
+0.04.656.802 I slot launch_slot_: id  2 | task 37 | processing task, is_child = 1
+0.04.656.804 I slot launch_slot_: id  0 | task 36 | processing task, is_child = 0
+0.04.732.889 I slot      release: id  0 | task 36 | stop processing: n_tokens = 136, truncated = 0
+0.04.732.904 I slot      release: id  2 | task 37 | stop processing: n_tokens = 123, truncated = 0
+0.04.734.386 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.253 (> 0.100 thold), f_keep = 0.301
+0.04.734.407 I slot launch_slot_: id  1 | task 41 | processing task, is_child = 1
+0.04.734.409 I slot launch_slot_: id  0 | task 40 | processing task, is_child = 0
+0.04.813.959 I slot      release: id  0 | task 40 | stop processing: n_tokens = 162, truncated = 0
+0.04.813.987 I slot      release: id  1 | task 41 | stop processing: n_tokens = 149, truncated = 0
+0.04.815.545 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.247 (> 0.100 thold), f_keep = 0.247
+0.04.815.554 I slot launch_slot_: id  2 | task 45 | processing task, is_child = 1
+0.04.815.569 I slot launch_slot_: id  0 | task 44 | processing task, is_child = 0
+0.04.898.290 I slot      release: id  0 | task 44 | stop processing: n_tokens = 162, truncated = 0
+0.04.898.302 I slot      release: id  2 | task 45 | stop processing: n_tokens = 149, truncated = 0
+0.05.077.727 I srv    operator(): operator(): cleaning up before exit...
+Collecting data...
+Generating '/tmp/nsys-root/nsys-report-c5c1.qdstrm'
+[1/1] [0%                          ] c0007-nsys-L.nsys-rep[1/1] [0%                          ] c0007-nsys-L.nsys-rep[1/1] [1%                          ] c0007-nsys-L.nsys-rep[1/1] [2%                          ] c0007-nsys-L.nsys-rep[1/1] [5%                          ] c0007-nsys-L.nsys-rep[1/1] [6%                          ] c0007-nsys-L.nsys-rep[1/1] [8%                          ] c0007-nsys-L.nsys-rep[1/1] [11%                         ] c0007-nsys-L.nsys-rep[1/1] [13%                         ] c0007-nsys-L.nsys-rep[1/1] [=15%                        ] c0007-nsys-L.nsys-rep[1/1] [==18%                       ] c0007-nsys-L.nsys-rep[1/1] [==19%                       ] c0007-nsys-L.nsys-rep[1/1] [==20%                       ] c0007-nsys-L.nsys-rep[1/1] [=======================93%  ] c0007-nsys-L.nsys-rep[1/1] [=======================96%  ] c0007-nsys-L.nsys-rep[1/1] [========================98% ] c0007-nsys-L.nsys-rep[1/1] [========================100%] c0007-nsys-L.nsys-rep[1/1] [========================100%] c0007-nsys-L.nsys-rep
+Generated:
+	/runs/c0007-nsys-L.nsys-rep

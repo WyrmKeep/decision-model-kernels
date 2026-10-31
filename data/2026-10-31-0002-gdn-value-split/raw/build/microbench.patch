@@ -1,0 +1,105 @@
+diff --git a/ggml/src/ggml-cuda/gated-delta-net-mma.cu b/ggml/src/ggml-cuda/gated-delta-net-mma.cu
+index 0684adc1a..73ca49ddd 100644
+--- a/ggml/src/ggml-cuda/gated-delta-net-mma.cu
++++ b/ggml/src/ggml-cuda/gated-delta-net-mma.cu
+@@ -3,6 +3,10 @@
+ 
+ #include <climits>
+ #include <mutex>
++#include <string>
++#include <vector>
++#include <cstring>
++#include <cstdlib>
+ 
+ namespace ggml_cuda_gated_delta_net_mma {
+ constexpr int D = 128;
+@@ -381,7 +385,7 @@ template <int C, int V, int BLOCKS = 1> bool init(int device) {
+     return available[device];
+ }
+ 
+-enum class gdn_path { ar, slice32_one_block, slice32_two_blocks, slice64, whole_head };
++enum class gdn_path { ar, slice32_one_block, slice32_two_blocks, slice64, whole_head, s16_1, s16_2, s16_3, s64_1, s64_2 };
+ 
+ static gdn_path select_gdn_mma_path(int device, const ggml_cuda_gdn_mma_args & a) {
+     GGML_ASSERT(device >= 0 && device < GGML_CUDA_MAX_DEVICES);
+@@ -405,6 +409,17 @@ static gdn_path select_gdn_mma_path(int device, const ggml_cuda_gdn_mma_args & a
+          info.cc != GGML_CUDA_CC_BLACKWELL && info.cc != GGML_CUDA_CC_DGX_SPARK)) {
+         return gdn_path::ar;
+     }
++    if (const char * force = getenv("DMK_GDN_PATH")) {
++        const std::string f(force);
++        if (f == "128")  return init<16, 128>(device)    ? gdn_path::whole_head : gdn_path::ar;
++        if (f == "64_1") return init<16, 64, 1>(device)  ? gdn_path::s64_1 : gdn_path::ar;
++        if (f == "64_2") return init<16, 64, 2>(device)  ? gdn_path::s64_2 : gdn_path::ar;
++        if (f == "32_1") return init<16, 32, 1>(device)  ? gdn_path::slice32_one_block : gdn_path::ar;
++        if (f == "32_2") return init<16, 32, 2>(device)  ? gdn_path::slice32_two_blocks : gdn_path::ar;
++        if (f == "16_1") return init<16, 16, 1>(device)  ? gdn_path::s16_1 : gdn_path::ar;
++        if (f == "16_2") return init<16, 16, 2>(device)  ? gdn_path::s16_2 : gdn_path::ar;
++        if (f == "16_3") return init<16, 16, 3>(device)  ? gdn_path::s16_3 : gdn_path::ar;
++    }
+     // Value splitting pays off when whole heads leave at least half the SMs idle.
+     if (a.H * a.n_seqs * 2 <= info.nsm) {
+         // A grid that already fits in one wave benefits from a larger register budget.
+@@ -419,18 +434,55 @@ static gdn_path select_gdn_mma_path(int device, const ggml_cuda_gdn_mma_args & a
+ }  // namespace
+ using namespace ggml_cuda_gated_delta_net_mma;
+ 
++static void launch_path(gdn_path path, const ggml_cuda_gdn_mma_args & a, cudaStream_t stream);
++
+ bool ggml_cuda_gdn_mma_launch(int device, const ggml_cuda_gdn_mma_args & a, cudaStream_t stream) {
+     if (!a.state_out) {
+         return false;
+     }
++    if (getenv("DMK_GDN_CHECK") && a.dst + D * a.H * a.n_tokens * a.n_seqs == a.state_out) {
++        // throwaway check: run every path on the same input and compare the bytes of dst and of the new state
++        const size_t n = (size_t) (D * a.H * a.n_tokens * a.n_seqs + D * D * a.H * a.n_seqs);
++        std::vector<float> ref(n), cur(n);
++        const char * names[] = { "128", "64_1", "64_2", "32_1", "32_2", "16_1", "16_2", "16_3" };
++        bool first = true;
++        for (const char * nm : names) {
++            setenv("DMK_GDN_PATH", nm, 1);
++            const auto pth = select_gdn_mma_path(device, a);
++            if (pth == gdn_path::ar) { continue; }
++            launch_path(pth, a, stream);
++            CUDA_CHECK(cudaStreamSynchronize(stream));
++            CUDA_CHECK(cudaMemcpy(cur.data(), a.dst, n * sizeof(float), cudaMemcpyDeviceToHost));
++            if (first) { ref = cur; first = false; }
++            size_t bad = 0;
++            for (size_t i = 0; i < n; ++i) { bad += memcmp(&ref[i], &cur[i], 4) != 0; }
++            fprintf(stderr, "GDN_CHECK H=%d seqs=%d tokens=%d path=%s bytes_differ=%zu of %zu\n", (int) a.H, (int) a.n_seqs, (int) a.n_tokens, nm, bad, n);
++        }
++        unsetenv("DMK_GDN_PATH");
++    }
+     const auto path = select_gdn_mma_path(device, a);
+     if (path == gdn_path::ar) {
+         return false;
+     }
++    launch_path(path, a, stream);
++    return true;
++}
++
++static void launch_path(gdn_path path, const ggml_cuda_gdn_mma_args & a, cudaStream_t stream) {
+ #ifdef GGML_USE_HIP
+     gdn_single<16, 64><<<a.H * a.n_seqs * 2, dim3(32, 8), sizeof(shared<16, 64>), stream>>>(a);
+ #else
+-    if (path == gdn_path::slice32_two_blocks) {
++    if (path == gdn_path::s16_1) {
++        gdn_single<16, 16, 1><<<a.H * a.n_seqs * 8, dim3(32, 8), sizeof(shared<16, 16>), stream>>>(a);
++    } else if (path == gdn_path::s16_2) {
++        gdn_single<16, 16, 2><<<a.H * a.n_seqs * 8, dim3(32, 8), sizeof(shared<16, 16>), stream>>>(a);
++    } else if (path == gdn_path::s16_3) {
++        gdn_single<16, 16, 3><<<a.H * a.n_seqs * 8, dim3(32, 8), sizeof(shared<16, 16>), stream>>>(a);
++    } else if (path == gdn_path::s64_1) {
++        gdn_single<16, 64, 1><<<a.H * a.n_seqs * 2, dim3(32, 8), sizeof(shared<16, 64>), stream>>>(a);
++    } else if (path == gdn_path::s64_2) {
++        gdn_single<16, 64, 2><<<a.H * a.n_seqs * 2, dim3(32, 8), sizeof(shared<16, 64>), stream>>>(a);
++    } else if (path == gdn_path::slice32_two_blocks) {
+         gdn_single<16, 32, 2><<<a.H * a.n_seqs * 4, dim3(32, 8), sizeof(shared<16, 32>), stream>>>(a);
+     } else if (path == gdn_path::slice32_one_block) {
+         gdn_single<16, 32, 1><<<a.H * a.n_seqs * 4, dim3(32, 8), sizeof(shared<16, 32>), stream>>>(a);
+@@ -439,5 +491,4 @@ bool ggml_cuda_gdn_mma_launch(int device, const ggml_cuda_gdn_mma_args & a, cuda
+     }
+ #endif // GGML_USE_HIP
+     CUDA_CHECK(cudaGetLastError());
+-    return true;
+ }
