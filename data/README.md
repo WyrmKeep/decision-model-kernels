@@ -13,6 +13,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-30-window1`](2026-10-30-window1/README.md) | 2026-10-30 | The first measurement window: build `D` against the stock image, the KL divergence, the 52-decision set, `compute-sanitizer`, and the first runs of the public benchmark |
 | [`2026-10-30-test-backend-ops`](2026-10-30-test-backend-ops/README.md) | 2026-10-30 | The logs of `test-backend-ops` for the 187 operations of the graph of mix8 and for five built-in tests, on build `D` |
 | [`2026-10-30-card-limits`](2026-10-30-card-limits/README.md) | 2026-10-30 | The highest rates of the `RTX 3060 Ti` for the tensor cores, the DRAM and the L2 cache, and the time of a cuBLASLt int8 GEMM for the weight shapes of the model. |
+| [`2026-10-31-public-baseline`](2026-10-31-public-baseline/README.md) | 2026-10-31 | The baseline of the public benchmark: three runs of build `D` with the model mix8, the file `bench/baseline.json`, and a check run with the result `PASS`. |
 
 Add one row for each new data set. Put a link to its folder in the first column.
 
