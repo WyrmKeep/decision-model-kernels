@@ -50,20 +50,25 @@ def compare(x, y):
     return {"decisions": n, "identical": x == y, "max_abs_dp": max_dp, "top_flips": flips}
 
 
-ap = argparse.ArgumentParser()
-ap.add_argument("--a", required=True)
-ap.add_argument("--b", required=True)
-args = ap.parse_args()
-fa, A = load(args.a)
-fb, B = load(args.b)
-out = {"files_a": fa, "files_b": fb,
-       "self_repeat_a": all(x == A[0] for x in A),
-       "self_repeat_b": all(x == B[0] for x in B),
-       "self_a_max_dp": max(compare(A[0], x)["max_abs_dp"] for x in A),
-       "self_b_max_dp": max(compare(B[0], x)["max_abs_dp"] for x in B)}
-pairs = [compare(x, y) for x in A for y in B]
-out["cross_identical_all"] = all(p["identical"] for p in pairs)
-out["cross_max_abs_dp"] = max(p["max_abs_dp"] for p in pairs)
-out["cross_top_flips"] = sorted({f for p in pairs for f in p["top_flips"]})
-out["decisions"] = pairs[0]["decisions"]
-print(json.dumps(out, indent=1))
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--a", required=True)
+    ap.add_argument("--b", required=True)
+    args = ap.parse_args()
+    fa, A = load(args.a)
+    fb, B = load(args.b)
+    out = {"files_a": fa, "files_b": fb,
+           "self_repeat_a": all(x == A[0] for x in A),
+           "self_repeat_b": all(x == B[0] for x in B),
+           "self_a_max_dp": max(compare(A[0], x)["max_abs_dp"] for x in A),
+           "self_b_max_dp": max(compare(B[0], x)["max_abs_dp"] for x in B)}
+    pairs = [compare(x, y) for x in A for y in B]
+    out["cross_identical_all"] = all(p["identical"] for p in pairs)
+    out["cross_max_abs_dp"] = max(p["max_abs_dp"] for p in pairs)
+    out["cross_top_flips"] = sorted({f for p in pairs for f in p["top_flips"]})
+    out["decisions"] = pairs[0]["decisions"]
+    print(json.dumps(out, indent=1))
+
+
+if __name__ == "__main__":
+    main()

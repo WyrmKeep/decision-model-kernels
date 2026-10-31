@@ -408,6 +408,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | ref | technical noun | A name in git that points to a commit. A branch and a tag are refs. |
 | reference | technical noun | A set of answers that you compare with the answers of a new build. |
 | register | technical noun | A fast part of the memory of one thread. |
+| regular expression | technical noun | A text with special characters. A program uses it to select lines of a file. |
 | relative link | technical noun | A link that gives the path of a file from the folder of the document that has the link. |
 | release | technical noun | A set of files of llama.cpp that a person can download from GitHub. Each release has a tag. |
 | remote | technical noun | A repository on a different host. A clone sends commits to it and gets commits from it. |
@@ -436,6 +437,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | run | technical verb | To start a program and let it work until it stops. |
 | S | technical name | The short name of the stock build of the tag `b12004`. Arm S uses it. |
 | sampler | technical noun | A program that reads the memory use, the power, and the clock of the GPU 4 times each second. It writes the values to a file. |
+| sanitizer | technical noun | A program that starts a second program. It records the errors of memory use of that program. In this project it is `compute-sanitizer`. |
 | SASS | technical name | The program code that an NVIDIA GPU runs. A tool can show it as text. |
 | scalar gate | technical noun | The number of a GDN layer that sets how much of the layer state stays for the next token. It is one number and not a list of numbers. |
 | scale | technical noun | A number that a group of quantized weights has. The program multiplies each integer of the group by the scale to get a model weight. |
@@ -464,6 +466,7 @@ A term can be the same as an approved word of the STE dictionary. Then the proje
 | slot assignment | technical noun | The list of the task slots that hold the questions of one request. Different lists can give different passes. |
 | SM | technical noun | One part of the GPU. It runs the threads of a thread block. The `RTX 3060 Ti` has 38 SMs. |
 | snapshot | technical noun | A copy of the layer state of a recurrent layer at one token. The memory keeps it. The program can then go back to that token. |
+| soak test | technical noun | A test in which one server runs for many hours. The benchmark runs against the server again and again. The test examines the server, the GPU and the log at a regular interval. |
 | softmax | technical noun | A function that changes logits to probabilities. The sum of the probabilities is 1. |
 | specification | technical noun | The PDF that gives the rules and the dictionary of STE. |
 | speculative decoding | technical noun | A method for faster decode. A draft writes the next tokens, and the model checks all of them in one pass. |
