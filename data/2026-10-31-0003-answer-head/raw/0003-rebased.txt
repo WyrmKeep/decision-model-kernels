@@ -1,0 +1,23 @@
+# Change 0003 (output head for the answer tokens only), the branch on the stack. S = build:stack-fbfd9cb (dmk/stack), A3R = build:0003-answer-head-rebased (change 0003 on S).
+# Part 1: correctness runs with the log level 4. One pass of the private benchmark for each arm, two times. The answers must be the same. The log of A3R must show no graph reallocation.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-rb-bench-A3R-1 build:0003-answer-head-rebased --passes 1 --write-reference 0003-rb-bench-A3R-1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-rb-bench-S-1 build:stack-fbfd9cb --passes 1 --write-reference 0003-rb-bench-S-1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-rb-bench-S-2 build:stack-fbfd9cb --passes 1 --write-reference 0003-rb-bench-S-2
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" bench 0003-rb-bench-A3R-2 build:0003-answer-head-rebased --passes 1 --write-reference 0003-rb-bench-A3R-2
+# Part 2: the weight of the head is in the CPU buffer. The graph has the full head and takes the values of the tokens from it. One request at a time. The answers must be the same.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot ^output[.]weight=CPU" client 0003-rb-cpuhead-A3R-1 build:0003-answer-head-rebased /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot ^output[.]weight=CPU" client 0003-rb-cpuhead-S-1 build:stack-fbfd9cb /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot ^output[.]weight=CPU" client 0003-rb-cpuhead-S-2 build:stack-fbfd9cb /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4 -ot ^output[.]weight=CPU" client 0003-rb-cpuhead-A3R-2 build:0003-answer-head-rebased /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 1
+# Part 3: the server of arm A3R in compute-sanitizer (memcheck), one request of each type.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 --kv-unified --no-webui --no-slots -lv 4" DMK_SERVER_WRAP="/tools/san-wrap-0003.sh" client 0003-rb-memcheck-A3R build:0003-answer-head-rebased /extra/0003/memcheck_client.py 18080 /runs/{name}.answers.json
+# Part 4: the speed of A3R against S, 4 blocks of the private benchmark with the flags of production. Each block has the two arms in a random order.
+# make_schedule.py --prefix 0003-rb-ab --blocks 4 --seed 3003 --arm S=build:stack-fbfd9cb --arm A3R=build:0003-answer-head-rebased --kind bench
+bench 0003-rb-ab-b1-S build:stack-fbfd9cb --write-reference 0003-rb-ab-b1-S
+bench 0003-rb-ab-b1-A3R build:0003-answer-head-rebased --write-reference 0003-rb-ab-b1-A3R
+bench 0003-rb-ab-b2-A3R build:0003-answer-head-rebased --write-reference 0003-rb-ab-b2-A3R
+bench 0003-rb-ab-b2-S build:stack-fbfd9cb --write-reference 0003-rb-ab-b2-S
+bench 0003-rb-ab-b3-S build:stack-fbfd9cb --write-reference 0003-rb-ab-b3-S
+bench 0003-rb-ab-b3-A3R build:0003-answer-head-rebased --write-reference 0003-rb-ab-b3-A3R
+bench 0003-rb-ab-b4-A3R build:0003-answer-head-rebased --write-reference 0003-rb-ab-b4-A3R
+bench 0003-rb-ab-b4-S build:stack-fbfd9cb --write-reference 0003-rb-ab-b4-S

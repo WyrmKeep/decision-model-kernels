@@ -1,0 +1,12 @@
+# Change 0003 (output head for the answer tokens only): correctness runs on the final build, before the A/B. This is not a speed test.
+# L = build:lead-30489 (the parent), A3 = build:0003-answer-head.
+# Six slots and six requests in flight: a pass can have 5 or 6 output rows, so the graph takes the values from the full head.
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots" client 0003-fin-np6-A3-1 build:0003-answer-head /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots" client 0003-fin-np6-L-1 build:lead-30489 /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots" client 0003-fin-np6-L-2 build:lead-30489 /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+DMK_SERVER_ARGS="-ngl 999 -c 16384 -b 2048 -ub 2048 -np 6 --kv-unified --no-webui --no-slots" client 0003-fin-np6-A3-2 build:0003-answer-head /extra/0003/conc_client.py 18080 /runs/{name}.answers.json 6
+# One request of each type, a new server for each arm, no wrapper (the first requests after the start).
+client 0003-fin-types-L build:lead-30489 /extra/0003/memcheck_client.py 18080 /runs/{name}.answers.json
+client 0003-fin-types-A3 build:0003-answer-head /extra/0003/memcheck_client.py 18080 /runs/{name}.answers.json
+# The server of arm A3 in compute-sanitizer (memcheck), one request of each type. The wrapper starts with timeout, so that docker stop reaches the sanitizer.
+DMK_SERVER_WRAP="timeout 1800 /tools/compute-sanitizer-12.8.93/bin/compute-sanitizer --tool memcheck --error-exitcode 99" client 0003-fin-memcheck-A3 build:0003-answer-head /extra/0003/memcheck_client.py 18080 /runs/{name}.answers.json

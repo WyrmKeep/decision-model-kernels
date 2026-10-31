@@ -1,0 +1,19 @@
+# Change 0003 (output head for the answer tokens only), A/B against the parent. L = build:lead-30489 (dmk/stack), A3 = build:0003-answer-head. 4 blocks each, arm order shuffled per block.
+# make_schedule.py --prefix 0003-bench --blocks 4 --seed 3001 --arm L=build:lead-30489 --arm A3=build:0003-answer-head --kind bench
+bench 0003-bench-b1-L build:lead-30489 --write-reference 0003-bench-b1-L
+bench 0003-bench-b1-A3 build:0003-answer-head --write-reference 0003-bench-b1-A3
+bench 0003-bench-b2-L build:lead-30489 --write-reference 0003-bench-b2-L
+bench 0003-bench-b2-A3 build:0003-answer-head --write-reference 0003-bench-b2-A3
+bench 0003-bench-b3-A3 build:0003-answer-head --write-reference 0003-bench-b3-A3
+bench 0003-bench-b3-L build:lead-30489 --write-reference 0003-bench-b3-L
+bench 0003-bench-b4-L build:lead-30489 --write-reference 0003-bench-b4-L
+bench 0003-bench-b4-A3 build:0003-answer-head --write-reference 0003-bench-b4-A3
+# make_schedule.py --prefix 0003-llb --blocks 4 --seed 3002 --arm L=build:lead-30489 --arm A3=build:0003-answer-head --kind tool
+tool 0003-llb-b1-A3 build:0003-answer-head bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool 0003-llb-b1-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool 0003-llb-b2-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool 0003-llb-b2-A3 build:0003-answer-head bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool 0003-llb-b3-A3 build:0003-answer-head bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool 0003-llb-b3-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool 0003-llb-b4-A3 build:0003-answer-head bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json
+tool 0003-llb-b4-L build:lead-30489 bench -m /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf -ngl 999 -fa auto -b 2048 -ub 2048 -p 64,256,3000 -n 0 -r 5 -o json

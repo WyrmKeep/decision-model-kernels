@@ -1,0 +1,1153 @@
+ERROR: driverInitFileInfo 578 result=11ERROR: init 664 result=11ERROR: init 250 result=11warn: LLAMA_ARG_HOST environment variable is set, but will be overwritten by command line argument --host
+warn: LLAMA_ARG_PORT environment variable is set, but will be overwritten by command line argument --port
+0.00.294.978 I load_backend: loaded CUDA backend from /opt/dmk/libggml-cuda.so
+0.00.308.920 I load_backend: loaded CPU backend from /opt/dmk/libggml-cpu-haswell.so
+0.00.309.601 I srv  llama_server: initializing ...
+0.00.309.633 I cmn  common_param: common_params_print_info: build 12005 (6b8b65e66) with GNU 14.2.0 for Linux x86_64
+0.00.309.638 I cmn  common_param: common_params_print_info: verbosity = 4 (adjust with the `-lv N` CLI arg)
+0.00.309.639 I cmn  common_param: device_info:
+0.00.662.581 I cmn  common_param:   - CUDA0   : NVIDIA GeForce RTX 3060 Ti (7834 MiB, 7693 MiB free)
+0.00.662.592 I cmn  common_param:   - CPU     : AMD Ryzen 5 3600 6-Core Processor (64217 MiB, 64217 MiB free)
+0.00.662.683 I cmn  common_param: system_info: n_threads = 6 (n_threads_batch = 6) / 12 | CUDA : ARCHS = 860 | USE_GRAPHS = 1 | FA_QUANTS = q4_0-q4_0,q8_0-q8_0,f16-f16,bf16-bf16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.00.662.791 I srv  init_listene: running without SSL
+0.00.662.847 I srv  init_listene: The UI is disabled
+0.00.662.848 I srv  init_listene: Use --ui/--no-ui (or deprecated --webui/--no-webui) to enable/disable
+0.00.662.885 I srv          init: using 11 threads for HTTP server
+0.00.662.947 W srv  server_setup: security: no API key is set and CORS allows all origins (see https://github.com/ggml-org/llama.cpp/pull/25655)
+0.00.664.824 I srv    load_model: loading model '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.00.664.827 I srv    load_model: local path '/models/h2o-lightning-4b-rq-Q4_0-mix8.gguf'
+0.00.664.847 I cmn  common_fit_a: fitting params to device memory ...
+0.00.664.848 I cmn  common_fit_a: (for bugs during this step try to reproduce them with -fit off, or provide --verbose logs if the bug only occurs with -fit on)
+0.00.664.922 I common_params_fit_impl: getting device memory data for initial parameters:
+0.01.067.048 I common_memory_breakdown_print: | memory breakdown [MiB]  | total   free    self   model   context   compute    unaccounted |
+0.01.067.055 I common_memory_breakdown_print: |   - CUDA0 (RTX 3060 Ti) |  7834 = 7693 + (4122 =  3099 +     662 +     360) +       -3981 |
+0.01.067.056 I common_memory_breakdown_print: |   - Host                |                  873 =   729 +       0 +     144                |
+0.01.142.645 I common_params_fit_impl: projected to use 4122 MiB of device memory vs. 7693 MiB of free device memory
+0.01.142.655 I common_params_fit_impl: will leave 3571 >= 1024 MiB of free device memory, no changes needed
+0.01.142.656 I common_fit_params: successfully fit params to free device memory
+0.01.142.660 I common_fit_params: fitting params to free memory took 0.48 seconds
+0.01.198.067 I llama_model_loader: loaded meta data with 53 key-value pairs and 426 tensors from /models/h2o-lightning-4b-rq-Q4_0-mix8.gguf (version GGUF V3 (latest))
+0.01.198.090 I llama_model_loader: Dumping metadata keys/values. Note: KV overrides do not apply in this output.
+0.01.198.096 I llama_model_loader: - kv   0:                       general.architecture str              = qwen35
+0.01.198.096 I llama_model_loader: - kv   1:                               general.type str              = model
+0.01.198.097 I llama_model_loader: - kv   2:                         general.size_label str              = 4.2B
+0.01.198.097 I llama_model_loader: - kv   3:                            general.license str              = apache-2.0
+0.01.198.098 I llama_model_loader: - kv   4:                   general.base_model.count u32              = 1
+0.01.198.099 I llama_model_loader: - kv   5:                  general.base_model.0.name str              = Qwen3.5 4B
+0.01.198.099 I llama_model_loader: - kv   6:          general.base_model.0.organization str              = Qwen
+0.01.198.100 I llama_model_loader: - kv   7:              general.base_model.0.repo_url str              = https://huggingface.co/Qwen/Qwen3.5-4B
+0.01.198.103 I llama_model_loader: - kv   8:                               general.tags arr[str,7]       = ["decision-model", "decision-making",...
+0.01.198.104 I llama_model_loader: - kv   9:                         qwen35.block_count u32              = 33
+0.01.198.104 I llama_model_loader: - kv  10:                      qwen35.context_length u32              = 262144
+0.01.198.105 I llama_model_loader: - kv  11:                    qwen35.embedding_length u32              = 2560
+0.01.198.105 I llama_model_loader: - kv  12:                 qwen35.feed_forward_length u32              = 9216
+0.01.198.106 I llama_model_loader: - kv  13:                qwen35.attention.head_count u32              = 16
+0.01.198.106 I llama_model_loader: - kv  14:             qwen35.attention.head_count_kv u32              = 4
+0.01.198.108 I llama_model_loader: - kv  15:             qwen35.rope.dimension_sections arr[i32,4]       = [11, 11, 10, 0]
+0.01.198.113 I llama_model_loader: - kv  16:                      qwen35.rope.freq_base f32              = 10000000.000000
+0.01.198.114 I llama_model_loader: - kv  17:    qwen35.attention.layer_norm_rms_epsilon f32              = 0.000001
+0.01.198.115 I llama_model_loader: - kv  18:                qwen35.attention.key_length u32              = 256
+0.01.198.115 I llama_model_loader: - kv  19:              qwen35.attention.value_length u32              = 256
+0.01.198.116 I llama_model_loader: - kv  20:                qwen35.nextn_predict_layers u32              = 1
+0.01.198.116 I llama_model_loader: - kv  21:                     qwen35.ssm.conv_kernel u32              = 4
+0.01.198.117 I llama_model_loader: - kv  22:                      qwen35.ssm.state_size u32              = 128
+0.01.198.118 I llama_model_loader: - kv  23:                     qwen35.ssm.group_count u32              = 16
+0.01.198.118 I llama_model_loader: - kv  24:                  qwen35.ssm.time_step_rank u32              = 32
+0.01.198.119 I llama_model_loader: - kv  25:                      qwen35.ssm.inner_size u32              = 4096
+0.01.198.121 I llama_model_loader: - kv  26:          qwen35.attention.recurrent_layers arr[bool,33]     = [true, true, true, false, true, true,...
+0.01.198.122 I llama_model_loader: - kv  27:             qwen35.full_attention_interval u32              = 4
+0.01.198.123 I llama_model_loader: - kv  28:                qwen35.rope.dimension_count u32              = 64
+0.01.198.124 I llama_model_loader: - kv  29:                       tokenizer.ggml.model str              = gpt2
+0.01.198.127 I llama_model_loader: - kv  30:                      tokenizer.ggml.tokens arr[str,248320]  = ["!", "\"", "#", "$", "%", "&", "'", ...
+0.01.198.129 I llama_model_loader: - kv  31:                  tokenizer.ggml.token_type arr[i32,248320]  = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, ...
+0.01.198.130 I llama_model_loader: - kv  32:                      tokenizer.ggml.merges arr[str,247587]  = ["Ġ Ġ", "ĠĠ ĠĠ", "i n", "Ġ t",...
+0.01.198.131 I llama_model_loader: - kv  33:                tokenizer.ggml.eos_token_id u32              = 248046
+0.01.198.131 I llama_model_loader: - kv  34:            tokenizer.ggml.padding_token_id u32              = 248044
+0.01.198.132 I llama_model_loader: - kv  35:               tokenizer.ggml.add_bos_token bool             = false
+0.01.198.132 I llama_model_loader: - kv  36:               tokenizer.ggml.add_eos_token bool             = false
+0.01.198.134 I llama_model_loader: - kv  37:                    tokenizer.chat_template str              = {%- set image_count = namespace(value...
+0.01.198.135 I llama_model_loader: - kv  38:             quantize.imatrix.entries_count u32              = 248
+0.01.198.135 I llama_model_loader: - kv  39:              quantize.imatrix.chunks_count u32              = 145
+0.01.198.136 I llama_model_loader: - kv  40:                               general.name str              = H2O Lightning 4B
+0.01.198.136 I llama_model_loader: - kv  41:                       qwen35.decision.type str              = h2o-lightning
+0.01.198.138 I llama_model_loader: - kv  42:                     qwen35.decision.labels arr[str,255]     = [" A", " B", " C", " D", " E", " F", ...
+0.01.198.139 I llama_model_loader: - kv  43:         qwen35.decision.temperature.choice f32              = 0.750000
+0.01.198.139 I llama_model_loader: - kv  44:           qwen35.decision.temperature.noul f32              = 0.800000
+0.01.198.140 I llama_model_loader: - kv  45:          qwen35.decision.temperature.score f32              = 0.650000
+0.01.198.141 I llama_model_loader: - kv  46:          qwen35.decision.temperature.image f32              = 1.000000
+0.01.198.141 I llama_model_loader: - kv  47:                         tokenizer.ggml.pre str              = qwen2
+0.01.198.142 I llama_model_loader: - kv  48:          tokenizer.chat_template.systemone str              = <|im_start|>system{{ '\n' }}You are a...
+0.01.198.143 I llama_model_loader: - kv  49:                   tokenizer.chat_templates arr[str,1]       = ["systemone"]
+0.01.198.144 I llama_model_loader: - kv  50:              tokenizer.ggml.normalizer.nfc bool             = true
+0.01.198.144 I llama_model_loader: - kv  51:               general.quantization_version u32              = 2
+0.01.198.145 I llama_model_loader: - kv  52:                          general.file_type u32              = 2
+0.01.198.145 I llama_model_loader: - type  f32:  177 tensors
+0.01.198.145 I llama_model_loader: - type q4_0:   96 tensors
+0.01.198.146 I llama_model_loader: - type q8_0:  153 tensors
+0.01.198.146 I print_info: file format = GGUF V3 (latest)
+0.01.198.147 I print_info: file type   = Q4_0
+0.01.198.147 I print_info: file size   = 3.11 GiB (6.35 BPW) 
+0.01.204.525 I llama_prepare_model_devices: using device CUDA0 (NVIDIA GeForce RTX 3060 Ti) (0000:0c:00.0) - 7693 MiB free
+0.01.360.314 I load: 0 unused tokens
+0.01.408.996 I load: printing all EOG tokens:
+0.01.409.004 I load:   - 248044 ('<|endoftext|>')
+0.01.409.005 I load:   - 248046 ('<|im_end|>')
+0.01.409.006 I load:   - 248063 ('<|fim_pad|>')
+0.01.409.006 I load:   - 248064 ('<|repo_name|>')
+0.01.409.006 I load:   - 248065 ('<|file_sep|>')
+0.01.409.966 I load: special tokens cache size = 33
+0.01.467.082 I load: token to piece cache size = 1.7581 MB
+0.01.467.106 I print_info: arch                  = qwen35
+0.01.467.107 I print_info: vocab_only            = 0
+0.01.467.107 I print_info: no_alloc              = 0
+0.01.467.107 I print_info: n_ctx_train           = 262144
+0.01.467.108 I print_info: n_embd_inp            = 2560
+0.01.467.109 I print_info: n_embd                = 2560
+0.01.467.109 I print_info: n_embd_out            = 2560
+0.01.467.109 I print_info: n_layer               = 32
+0.01.467.110 I print_info: n_layer_all           = 33
+0.01.467.119 I print_info: n_head                = 16
+0.01.467.120 I print_info: n_head_kv             = 4
+0.01.467.121 I print_info: n_rot                 = 64
+0.01.467.121 I print_info: n_swa                 = 0
+0.01.467.122 I print_info: is_swa_any            = 0
+0.01.467.124 I print_info: non_causal_type       = 0
+0.01.467.124 I print_info: n_embd_head_k         = 256
+0.01.467.124 I print_info: n_embd_head_v         = 256
+0.01.467.126 I print_info: n_gqa                 = 4
+0.01.467.128 I print_info: n_embd_k_gqa          = 1024
+0.01.467.129 I print_info: n_embd_v_gqa          = 1024
+0.01.467.130 I print_info: f_norm_eps            = 0.0e+00
+0.01.467.132 I print_info: f_norm_rms_eps        = 1.0e-06
+0.01.467.132 I print_info: f_clamp_kqv           = 0.0e+00
+0.01.467.133 I print_info: f_max_alibi_bias      = 0.0e+00
+0.01.467.133 I print_info: f_logit_scale         = 0.0e+00
+0.01.467.133 I print_info: f_attn_scale          = 0.0e+00
+0.01.467.134 I print_info: f_attn_value_scale    = 0.0000
+0.01.467.135 I print_info: n_ff                  = 9216
+0.01.467.135 I print_info: n_expert              = 0
+0.01.467.136 I print_info: n_expert_used         = 0
+0.01.467.136 I print_info: n_expert_groups       = 0
+0.01.467.137 I print_info: n_group_used          = 0
+0.01.467.137 I print_info: causal attn           = 1
+0.01.467.137 I print_info: pooling type          = -1
+0.01.467.137 I print_info: rope type             = 40
+0.01.467.138 I print_info: rope scaling          = linear
+0.01.467.139 I print_info: freq_base_train       = 10000000.0
+0.01.467.140 I print_info: freq_scale_train      = 1
+0.01.467.140 I print_info: n_ctx_orig_yarn       = 262144
+0.01.467.141 I print_info: rope_yarn_log_mul     = 0.0000
+0.01.467.141 I print_info: rope_finetuned        = unknown
+0.01.467.142 I print_info: mrope sections        = [11, 11, 10, 0]
+0.01.467.142 I print_info: ssm_d_conv            = 4
+0.01.467.143 I print_info: ssm_d_inner           = 4096
+0.01.467.143 I print_info: ssm_d_state           = 128
+0.01.467.143 I print_info: ssm_dt_rank           = 32
+0.01.467.144 I print_info: ssm_n_group           = 16
+0.01.467.144 I print_info: ssm_dt_b_c_rms        = 0
+0.01.467.145 I print_info: model type            = 4B
+0.01.467.145 I print_info: model params          = 4.21 B
+0.01.467.145 I print_info: general.name          = H2O Lightning 4B
+0.01.467.147 I print_info: vocab type            = BPE
+0.01.467.147 I print_info: n_vocab               = 248320
+0.01.467.148 I print_info: n_merges              = 247587
+0.01.467.148 I print_info: BOS token             = 11 ','
+0.01.467.149 I print_info: EOS token             = 248046 '<|im_end|>'
+0.01.467.149 I print_info: EOT token             = 248046 '<|im_end|>'
+0.01.467.150 I print_info: PAD token             = 248044 '<|endoftext|>'
+0.01.467.150 I print_info: LF token              = 198 'Ċ'
+0.01.467.150 I print_info: FIM PRE token         = 248060 '<|fim_prefix|>'
+0.01.467.151 I print_info: FIM SUF token         = 248062 '<|fim_suffix|>'
+0.01.467.151 I print_info: FIM MID token         = 248061 '<|fim_middle|>'
+0.01.467.151 I print_info: FIM PAD token         = 248063 '<|fim_pad|>'
+0.01.467.152 I print_info: FIM REP token         = 248064 '<|repo_name|>'
+0.01.467.152 I print_info: FIM SEP token         = 248065 '<|file_sep|>'
+0.01.467.152 I print_info: EOG token             = 248044 '<|endoftext|>'
+0.01.467.153 I print_info: EOG token             = 248046 '<|im_end|>'
+0.01.467.153 I print_info: EOG token             = 248063 '<|fim_pad|>'
+0.01.467.153 I print_info: EOG token             = 248064 '<|repo_name|>'
+0.01.467.154 I print_info: EOG token             = 248065 '<|file_sep|>'
+0.01.467.154 I print_info: max token length      = 256
+0.01.472.385 I load_tensors: loading model tensors, this can take a while... (load_mode = mmap)
+0.01.480.699 W llama_model_loader: tensor overrides to CPU are used with mmap enabled - consider using --load-mode none for better performance
+0.02.163.114 I load_tensors: offloading output layer to GPU
+0.02.163.120 I load_tensors: offloading 32 repeating layers to GPU
+0.02.163.121 I load_tensors: offloaded 34/34 layers to GPU
+0.02.163.126 I load_tensors:   CPU_Mapped model buffer size =   644.14 MiB
+0.02.163.126 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.127 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.127 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.128 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.128 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.128 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.129 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.129 I load_tensors:   CPU_Mapped model buffer size =    10.62 MiB
+0.02.163.130 I load_tensors:        CUDA0 model buffer size =  3099.29 MiB
+0.02.696.697 I cmn  common_init_: added <|endoftext|> logit bias = -inf
+0.02.696.705 I cmn  common_init_: added <|im_end|> logit bias = -inf
+0.02.696.706 I cmn  common_init_: added <|fim_pad|> logit bias = -inf
+0.02.696.707 I cmn  common_init_: added <|repo_name|> logit bias = -inf
+0.02.696.707 I cmn  common_init_: added <|file_sep|> logit bias = -inf
+0.02.696.861 I llama_context: constructing llama_context
+0.02.696.865 I llama_context: n_seq_max             = 3
+0.02.696.865 I llama_context: n_ctx                 = 16384
+0.02.696.866 I llama_context: n_ctx_seq             = 16384
+0.02.696.866 I llama_context: n_batch               = 2048
+0.02.696.867 I llama_context: n_ubatch              = 2048
+0.02.696.867 I llama_context: causal_attn           = 1
+0.02.696.867 I llama_context: flash_attn            = auto
+0.02.696.868 I llama_context: kv_unified            = true
+0.02.696.872 I llama_context: freq_base             = 10000000.0
+0.02.696.873 I llama_context: freq_scale            = 1
+0.02.696.873 I llama_context: n_rs_seq              = 0
+0.02.696.874 I llama_context: n_outputs_max         = 3
+0.02.696.874 I llama_context: n_outputs_max_per_seq = 1
+0.02.696.875 I llama_context: n_ctx_seq (16384) < n_ctx_train (262144) -- the full capacity of the model will not be utilized
+0.02.703.604 I llama_context:  CUDA_Host  output buffer size =     2.84 MiB
+0.02.705.333 I llama_kv_cache:      CUDA0 KV buffer size =   512.00 MiB
+0.02.705.342 I llama_kv_cache: size =  512.00 MiB ( 16384 cells,   8 layers,  3/1 seqs), K (f16):  256.00 MiB, V (f16):  256.00 MiB
+0.02.705.345 I llama_kv_cache: n_rot_k = 0, n_embd_head_k_all = 256
+0.02.705.345 I llama_kv_cache: n_rot_v = 0, n_embd_head_k_all = 256
+0.02.705.975 I llama_memory_recurrent:      CUDA0 RS buffer size =   150.75 MiB
+0.02.705.987 I llama_memory_recurrent: size =  150.75 MiB (     3 cells,  32 layers,  3 seqs  0 rs_seq), R (f32):    6.75 MiB, S (f32):  144.00 MiB, P (f32):    0.00 MiB
+0.02.707.417 I sched_reserve: reserving ...
+0.02.715.303 I resolve_fused_ops: Flash Attention enabled
+0.02.715.310 I resolve_fused_ops: resolving fused DeepSeek V4 HC support:
+0.02.716.611 I resolve_fused_ops: fused DeepSeek V4 HC pre enabled
+0.02.717.923 I resolve_fused_ops: fused DeepSeek V4 HC comb enabled
+0.02.719.203 I resolve_fused_ops: fused DeepSeek V4 HC post enabled
+0.02.910.630 I sched_reserve:      CUDA0 compute buffer size =   360.25 MiB
+0.02.910.637 I sched_reserve:  CUDA_Host compute buffer size =   144.16 MiB
+0.02.910.640 I sched_reserve: graph (pp bs=2048, tg bs=3): nodes = 1905 / 1905, splits = 10 / 18, input objects = 4 / 4, input tensors = 10 / 10
+0.02.910.641 I sched_reserve: reserve took 203.22 ms, sched copies = 1
+0.02.910.740 I cmn          init: llama threadpool init, n_threads = 6
+0.02.912.168 I cmn  common_init_: warming up the model with an empty run - please wait ... (--no-warmup to disable)
+0.03.019.195 I srv          init: decision model type: h2o-lightning
+0.03.055.355 I cmn  common_conte: the context does not support partial sequence removal
+0.03.058.777 I srv    load_model: speculative decoding will use checkpoints
+0.03.058.927 I srv    load_model: initializing, n_slots = 3, n_ctx_slot = 16384, kv_unified = 'true'
+0.03.059.094 I spec common_specu: no implementations specified for speculative decoding
+0.03.059.195 I slot   load_model: id  0 | task -1 | new slot, n_ctx = 16384
+0.03.059.304 I slot   load_model: id  1 | task -1 | new slot, n_ctx = 16384
+0.03.059.407 I slot   load_model: id  2 | task -1 | new slot, n_ctx = 16384
+0.03.059.564 I srv    load_model: decision model: prompt cache disabled by default, use `--cache-ram N` to enable it
+0.03.059.658 I srv    load_model: prompt cache is disabled - use `--cache-ram N` to enable it
+0.03.059.658 I srv    load_model: for more info see https://github.com/ggml-org/llama.cpp/pull/16391
+0.03.059.659 I srv    load_model: context checkpoints enabled, max = 32, min spacing = 8192
+0.03.066.710 I srv          init: init: chat template, example_format: '<|im_start|>system
+You are a helpful assistant<|im_end|>
+<|im_start|>user
+Hello<|im_end|>
+<|im_start|>assistant
+Hi there<|im_end|>
+<|im_start|>user
+How are you?<|im_end|>
+<|im_start|>assistant
+<think>
+'
+0.03.067.410 I srv          init: init: chat template, thinking = 1
+0.03.067.434 I srv          init: preserve_reasoning kwarg: not supported by template
+0.03.067.507 I srv  server_run_i: model loaded
+0.03.067.514 I srv  server_on_li: listening on http://0.0.0.0:8080
+0.03.067.630 I srv  update_slots: all slots are idle
+0.03.869.722 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.03.869.817 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.03.869.861 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.03.869.927 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = -1
+0.03.869.969 I srv  launch_slots: launching slots for parent task id_task = 0 with 1 child tasks
+0.03.870.037 I slot launch_slot_: id  1 | task 1 | processing task, is_child = 1
+0.03.870.078 I slot launch_slot_: id  0 | task 0 | processing task, is_child = 0
+0.03.870.170 I slot   operator(): id  0 | task 0 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 188
+0.03.870.228 I slot   operator(): id  0 | task 0 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.03.944.503 I slot   operator(): id  0 | task 0 | cached n_tokens = 68, memory_seq_rm [68, end)
+0.03.944.527 I slot   operator(): id  0 | task 0 |  - copying shared prompt (68 tokens) to child 1
+0.03.944.596 I slot   operator(): id  1 | task 1 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 119
+0.03.944.601 I slot   operator(): id  1 | task 1 | cached n_tokens = 68, memory_seq_rm [68, end)
+0.03.946.213 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 1, n_diff = 0
+0.04.037.812 I slot      release: id  0 | task 0 | stop processing: n_tokens = 188, truncated = 0
+0.04.037.827 I slot      release: id  1 | task 1 | stop processing: n_tokens = 119, truncated = 0
+0.04.037.829 I slot prompt_clear: id  1 | task 1 | clearing prompt with 119 tokens
+0.04.037.873 I srv  update_slots: all slots are idle
+0.04.041.127 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.196 (38/194) > 0.100
+0.04.041.135 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.041.136 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.041.137 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.196 (> 0.100 thold), f_keep = 0.202
+0.04.041.140 I srv  launch_slots: launching slots for parent task id_task = 4 with 1 child tasks
+0.04.041.144 I slot launch_slot_: id  2 | task 5 | processing task, is_child = 1
+0.04.041.146 I slot launch_slot_: id  0 | task 4 | processing task, is_child = 0
+0.04.041.168 I slot   operator(): id  0 | task 4 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 194
+0.04.041.172 I slot   operator(): id  0 | task 4 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.041.173 I slot   operator(): id  0 | task 4 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.04.081.840 I slot   operator(): id  0 | task 4 | cached n_tokens = 74, memory_seq_rm [74, end)
+0.04.081.865 I slot   operator(): id  0 | task 4 |  - copying shared prompt (74 tokens) to child 2
+0.04.081.919 I slot   operator(): id  2 | task 5 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 125
+0.04.081.923 I slot   operator(): id  2 | task 5 | cached n_tokens = 74, memory_seq_rm [74, end)
+0.04.171.580 I slot      release: id  0 | task 4 | stop processing: n_tokens = 194, truncated = 0
+0.04.171.609 I slot      release: id  2 | task 5 | stop processing: n_tokens = 125, truncated = 0
+0.04.171.611 I slot prompt_clear: id  2 | task 5 | clearing prompt with 125 tokens
+0.04.171.644 I srv  update_slots: all slots are idle
+0.04.174.739 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.195 (38/195) > 0.100
+0.04.174.741 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.174.742 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.174.743 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.195 (> 0.100 thold), f_keep = 0.196
+0.04.174.745 I srv  launch_slots: launching slots for parent task id_task = 8 with 1 child tasks
+0.04.174.752 I slot launch_slot_: id  1 | task 9 | processing task, is_child = 1
+0.04.174.753 I slot launch_slot_: id  0 | task 8 | processing task, is_child = 0
+0.04.174.760 I slot   operator(): id  0 | task 8 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 195
+0.04.174.763 I slot   operator(): id  0 | task 8 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.174.764 I slot   operator(): id  0 | task 8 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.04.214.604 I slot   operator(): id  0 | task 8 | cached n_tokens = 75, memory_seq_rm [75, end)
+0.04.214.620 I slot   operator(): id  0 | task 8 |  - copying shared prompt (75 tokens) to child 1
+0.04.214.661 I slot   operator(): id  1 | task 9 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 126
+0.04.214.669 I slot   operator(): id  1 | task 9 | cached n_tokens = 75, memory_seq_rm [75, end)
+0.04.303.914 I slot      release: id  0 | task 8 | stop processing: n_tokens = 195, truncated = 0
+0.04.303.924 I slot      release: id  1 | task 9 | stop processing: n_tokens = 126, truncated = 0
+0.04.303.925 I slot prompt_clear: id  1 | task 9 | clearing prompt with 126 tokens
+0.04.303.964 I srv  update_slots: all slots are idle
+0.04.306.635 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.211 (38/180) > 0.100
+0.04.306.639 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.306.639 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.306.640 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.211 (> 0.100 thold), f_keep = 0.195
+0.04.306.643 I srv  launch_slots: launching slots for parent task id_task = 12 with 1 child tasks
+0.04.306.659 I slot launch_slot_: id  2 | task 13 | processing task, is_child = 1
+0.04.306.660 I slot launch_slot_: id  0 | task 12 | processing task, is_child = 0
+0.04.306.672 I slot   operator(): id  0 | task 12 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 180
+0.04.306.676 I slot   operator(): id  0 | task 12 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.306.676 I slot   operator(): id  0 | task 12 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.04.345.494 I slot   operator(): id  0 | task 12 | cached n_tokens = 60, memory_seq_rm [60, end)
+0.04.345.512 I slot   operator(): id  0 | task 12 |  - copying shared prompt (60 tokens) to child 2
+0.04.345.545 I slot   operator(): id  2 | task 13 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 111
+0.04.345.549 I slot   operator(): id  2 | task 13 | cached n_tokens = 60, memory_seq_rm [60, end)
+0.04.434.397 I slot      release: id  0 | task 12 | stop processing: n_tokens = 180, truncated = 0
+0.04.434.413 I slot      release: id  2 | task 13 | stop processing: n_tokens = 111, truncated = 0
+0.04.434.414 I slot prompt_clear: id  2 | task 13 | clearing prompt with 111 tokens
+0.04.434.460 I srv  update_slots: all slots are idle
+0.04.436.832 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.189 (38/201) > 0.100
+0.04.436.836 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.436.837 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.436.838 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.189 (> 0.100 thold), f_keep = 0.211
+0.04.436.841 I srv  launch_slots: launching slots for parent task id_task = 16 with 1 child tasks
+0.04.436.845 I slot launch_slot_: id  1 | task 17 | processing task, is_child = 1
+0.04.436.846 I slot launch_slot_: id  0 | task 16 | processing task, is_child = 0
+0.04.436.858 I slot   operator(): id  0 | task 16 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 201
+0.04.436.861 I slot   operator(): id  0 | task 16 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.436.862 I slot   operator(): id  0 | task 16 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.04.479.717 I slot   operator(): id  0 | task 16 | cached n_tokens = 81, memory_seq_rm [81, end)
+0.04.479.733 I slot   operator(): id  0 | task 16 |  - copying shared prompt (81 tokens) to child 1
+0.04.479.767 I slot   operator(): id  1 | task 17 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 132
+0.04.479.770 I slot   operator(): id  1 | task 17 | cached n_tokens = 81, memory_seq_rm [81, end)
+0.04.568.964 I slot      release: id  0 | task 16 | stop processing: n_tokens = 201, truncated = 0
+0.04.568.975 I slot      release: id  1 | task 17 | stop processing: n_tokens = 132, truncated = 0
+0.04.568.976 I slot prompt_clear: id  1 | task 17 | clearing prompt with 132 tokens
+0.04.569.013 I srv  update_slots: all slots are idle
+0.04.571.477 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.180 (38/211) > 0.100
+0.04.571.479 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.571.480 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.571.481 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.180 (> 0.100 thold), f_keep = 0.189
+0.04.571.483 I srv  launch_slots: launching slots for parent task id_task = 20 with 1 child tasks
+0.04.571.491 I slot launch_slot_: id  2 | task 21 | processing task, is_child = 1
+0.04.571.492 I slot launch_slot_: id  0 | task 20 | processing task, is_child = 0
+0.04.571.499 I slot   operator(): id  0 | task 20 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 211
+0.04.571.502 I slot   operator(): id  0 | task 20 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.571.503 I slot   operator(): id  0 | task 20 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.04.613.987 I slot   operator(): id  0 | task 20 | cached n_tokens = 91, memory_seq_rm [91, end)
+0.04.614.004 I slot   operator(): id  0 | task 20 |  - copying shared prompt (91 tokens) to child 2
+0.04.614.048 I slot   operator(): id  2 | task 21 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 142
+0.04.614.052 I slot   operator(): id  2 | task 21 | cached n_tokens = 91, memory_seq_rm [91, end)
+0.04.662.401 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 2, n_diff = 0
+0.04.703.770 I slot      release: id  0 | task 20 | stop processing: n_tokens = 211, truncated = 0
+0.04.703.782 I slot      release: id  2 | task 21 | stop processing: n_tokens = 142, truncated = 0
+0.04.703.783 I slot prompt_clear: id  2 | task 21 | clearing prompt with 142 tokens
+0.04.703.829 I srv  update_slots: all slots are idle
+0.04.706.381 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.204 (38/186) > 0.100
+0.04.706.386 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.706.387 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.706.388 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.204 (> 0.100 thold), f_keep = 0.180
+0.04.706.391 I srv  launch_slots: launching slots for parent task id_task = 24 with 1 child tasks
+0.04.706.403 I slot launch_slot_: id  1 | task 25 | processing task, is_child = 1
+0.04.706.404 I slot launch_slot_: id  0 | task 24 | processing task, is_child = 0
+0.04.706.413 I slot   operator(): id  0 | task 24 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 186
+0.04.706.417 I slot   operator(): id  0 | task 24 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.706.418 I slot   operator(): id  0 | task 24 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.04.746.117 I slot   operator(): id  0 | task 24 | cached n_tokens = 66, memory_seq_rm [66, end)
+0.04.746.134 I slot   operator(): id  0 | task 24 |  - copying shared prompt (66 tokens) to child 1
+0.04.746.169 I slot   operator(): id  1 | task 25 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 117
+0.04.746.172 I slot   operator(): id  1 | task 25 | cached n_tokens = 66, memory_seq_rm [66, end)
+0.04.747.268 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 3, n_diff = 0
+0.04.835.443 I slot      release: id  0 | task 24 | stop processing: n_tokens = 186, truncated = 0
+0.04.835.457 I slot      release: id  1 | task 25 | stop processing: n_tokens = 117, truncated = 0
+0.04.835.457 I slot prompt_clear: id  1 | task 25 | clearing prompt with 117 tokens
+0.04.835.519 I srv  update_slots: all slots are idle
+0.04.838.305 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.200 (38/190) > 0.100
+0.04.838.307 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.838.308 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.838.309 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.200 (> 0.100 thold), f_keep = 0.204
+0.04.838.311 I srv  launch_slots: launching slots for parent task id_task = 28 with 1 child tasks
+0.04.838.317 I slot launch_slot_: id  2 | task 29 | processing task, is_child = 1
+0.04.838.318 I slot launch_slot_: id  0 | task 28 | processing task, is_child = 0
+0.04.838.323 I slot   operator(): id  0 | task 28 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 190
+0.04.838.326 I slot   operator(): id  0 | task 28 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.838.327 I slot   operator(): id  0 | task 28 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.04.877.827 I slot   operator(): id  0 | task 28 | cached n_tokens = 70, memory_seq_rm [70, end)
+0.04.877.845 I slot   operator(): id  0 | task 28 |  - copying shared prompt (70 tokens) to child 2
+0.04.877.878 I slot   operator(): id  2 | task 29 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 121
+0.04.877.881 I slot   operator(): id  2 | task 29 | cached n_tokens = 70, memory_seq_rm [70, end)
+0.04.966.649 I slot      release: id  0 | task 28 | stop processing: n_tokens = 190, truncated = 0
+0.04.966.659 I slot      release: id  2 | task 29 | stop processing: n_tokens = 121, truncated = 0
+0.04.966.660 I slot prompt_clear: id  2 | task 29 | clearing prompt with 121 tokens
+0.04.966.697 I srv  update_slots: all slots are idle
+0.04.968.937 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.208 (38/183) > 0.100
+0.04.968.940 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.04.968.940 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.04.968.941 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.208 (> 0.100 thold), f_keep = 0.200
+0.04.968.944 I srv  launch_slots: launching slots for parent task id_task = 32 with 1 child tasks
+0.04.968.951 I slot launch_slot_: id  1 | task 33 | processing task, is_child = 1
+0.04.968.951 I slot launch_slot_: id  0 | task 32 | processing task, is_child = 0
+0.04.968.957 I slot   operator(): id  0 | task 32 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 183
+0.04.968.960 I slot   operator(): id  0 | task 32 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.04.968.961 I slot   operator(): id  0 | task 32 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.006.950 I slot   operator(): id  0 | task 32 | cached n_tokens = 63, memory_seq_rm [63, end)
+0.05.006.967 I slot   operator(): id  0 | task 32 |  - copying shared prompt (63 tokens) to child 1
+0.05.007.008 I slot   operator(): id  1 | task 33 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 114
+0.05.007.012 I slot   operator(): id  1 | task 33 | cached n_tokens = 63, memory_seq_rm [63, end)
+0.05.096.019 I slot      release: id  0 | task 32 | stop processing: n_tokens = 183, truncated = 0
+0.05.096.032 I slot      release: id  1 | task 33 | stop processing: n_tokens = 114, truncated = 0
+0.05.096.033 I slot prompt_clear: id  1 | task 33 | clearing prompt with 114 tokens
+0.05.096.079 I srv  update_slots: all slots are idle
+0.05.098.620 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.196 (38/194) > 0.100
+0.05.098.623 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.098.624 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.098.625 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.196 (> 0.100 thold), f_keep = 0.208
+0.05.098.628 I srv  launch_slots: launching slots for parent task id_task = 36 with 1 child tasks
+0.05.098.640 I slot launch_slot_: id  2 | task 37 | processing task, is_child = 1
+0.05.098.641 I slot launch_slot_: id  0 | task 36 | processing task, is_child = 0
+0.05.098.652 I slot   operator(): id  0 | task 36 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 194
+0.05.098.656 I slot   operator(): id  0 | task 36 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.098.657 I slot   operator(): id  0 | task 36 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.138.634 I slot   operator(): id  0 | task 36 | cached n_tokens = 74, memory_seq_rm [74, end)
+0.05.138.657 I slot   operator(): id  0 | task 36 |  - copying shared prompt (74 tokens) to child 2
+0.05.138.700 I slot   operator(): id  2 | task 37 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 125
+0.05.138.702 I slot   operator(): id  2 | task 37 | cached n_tokens = 74, memory_seq_rm [74, end)
+0.05.228.395 I slot      release: id  0 | task 36 | stop processing: n_tokens = 194, truncated = 0
+0.05.228.410 I slot      release: id  2 | task 37 | stop processing: n_tokens = 125, truncated = 0
+0.05.228.411 I slot prompt_clear: id  2 | task 37 | clearing prompt with 125 tokens
+0.05.228.448 I srv  update_slots: all slots are idle
+0.05.230.896 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.207 (38/184) > 0.100
+0.05.230.899 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.230.900 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.230.901 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.207 (> 0.100 thold), f_keep = 0.196
+0.05.230.903 I srv  launch_slots: launching slots for parent task id_task = 40 with 1 child tasks
+0.05.230.912 I slot launch_slot_: id  1 | task 41 | processing task, is_child = 1
+0.05.230.914 I slot launch_slot_: id  0 | task 40 | processing task, is_child = 0
+0.05.230.922 I slot   operator(): id  0 | task 40 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 184
+0.05.230.925 I slot   operator(): id  0 | task 40 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.230.925 I slot   operator(): id  0 | task 40 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.268.180 I slot   operator(): id  0 | task 40 | cached n_tokens = 64, memory_seq_rm [64, end)
+0.05.268.200 I slot   operator(): id  0 | task 40 |  - copying shared prompt (64 tokens) to child 1
+0.05.268.246 I slot   operator(): id  1 | task 41 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 115
+0.05.268.252 I slot   operator(): id  1 | task 41 | cached n_tokens = 64, memory_seq_rm [64, end)
+0.05.357.056 I slot      release: id  0 | task 40 | stop processing: n_tokens = 184, truncated = 0
+0.05.357.085 I slot      release: id  1 | task 41 | stop processing: n_tokens = 115, truncated = 0
+0.05.357.085 I slot prompt_clear: id  1 | task 41 | clearing prompt with 115 tokens
+0.05.357.120 I srv  update_slots: all slots are idle
+0.05.359.887 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.196 (38/194) > 0.100
+0.05.359.890 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.359.891 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.359.891 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.196 (> 0.100 thold), f_keep = 0.207
+0.05.359.893 I srv  launch_slots: launching slots for parent task id_task = 44 with 1 child tasks
+0.05.359.899 I slot launch_slot_: id  2 | task 45 | processing task, is_child = 1
+0.05.359.901 I slot launch_slot_: id  0 | task 44 | processing task, is_child = 0
+0.05.359.909 I slot   operator(): id  0 | task 44 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 194
+0.05.359.912 I slot   operator(): id  0 | task 44 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.359.913 I slot   operator(): id  0 | task 44 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.399.390 I slot   operator(): id  0 | task 44 | cached n_tokens = 74, memory_seq_rm [74, end)
+0.05.399.410 I slot   operator(): id  0 | task 44 |  - copying shared prompt (74 tokens) to child 2
+0.05.399.456 I slot   operator(): id  2 | task 45 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 125
+0.05.399.460 I slot   operator(): id  2 | task 45 | cached n_tokens = 74, memory_seq_rm [74, end)
+0.05.488.203 I slot      release: id  0 | task 44 | stop processing: n_tokens = 194, truncated = 0
+0.05.488.215 I slot      release: id  2 | task 45 | stop processing: n_tokens = 125, truncated = 0
+0.05.488.216 I slot prompt_clear: id  2 | task 45 | clearing prompt with 125 tokens
+0.05.488.250 I srv  update_slots: all slots are idle
+0.05.489.853 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.288 (38/132) > 0.100
+0.05.489.856 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.489.857 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.489.858 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.288 (> 0.100 thold), f_keep = 0.196
+0.05.489.867 I slot launch_slot_: id  0 | task 48 | processing task, is_child = 0
+0.05.489.874 I slot   operator(): id  0 | task 48 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 132
+0.05.489.877 I slot   operator(): id  0 | task 48 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.489.877 I slot   operator(): id  0 | task 48 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.491.366 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 4, n_diff = 0
+0.05.547.313 I slot      release: id  0 | task 48 | stop processing: n_tokens = 132, truncated = 0
+0.05.547.328 I srv  update_slots: all slots are idle
+0.05.548.810 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.483 (57/118) > 0.100
+0.05.548.815 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.548.815 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.548.817 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.483 (> 0.100 thold), f_keep = 0.432
+0.05.548.820 I slot launch_slot_: id  0 | task 50 | processing task, is_child = 0
+0.05.548.827 I slot   operator(): id  0 | task 50 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 118
+0.05.548.831 I slot   operator(): id  0 | task 50 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.548.832 I slot   operator(): id  0 | task 50 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.598.865 I slot      release: id  0 | task 50 | stop processing: n_tokens = 118, truncated = 0
+0.05.598.878 I srv  update_slots: all slots are idle
+0.05.600.621 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.270 (40/148) > 0.100
+0.05.600.624 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.600.624 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.600.625 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.270 (> 0.100 thold), f_keep = 0.339
+0.05.600.629 I slot launch_slot_: id  0 | task 52 | processing task, is_child = 0
+0.05.600.636 I slot   operator(): id  0 | task 52 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 148
+0.05.600.639 I slot   operator(): id  0 | task 52 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.600.640 I slot   operator(): id  0 | task 52 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.602.094 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 5, n_diff = 0
+0.05.659.383 I slot      release: id  0 | task 52 | stop processing: n_tokens = 148, truncated = 0
+0.05.659.396 I srv  update_slots: all slots are idle
+0.05.660.981 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.272 (40/147) > 0.100
+0.05.660.983 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.660.983 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.660.984 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.272 (> 0.100 thold), f_keep = 0.270
+0.05.660.987 I slot launch_slot_: id  0 | task 54 | processing task, is_child = 0
+0.05.660.993 I slot   operator(): id  0 | task 54 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 147
+0.05.660.997 I slot   operator(): id  0 | task 54 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.660.998 I slot   operator(): id  0 | task 54 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.718.605 I slot      release: id  0 | task 54 | stop processing: n_tokens = 147, truncated = 0
+0.05.718.617 I srv  update_slots: all slots are idle
+0.05.720.212 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.263 (40/152) > 0.100
+0.05.720.214 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.720.214 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.720.215 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.263 (> 0.100 thold), f_keep = 0.272
+0.05.720.218 I slot launch_slot_: id  0 | task 56 | processing task, is_child = 0
+0.05.720.225 I slot   operator(): id  0 | task 56 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 152
+0.05.720.229 I slot   operator(): id  0 | task 56 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.720.230 I slot   operator(): id  0 | task 56 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.721.308 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 6, n_diff = 0
+0.05.778.451 I slot      release: id  0 | task 56 | stop processing: n_tokens = 152, truncated = 0
+0.05.778.478 I srv  update_slots: all slots are idle
+0.05.779.911 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.272 (40/147) > 0.100
+0.05.779.914 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.779.915 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.779.916 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.272 (> 0.100 thold), f_keep = 0.263
+0.05.779.920 I slot launch_slot_: id  0 | task 58 | processing task, is_child = 0
+0.05.779.927 I slot   operator(): id  0 | task 58 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 147
+0.05.779.930 I slot   operator(): id  0 | task 58 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.779.932 I slot   operator(): id  0 | task 58 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.837.614 I slot      release: id  0 | task 58 | stop processing: n_tokens = 147, truncated = 0
+0.05.837.628 I srv  update_slots: all slots are idle
+0.05.838.978 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.317 (40/126) > 0.100
+0.05.838.980 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.838.981 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.838.982 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.317 (> 0.100 thold), f_keep = 0.272
+0.05.838.986 I slot launch_slot_: id  0 | task 60 | processing task, is_child = 0
+0.05.838.994 I slot   operator(): id  0 | task 60 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 126
+0.05.838.997 I slot   operator(): id  0 | task 60 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.838.999 I slot   operator(): id  0 | task 60 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.889.545 I slot      release: id  0 | task 60 | stop processing: n_tokens = 126, truncated = 0
+0.05.889.557 I srv  update_slots: all slots are idle
+0.05.890.868 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.278 (40/144) > 0.100
+0.05.890.871 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.890.871 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.890.873 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.278 (> 0.100 thold), f_keep = 0.317
+0.05.890.876 I slot launch_slot_: id  0 | task 62 | processing task, is_child = 0
+0.05.890.884 I slot   operator(): id  0 | task 62 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 144
+0.05.890.887 I slot   operator(): id  0 | task 62 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.890.888 I slot   operator(): id  0 | task 62 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.947.656 I slot      release: id  0 | task 62 | stop processing: n_tokens = 144, truncated = 0
+0.05.947.668 I srv  update_slots: all slots are idle
+0.05.949.497 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.306 (38/124) > 0.100
+0.05.949.499 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.05.949.500 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.05.949.501 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.306 (> 0.100 thold), f_keep = 0.264
+0.05.949.503 I srv  launch_slots: launching slots for parent task id_task = 64 with 1 child tasks
+0.05.949.507 I slot launch_slot_: id  1 | task 65 | processing task, is_child = 1
+0.05.949.509 I slot launch_slot_: id  0 | task 64 | processing task, is_child = 0
+0.05.949.517 I slot   operator(): id  0 | task 64 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 124
+0.05.949.522 I slot   operator(): id  0 | task 64 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.05.949.522 I slot   operator(): id  0 | task 64 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.05.986.577 I slot   operator(): id  0 | task 64 | cached n_tokens = 57, memory_seq_rm [57, end)
+0.05.986.597 I slot   operator(): id  0 | task 64 |  - copying shared prompt (57 tokens) to child 1
+0.05.986.636 I slot   operator(): id  1 | task 65 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 111
+0.05.986.641 I slot   operator(): id  1 | task 65 | cached n_tokens = 57, memory_seq_rm [57, end)
+0.05.987.689 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 7, n_diff = 0
+0.06.064.054 I slot      release: id  0 | task 64 | stop processing: n_tokens = 124, truncated = 0
+0.06.064.063 I slot      release: id  1 | task 65 | stop processing: n_tokens = 111, truncated = 0
+0.06.064.065 I slot prompt_clear: id  1 | task 65 | clearing prompt with 111 tokens
+0.06.064.101 I srv  update_slots: all slots are idle
+0.06.065.993 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.288 (40/139) > 0.100
+0.06.065.995 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.065.996 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.065.997 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.288 (> 0.100 thold), f_keep = 0.323
+0.06.065.999 I srv  launch_slots: launching slots for parent task id_task = 68 with 1 child tasks
+0.06.066.005 I slot launch_slot_: id  2 | task 69 | processing task, is_child = 1
+0.06.066.006 I slot launch_slot_: id  0 | task 68 | processing task, is_child = 0
+0.06.066.012 I slot   operator(): id  0 | task 68 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 139
+0.06.066.015 I slot   operator(): id  0 | task 68 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.066.016 I slot   operator(): id  0 | task 68 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.105.612 I slot   operator(): id  0 | task 68 | cached n_tokens = 72, memory_seq_rm [72, end)
+0.06.105.628 I slot   operator(): id  0 | task 68 |  - copying shared prompt (72 tokens) to child 2
+0.06.105.660 I slot   operator(): id  2 | task 69 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 126
+0.06.105.664 I slot   operator(): id  2 | task 69 | cached n_tokens = 72, memory_seq_rm [72, end)
+0.06.106.684 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 8, n_diff = 0
+0.06.196.340 I slot      release: id  0 | task 68 | stop processing: n_tokens = 139, truncated = 0
+0.06.196.367 I slot      release: id  2 | task 69 | stop processing: n_tokens = 126, truncated = 0
+0.06.196.368 I slot prompt_clear: id  2 | task 69 | clearing prompt with 126 tokens
+0.06.196.409 I srv  update_slots: all slots are idle
+0.06.199.052 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.242 (38/157) > 0.100
+0.06.199.054 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.199.055 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.199.056 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.242 (> 0.100 thold), f_keep = 0.273
+0.06.199.059 I srv  launch_slots: launching slots for parent task id_task = 72 with 1 child tasks
+0.06.199.071 I slot launch_slot_: id  1 | task 73 | processing task, is_child = 1
+0.06.199.072 I slot launch_slot_: id  0 | task 72 | processing task, is_child = 0
+0.06.199.082 I slot   operator(): id  0 | task 72 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 157
+0.06.199.087 I slot   operator(): id  0 | task 72 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.199.093 I slot   operator(): id  0 | task 72 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.242.416 I slot   operator(): id  0 | task 72 | cached n_tokens = 90, memory_seq_rm [90, end)
+0.06.242.438 I slot   operator(): id  0 | task 72 |  - copying shared prompt (90 tokens) to child 1
+0.06.242.498 I slot   operator(): id  1 | task 73 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 144
+0.06.242.504 I slot   operator(): id  1 | task 73 | cached n_tokens = 90, memory_seq_rm [90, end)
+0.06.243.601 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 9, n_diff = 0
+0.06.318.060 I slot      release: id  0 | task 72 | stop processing: n_tokens = 157, truncated = 0
+0.06.318.075 I slot      release: id  1 | task 73 | stop processing: n_tokens = 144, truncated = 0
+0.06.318.076 I slot prompt_clear: id  1 | task 73 | clearing prompt with 144 tokens
+0.06.318.114 I srv  update_slots: all slots are idle
+0.06.320.370 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.288 (38/132) > 0.100
+0.06.320.372 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.320.373 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.320.374 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.288 (> 0.100 thold), f_keep = 0.242
+0.06.320.376 I srv  launch_slots: launching slots for parent task id_task = 76 with 1 child tasks
+0.06.320.386 I slot launch_slot_: id  2 | task 77 | processing task, is_child = 1
+0.06.320.387 I slot launch_slot_: id  0 | task 76 | processing task, is_child = 0
+0.06.320.395 I slot   operator(): id  0 | task 76 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 132
+0.06.320.398 I slot   operator(): id  0 | task 76 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.320.399 I slot   operator(): id  0 | task 76 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.359.712 I slot   operator(): id  0 | task 76 | cached n_tokens = 65, memory_seq_rm [65, end)
+0.06.359.736 I slot   operator(): id  0 | task 76 |  - copying shared prompt (65 tokens) to child 2
+0.06.359.786 I slot   operator(): id  2 | task 77 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 119
+0.06.359.790 I slot   operator(): id  2 | task 77 | cached n_tokens = 65, memory_seq_rm [65, end)
+0.06.360.845 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 10, n_diff = 0
+0.06.435.254 I slot      release: id  0 | task 76 | stop processing: n_tokens = 132, truncated = 0
+0.06.435.266 I slot      release: id  2 | task 77 | stop processing: n_tokens = 119, truncated = 0
+0.06.435.266 I slot prompt_clear: id  2 | task 77 | clearing prompt with 119 tokens
+0.06.435.305 I srv  update_slots: all slots are idle
+0.06.437.146 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.314 (38/121) > 0.100
+0.06.437.149 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.437.149 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.437.150 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.314 (> 0.100 thold), f_keep = 0.288
+0.06.437.152 I srv  launch_slots: launching slots for parent task id_task = 80 with 1 child tasks
+0.06.437.159 I slot launch_slot_: id  1 | task 81 | processing task, is_child = 1
+0.06.437.161 I slot launch_slot_: id  0 | task 80 | processing task, is_child = 0
+0.06.437.166 I slot   operator(): id  0 | task 80 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 121
+0.06.437.169 I slot   operator(): id  0 | task 80 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.437.169 I slot   operator(): id  0 | task 80 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.474.414 I slot   operator(): id  0 | task 80 | cached n_tokens = 54, memory_seq_rm [54, end)
+0.06.474.430 I slot   operator(): id  0 | task 80 |  - copying shared prompt (54 tokens) to child 1
+0.06.474.485 I slot   operator(): id  1 | task 81 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 108
+0.06.474.490 I slot   operator(): id  1 | task 81 | cached n_tokens = 54, memory_seq_rm [54, end)
+0.06.475.499 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 11, n_diff = 0
+0.06.546.185 I slot      release: id  0 | task 80 | stop processing: n_tokens = 121, truncated = 0
+0.06.546.197 I slot      release: id  1 | task 81 | stop processing: n_tokens = 108, truncated = 0
+0.06.546.198 I slot prompt_clear: id  1 | task 81 | clearing prompt with 108 tokens
+0.06.546.240 I srv  update_slots: all slots are idle
+0.06.548.089 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.257 (38/148) > 0.100
+0.06.548.095 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.548.096 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.548.097 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.257 (> 0.100 thold), f_keep = 0.314
+0.06.548.100 I srv  launch_slots: launching slots for parent task id_task = 84 with 1 child tasks
+0.06.548.108 I slot launch_slot_: id  2 | task 85 | processing task, is_child = 1
+0.06.548.109 I slot launch_slot_: id  0 | task 84 | processing task, is_child = 0
+0.06.548.117 I slot   operator(): id  0 | task 84 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 148
+0.06.548.119 I slot   operator(): id  0 | task 84 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.548.120 I slot   operator(): id  0 | task 84 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.589.892 I slot   operator(): id  0 | task 84 | cached n_tokens = 81, memory_seq_rm [81, end)
+0.06.589.909 I slot   operator(): id  0 | task 84 |  - copying shared prompt (81 tokens) to child 2
+0.06.589.956 I slot   operator(): id  2 | task 85 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 135
+0.06.589.961 I slot   operator(): id  2 | task 85 | cached n_tokens = 81, memory_seq_rm [81, end)
+0.06.591.014 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 12, n_diff = 0
+0.06.661.194 I slot      release: id  0 | task 84 | stop processing: n_tokens = 148, truncated = 0
+0.06.661.207 I slot      release: id  2 | task 85 | stop processing: n_tokens = 135, truncated = 0
+0.06.661.207 I slot prompt_clear: id  2 | task 85 | clearing prompt with 135 tokens
+0.06.661.254 I srv  update_slots: all slots are idle
+0.06.663.136 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.253 (38/150) > 0.100
+0.06.663.139 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.663.139 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.663.140 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.253 (> 0.100 thold), f_keep = 0.257
+0.06.663.142 I srv  launch_slots: launching slots for parent task id_task = 88 with 1 child tasks
+0.06.663.151 I slot launch_slot_: id  1 | task 89 | processing task, is_child = 1
+0.06.663.152 I slot launch_slot_: id  0 | task 88 | processing task, is_child = 0
+0.06.663.160 I slot   operator(): id  0 | task 88 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 150
+0.06.663.163 I slot   operator(): id  0 | task 88 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.663.163 I slot   operator(): id  0 | task 88 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.705.058 I slot   operator(): id  0 | task 88 | cached n_tokens = 83, memory_seq_rm [83, end)
+0.06.705.073 I slot   operator(): id  0 | task 88 |  - copying shared prompt (83 tokens) to child 1
+0.06.705.134 I slot   operator(): id  1 | task 89 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 137
+0.06.705.137 I slot   operator(): id  1 | task 89 | cached n_tokens = 83, memory_seq_rm [83, end)
+0.06.706.151 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 13, n_diff = 0
+0.06.783.643 I slot      release: id  0 | task 88 | stop processing: n_tokens = 150, truncated = 0
+0.06.783.664 I slot      release: id  1 | task 89 | stop processing: n_tokens = 137, truncated = 0
+0.06.783.665 I slot prompt_clear: id  1 | task 89 | clearing prompt with 137 tokens
+0.06.783.858 I srv  update_slots: all slots are idle
+0.06.791.882 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.279 (38/136) > 0.100
+0.06.791.889 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.791.890 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.791.891 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.279 (> 0.100 thold), f_keep = 0.253
+0.06.791.896 I srv  launch_slots: launching slots for parent task id_task = 92 with 1 child tasks
+0.06.791.970 I slot launch_slot_: id  2 | task 93 | processing task, is_child = 1
+0.06.791.976 I slot launch_slot_: id  0 | task 92 | processing task, is_child = 0
+0.06.792.006 I slot   operator(): id  0 | task 92 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 136
+0.06.792.015 I slot   operator(): id  0 | task 92 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.792.016 I slot   operator(): id  0 | task 92 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.834.157 I slot   operator(): id  0 | task 92 | cached n_tokens = 69, memory_seq_rm [69, end)
+0.06.834.182 I slot   operator(): id  0 | task 92 |  - copying shared prompt (69 tokens) to child 2
+0.06.834.294 I slot   operator(): id  2 | task 93 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 123
+0.06.834.302 I slot   operator(): id  2 | task 93 | cached n_tokens = 69, memory_seq_rm [69, end)
+0.06.835.880 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 14, n_diff = 0
+0.06.915.623 I slot      release: id  0 | task 92 | stop processing: n_tokens = 136, truncated = 0
+0.06.915.641 I slot      release: id  2 | task 93 | stop processing: n_tokens = 123, truncated = 0
+0.06.915.642 I slot prompt_clear: id  2 | task 93 | clearing prompt with 123 tokens
+0.06.917.521 I srv  update_slots: all slots are idle
+0.06.919.223 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.229 (38/166) > 0.100
+0.06.919.228 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.919.229 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.919.230 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.229 (> 0.100 thold), f_keep = 0.279
+0.06.919.275 I slot launch_slot_: id  0 | task 96 | processing task, is_child = 0
+0.06.919.301 I slot   operator(): id  0 | task 96 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 166
+0.06.919.308 I slot   operator(): id  0 | task 96 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.919.314 I slot   operator(): id  0 | task 96 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.06.983.777 I slot      release: id  0 | task 96 | stop processing: n_tokens = 166, truncated = 0
+0.06.983.797 I srv  update_slots: all slots are idle
+0.06.987.501 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.331 (41/124) > 0.100
+0.06.987.508 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.06.987.508 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.06.987.509 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.331 (> 0.100 thold), f_keep = 0.247
+0.06.987.516 I slot launch_slot_: id  0 | task 98 | processing task, is_child = 0
+0.06.987.593 I slot   operator(): id  0 | task 98 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 124
+0.06.987.604 I slot   operator(): id  0 | task 98 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.06.987.605 I slot   operator(): id  0 | task 98 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.07.040.512 I slot      release: id  0 | task 98 | stop processing: n_tokens = 124, truncated = 0
+0.07.040.535 I srv  update_slots: all slots are idle
+0.07.042.547 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.295 (41/139) > 0.100
+0.07.042.552 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.07.042.553 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.07.042.554 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.295 (> 0.100 thold), f_keep = 0.331
+0.07.042.560 I slot launch_slot_: id  0 | task 100 | processing task, is_child = 0
+0.07.042.570 I slot   operator(): id  0 | task 100 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 139
+0.07.042.577 I slot   operator(): id  0 | task 100 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.07.042.577 I slot   operator(): id  0 | task 100 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.07.102.160 I slot      release: id  0 | task 100 | stop processing: n_tokens = 139, truncated = 0
+0.07.102.173 I srv  update_slots: all slots are idle
+0.07.103.876 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.339 (41/121) > 0.100
+0.07.103.878 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.07.103.878 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.07.103.879 I slot get_availabl: id  0 | task -1 | selected slot by LCP similarity, f_sim_best = 0.339 (> 0.100 thold), f_keep = 0.295
+0.07.103.882 I slot launch_slot_: id  0 | task 102 | processing task, is_child = 0
+0.07.103.887 I slot   operator(): id  0 | task 102 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 121
+0.07.103.890 I slot   operator(): id  0 | task 102 | forcing full prompt re-processing due to lack of cache data (likely due to SWA or hybrid/recurrent memory, see https://github.com/ggml-org/llama.cpp/pull/13194#issuecomment-2868343055)
+0.07.103.891 I slot   operator(): id  0 | task 102 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.07.154.458 I slot      release: id  0 | task 102 | stop processing: n_tokens = 121, truncated = 0
+0.07.154.494 I srv  update_slots: all slots are idle
+0.07.165.941 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.036 (38/1069) > 0.100
+0.07.165.949 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.07.165.950 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.07.165.954 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210288972204
+0.07.165.955 I srv  launch_slots: launching slots for parent task id_task = 104 with 2 child tasks
+0.07.165.961 I slot launch_slot_: id  2 | task 105 | processing task, is_child = 1
+0.07.165.964 I slot launch_slot_: id  0 | task 106 | processing task, is_child = 1
+0.07.165.967 I slot launch_slot_: id  1 | task 104 | processing task, is_child = 0
+0.07.165.977 I slot   operator(): id  1 | task 104 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1069
+0.07.165.982 I slot   operator(): id  1 | task 104 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.07.169.088 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 15, n_diff = 0
+0.07.409.828 I slot   operator(): id  1 | task 104 | cached n_tokens = 1026, memory_seq_rm [1026, end)
+0.07.409.849 I slot   operator(): id  1 | task 104 |  - copying shared prompt (1026 tokens) to child 0
+0.07.409.984 I slot   operator(): id  1 | task 104 |  - copying shared prompt (1026 tokens) to child 2
+0.07.410.126 I slot   operator(): id  2 | task 105 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1073
+0.07.410.132 I slot   operator(): id  2 | task 105 | cached n_tokens = 1026, memory_seq_rm [1026, end)
+0.07.411.265 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 16, n_diff = 0
+0.07.484.536 I slot      release: id  1 | task 104 | stop processing: n_tokens = 1069, truncated = 0
+0.07.484.549 I slot      release: id  2 | task 105 | stop processing: n_tokens = 1073, truncated = 0
+0.07.484.550 I slot prompt_clear: id  2 | task 105 | clearing prompt with 1073 tokens
+0.07.484.682 I slot   operator(): id  0 | task 106 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1099
+0.07.484.687 I slot   operator(): id  0 | task 106 | cached n_tokens = 1026, memory_seq_rm [1026, end)
+0.07.528.178 I slot      release: id  0 | task 106 | stop processing: n_tokens = 1099, truncated = 0
+0.07.528.183 I slot prompt_clear: id  0 | task 106 | clearing prompt with 1099 tokens
+0.07.528.316 I srv  update_slots: all slots are idle
+0.07.535.571 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.07.535.580 I slot get_availabl: id  1 | task -1 |  - checking sim = 0.048 (63/1319) > 0.100
+0.07.535.581 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.07.535.584 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210289673089
+0.07.535.585 I srv  launch_slots: launching slots for parent task id_task = 110 with 2 child tasks
+0.07.535.636 I slot launch_slot_: id  0 | task 111 | processing task, is_child = 1
+0.07.535.639 I slot launch_slot_: id  1 | task 112 | processing task, is_child = 1
+0.07.535.643 I slot launch_slot_: id  2 | task 110 | processing task, is_child = 0
+0.07.535.654 I slot   operator(): id  2 | task 110 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1319
+0.07.535.659 I slot   operator(): id  2 | task 110 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.07.539.047 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 17, n_diff = 0
+0.07.820.296 I slot   operator(): id  2 | task 110 | cached n_tokens = 1276, memory_seq_rm [1276, end)
+0.07.820.310 I slot   operator(): id  2 | task 110 |  - copying shared prompt (1276 tokens) to child 0
+0.07.820.401 I slot   operator(): id  2 | task 110 |  - copying shared prompt (1276 tokens) to child 1
+0.07.821.816 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 18, n_diff = 0
+0.07.859.422 I slot      release: id  2 | task 110 | stop processing: n_tokens = 1319, truncated = 0
+0.07.859.451 I slot   operator(): id  0 | task 111 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1323
+0.07.859.459 I slot   operator(): id  0 | task 111 | cached n_tokens = 1276, memory_seq_rm [1276, end)
+0.07.859.498 I slot   operator(): id  1 | task 112 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1349
+0.07.859.502 I slot   operator(): id  1 | task 112 | cached n_tokens = 1276, memory_seq_rm [1276, end)
+0.07.861.109 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 19, n_diff = 0
+0.07.951.504 I slot      release: id  0 | task 111 | stop processing: n_tokens = 1323, truncated = 0
+0.07.951.510 I slot prompt_clear: id  0 | task 111 | clearing prompt with 1323 tokens
+0.07.951.653 I slot      release: id  1 | task 112 | stop processing: n_tokens = 1349, truncated = 0
+0.07.951.654 I slot prompt_clear: id  1 | task 112 | clearing prompt with 1349 tokens
+0.07.951.783 I srv  update_slots: all slots are idle
+0.07.958.961 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.07.958.969 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.07.958.975 I slot get_availabl: id  2 | task -1 |  - checking sim = 0.046 (63/1367) > 0.100
+0.07.958.979 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210290140048
+0.07.958.980 I srv  launch_slots: launching slots for parent task id_task = 116 with 2 child tasks
+0.07.959.037 I slot launch_slot_: id  1 | task 117 | processing task, is_child = 1
+0.07.959.044 I slot launch_slot_: id  2 | task 118 | processing task, is_child = 1
+0.07.959.047 I slot launch_slot_: id  0 | task 116 | processing task, is_child = 0
+0.07.959.059 I slot   operator(): id  0 | task 116 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1367
+0.07.959.068 I slot   operator(): id  0 | task 116 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.08.258.402 I slot   operator(): id  0 | task 116 | cached n_tokens = 1324, memory_seq_rm [1324, end)
+0.08.258.424 I slot   operator(): id  0 | task 116 |  - copying shared prompt (1324 tokens) to child 1
+0.08.258.561 I slot   operator(): id  0 | task 116 |  - copying shared prompt (1324 tokens) to child 2
+0.08.258.881 I slot   operator(): id  1 | task 117 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1371
+0.08.258.887 I slot   operator(): id  1 | task 117 | cached n_tokens = 1324, memory_seq_rm [1324, end)
+0.08.258.904 I slot   operator(): id  2 | task 118 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1397
+0.08.258.906 I slot   operator(): id  2 | task 118 | cached n_tokens = 1324, memory_seq_rm [1324, end)
+0.08.260.341 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 20, n_diff = 0
+0.08.353.694 I sched_graph_realloc: graph reallocation: nodes = 1957 (changed = 0), splits = 18, n_same = 21, n_diff = 0
+0.08.465.530 I slot      release: id  0 | task 116 | stop processing: n_tokens = 1367, truncated = 0
+0.08.465.544 I slot      release: id  1 | task 117 | stop processing: n_tokens = 1371, truncated = 0
+0.08.465.546 I slot prompt_clear: id  1 | task 117 | clearing prompt with 1371 tokens
+0.08.465.694 I slot      release: id  2 | task 118 | stop processing: n_tokens = 1397, truncated = 0
+0.08.465.697 I slot prompt_clear: id  2 | task 118 | clearing prompt with 1397 tokens
+0.08.465.870 I srv  update_slots: all slots are idle
+0.08.475.260 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.045 (63/1391) > 0.100
+0.08.475.264 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.08.475.265 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.08.475.268 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210290654085
+0.08.475.270 I srv  launch_slots: launching slots for parent task id_task = 121 with 2 child tasks
+0.08.475.278 I slot launch_slot_: id  2 | task 122 | processing task, is_child = 1
+0.08.475.282 I slot launch_slot_: id  0 | task 123 | processing task, is_child = 1
+0.08.475.303 I slot launch_slot_: id  1 | task 121 | processing task, is_child = 0
+0.08.475.315 I slot   operator(): id  1 | task 121 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1391
+0.08.475.319 I slot   operator(): id  1 | task 121 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.08.779.546 I slot   operator(): id  1 | task 121 | cached n_tokens = 1348, memory_seq_rm [1348, end)
+0.08.779.574 I slot   operator(): id  1 | task 121 |  - copying shared prompt (1348 tokens) to child 0
+0.08.779.937 I slot   operator(): id  1 | task 121 |  - copying shared prompt (1348 tokens) to child 2
+0.08.780.087 I slot   operator(): id  2 | task 122 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1395
+0.08.780.092 I slot   operator(): id  2 | task 122 | cached n_tokens = 1348, memory_seq_rm [1348, end)
+0.08.783.841 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 22, n_diff = 0
+0.08.882.544 I slot      release: id  1 | task 121 | stop processing: n_tokens = 1391, truncated = 0
+0.08.882.556 I slot      release: id  2 | task 122 | stop processing: n_tokens = 1395, truncated = 0
+0.08.882.558 I slot prompt_clear: id  2 | task 122 | clearing prompt with 1395 tokens
+0.08.882.712 I slot   operator(): id  0 | task 123 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1421
+0.08.882.719 I slot   operator(): id  0 | task 123 | cached n_tokens = 1348, memory_seq_rm [1348, end)
+0.08.927.371 I slot      release: id  0 | task 123 | stop processing: n_tokens = 1421, truncated = 0
+0.08.927.375 I slot prompt_clear: id  0 | task 123 | clearing prompt with 1421 tokens
+0.08.927.508 I srv  update_slots: all slots are idle
+0.08.936.475 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.08.936.485 I slot get_availabl: id  1 | task -1 |  - checking sim = 0.047 (63/1337) > 0.100
+0.08.936.485 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.08.936.489 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210291071096
+0.08.936.490 I srv  launch_slots: launching slots for parent task id_task = 127 with 2 child tasks
+0.08.936.532 I slot launch_slot_: id  0 | task 128 | processing task, is_child = 1
+0.08.936.534 I slot launch_slot_: id  1 | task 129 | processing task, is_child = 1
+0.08.936.536 I slot launch_slot_: id  2 | task 127 | processing task, is_child = 0
+0.08.936.549 I slot   operator(): id  2 | task 127 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1337
+0.08.936.554 I slot   operator(): id  2 | task 127 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.08.938.857 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 23, n_diff = 0
+0.09.229.644 I slot   operator(): id  2 | task 127 | cached n_tokens = 1294, memory_seq_rm [1294, end)
+0.09.229.662 I slot   operator(): id  2 | task 127 |  - copying shared prompt (1294 tokens) to child 0
+0.09.229.754 I slot   operator(): id  2 | task 127 |  - copying shared prompt (1294 tokens) to child 1
+0.09.231.340 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 24, n_diff = 0
+0.09.268.802 I slot      release: id  2 | task 127 | stop processing: n_tokens = 1337, truncated = 0
+0.09.268.830 I slot   operator(): id  0 | task 128 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1341
+0.09.268.839 I slot   operator(): id  0 | task 128 | cached n_tokens = 1294, memory_seq_rm [1294, end)
+0.09.268.864 I slot   operator(): id  1 | task 129 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1367
+0.09.268.866 I slot   operator(): id  1 | task 129 | cached n_tokens = 1294, memory_seq_rm [1294, end)
+0.09.270.153 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 25, n_diff = 0
+0.09.362.518 I slot      release: id  0 | task 128 | stop processing: n_tokens = 1341, truncated = 0
+0.09.362.524 I slot prompt_clear: id  0 | task 128 | clearing prompt with 1341 tokens
+0.09.362.657 I slot      release: id  1 | task 129 | stop processing: n_tokens = 1367, truncated = 0
+0.09.362.657 I slot prompt_clear: id  1 | task 129 | clearing prompt with 1367 tokens
+0.09.362.775 I srv  update_slots: all slots are idle
+0.09.370.077 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.09.370.080 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.09.370.085 I slot get_availabl: id  2 | task -1 |  - checking sim = 0.048 (62/1297) > 0.100
+0.09.370.089 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210291551063
+0.09.370.090 I srv  launch_slots: launching slots for parent task id_task = 133 with 2 child tasks
+0.09.370.141 I slot launch_slot_: id  1 | task 134 | processing task, is_child = 1
+0.09.370.149 I slot launch_slot_: id  2 | task 135 | processing task, is_child = 1
+0.09.370.151 I slot launch_slot_: id  0 | task 133 | processing task, is_child = 0
+0.09.370.166 I slot   operator(): id  0 | task 133 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1297
+0.09.370.172 I slot   operator(): id  0 | task 133 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.09.653.194 I slot   operator(): id  0 | task 133 | cached n_tokens = 1254, memory_seq_rm [1254, end)
+0.09.653.221 I slot   operator(): id  0 | task 133 |  - copying shared prompt (1254 tokens) to child 1
+0.09.653.354 I slot   operator(): id  0 | task 133 |  - copying shared prompt (1254 tokens) to child 2
+0.09.653.717 I slot   operator(): id  1 | task 134 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1301
+0.09.653.727 I slot   operator(): id  1 | task 134 | cached n_tokens = 1254, memory_seq_rm [1254, end)
+0.09.653.746 I slot   operator(): id  2 | task 135 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1327
+0.09.653.751 I slot   operator(): id  2 | task 135 | cached n_tokens = 1254, memory_seq_rm [1254, end)
+0.09.655.486 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 26, n_diff = 0
+0.09.749.884 I sched_graph_realloc: graph reallocation: nodes = 1957 (changed = 0), splits = 18, n_same = 27, n_diff = 0
+0.09.814.975 I slot      release: id  0 | task 133 | stop processing: n_tokens = 1297, truncated = 0
+0.09.814.996 I slot      release: id  1 | task 134 | stop processing: n_tokens = 1301, truncated = 0
+0.09.814.998 I slot prompt_clear: id  1 | task 134 | clearing prompt with 1301 tokens
+0.09.815.134 I slot      release: id  2 | task 135 | stop processing: n_tokens = 1327, truncated = 0
+0.09.815.138 I slot prompt_clear: id  2 | task 135 | clearing prompt with 1327 tokens
+0.09.815.268 I srv  update_slots: all slots are idle
+0.09.825.139 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.050 (63/1255) > 0.100
+0.09.825.146 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.09.825.147 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.09.825.150 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210292003536
+0.09.825.153 I srv  launch_slots: launching slots for parent task id_task = 138 with 2 child tasks
+0.09.825.235 I slot launch_slot_: id  2 | task 139 | processing task, is_child = 1
+0.09.825.241 I slot launch_slot_: id  0 | task 140 | processing task, is_child = 1
+0.09.825.244 I slot launch_slot_: id  1 | task 138 | processing task, is_child = 0
+0.09.825.259 I slot   operator(): id  1 | task 138 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1255
+0.09.825.267 I slot   operator(): id  1 | task 138 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.10.103.092 I slot   operator(): id  1 | task 138 | cached n_tokens = 1212, memory_seq_rm [1212, end)
+0.10.103.110 I slot   operator(): id  1 | task 138 |  - copying shared prompt (1212 tokens) to child 0
+0.10.103.402 I slot   operator(): id  1 | task 138 |  - copying shared prompt (1212 tokens) to child 2
+0.10.103.518 I slot   operator(): id  2 | task 139 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1259
+0.10.103.524 I slot   operator(): id  2 | task 139 | cached n_tokens = 1212, memory_seq_rm [1212, end)
+0.10.104.872 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 28, n_diff = 0
+0.10.173.518 I slot      release: id  1 | task 138 | stop processing: n_tokens = 1255, truncated = 0
+0.10.173.537 I slot      release: id  2 | task 139 | stop processing: n_tokens = 1259, truncated = 0
+0.10.173.538 I slot prompt_clear: id  2 | task 139 | clearing prompt with 1259 tokens
+0.10.173.685 I slot   operator(): id  0 | task 140 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1285
+0.10.173.693 I slot   operator(): id  0 | task 140 | cached n_tokens = 1212, memory_seq_rm [1212, end)
+0.10.217.452 I slot      release: id  0 | task 140 | stop processing: n_tokens = 1285, truncated = 0
+0.10.217.455 I slot prompt_clear: id  0 | task 140 | clearing prompt with 1285 tokens
+0.10.217.607 I srv  update_slots: all slots are idle
+0.10.223.685 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.10.223.692 I slot get_availabl: id  1 | task -1 |  - checking sim = 0.049 (62/1254) > 0.100
+0.10.223.693 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.10.223.695 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210292362076
+0.10.223.696 I srv  launch_slots: launching slots for parent task id_task = 144 with 2 child tasks
+0.10.223.735 I slot launch_slot_: id  0 | task 145 | processing task, is_child = 1
+0.10.223.738 I slot launch_slot_: id  1 | task 146 | processing task, is_child = 1
+0.10.223.742 I slot launch_slot_: id  2 | task 144 | processing task, is_child = 0
+0.10.223.750 I slot   operator(): id  2 | task 144 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1254
+0.10.223.754 I slot   operator(): id  2 | task 144 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.10.226.233 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 29, n_diff = 0
+0.10.503.525 I slot   operator(): id  2 | task 144 | cached n_tokens = 1211, memory_seq_rm [1211, end)
+0.10.503.549 I slot   operator(): id  2 | task 144 |  - copying shared prompt (1211 tokens) to child 0
+0.10.503.670 I slot   operator(): id  2 | task 144 |  - copying shared prompt (1211 tokens) to child 1
+0.10.505.411 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 30, n_diff = 0
+0.10.542.587 I slot      release: id  2 | task 144 | stop processing: n_tokens = 1254, truncated = 0
+0.10.542.611 I slot   operator(): id  0 | task 145 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1258
+0.10.542.617 I slot   operator(): id  0 | task 145 | cached n_tokens = 1211, memory_seq_rm [1211, end)
+0.10.542.632 I slot   operator(): id  1 | task 146 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 1284
+0.10.542.638 I slot   operator(): id  1 | task 146 | cached n_tokens = 1211, memory_seq_rm [1211, end)
+0.10.543.832 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 31, n_diff = 0
+0.10.742.631 I slot      release: id  0 | task 145 | stop processing: n_tokens = 1258, truncated = 0
+0.10.742.636 I slot prompt_clear: id  0 | task 145 | clearing prompt with 1258 tokens
+0.10.742.767 I slot      release: id  1 | task 146 | stop processing: n_tokens = 1284, truncated = 0
+0.10.742.768 I slot prompt_clear: id  1 | task 146 | clearing prompt with 1284 tokens
+0.10.742.891 I srv  update_slots: all slots are idle
+0.10.761.888 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.10.761.891 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.10.761.896 I slot get_availabl: id  2 | task -1 |  - checking sim = 0.019 (63/3251) > 0.100
+0.10.761.900 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210292931174
+0.10.761.901 I srv  launch_slots: launching slots for parent task id_task = 150 with 2 child tasks
+0.10.761.967 I slot launch_slot_: id  1 | task 151 | processing task, is_child = 1
+0.10.761.988 I slot launch_slot_: id  2 | task 152 | processing task, is_child = 1
+0.10.761.993 I slot launch_slot_: id  0 | task 150 | processing task, is_child = 0
+0.10.762.020 I slot   operator(): id  0 | task 150 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3251
+0.10.762.025 I slot   operator(): id  0 | task 150 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.11.201.516 I slot   operator(): id  0 | task 150 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.11.483.543 I slot   operator(): id  0 | task 150 | cached n_tokens = 3208, memory_seq_rm [3208, end)
+0.11.483.568 I slot   operator(): id  0 | task 150 |  - copying shared prompt (3208 tokens) to child 1
+0.11.483.829 I slot   operator(): id  0 | task 150 |  - copying shared prompt (3208 tokens) to child 2
+0.11.484.254 I slot   operator(): id  1 | task 151 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3255
+0.11.484.259 I slot   operator(): id  1 | task 151 | cached n_tokens = 3208, memory_seq_rm [3208, end)
+0.11.484.277 I slot   operator(): id  2 | task 152 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3281
+0.11.484.280 I slot   operator(): id  2 | task 152 | cached n_tokens = 3208, memory_seq_rm [3208, end)
+0.11.485.930 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 32, n_diff = 0
+0.11.641.603 I sched_graph_realloc: graph reallocation: nodes = 1957 (changed = 0), splits = 18, n_same = 33, n_diff = 0
+0.11.691.402 I slot      release: id  0 | task 150 | stop processing: n_tokens = 3251, truncated = 0
+0.11.691.414 I slot      release: id  1 | task 151 | stop processing: n_tokens = 3255, truncated = 0
+0.11.691.415 I slot prompt_clear: id  1 | task 151 | clearing prompt with 3255 tokens
+0.11.691.873 I slot      release: id  2 | task 152 | stop processing: n_tokens = 3281, truncated = 0
+0.11.691.874 I slot prompt_clear: id  2 | task 152 | clearing prompt with 3281 tokens
+0.11.692.186 I srv  update_slots: all slots are idle
+0.11.712.163 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.018 (62/3455) > 0.100
+0.11.712.167 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.11.712.167 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.11.712.171 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210293879954
+0.11.712.173 I srv  launch_slots: launching slots for parent task id_task = 156 with 2 child tasks
+0.11.712.278 I slot launch_slot_: id  2 | task 157 | processing task, is_child = 1
+0.11.712.289 I slot launch_slot_: id  0 | task 158 | processing task, is_child = 1
+0.11.712.295 I slot launch_slot_: id  1 | task 156 | processing task, is_child = 0
+0.11.712.303 I slot   operator(): id  1 | task 156 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3455
+0.11.712.307 I slot   operator(): id  1 | task 156 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.12.162.079 I slot   operator(): id  1 | task 156 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.12.486.059 I slot   operator(): id  1 | task 156 | cached n_tokens = 3412, memory_seq_rm [3412, end)
+0.12.486.081 I slot   operator(): id  1 | task 156 |  - copying shared prompt (3412 tokens) to child 0
+0.12.486.729 I slot   operator(): id  1 | task 156 |  - copying shared prompt (3412 tokens) to child 2
+0.12.486.949 I slot   operator(): id  2 | task 157 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3459
+0.12.486.956 I slot   operator(): id  2 | task 157 | cached n_tokens = 3412, memory_seq_rm [3412, end)
+0.12.488.281 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 34, n_diff = 0
+0.12.556.658 I slot      release: id  1 | task 156 | stop processing: n_tokens = 3455, truncated = 0
+0.12.556.679 I slot      release: id  2 | task 157 | stop processing: n_tokens = 3459, truncated = 0
+0.12.556.681 I slot prompt_clear: id  2 | task 157 | clearing prompt with 3459 tokens
+0.12.556.974 I slot   operator(): id  0 | task 158 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3485
+0.12.556.987 I slot   operator(): id  0 | task 158 | cached n_tokens = 3412, memory_seq_rm [3412, end)
+0.12.602.922 I slot      release: id  0 | task 158 | stop processing: n_tokens = 3485, truncated = 0
+0.12.602.931 I slot prompt_clear: id  0 | task 158 | clearing prompt with 3485 tokens
+0.12.603.278 I srv  update_slots: all slots are idle
+0.12.613.414 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.12.613.422 I slot get_availabl: id  1 | task -1 |  - checking sim = 0.019 (62/3224) > 0.100
+0.12.613.423 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.12.613.426 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210294745219
+0.12.613.427 I srv  launch_slots: launching slots for parent task id_task = 163 with 2 child tasks
+0.12.613.529 I slot launch_slot_: id  0 | task 164 | processing task, is_child = 1
+0.12.613.539 I slot launch_slot_: id  1 | task 165 | processing task, is_child = 1
+0.12.613.543 I slot launch_slot_: id  2 | task 163 | processing task, is_child = 0
+0.12.613.554 I slot   operator(): id  2 | task 163 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3224
+0.12.613.559 I slot   operator(): id  2 | task 163 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.12.616.838 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 35, n_diff = 0
+0.13.056.706 I slot   operator(): id  2 | task 163 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.13.322.664 I slot   operator(): id  2 | task 163 | cached n_tokens = 3181, memory_seq_rm [3181, end)
+0.13.322.691 I slot   operator(): id  2 | task 163 |  - copying shared prompt (3181 tokens) to child 0
+0.13.322.964 I slot   operator(): id  2 | task 163 |  - copying shared prompt (3181 tokens) to child 1
+0.13.325.287 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 36, n_diff = 0
+0.13.366.549 I slot      release: id  2 | task 163 | stop processing: n_tokens = 3224, truncated = 0
+0.13.366.580 I slot   operator(): id  0 | task 164 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3228
+0.13.366.589 I slot   operator(): id  0 | task 164 | cached n_tokens = 3181, memory_seq_rm [3181, end)
+0.13.366.612 I slot   operator(): id  1 | task 165 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3254
+0.13.366.615 I slot   operator(): id  1 | task 165 | cached n_tokens = 3181, memory_seq_rm [3181, end)
+0.13.368.138 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 37, n_diff = 0
+0.13.460.797 I slot      release: id  0 | task 164 | stop processing: n_tokens = 3228, truncated = 0
+0.13.460.803 I slot prompt_clear: id  0 | task 164 | clearing prompt with 3228 tokens
+0.13.461.089 I slot      release: id  1 | task 165 | stop processing: n_tokens = 3254, truncated = 0
+0.13.461.094 I slot prompt_clear: id  1 | task 165 | clearing prompt with 3254 tokens
+0.13.461.385 I srv  update_slots: all slots are idle
+0.13.480.217 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.13.480.221 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.13.480.226 I slot get_availabl: id  2 | task -1 |  - checking sim = 0.021 (62/2986) > 0.100
+0.13.480.230 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210295649342
+0.13.480.231 I srv  launch_slots: launching slots for parent task id_task = 170 with 2 child tasks
+0.13.480.357 I slot launch_slot_: id  1 | task 171 | processing task, is_child = 1
+0.13.480.363 I slot launch_slot_: id  2 | task 172 | processing task, is_child = 1
+0.13.480.371 I slot launch_slot_: id  0 | task 170 | processing task, is_child = 0
+0.13.480.383 I slot   operator(): id  0 | task 170 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 2986
+0.13.480.389 I slot   operator(): id  0 | task 170 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.13.934.654 I slot   operator(): id  0 | task 170 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.14.152.242 I slot   operator(): id  0 | task 170 | cached n_tokens = 2943, memory_seq_rm [2943, end)
+0.14.152.262 I slot   operator(): id  0 | task 170 |  - copying shared prompt (2943 tokens) to child 1
+0.14.152.500 I slot   operator(): id  0 | task 170 |  - copying shared prompt (2943 tokens) to child 2
+0.14.153.223 I slot   operator(): id  1 | task 171 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 2990
+0.14.153.234 I slot   operator(): id  1 | task 171 | cached n_tokens = 2943, memory_seq_rm [2943, end)
+0.14.153.253 I slot   operator(): id  2 | task 172 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3016
+0.14.153.255 I slot   operator(): id  2 | task 172 | cached n_tokens = 2943, memory_seq_rm [2943, end)
+0.14.154.993 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 38, n_diff = 0
+0.14.246.514 I sched_graph_realloc: graph reallocation: nodes = 1957 (changed = 0), splits = 18, n_same = 39, n_diff = 0
+0.14.289.791 I slot      release: id  0 | task 170 | stop processing: n_tokens = 2986, truncated = 0
+0.14.289.806 I slot      release: id  1 | task 171 | stop processing: n_tokens = 2990, truncated = 0
+0.14.289.807 I slot prompt_clear: id  1 | task 171 | clearing prompt with 2990 tokens
+0.14.290.028 I slot      release: id  2 | task 172 | stop processing: n_tokens = 3016, truncated = 0
+0.14.290.032 I slot prompt_clear: id  2 | task 172 | clearing prompt with 3016 tokens
+0.14.290.249 I srv  update_slots: all slots are idle
+0.14.303.287 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.020 (62/3025) > 0.100
+0.14.303.294 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.14.303.295 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.14.303.298 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210296478345
+0.14.303.299 I srv  launch_slots: launching slots for parent task id_task = 176 with 2 child tasks
+0.14.303.435 I slot launch_slot_: id  2 | task 177 | processing task, is_child = 1
+0.14.303.444 I slot launch_slot_: id  0 | task 178 | processing task, is_child = 1
+0.14.303.448 I slot launch_slot_: id  1 | task 176 | processing task, is_child = 0
+0.14.303.459 I slot   operator(): id  1 | task 176 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3025
+0.14.303.474 I slot   operator(): id  1 | task 176 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.14.752.551 I slot   operator(): id  1 | task 176 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.14.996.266 I slot   operator(): id  1 | task 176 | cached n_tokens = 2982, memory_seq_rm [2982, end)
+0.14.996.293 I slot   operator(): id  1 | task 176 |  - copying shared prompt (2982 tokens) to child 0
+0.14.996.971 I slot   operator(): id  1 | task 176 |  - copying shared prompt (2982 tokens) to child 2
+0.14.997.210 I slot   operator(): id  2 | task 177 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3029
+0.14.997.217 I slot   operator(): id  2 | task 177 | cached n_tokens = 2982, memory_seq_rm [2982, end)
+0.14.998.911 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 40, n_diff = 0
+0.15.070.964 I slot      release: id  1 | task 176 | stop processing: n_tokens = 3025, truncated = 0
+0.15.070.979 I slot      release: id  2 | task 177 | stop processing: n_tokens = 3029, truncated = 0
+0.15.070.980 I slot prompt_clear: id  2 | task 177 | clearing prompt with 3029 tokens
+0.15.071.237 I slot   operator(): id  0 | task 178 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3055
+0.15.071.247 I slot   operator(): id  0 | task 178 | cached n_tokens = 2982, memory_seq_rm [2982, end)
+0.15.116.599 I slot      release: id  0 | task 178 | stop processing: n_tokens = 3055, truncated = 0
+0.15.116.603 I slot prompt_clear: id  0 | task 178 | clearing prompt with 3055 tokens
+0.15.116.867 I srv  update_slots: all slots are idle
+0.15.126.780 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.15.126.791 I slot get_availabl: id  1 | task -1 |  - checking sim = 0.019 (63/3255) > 0.100
+0.15.126.809 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.15.126.812 I slot get_availabl: id  2 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210297259519
+0.15.126.814 I srv  launch_slots: launching slots for parent task id_task = 183 with 2 child tasks
+0.15.126.915 I slot launch_slot_: id  0 | task 184 | processing task, is_child = 1
+0.15.126.920 I slot launch_slot_: id  1 | task 185 | processing task, is_child = 1
+0.15.126.924 I slot launch_slot_: id  2 | task 183 | processing task, is_child = 0
+0.15.126.940 I slot   operator(): id  2 | task 183 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3255
+0.15.126.945 I slot   operator(): id  2 | task 183 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.15.131.124 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 41, n_diff = 0
+0.15.581.079 I slot   operator(): id  2 | task 183 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.15.872.875 I slot   operator(): id  2 | task 183 | cached n_tokens = 3212, memory_seq_rm [3212, end)
+0.15.872.900 I slot   operator(): id  2 | task 183 |  - copying shared prompt (3212 tokens) to child 0
+0.15.873.177 I slot   operator(): id  2 | task 183 |  - copying shared prompt (3212 tokens) to child 1
+0.15.875.696 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 42, n_diff = 0
+0.15.914.033 I slot      release: id  2 | task 183 | stop processing: n_tokens = 3255, truncated = 0
+0.15.914.060 I slot   operator(): id  0 | task 184 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3259
+0.15.914.066 I slot   operator(): id  0 | task 184 | cached n_tokens = 3212, memory_seq_rm [3212, end)
+0.15.914.089 I slot   operator(): id  1 | task 185 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3285
+0.15.914.096 I slot   operator(): id  1 | task 185 | cached n_tokens = 3212, memory_seq_rm [3212, end)
+0.15.915.172 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 43, n_diff = 0
+0.16.029.860 I slot      release: id  0 | task 184 | stop processing: n_tokens = 3259, truncated = 0
+0.16.029.866 I slot prompt_clear: id  0 | task 184 | clearing prompt with 3259 tokens
+0.16.030.102 I slot      release: id  1 | task 185 | stop processing: n_tokens = 3285, truncated = 0
+0.16.030.102 I slot prompt_clear: id  1 | task 185 | clearing prompt with 3285 tokens
+0.16.030.345 I srv  update_slots: all slots are idle
+0.16.046.456 I slot get_availabl: id  0 | task -1 |  - skipping, slot is empty
+0.16.046.459 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.16.046.474 I slot get_availabl: id  2 | task -1 |  - checking sim = 0.018 (62/3498) > 0.100
+0.16.046.480 I slot get_availabl: id  0 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210298218404
+0.16.046.481 I srv  launch_slots: launching slots for parent task id_task = 190 with 2 child tasks
+0.16.046.616 I slot launch_slot_: id  1 | task 191 | processing task, is_child = 1
+0.16.046.622 I slot launch_slot_: id  2 | task 192 | processing task, is_child = 1
+0.16.046.634 I slot launch_slot_: id  0 | task 190 | processing task, is_child = 0
+0.16.046.648 I slot   operator(): id  0 | task 190 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3498
+0.16.046.652 I slot   operator(): id  0 | task 190 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.16.493.262 I slot   operator(): id  0 | task 190 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.16.819.036 I slot   operator(): id  0 | task 190 | cached n_tokens = 3455, memory_seq_rm [3455, end)
+0.16.819.056 I slot   operator(): id  0 | task 190 |  - copying shared prompt (3455 tokens) to child 1
+0.16.819.279 I slot   operator(): id  0 | task 190 |  - copying shared prompt (3455 tokens) to child 2
+0.16.819.867 I slot   operator(): id  1 | task 191 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3502
+0.16.819.873 I slot   operator(): id  1 | task 191 | cached n_tokens = 3455, memory_seq_rm [3455, end)
+0.16.819.891 I slot   operator(): id  2 | task 192 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3528
+0.16.819.899 I slot   operator(): id  2 | task 192 | cached n_tokens = 3455, memory_seq_rm [3455, end)
+0.16.821.130 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 44, n_diff = 0
+0.16.913.448 I sched_graph_realloc: graph reallocation: nodes = 1957 (changed = 0), splits = 18, n_same = 45, n_diff = 0
+0.16.958.824 I slot      release: id  0 | task 190 | stop processing: n_tokens = 3498, truncated = 0
+0.16.958.838 I slot      release: id  1 | task 191 | stop processing: n_tokens = 3502, truncated = 0
+0.16.958.839 I slot prompt_clear: id  1 | task 191 | clearing prompt with 3502 tokens
+0.16.959.104 I slot      release: id  2 | task 192 | stop processing: n_tokens = 3528, truncated = 0
+0.16.959.110 I slot prompt_clear: id  2 | task 192 | clearing prompt with 3528 tokens
+0.16.959.417 I srv  update_slots: all slots are idle
+0.16.972.391 I slot get_availabl: id  0 | task -1 |  - checking sim = 0.021 (63/2983) > 0.100
+0.16.972.399 I slot get_availabl: id  1 | task -1 |  - skipping, slot is empty
+0.16.972.399 I slot get_availabl: id  2 | task -1 |  - skipping, slot is empty
+0.16.972.403 I slot get_availabl: id  1 | task -1 | selected slot by LRU, n_tokens = 0, t_last = 210299147378
+0.16.972.404 I srv  launch_slots: launching slots for parent task id_task = 196 with 2 child tasks
+0.16.972.541 I slot launch_slot_: id  2 | task 197 | processing task, is_child = 1
+0.16.972.550 I slot launch_slot_: id  0 | task 198 | processing task, is_child = 1
+0.16.972.554 I slot launch_slot_: id  1 | task 196 | processing task, is_child = 0
+0.16.972.565 I slot   operator(): id  1 | task 196 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 2983
+0.16.972.572 I slot   operator(): id  1 | task 196 | cached n_tokens = 0, memory_seq_rm [0, end)
+0.17.428.195 I slot   operator(): id  1 | task 196 | cached n_tokens = 2048, memory_seq_rm [2048, end)
+0.17.649.591 I slot   operator(): id  1 | task 196 | cached n_tokens = 2940, memory_seq_rm [2940, end)
+0.17.649.621 I slot   operator(): id  1 | task 196 |  - copying shared prompt (2940 tokens) to child 0
+0.17.650.526 I slot   operator(): id  1 | task 196 |  - copying shared prompt (2940 tokens) to child 2
+0.17.650.755 I slot   operator(): id  2 | task 197 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 2987
+0.17.650.765 I slot   operator(): id  2 | task 197 | cached n_tokens = 2940, memory_seq_rm [2940, end)
+0.17.652.688 I sched_graph_realloc: graph reallocation: nodes = 1941 (changed = 0), splits = 10, n_same = 46, n_diff = 0
+0.17.741.074 I slot      release: id  1 | task 196 | stop processing: n_tokens = 2983, truncated = 0
+0.17.741.096 I slot      release: id  2 | task 197 | stop processing: n_tokens = 2987, truncated = 0
+0.17.741.097 I slot prompt_clear: id  2 | task 197 | clearing prompt with 2987 tokens
+0.17.741.369 I slot   operator(): id  0 | task 198 | new prompt, n_ctx_slot = 16384, n_keep = 0, task.n_tokens = 3013
+0.17.741.382 I slot   operator(): id  0 | task 198 | cached n_tokens = 2940, memory_seq_rm [2940, end)
+0.17.787.942 I slot      release: id  0 | task 198 | stop processing: n_tokens = 3013, truncated = 0
+0.17.787.950 I slot prompt_clear: id  0 | task 198 | clearing prompt with 3013 tokens
+0.17.788.228 I srv  update_slots: all slots are idle
