@@ -69,6 +69,7 @@ The [ablation](notebook/2026-10-31-phase3-ablation-caps.md#caps-for-each-part-an
 | Change | Operation | File | Work of one thread | Measured time | Source |
 |---|---|---|---|---|---|
 | [0004](changes/0004-gpu-mask.md) | `KQ_MASK` | `ggml/src/ggml-cuda/kq-mask.cu` | It writes 16 bytes of the attention mask for each of 4 token rows. It reads the data of its KV cells one time. | 72 µs for an attention mask of 6,912 cells and 2,048 tokens (28 MB, 367 GB/s) | [Result of change 0004](notebook/2026-10-31-0004-gpu-mask-result.md) |
+| [0005](changes/0005-concat-conv.md) | Fusion of `CONCAT`, `CPY`, `SSM_CONV` and `SILU` | `ggml/src/ggml-cuda/ssm-conv.cu` | It reads the conv state and the new input where they are. It does not write the tensor of the `concat`. The kernel for `d_conv` 4 uses 92 registers. | We did not measure the kernel time. `lat_ms` is 3.02 % lower. | [Result of change 0005](notebook/2026-10-31-0005-concat-conv-result.md) |
 
 Source: the change documents in the first column.
 

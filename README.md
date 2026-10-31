@@ -20,7 +20,7 @@ Phase 5 started on 2026-10-31. The owner approved the sequence of the ranked lis
 - A request uses 2.13 to 2.45 times its roofline floor.
 - The GPU runs a kernel for 90 % to 94 % of the time of a request. The host is not the limit.
 - The ranked list has 15 targets. The first change is target `E`: [pull request #30489](https://github.com/ggml-org/llama.cpp/pull/30489) of llama.cpp. We measured it as a lead. `lat_ms` is 1.94 % lower, and the answers are the same bit for bit.
-- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004`, change 0001 (target `E`) and change 0007 (target `P`).
+- The branch `dmk/stack` of the fork has the changes that pass. At this time, it has tag `b12004` and the changes 0001 (target `E`), 0004 (target `B`), 0005 (target `C`) and 0007 (target `P`).
 
 ## How we got here
 
@@ -173,6 +173,7 @@ The folder `data/` has these data sets.
 | [`2026-10-31-0002-gdn-value-split`](data/2026-10-31-0002-gdn-value-split/README.md) | The kernel test of the paths of `gdn_single` (change 0002) |
 | [`2026-10-31-0004-gpu-mask`](data/2026-10-31-0004-gpu-mask/README.md) | The test of change 0004 |
 | [`2026-10-31-0006-mmq-tiles`](data/2026-10-31-0006-mmq-tiles/README.md) | The sweep of the MMQ tiles (target `H`) and the ceiling of target `G` |
+| [`2026-10-31-0005-concat-conv`](data/2026-10-31-0005-concat-conv/README.md) | The test of change 0005 |
 
 ## Condition of each change
 
@@ -185,7 +186,7 @@ A change gets its number when it gets its document. The table shows the changes 
 | `H` | MMQ tile and occupancy adjustments for this GPU | `exact` or `re-associated` | We do not use it. No rule that the code can use gives a gain. The [result entry](docs/notebook/2026-10-31-0006-mmq-tiles-result.md) has the sweep. |
 | `A` | Output head for the answer tokens only | `exact` | In work. |
 | `B` | Change [0004](docs/changes/0004-gpu-mask.md): attention mask on the GPU | `exact` | In the branch `dmk/stack`. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. Not in production. |
-| `C` | Concat folded into `ssm_conv` | `exact` | In work. |
+| `C` | Change [0005](docs/changes/0005-concat-conv.md): concat folded into `ssm_conv` | `exact` | In the branch `dmk/stack`. `lat_ms` is 3.02 % lower, `medium_ms` is 3.21 % lower and `long_ms` is 3.15 % lower. Not in production. |
 | `P` | Change [0007](docs/changes/0007-input-copies.md): the scheduler skips the uploads that no `COMPUTE` node reads | `exact` | In the branch `dmk/stack`. `medium_ms` is 1.0 % lower, `long_ms` is 1.3 % lower, and `lat_ms` is 0.9 % lower (the interval includes 0). Not in production. |
 | `G` | MMQ as a pipeline for the tile loads | `exact` | In work, as change 0009. The ceiling that we measured is 12.4 % of `lat_ms`. |
 | `J` | Ragged batching for the suffixes of the questions | `re-associated` | In work. |

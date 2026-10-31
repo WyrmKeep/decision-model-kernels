@@ -37,6 +37,8 @@ The notebook records the tests of the project. Each entry has a date. The dates 
 | 2026-10-31 | [Change 0004: attention mask on the GPU (prediction)](2026-10-31-0004-gpu-mask-prediction.md) | Prediction | Committed at 05:24 UTC, before the first run of the speed test at 07:11 UTC. |
 | 2026-10-31 | [Change 0004: attention mask on the GPU (result)](2026-10-31-0004-gpu-mask-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 1.06 % lower and `long_ms` is 1.52 % lower. The gain is 37 % to 44 % of the prediction, because the upload time of phase 4 has more than the attention mask. |
 | 2026-10-31 | [Target H: MMQ tile and occupancy adjustments (result)](2026-10-31-0006-mmq-tiles-result.md) | Results | Complete. We do not use target `H`: no rule that the code can use gives a gain. The entry also measures the ceiling of target `G`: the loads make the kernels wait for 12.4 % of `lat_ms`. `G` is above the limit of the rule to stop, but only by a small quantity. |
+| 2026-10-31 | [Change 0005: concat folded into `ssm_conv` (prediction)](2026-10-31-0005-concat-conv-prediction.md) | Prediction | Committed at 05:15 UTC, before the first run of the speed test at 06:34 UTC. |
+| 2026-10-31 | [Change 0005: concat folded into `ssm_conv` (result)](2026-10-31-0005-concat-conv-result.md) | Results | Complete. The answers are the same bit for bit. `lat_ms` is 3.02 % lower. The prediction was 2.7 %. |
 
 Source: the files in this folder.
 
