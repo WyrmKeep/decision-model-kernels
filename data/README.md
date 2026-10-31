@@ -18,6 +18,7 @@ The [harness](../harness/README.md) makes the raw files. The [method](../docs/me
 | [`2026-10-31-profiles`](2026-10-31-profiles/README.md) | 2026-10-31 | The decomposition of the request time, the Nsight Systems and Nsight Compute profiles of the server, and the two lead tests (#28495 and #30779) of the second measurement window. |
 | [`2026-10-31-ablation`](2026-10-31-ablation/README.md) | 2026-10-31 | The first ablation: 56 runs of the ablation build and of the baseline build, the caps of the parts of the GPU work for short requests, medium requests and long requests, the caps in `llama bench`, and the SASS check of the ablation build. The table `DMK_OPS` has no rows. |
 | [`2026-10-31-lead-30489`](2026-10-31-lead-30489/README.md) | 2026-10-31 | The test of pull request #30489 against build `D`. It has 4 blocks of the private benchmark and 4 blocks of `llama bench`. It also has the answers of 8 runs and the SASS compare of the two builds. |
+| [`2026-10-31-0001-correctness`](2026-10-31-0001-correctness/README.md) | 2026-10-31 | The logs of `test-backend-ops` and `compute-sanitizer` for change 0001: the 310 new cases, the 187 operations of the graph of mix8, and four tools of `compute-sanitizer` on the model. |
 | [`2026-10-31-phase4-model`](2026-10-31-phase4-model/README.md) | 2026-10-31 | The time model of phase 4: the input numbers, the assumption of each target, and the predicted time that each target removes for each request type. It has no run of the GPU. |
 
 Add one row for each new data set. Put a link to its folder in the first column.

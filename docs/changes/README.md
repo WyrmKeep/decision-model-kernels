@@ -1,6 +1,12 @@
 # Change documents
 
-This folder has one document for each change to llama.cpp. At this time, the folder has no change document. It has this README only.
+This folder has one document for each change to llama.cpp.
+
+| Number | Change | Equivalence class | Condition |
+|---|---|---|---|
+| [`0001`](0001-glu-into-quantize.md) | GLU fused into the quantization of the activation in MMQ (upstream pull request #30489) | `exact` | In the branch `dmk/stack`. Not in production. |
+
+Source: the change documents in this folder.
 
 ## Rules
 
