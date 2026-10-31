@@ -14,12 +14,12 @@ This data set holds the raw files and the derived tables for change 0008 of the 
 | Item | Value |
 |---|---|
 | First run with build `B` starts | 2026-10-31 07:52:10 UTC |
-| Last run starts | See the section "Raw files" and the table `runs.tsv` |
+| Last run starts | 2026-10-31 09:07:21 UTC (the census of the client) |
 | First correctness measurement window | 07:51:23 to 07:57:27 UTC |
 | Second correctness measurement window | 08:05:25 to 08:08:56 UTC |
 | Speed measurement window | 08:15:42 to 08:31:59 UTC |
 | Measurement window of the request types | 08:34:02 to 08:42:52 UTC |
-| Measurement window of the census | See the file `raw/0008-type-census.meta` |
+| Measurement window of the census | 09:07:05 to 09:07:59 UTC |
 
 The GPU did the work of one run at a time. The project stopped the server in production for each measurement window and started it again at the end. The logs of `test-backend-ops` have no time. Four of them ran before the first measurement window, with the server in production on. The other logs came from the first and the second measurement window.
 

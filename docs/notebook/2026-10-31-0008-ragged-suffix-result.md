@@ -11,7 +11,7 @@ This entry gives the result of the tests of change `0008` against the [predictio
 - Arm B (`build:0008-ragged-suffix`) is faster than arm A (`build:lead-30489`) in the private benchmark. `lat_ms` is 3.32 % lower (95 % interval: -4.18 % to -2.63 %). The prediction was -6.6 %.
 - The gain is 39 % to 61 % of the predicted gain for each request type. The gain of `lat_ms` is 50.3 % of the predicted gain. The prediction is not correct if the gain is less than 3.3 %. The result is 0.02 points above that limit.
 - `rps8` is 5.96 % higher (interval +5.60 % to +6.31 %). This is in the predicted range of 0 % to +6.6 %. `llama bench` changes by -0.08 % to -0.30 %. This is in the predicted limit of 1 %.
-- The cause of the smaller gain is the number of ubatches. The census of one pass of the benchmark finds 20 ubatches with suffixes of different lengths in the phase `seq`. The prediction used 36 requests. It removed 1 pass for each short request with two questions and 2 passes for each request with three questions.
+- The cause of the smaller gain is the number of ubatches with suffixes of different lengths. The pass of the benchmark with the log has 20 of them in the phase `seq`. The pass of the client with the log has 32. The prediction removed 52 passes in one pass.
 - Correctness: some tests that the prediction declared give `FAIL`. The mean KL divergence of the logits is more than its limit. The NMSE of the layer states and the largest probability difference of the answers are also more than their limits. The prediction limits were too small for a change of the contents of a batch. A control shows the same differences between the equal split and a decode of one sequence at a time.
 - The other tests give a pass. They are the tests of the two new operations, the graph of 187 operations, `llama perplexity`, the guards, the 52-decision set, `compute-sanitizer` and `split_equal`.
 
@@ -58,7 +58,7 @@ The test has 4 blocks. Each block has one run of each arm. The power limit was 2
 
 Source: table `speed-bench.tsv`.
 
-The difference of `lat_ms` in the four blocks is -2.45 %, -4.52 %, -3.13 % and -3.16 %. Arm B is faster than arm A in all 4 blocks. Arm A has 235.9 ms. Arm `L` in the [lead 30489](2026-10-31-lead-30489.md) has 236.5 ms.
+The difference of `lat_ms` in the four blocks is -2.45 %, -4.52 %, -3.13 % and -3.16 %. Arm B is faster than arm A in all 4 blocks. Arm A gives 235.9 ms. In the [lead 30489](2026-10-31-lead-30489.md), arm `L` gave 236.5 ms.
 
 ## Speed for each request type
 
@@ -75,7 +75,9 @@ It has the same warm-up, the same sequence of the cases, and the same tags again
 
 Source: table `speed-type.tsv`.
 
-The client and the benchmark agree for the medium requests and the long requests. They do not agree for the short requests. The numbers of the client give -6.7 % for all short requests. The benchmark gives -3.9 %. The runs of the client have no phase `quality` before the phase `seq`. We do not know if this is the cause.
+The client and the benchmark agree for the medium requests and the long requests. They do not agree for the short requests. The numbers of the client give -6.7 % for all short requests. The benchmark gives -3.9 %.
+
+The census of the client has 32 ubatches with suffixes of different lengths. The census of the benchmark has 20 in the phase `seq`. This agrees with the larger gain of the client. [INFERENCE: the number of these ubatches in a pass changes with the flow of the requests. The client and the benchmark have a different flow. We do not know the cause.]
 
 ## Speed test with `llama bench`
 
@@ -91,7 +93,7 @@ These runs have one sequence, and the change does not apply. The difference of 2
 
 ## Where the change applies
 
-The pass of the private benchmark with the log of the ubatches (`-lv 5`) shows each ubatch with suffixes of different lengths. The table gives the number of them for each phase.
+The passes of the private benchmark and of the client with the log of the ubatches (`-lv 5`) show each ubatch with suffixes of different lengths. The first table gives the number of them for each phase of the benchmark.
 
 | Phase | Requests | Ubatches with suffixes of different lengths | In one pass (ragged batching) | Not in one pass |
 |---|---:|---:|---:|---:|
@@ -102,15 +104,26 @@ The pass of the private benchmark with the log of the ubatches (`-lv 5`) shows e
 
 Source: table `ragged-ubatches.tsv`.
 
-The phase `seq` has 20 ubatches: 17 with 2 sequences and 3 with 3 sequences. The phase `tput` has 29 ubatches with 3 sequences. One ubatch in `tput` has a step of 152 tokens. This is more than the limit of 128, and the equal split does it.
+The next table gives the same numbers for one pass of the client `latency_by_type.py`.
 
-The prediction used 36 requests in the phase `seq`: 20 requests with two questions and 16 requests with three questions. The prediction thus removed 52 passes in one pass of the phase `seq`. The change removes 23 passes at most.
+| Phase | Requests | Ubatches with suffixes of different lengths | In one pass (ragged batching) | Not in one pass |
+|---|---:|---:|---:|---:|
+| `warmup` | 3 | 3 | 3 | 0 |
+| `seq` | 48 | 32 | 32 | 0 |
 
-The log of the server gives the cause for the requests with 3 questions. The first question and one other question run in the same pass. The third question starts when the first question is complete. The log line is `waiting for parent slot to complete`.
+Source: table `census-type.tsv`.
 
-[INFERENCE: this is the work of the server for the requests that we read. We did not change it.] The third question then runs in a pass for one sequence. Ragged batching cannot attach it to the other two.
+The phase `seq` of the benchmark has 20 ubatches: 17 with 2 sequences and 3 with 3 sequences. The pass of the client has 25 ubatches with 2 sequences and 7 with 3 sequences. The phase `tput` has 29 ubatches with 3 sequences. One ubatch in `tput` has a step of 152 tokens. This is more than the limit of 128, and the equal split does it.
 
-The gain of each pass that the change removes is more than the prediction. The change removes 7.84 ms for each request, or 376 ms in the phase `seq` of 48 requests. This is 16.4 ms for each of the 23 passes. The prediction used 10.4 ms. [INFERENCE: a pass with a small number of tokens uses more time than the mean pass. The build of the graph and the start of the kernels are in this time.]
+The prediction used 36 requests in the phase `seq`: 20 requests with two questions and 16 requests with three questions. It removed 52 passes in one pass. A ubatch with 2 sequences removes 1 pass at most, and a ubatch with 3 sequences removes 2 passes at most. The benchmark pass removes 23 passes at most. The client pass removes 39 passes at most.
+
+The log of the server shows one cause of the small number of ubatches with 3 sequences. The third question of a request can wait. The log line is `waiting for parent slot to complete`. We did not change the server.
+
+[INFERENCE: this is the work of the server for the request that we read. The 16 requests with 3 questions give only 3 ubatches with 3 sequences in the benchmark pass and 7 in the client pass. The three questions thus use one pass together in some requests only.]
+
+The gain for each pass that the change removes is near the prediction in the client. The client removes 451 ms in the 48 requests of one pass, the sum of the gains of the four request types. This is 11.6 ms or more for each pass that the change removes. The prediction used 10.4 ms to 11.5 ms.
+
+The benchmark removes 376 ms in one pass. This is 16.4 ms or more for each pass that the change removes. [INFERENCE: the speed test has a different number of ubatches than the passes with the log. The log of level 5 writes the prompts and can change the time of each task of the server.]
 
 ## Correctness
 
@@ -172,9 +185,9 @@ The host has 12 CPU threads. The one-minute load average was 1.65 to 17.04 in th
 
 ## Limits and next work
 
-- **Gain.** The gain is 50 % of the gain that the prediction gave. The cause is the structure of the server. A request with 3 questions has two passes after the change, and not one.
-- **Server.** If the third question starts together with the other two, one pass can hold the three suffixes of a medium request or a long request. This removes one more pass for 16 of the 48 requests. It is a change of the server code. We did not do it.
-- **Two measurements for the short requests.** The client and the benchmark give -6.7 % and -3.9 %. We did not find the cause.
+- **Gain.** The gain is 50 % of the gain that the prediction gave. The cause is the number of ubatches with suffixes of different lengths. It is 20 in the pass of the benchmark with the log and 32 in the pass of the client with the log.
+- **Server.** The third question of a request can start after the other two. A change of the server that starts all questions together can remove one more pass for some of the 16 requests with 3 questions. We did not do it.
+- **Two measurements for the short requests.** The client and the benchmark give -6.7 % and -3.9 %. The census agrees with this: 32 and 20 ubatches. We do not know the cause of the different flow of the requests.
 - **Result of the numbers.** The tests of the layer state, the logits and the answers are not in the declared limits. The change is not `exact`. The tests show that the result is in the range of the noise of the contents of a batch. The answers of 100 decisions have no different top answer. A decision on the limits is necessary before a merge.
 - **Not in the tests.** Other models, speculative decoding (`n_rs_seq` more than 0), the other backends, and more than one GPU. The new operations have only a CPU version and a CUDA version. Other backends use the equal split.
 - **Other changes.** Changes 0002 to 0005 change the same files. A merge can give different lines in `ggml-cuda.cu`, in `qwen35.cpp` and in the graph code.

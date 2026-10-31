@@ -65,13 +65,15 @@ We committed the [prediction entry](../notebook/2026-10-31-0008-ragged-suffix-pr
 
 Source: the [notebook entry of the result](../notebook/2026-10-31-0008-ragged-suffix-result.md).
 
-The cause of the smaller gain is the number of ubatches with suffixes of different lengths. The prediction used 36 requests with 2 or 3 questions in the phase `seq`. It removed 52 passes. The log of one pass shows 20 ubatches, and the change removes 23 passes at most.
+The cause of the smaller gain is the number of ubatches with suffixes of different lengths. The prediction used 36 requests with 2 or 3 questions in the phase `seq`. It removed 52 passes in one pass. The pass of the benchmark with the log has 20 such ubatches, and the change removes 23 passes at most. The pass of the client `latency_by_type.py` with the log has 32 such ubatches, and the change removes 39 passes at most.
 
-The server runs a request with 3 questions in two passes. The first question and one other question start together. The third question starts when the first question is complete. The log line is `waiting for parent slot to complete`. Ragged batching cannot attach the third question to the other two.
+The log of the server shows one cause of the small number of ubatches with 3 sequences. The third question of a request can wait. The log line is `waiting for parent slot to complete`. Ragged batching cannot attach the third question to the other two.
 
-Each pass that the change removes gives more than the prediction. The change removes 376 ms in the 48 requests of the phase `seq`. This is 16.4 ms for each of the 23 passes. The prediction used 10.4 ms. [INFERENCE: a pass with a small number of tokens uses more time than the mean pass.]
+The gain for each pass that the change removes is near the prediction in the client. The client removes 451 ms in one pass of 48 requests. This is 11.6 ms or more for each pass that the change removes. The prediction used 10.4 ms to 11.5 ms. The benchmark removes 376 ms, or 16.4 ms or more for each pass.
 
-The short requests give -6.7 % in the client and -3.9 % in the benchmark. We did not find the cause.
+[INFERENCE: the speed test has a different number of ubatches than the passes with the log. The log of level 5 writes the prompts and can change the time of each task of the server.]
+
+The short requests give -6.7 % in the client and -3.9 % in the benchmark. The client has more ubatches with ragged batching, and this agrees with its larger gain. We do not know the cause of the different flow of the requests.
 
 ## Correctness
 
@@ -168,9 +170,9 @@ The server flags of the benchmark are `-ngl 999 -c 16384 -b 2048 -ub 2048 -np 3 
   - Each step between the lengths, from 0 to the longest length, is 128 tokens or less. The kernel of Gated DeltaNet runs one token at a time, and this limit keeps the time small.
   - The backend of each recurrent layer has the two new operations. Only the CPU backend and the CUDA backend have them. The memory tests this when it starts.
 - **Where it applies in the benchmark.** The phase `seq` has 20 ubatches with ragged batching in one pass. The benchmark has 36 requests with 2 or 3 questions.
-- **Server.** The server starts the third question of a request after the first question. This limits the gain. A change of the server can start all questions together. We did not make it.
+- **Server.** The third question of a request can start after the other two. This limits the gain. A change of the server can start all questions together. We did not make it.
 - **Numbers.** The tests of the layer states, the logits and the answers are not in the declared limits. The answers of 100 decisions have no different top answer. A decision on the limits is necessary before a merge.
-- **Two measurements for short requests.** The client and the benchmark give -6.7 % and -3.9 %. We did not find the cause.
+- **Two measurements for short requests.** The client and the benchmark give -6.7 % and -3.9 %. The census gives 32 and 20 ubatches. We do not know the cause of the different flow of the requests.
 - **Host load.** The load of the host was 1.65 to 17.04 in the private benchmark. The sign of the difference of `lat_ms` is the same in all 4 blocks.
 - **Not in the tests.** Other models, speculative decoding (`n_rs_seq` more than 0), and more than one GPU.
 - **Operations.** The change adds two operations. Thus `GGML_OP_COUNT` is 104, and `RPC_PROTO_PATCH_VERSION` is 2. Other changes that add operations change the same lines of `ggml-rpc.h`.
